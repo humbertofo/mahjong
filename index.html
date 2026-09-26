@@ -268,6 +268,31 @@
         </div>
       </div>
 
+      <!-- MODAL: ATUALIZAÇÃO EM TEMPO REAL (LIVE UPDATE) -->
+      <div id="modal-update-dialog" class="update-dialog-backdrop hidden">
+        <div class="update-dialog-card">
+          <!-- Etapa 1: Baixando e Instalando -->
+          <div id="update-dialog-downloading">
+            <div class="update-spinner-ring"></div>
+            <h3 class="update-dialog-title">Baixando Novidades...</h3>
+            <p id="update-download-desc" class="update-dialog-desc">Instalando novas fases e melhorias...</p>
+            <div class="update-progress-track">
+              <div class="update-progress-bar-anim"></div>
+            </div>
+          </div>
+          <!-- Etapa 2: Concluído e Pedir para Reiniciar -->
+          <div id="update-dialog-ready" class="hidden">
+            <div class="update-dialog-icon">🚀</div>
+            <h3 class="update-dialog-title">Atualização Concluída!</h3>
+            <p id="update-ready-desc" class="update-dialog-desc">Novas fases e melhorias prontas. Reinicie agora para jogar na versão mais recente!</p>
+            <div class="update-dialog-actions">
+              <button id="btn-update-later" class="btn-secondary btn-update-secondary">Depois</button>
+              <button id="btn-update-restart" class="btn-primary btn-update-primary">🔄 Reiniciar Agora</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /app-container -->
 
     <script type="module" src="./src/main.ts"></script>

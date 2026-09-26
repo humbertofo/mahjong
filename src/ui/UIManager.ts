@@ -5,6 +5,7 @@ import { StorageManager } from '../storage/StorageManager';
 import { soundManager } from '../audio/SoundManager';
 import { hapticManager } from '../audio/HapticManager';
 import { PlacedTile } from '../core/types';
+import { LiveUpdateManager } from '../core/LiveUpdateManager';
 import confetti from 'canvas-confetti';
 
 export class UIManager {
@@ -1123,4 +1124,50 @@ export class UIManager {
       onArrival();
     }, 220);
   }
+
+  // ─── Live Update UI ────────────────────────────────────────────────────────
+
+  public showUpdateDownloading(message?: string): void {
+    const dialog = document.getElementById('modal-update-dialog');
+    const stepDownloading = document.getElementById('update-dialog-downloading');
+    const stepReady = document.getElementById('update-dialog-ready');
+    const desc = document.getElementById('update-download-desc');
+
+    if (!dialog) return;
+    if (desc && message) desc.textContent = `Instalando: ${message}`;
+    stepDownloading?.classList.remove('hidden');
+    stepReady?.classList.add('hidden');
+    dialog.classList.remove('hidden');
+  }
+
+  public showUpdateReady(message?: string): void {
+    const dialog = document.getElementById('modal-update-dialog');
+    const stepDownloading = document.getElementById('update-dialog-downloading');
+    const stepReady = document.getElementById('update-dialog-ready');
+    const desc = document.getElementById('update-ready-desc');
+    const btnRestart = document.getElementById('btn-update-restart');
+    const btnLater = document.getElementById('btn-update-later');
+
+    if (!dialog) return;
+    if (desc && message) {
+      desc.textContent = `"${message}" instalada com sucesso. Reinicie agora para jogar na versão mais recente!`;
+    }
+    stepDownloading?.classList.add('hidden');
+    stepReady?.classList.remove('hidden');
+    dialog.classList.remove('hidden');
+
+    if (btnRestart) {
+      btnRestart.onclick = () => {
+        LiveUpdateManager.applyUpdateNow();
+      };
+    }
+
+    if (btnLater) {
+      btnLater.onclick = () => {
+        dialog.classList.add('hidden');
+        this.showToast('✨ A atualização entrará em vigor ao reabrir o jogo.');
+      };
+    }
+  }
 }
+

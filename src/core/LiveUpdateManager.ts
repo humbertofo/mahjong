@@ -7,13 +7,18 @@ const BUNDLE_ZIP_URL = `https://github.com/${GITHUB_REPO}/releases/download/live
 const CURRENT_BUNDLE_KEY = 'mahjong_live_bundle_sha';
 const LAST_CHECK_KEY = 'mahjong_last_update_check';
 
+export interface LiveUpdateCallbacks {
+  onDownloading?: (commitMessage: string) => void;
+  onReady?: (commitMessage: string) => void;
+}
+
 export class LiveUpdateManager {
   private static isChecking = false;
 
   /**
    * Verifica em segundo plano se há um novo commit/versão no GitHub
    */
-  public static async checkForUpdates(onUpdateReady?: (message: string) => void): Promise<void> {
+  public static async checkForUpdates(callbacks?: LiveUpdateCallbacks | ((message: string) => void)): Promise<void> {
     // Live update só roda no aplicativo nativo Android/iOS, não no browser
     if (!Capacitor.isNativePlatform()) {
       return;
@@ -48,7 +53,7 @@ export class LiveUpdateManager {
 
       const data = await res.json();
       const latestSha = (data.sha || '').substring(0, 10);
-      const commitMessage = data.commit?.message?.split('\n')[0] || 'Melhorias e correções';
+      const commitMessage = data.commit?.message?.split('\n')[0] || 'Novas fases e melhorias visuais';
 
       if (!latestSha) return;
 
@@ -59,6 +64,11 @@ export class LiveUpdateManager {
       }
 
       console.log(`[LiveUpdate] Nova versão detectada (${latestSha}). Baixando dist.zip...`);
+
+      // Notificar que o download começou (exibe tela de carregando)
+      if (typeof callbacks === 'object' && callbacks?.onDownloading) {
+        callbacks.onDownloading(commitMessage);
+      }
 
       // 4. Baixar o bundle dist.zip da release 'live-update'
       await LiveUpdate.downloadBundle({
@@ -76,8 +86,11 @@ export class LiveUpdateManager {
 
       console.log(`[LiveUpdate] Sucesso! Bundle ${latestSha} preparado.`);
 
-      if (onUpdateReady) {
-        onUpdateReady(commitMessage);
+      // Notificar que o download terminou e pode reiniciar
+      if (typeof callbacks === 'object' && callbacks?.onReady) {
+        callbacks.onReady(commitMessage);
+      } else if (typeof callbacks === 'function') {
+        callbacks(commitMessage);
       }
     } catch (err) {
       console.warn('[LiveUpdate] Verificação em background ignorada (offline ou conexão lenta):', err);

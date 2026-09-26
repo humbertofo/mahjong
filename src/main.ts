@@ -54,8 +54,13 @@ window.addEventListener('DOMContentLoaded', () => {
       .catch(() => {});
   }
 
-  // 5. Verificação silenciosa de Live Update em segundo plano (Android)
-  LiveUpdateManager.checkForUpdates((notes) => {
-    uiManager?.showToast(notes ? `✨ ${notes}` : '✨ Novas fases atualizadas! Reinicie o jogo para aplicar.');
+  // 5. Verificação de Live Update com tela de download e solicitação de reinício
+  LiveUpdateManager.checkForUpdates({
+    onDownloading: (message) => {
+      uiManager?.showUpdateDownloading(message);
+    },
+    onReady: (message) => {
+      uiManager?.showUpdateReady(message);
+    },
   });
 });
