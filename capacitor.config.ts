@@ -16,6 +16,7 @@ const config: CapacitorConfig = {
   plugins: {
     LiveUpdate: {
       autoUpdateStrategy: 'none',
+      resetOnUpdate: false,
     },
   },
 };

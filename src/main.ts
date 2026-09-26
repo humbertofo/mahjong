@@ -5,6 +5,9 @@ import { garden36Layout } from './core/layouts/garden36';
 import { LiveUpdateManager } from './core/LiveUpdateManager';
 
 window.addEventListener('DOMContentLoaded', () => {
+  // Confirmar que o app carregou com sucesso e desativar o rollback automático
+  LiveUpdateManager.notifyAppReady();
+
   const canvas = document.getElementById('board-canvas') as HTMLCanvasElement;
   if (!canvas) {
     console.error('Canvas element not found');

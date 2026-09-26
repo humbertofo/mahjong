@@ -76,10 +76,16 @@ export class LiveUpdateManager {
         url: `${BUNDLE_ZIP_URL}?_v=${latestSha}`,
       });
 
-      // 5. Definir como o bundle ativo
-      await LiveUpdate.setBundle({
-        bundleId: latestSha,
-      });
+      // 5. Definir como o próximo bundle ativo (para recarregar sem rollback)
+      try {
+        await LiveUpdate.setNextBundle({
+          bundleId: latestSha,
+        });
+      } catch {
+        await LiveUpdate.setBundle({
+          bundleId: latestSha,
+        });
+      }
 
       localStorage.setItem(CURRENT_BUNDLE_KEY, latestSha);
       localStorage.setItem(LAST_CHECK_KEY, Date.now().toString());
@@ -100,7 +106,20 @@ export class LiveUpdateManager {
   }
 
   /**
-   * Recarrega o app imediatamente
+   * Confirma que o bundle atual carregou com sucesso e IMPEDE o rollback automático
+   */
+  public static async notifyAppReady(): Promise<void> {
+    if (!Capacitor.isNativePlatform()) return;
+    try {
+      await LiveUpdate.ready();
+      console.log('[LiveUpdate] Bundle ativo confirmado como estável via ready(). Rollback desativado.');
+    } catch (err) {
+      console.warn('[LiveUpdate] Erro ao chamar ready():', err);
+    }
+  }
+
+  /**
+   * Recarrega o app imediatamente para carregar o novo bundle
    */
   public static async applyUpdateNow(): Promise<void> {
     if (!Capacitor.isNativePlatform()) return;
