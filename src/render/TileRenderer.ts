@@ -44,6 +44,17 @@ const ANIMAL_PALETTE: Record<AnimalValue, { bg: string; accent: string; dark: st
   chameleon: { bg: '#E8F5E9', accent: '#00E676', dark: '#00B0FF' },
 };
 
+const EMOJIS_MAP: Record<AnimalValue, string> = {
+  cat: '🐱', dog: '🐶', rabbit: '🐰', fish: '🐟',
+  bird: '🐦', butterfly: '🦋', turtle: '🐢', frog: '🐸',
+  bee: '🐝', elephant: '🐘', lion: '🦁', fox: '🦊',
+  monkey: '🐒', panda: '🐼', penguin: '🐧', duck: '🦆',
+  snail: '🐌', ladybug: '🐞',
+  bear: '🐻', squirrel: '🐿️', dolphin: '🐬', hedgehog: '🦔',
+  banana: '🍌', acorn: '🌰', shell: '🐚', apple: '🍎', honeycomb: '🍯',
+  chameleon: '🦎',
+};
+
 export class TileRenderer {
   private cache: Map<string, HTMLCanvasElement> = new Map();
   private dpr: number = 1;
@@ -86,7 +97,7 @@ export class TileRenderer {
   }
 
   // =========================================================================
-  // MAIN DRAW ENTRY POINT
+  // MAIN DRAW ENTRY POINT (ULTRA-OTIMIZADO - ZERO OFFSCREEN CANVAS POR TILE)
   // =========================================================================
 
   public drawTile(
@@ -181,14 +192,15 @@ export class TileRenderer {
       ctx.stroke();
     }
 
-    // 7. Sprite do animal (pré-renderizado em cache)
-    const faceSprite = this.getOrGenerateTileFace(tile);
+    // 7. Glifo do animal / elemento desenhado diretamente (alta performance sem recriar canvas)
+    const cw = tileWidth - 2;
+    const ch = tileHeight - 2;
     if (!isFree && this.dimBlockedTiles) {
       ctx.globalAlpha = 0.78;
-      ctx.drawImage(faceSprite, x, y, tileWidth - 2, tileHeight - 2);
+      this.drawAnimalGlyph(ctx, tile.value as AnimalValue, cw, ch, x, y);
       ctx.globalAlpha = 1.0;
     } else {
-      ctx.drawImage(faceSprite, x, y, tileWidth - 2, tileHeight - 2);
+      this.drawAnimalGlyph(ctx, tile.value as AnimalValue, cw, ch, x, y);
     }
 
     ctx.restore();
@@ -199,57 +211,45 @@ export class TileRenderer {
     let cached = this.cache.get(key);
     if (cached) return cached;
 
-    const w = (this.dims.tileWidth - 2) * this.dpr;
-    const h = (this.dims.tileHeight - 2) * this.dpr;
-
+    const cw = this.dims.tileWidth - 2;
+    const ch = this.dims.tileHeight - 2;
     const off = document.createElement('canvas');
-    off.width = w;
-    off.height = h;
+    off.width = Math.round(cw * this.dpr);
+    off.height = Math.round(ch * this.dpr);
     const g = off.getContext('2d');
     if (!g) return off;
 
     g.scale(this.dpr, this.dpr);
-    const cw = this.dims.tileWidth - 2;
-    const ch = this.dims.tileHeight - 2;
-
-    this.drawAnimalGlyph(g, tile.value as AnimalValue, cw, ch);
+    this.drawAnimalGlyph(g, tile.value as AnimalValue, cw, ch, 0, 0);
 
     this.cache.set(key, off);
     return off;
   }
 
   // =========================================================================
-  // RENDERIZADOR DE ANIMAIS (EMOJIS)
+  // RENDERIZADOR DE ANIMAIS (EMOJIS) DIRETO NO CONTEXTO
   // =========================================================================
 
-  private drawAnimalGlyph(g: CanvasRenderingContext2D, animal: AnimalValue, cw: number, ch: number): void {
-    const emojis: Record<AnimalValue, string> = {
-      cat: '🐱', dog: '🐶', rabbit: '🐰', fish: '🐟',
-      bird: '🐦', butterfly: '🦋', turtle: '🐢', frog: '🐸',
-      bee: '🐝', elephant: '🐘', lion: '🦁', fox: '🦊',
-      monkey: '🐒', panda: '🐼', penguin: '🐧', duck: '🦆',
-      snail: '🐌', ladybug: '🐞',
-      // Novos animais
-      bear: '🐻', squirrel: '🐿️', dolphin: '🐬', hedgehog: '🦔',
-      // Adereços e natureza
-      banana: '🍌', acorn: '🌰', shell: '🐚', apple: '🍎', honeycomb: '🍯',
-      // Peça Coringa
-      chameleon: '🦎',
-    };
-
-    const emoji = emojis[animal] || '🐾';
-    const cx = cw / 2;
-    const cy = ch * 0.48; // Perfeitamente centralizado no corpo da pedra
-    const fontSize = Math.round(cw * 0.62); // Ampliado para destaque total da figura
+  public drawAnimalGlyph(
+    g: CanvasRenderingContext2D,
+    animal: AnimalValue,
+    cw: number,
+    ch: number,
+    offsetX: number = 0,
+    offsetY: number = 0
+  ): void {
+    const emoji = EMOJIS_MAP[animal] || '🐾';
+    const cx = offsetX + cw / 2;
+    const cy = offsetY + ch * 0.48;
+    const fontSize = Math.round(cw * 0.62);
 
     g.save();
     g.textAlign = 'center';
     g.textBaseline = 'middle';
     g.font = `${fontSize}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Android Emoji", sans-serif`;
 
-    // Sombra suave para profundidade sobre a pedra
     g.shadowColor = 'rgba(0, 0, 0, 0.16)';
-    g.shadowBlur = 6;
+    g.shadowBlur = 4;
     g.shadowOffsetY = 2;
 
     g.fillText(emoji, cx, cy);

@@ -64,6 +64,9 @@ export class BoardRenderer {
     color?: string;
   }> = [];
 
+  // Fundo em Cache de Alta Performance (Hardware Blit)
+  private bgCanvas: HTMLCanvasElement | null = null;
+
   constructor(
     canvas: HTMLCanvasElement,
     engine: BoardEngine,
@@ -107,6 +110,11 @@ export class BoardRenderer {
 
   public setTheme(theme: ThemeType): void {
     this.theme = theme;
+    const viewW = this.canvas.width / this.dpr;
+    const viewH = this.canvas.height / this.dpr;
+    if (viewW > 0 && viewH > 0) {
+      this.renderBackgroundCache(viewW, viewH);
+    }
     this.requestRender();
   }
 
@@ -134,7 +142,21 @@ export class BoardRenderer {
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.ctx.scale(this.dpr, this.dpr);
 
+    this.renderBackgroundCache(width, height);
     this.calculateAutoFit(width, height);
+  }
+
+  private renderBackgroundCache(w: number, h: number): void {
+    if (!this.bgCanvas) {
+      this.bgCanvas = document.createElement('canvas');
+    }
+    this.bgCanvas.width = Math.round(w * this.dpr);
+    this.bgCanvas.height = Math.round(h * this.dpr);
+    const g = this.bgCanvas.getContext('2d');
+    if (!g) return;
+
+    g.scale(this.dpr, this.dpr);
+    this.drawBackgroundTo(g, w, h);
   }
 
   /**
@@ -202,7 +224,7 @@ export class BoardRenderer {
       if (!this.isRunning) return;
       this.animTime = timestamp;
 
-      const isAnimating = timestamp < this.animatingUntil;
+      const isAnimating = timestamp < this.animatingUntil || this.climateTimer > 0;
       if (this.isDirty || isAnimating) {
         this.render();
         this.isDirty = false;
@@ -217,8 +239,12 @@ export class BoardRenderer {
     const viewW = this.canvas.width / this.dpr;
     const viewH = this.canvas.height / this.dpr;
 
-    // 1. Desenhar Fundo da Mesa com textura
-    this.drawBackground(viewW, viewH);
+    // 1. Desenhar Fundo da Mesa em Cache (Hardware Blit < 0.1ms)
+    if (this.bgCanvas) {
+      this.ctx.drawImage(this.bgCanvas, 0, 0, viewW, viewH);
+    } else {
+      this.drawBackgroundTo(this.ctx, viewW, viewH);
+    }
 
     // 2. Ordenar as peças ativas do tabuleiro
     const activeTiles = this.engine.getActiveBoardTiles();
@@ -263,9 +289,7 @@ export class BoardRenderer {
     this.updateAndDrawClimateParticles(viewW, viewH);
   }
 
-  private drawBackground(w: number, h: number): void {
-    const g = this.ctx;
-
+  private drawBackgroundTo(g: CanvasRenderingContext2D, w: number, h: number): void {
     if (this.theme === 'mist-emerald' || this.theme === 'felt-green') {
       // Fundo dos prints: Verde esmeralda profundo com silhueta de montanhas zen
       const grad = g.createLinearGradient(0, 0, 0, h);
