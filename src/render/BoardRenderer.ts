@@ -1,5 +1,5 @@
 import { BoardEngine } from '../core/BoardEngine';
-import { PlacedTile, ThemeType } from '../core/types';
+import { PlacedTile, ThemeType, SynergyResult, ClimateEffectResult, ClimateType } from '../core/types';
 import { TileRenderer, TileDimensions } from './TileRenderer';
 import { soundManager } from '../audio/SoundManager';
 import { hapticManager } from '../audio/HapticManager';
@@ -10,6 +10,10 @@ export interface BoardRendererCallbacks {
   onBlockedTileClick?: (tile: PlacedTile, isBlockedFromAbove: boolean) => void;
   onMatchSuccess?: (pair: [PlacedTile, PlacedTile]) => void;
   onBoardCleared?: () => void;
+  onWaveCleared?: (currentWave: number, totalWaves: number) => void;
+  onSynergyTriggered?: (synergy: SynergyResult) => void;
+  onClimateTriggered?: (climate: ClimateEffectResult) => void;
+  onTileLongPress?: (tile: PlacedTile) => void;
   onStateChanged?: () => void;
   onTileFlightToTray?: (
     tile: PlacedTile,
@@ -45,6 +49,20 @@ export class BoardRenderer {
   private isDirty: boolean = true;
   private animatingUntil: number = 0;
   public isInputLocked: boolean = false;
+
+  // Efeitos Climáticos da Natureza (Partículas Zen)
+  private activeClimate: ClimateType | null = null;
+  private climateTimer: number = 0;
+  private climateParticles: Array<{
+    x: number;
+    y: number;
+    speedX: number;
+    speedY: number;
+    size: number;
+    alpha: number;
+    char?: string;
+    color?: string;
+  }> = [];
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -240,6 +258,9 @@ export class BoardRenderer {
         animOffset
       );
     });
+
+    // 3. Renderizar partículas climáticas da natureza sobre a mesa
+    this.updateAndDrawClimateParticles(viewW, viewH);
   }
 
   private drawBackground(w: number, h: number): void {
@@ -300,18 +321,84 @@ export class BoardRenderer {
     }
   }
 
-  private initEvents(): void {
-    // Touch e Click unificados
-    const handlePointerDown = (clientX: number, clientY: number) => {
-      const rect = this.canvas.getBoundingClientRect();
-      const clickX = clientX - rect.left;
-      const clickY = clientY - rect.top;
+  private getTileAtScreenPos(px: number, py: number): { tile: PlacedTile; sx: number; sy: number } | null {
+    const { tileWidth, tileHeight, tileDepth } = {
+      tileWidth: Math.round(this.baseTileWidth * this.scale),
+      tileHeight: Math.round(this.baseTileHeight * this.scale),
+      tileDepth: Math.max(4, Math.round(this.baseTileDepth * this.scale)),
+    };
 
-      this.processClickAt(clickX, clickY);
+    const activeTiles = this.engine.getActiveBoardTiles();
+    const sorted = [...activeTiles].sort((a, b) => b.position.z - a.position.z);
+
+    for (const tile of sorted) {
+      const sx = this.offsetX + (tile.position.x / 2) * tileWidth - tile.position.z * (tileDepth * 0.4);
+      const sy = this.offsetY + (tile.position.y / 2) * tileHeight - tile.position.z * (tileDepth * 0.8) + (tile.isSelected ? -6 : 0);
+
+      if (
+        px >= sx &&
+        px <= sx + tileWidth &&
+        py >= sy &&
+        py <= sy + tileHeight
+      ) {
+        return { tile, sx, sy };
+      }
+    }
+    return null;
+  }
+
+  private initEvents(): void {
+    let longPressTimer: ReturnType<typeof setTimeout> | null = null;
+    let isLongPressTriggered = false;
+    let startX = 0;
+    let startY = 0;
+
+    const clearTimer = () => {
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
     };
 
     this.canvas.addEventListener('pointerdown', (e) => {
-      handlePointerDown(e.clientX, e.clientY);
+      clearTimer();
+      isLongPressTriggered = false;
+      const rect = this.canvas.getBoundingClientRect();
+      startX = e.clientX - rect.left;
+      startY = e.clientY - rect.top;
+
+      const hit = this.getTileAtScreenPos(startX, startY);
+      if (hit) {
+        longPressTimer = setTimeout(() => {
+          isLongPressTriggered = true;
+          hapticManager.impactMedium();
+          if (this.callbacks.onTileLongPress) {
+            this.callbacks.onTileLongPress(hit.tile);
+          }
+        }, 400);
+      }
+    });
+
+    this.canvas.addEventListener('pointermove', (e) => {
+      const rect = this.canvas.getBoundingClientRect();
+      const currentX = e.clientX - rect.left;
+      const currentY = e.clientY - rect.top;
+      if (Math.hypot(currentX - startX, currentY - startY) > 12) {
+        clearTimer();
+      }
+    });
+
+    this.canvas.addEventListener('pointerup', (e) => {
+      clearTimer();
+      if (isLongPressTriggered) return;
+      const rect = this.canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+      this.processClickAt(clickX, clickY);
+    });
+
+    this.canvas.addEventListener('pointercancel', () => {
+      clearTimer();
     });
 
     window.addEventListener('resize', () => {
@@ -325,39 +412,17 @@ export class BoardRenderer {
   private processClickAt(px: number, py: number): void {
     if (this.isInputLocked) return;
 
-    const { tileWidth, tileHeight, tileDepth } = {
+    const { tileWidth, tileHeight } = {
       tileWidth: Math.round(this.baseTileWidth * this.scale),
       tileHeight: Math.round(this.baseTileHeight * this.scale),
-      tileDepth: Math.max(4, Math.round(this.baseTileDepth * this.scale)),
     };
 
-    const activeTiles = this.engine.getActiveBoardTiles();
+    const hit = this.getTileAtScreenPos(px, py);
+    if (!hit) return;
 
-    // Ordena do topo para a base (Z decrescente) para pegar a peça superior primeiro
-    const sorted = [...activeTiles].sort((a, b) => b.position.z - a.position.z);
-
-    let clickedTile: PlacedTile | null = null;
-    let clickTileScreenX = 0;
-    let clickTileScreenY = 0;
-
-    for (const tile of sorted) {
-      const sx = this.offsetX + (tile.position.x / 2) * tileWidth - tile.position.z * (tileDepth * 0.4);
-      const sy = this.offsetY + (tile.position.y / 2) * tileHeight - tile.position.z * (tileDepth * 0.8) + (tile.isSelected ? -6 : 0);
-
-      if (
-        px >= sx &&
-        px <= sx + tileWidth &&
-        py >= sy &&
-        py <= sy + tileHeight
-      ) {
-        clickedTile = tile;
-        clickTileScreenX = sx;
-        clickTileScreenY = sy;
-        break; // Achou a peça mais ao topo sob o dedo
-      }
-    }
-
-    if (!clickedTile) return;
+    const clickedTile = hit.tile;
+    const clickTileScreenX = hit.sx;
+    const clickTileScreenY = hit.sy;
 
     const isFree = this.engine.isTileFree(clickedTile);
 
@@ -424,6 +489,20 @@ export class BoardRenderer {
         this.callbacks.onMatchSuccess(result.matchedPair);
       }
 
+      // 1. Sinergia da Natureza ativada
+      if (result.synergy && this.callbacks.onSynergyTriggered) {
+        this.callbacks.onSynergyTriggered(result.synergy);
+      }
+
+      // 2. Clima da Natureza disparado
+      if (result.climateTriggered) {
+        this.triggerClimateEffect(result.climateTriggered.climate);
+        if (this.callbacks.onClimateTriggered) {
+          this.callbacks.onClimateTriggered(result.climateTriggered);
+        }
+      }
+
+      // 3. Fim de Fase vs Fim de Onda intermediária
       if (this.engine.isVictory()) {
         soundManager.playVictoryFanfare();
         hapticManager.impactVictory();
@@ -431,6 +510,19 @@ export class BoardRenderer {
 
         if (this.callbacks.onBoardCleared) {
           this.callbacks.onBoardCleared();
+        }
+      } else if (result.waveCleared && this.engine.hasMoreWaves()) {
+        // Celebração da onda intermediária!
+        soundManager.playMatchSuccess();
+        confetti({
+          particleCount: 40,
+          spread: 55,
+          origin: { y: 0.6 },
+          colors: ['#10B981', '#F59E0B', '#3B82F6', '#EC4899'],
+        });
+
+        if (this.callbacks.onWaveCleared) {
+          this.callbacks.onWaveCleared(this.engine.getCurrentWave(), this.engine.getTotalWaves());
         }
       }
     } else if (result.action === 'added') {
@@ -444,6 +536,95 @@ export class BoardRenderer {
       this.callbacks.onStateChanged();
     }
     this.requestRender();
+  }
+
+  /** Ativa o efeito visual de clima por 4.5 segundos com partículas atmosféricas */
+  public triggerClimateEffect(climate: ClimateType): void {
+    this.activeClimate = climate;
+    this.climateTimer = 270; // ~4.5s em 60fps
+    const viewW = this.canvas.width / this.dpr;
+    const viewH = this.canvas.height / this.dpr;
+
+    this.climateParticles = [];
+    const count = 30;
+
+    for (let i = 0; i < count; i++) {
+      let speedX = (Math.random() - 0.5) * 1.5;
+      let speedY = Math.random() * 2 + 1;
+      let char: string | undefined;
+      let color: string | undefined = 'rgba(255, 255, 255, 0.7)';
+
+      if (climate === 'ocean_surge') {
+        color = 'rgba(56, 189, 248, 0.75)';
+        speedY = Math.random() * 3 + 2;
+        char = '💧';
+      } else if (climate === 'heat_wave') {
+        color = 'rgba(251, 191, 36, 0.6)';
+        speedY = -(Math.random() * 1.5 + 0.5);
+        char = '✨';
+      } else if (climate === 'spring_breeze') {
+        color = 'rgba(244, 114, 182, 0.7)';
+        speedX = Math.random() * 2 + 1;
+        speedY = Math.random() * 1.5 + 0.5;
+        char = '🌸';
+      } else if (climate === 'full_moon') {
+        color = 'rgba(250, 204, 21, 0.8)';
+        speedX = (Math.random() - 0.5) * 0.8;
+        speedY = (Math.random() - 0.5) * 0.8;
+        char = '✨';
+      }
+
+      this.climateParticles.push({
+        x: Math.random() * viewW,
+        y: Math.random() * viewH,
+        speedX,
+        speedY,
+        size: Math.random() * 14 + 10,
+        alpha: Math.random() * 0.7 + 0.3,
+        char,
+        color,
+      });
+    }
+
+    this.isDirty = true;
+  }
+
+  private updateAndDrawClimateParticles(w: number, h: number): void {
+    if (this.climateTimer <= 0 || !this.activeClimate) return;
+
+    this.climateTimer--;
+    const g = this.ctx;
+
+    this.climateParticles.forEach((p) => {
+      p.x += p.speedX;
+      p.y += p.speedY;
+
+      if (p.x < -20) p.x = w + 10;
+      if (p.x > w + 20) p.x = -10;
+      if (p.y > h + 20) p.y = -10;
+      if (p.y < -20) p.y = h + 10;
+
+      g.save();
+      g.globalAlpha = p.alpha * Math.min(1, this.climateTimer / 60);
+
+      if (p.char) {
+        g.font = `${Math.round(p.size)}px sans-serif`;
+        g.textAlign = 'center';
+        g.textBaseline = 'middle';
+        g.fillText(p.char, p.x, p.y);
+      } else {
+        g.fillStyle = p.color || 'white';
+        g.beginPath();
+        g.arc(p.x, p.y, p.size / 4, 0, Math.PI * 2);
+        g.fill();
+      }
+
+      g.restore();
+    });
+
+    if (this.climateTimer > 0) {
+      this.isDirty = true;
+    }
   }
 
   /** Setas pretas de alto contraste indicando em qual direção há peças bloqueando */

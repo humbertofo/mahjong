@@ -26,6 +26,22 @@ const ANIMAL_PALETTE: Record<AnimalValue, { bg: string; accent: string; dark: st
   duck:      { bg: '#E0F7FA', accent: '#00ACC1', dark: '#1B5E20' },
   snail:     { bg: '#FFF9C4', accent: '#F57F17', dark: '#4E342E' },
   ladybug:   { bg: '#FFEBEE', accent: '#C62828', dark: '#B71C1C' },
+
+  // Novos Animais
+  bear:      { bg: '#EFEBE9', accent: '#795548', dark: '#3E2723' },
+  squirrel:  { bg: '#FFF3E0', accent: '#E65100', dark: '#BF360C' },
+  dolphin:   { bg: '#E0F7FA', accent: '#0097A7', dark: '#006064' },
+  hedgehog:  { bg: '#F5EBE6', accent: '#8D6E63', dark: '#4E342E' },
+
+  // Adereços e Elementos Naturais
+  banana:    { bg: '#FFFDE7', accent: '#FBC02D', dark: '#F57F17' },
+  acorn:     { bg: '#EFEBE9', accent: '#8D6E63', dark: '#4E342E' },
+  shell:     { bg: '#EDE7F6', accent: '#7E57C2', dark: '#4527A0' },
+  apple:     { bg: '#FFEBEE', accent: '#E53935', dark: '#B71C1C' },
+  honeycomb: { bg: '#FFF8E1', accent: '#FFA000', dark: '#FF6F00' },
+
+  // Peça Coringa
+  chameleon: { bg: '#E8F5E9', accent: '#00E676', dark: '#00B0FF' },
 };
 
 export class TileRenderer {
@@ -132,6 +148,19 @@ export class TileRenderer {
     ctx.strokeStyle = isFree ? palette.accent + '55' : '#C0CBDA';
     ctx.stroke();
 
+    // Efeito Especial: Camaleão Dourado / Holográfico (Peça Coringa)
+    if (tile.value === 'chameleon') {
+      const grad = ctx.createLinearGradient(x, y, x + tileWidth, y + tileHeight);
+      grad.addColorStop(0, '#FFD700');
+      grad.addColorStop(0.33, '#00E676');
+      grad.addColorStop(0.66, '#00B0FF');
+      grad.addColorStop(1, '#E040FB');
+      ctx.lineWidth = 2.2;
+      ctx.strokeStyle = grad;
+      this.drawRoundedRect(ctx, x - 1, y - 1, tileWidth, tileHeight, 9);
+      ctx.stroke();
+    }
+
     // 5. Selecionada — borda dourada brilhante
     if (tile.isSelected) {
       ctx.lineWidth = 3.5;
@@ -200,6 +229,12 @@ export class TileRenderer {
       bee: '🐝', elephant: '🐘', lion: '🦁', fox: '🦊',
       monkey: '🐒', panda: '🐼', penguin: '🐧', duck: '🦆',
       snail: '🐌', ladybug: '🐞',
+      // Novos animais
+      bear: '🐻', squirrel: '🐿️', dolphin: '🐬', hedgehog: '🦔',
+      // Adereços e natureza
+      banana: '🍌', acorn: '🌰', shell: '🐚', apple: '🍎', honeycomb: '🍯',
+      // Peça Coringa
+      chameleon: '🦎',
     };
 
     const emoji = emojis[animal] || '🐾';

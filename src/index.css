@@ -2056,3 +2056,117 @@ html, body {
   color: #e2e8f0;
   line-height: 1.4;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   ESTILOS: ONDAS (MULTI-WAVE) & TOASTS DA NATUREZA
+   ═══════════════════════════════════════════════════════════════════ */
+.hud-wave-pill {
+  background: rgba(16, 185, 129, 0.22);
+  border: 1px solid rgba(52, 211, 153, 0.45);
+  color: #a7f3d0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
+}
+
+.nature-toast {
+  position: absolute;
+  top: 98px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(10, 30, 24, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(245, 158, 11, 0.55);
+  border-radius: 14px;
+  padding: 10px 16px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5), 0 0 16px rgba(245, 158, 11, 0.25);
+  max-width: 90%;
+  animation: natureToastPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none;
+}
+
+@keyframes natureToastPop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -12px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+.nature-toast-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.nature-toast-title {
+  color: #fde047;
+  font-weight: 800;
+  font-size: 0.92rem;
+  line-height: 1.2;
+}
+
+.nature-toast-desc {
+  color: #e2e8f0;
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+
+/* Modal Conclusão de Onda Intermediária */
+.wave-cleared-card {
+  text-align: center;
+  background: linear-gradient(135deg, #0e3c32 0%, #06231d 100%);
+  border: 2px solid rgba(52, 211, 153, 0.5);
+  border-radius: 20px;
+  padding: 24px 20px;
+  max-width: 320px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 24px rgba(16, 185, 129, 0.3);
+}
+
+.wave-cleared-icon {
+  font-size: 3rem;
+  margin-bottom: 8px;
+  animation: bounce 1s infinite alternate;
+}
+
+.wave-cleared-title {
+  color: #fde047;
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 0 0 6px;
+}
+
+.wave-cleared-subtitle {
+  color: #cbd5e1;
+  font-size: 0.88rem;
+  margin: 0 0 14px;
+}
+
+.wave-cleared-reward {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  border-radius: 10px;
+  padding: 8px 12px;
+  color: #a7f3d0;
+  font-size: 0.88rem;
+  margin-bottom: 18px;
+}
+
+.wave-cleared-btn {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 1rem;
+  font-weight: 700;
+}

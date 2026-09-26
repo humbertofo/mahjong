@@ -4,7 +4,7 @@ import { ALL_LAYOUTS, WORLDS } from '../core/layouts';
 import { StorageManager } from '../storage/StorageManager';
 import { soundManager } from '../audio/SoundManager';
 import { hapticManager } from '../audio/HapticManager';
-import { PlacedTile } from '../core/types';
+import { PlacedTile, SynergyResult, ClimateEffectResult } from '../core/types';
 import { LiveUpdateManager } from '../core/LiveUpdateManager';
 import confetti from 'canvas-confetti';
 
@@ -385,6 +385,8 @@ export class UIManager {
     this.updateHUD();
 
     // Fechar modais que possam estar abertos
+    const waveModal = document.getElementById('modal-wave-cleared');
+    if (waveModal) waveModal.classList.add('hidden');
     [this.levelsModal, this.settingsModal, this.victoryModal].forEach((m) =>
       m.classList.add('hidden')
     );
@@ -424,6 +426,17 @@ export class UIManager {
     // Número do nível
     const levelEl = document.getElementById('wisdom-level');
     if (levelEl) levelEl.textContent = `${this.currentLevelIndex + 1}`;
+
+    // Badge de Onda Atual (Multi-Wave)
+    const waveBadgeEl = document.getElementById('hud-wave-badge');
+    if (waveBadgeEl) {
+      if (this.engine.getTotalWaves() > 1) {
+        waveBadgeEl.textContent = `Onda ${this.engine.getCurrentWave()}/${this.engine.getTotalWaves()}`;
+        waveBadgeEl.classList.remove('hidden');
+      } else {
+        waveBadgeEl.classList.add('hidden');
+      }
+    }
 
     // Bandeja de 4 slots
     const tray = this.engine.getTray();
@@ -625,6 +638,99 @@ export class UIManager {
       if (Date.now() < end) requestAnimationFrame(frame);
     };
     frame();
+  }
+
+  // ─── Transições de Onda (Multi-Wave) ──────────────────────────────────────
+
+  public handleWaveCleared(currentWave: number, totalWaves: number): void {
+    const waveModal = document.getElementById('modal-wave-cleared');
+    const titleEl = document.getElementById('wave-cleared-title');
+    const subtitleEl = document.getElementById('wave-cleared-subtitle');
+    const nextWaveBtn = document.getElementById('btn-next-wave');
+
+    if (titleEl) titleEl.textContent = `Onda ${currentWave} Concluída! 🌸`;
+    if (subtitleEl) subtitleEl.textContent = `Prepare-se para a Onda ${currentWave + 1} de ${totalWaves}!`;
+
+    if (nextWaveBtn) {
+      nextWaveBtn.onclick = () => {
+        if (waveModal) waveModal.classList.add('hidden');
+        this.engine.advanceToNextWave();
+        this.renderer.handleResize();
+        this.renderer.requestRender();
+        this.updateHUD();
+        this.showNatureToast('🌊', `Onda ${this.engine.getCurrentWave()} Iniciada!`, 'Novas peças na mesa com peças gigantes!');
+      };
+    }
+
+    if (waveModal) waveModal.classList.remove('hidden');
+  }
+
+  // ─── Sinergias & Climas da Natureza ───────────────────────────────────────
+
+  public handleSynergy(synergy: SynergyResult): void {
+    soundManager.playMatchSuccess();
+    hapticManager.impactLight();
+    this.showNatureToast('🐾', synergy.title, synergy.description);
+    this.updateHUD();
+  }
+
+  public handleClimate(climate: ClimateEffectResult): void {
+    soundManager.playMatchSuccess();
+    hapticManager.impactMedium();
+
+    if (climate.rechargedTool === 'hammer') {
+      this.hammerCount = Math.min(UIManager.MAX_HAMMER, this.hammerCount + 1);
+      this.updatePowerUpBadges();
+    }
+
+    this.showNatureToast(climate.icon, climate.title, climate.description);
+    this.updateHUD();
+  }
+
+  public showNatureToast(icon: string, title: string, desc: string): void {
+    const toast = document.getElementById('nature-toast');
+    const toastIcon = document.getElementById('nature-toast-icon');
+    const toastTitle = document.getElementById('nature-toast-title');
+    const toastDesc = document.getElementById('nature-toast-desc');
+
+    if (!toast || !toastIcon || !toastTitle || !toastDesc) return;
+
+    toastIcon.textContent = icon;
+    toastTitle.textContent = title;
+    toastDesc.textContent = desc;
+
+    toast.classList.remove('hidden');
+    clearTimeout((this as unknown as { _natureToastTimer?: ReturnType<typeof setTimeout> })._natureToastTimer);
+    (this as unknown as { _natureToastTimer?: ReturnType<typeof setTimeout> })._natureToastTimer = setTimeout(() => {
+      toast.classList.add('hidden');
+    }, 4000);
+  }
+
+  public handleTileLongPress(tile: PlacedTile): void {
+    const tips: Partial<Record<string, { icon: string; title: string; text: string }>> = {
+      chameleon: { icon: '🦎', title: 'Camaleão Dourado', text: 'Peça Coringa! Combina com qualquer peça livre.' },
+      bear:      { icon: '🐻', title: 'Urso Marrom', text: 'Combina com Mel 🍯 ou Peixe 🐟 para quebrar rochas!' },
+      honeycomb: { icon: '🍯', title: 'Favo de Mel', text: 'Combina com Abelha 🐝 ou Urso 🐻 para abrir espaço!' },
+      bee:       { icon: '🐝', title: 'Abelhinha', text: 'Combina com Favo de Mel 🍯 para o Enxame Dourado!' },
+      monkey:    { icon: '🐒', title: 'Macaco Esperto', text: 'Combina com Banana 🍌 para o Salto na Copa!' },
+      banana:    { icon: '🍌', title: 'Cacho de Bananas', text: 'Combina com Macaco 🐒 para reorganizar a mesa!' },
+      squirrel:  { icon: '🐿️', title: 'Esquilo Tagarela', text: 'Combina com Noz 🌰 para a Reserva Secreta!' },
+      acorn:     { icon: '🌰', title: 'Noz Silvestre', text: 'Combina com Esquilo 🐿️ para guardar peças!' },
+      frog:      { icon: '🐸', title: 'Sapo Saltador', text: 'Combina com Joaninha 🐞 ou Abelha 🐝!' },
+      dolphin:   { icon: '🐬', title: 'Golfinho Encantado', text: 'Combina com Concha 🐚 para o Eco Sonar!' },
+      shell:     { icon: '🐚', title: 'Concha Marinha', text: 'Combina com Golfinho 🐬 para iluminar pares!' },
+      hedgehog:  { icon: '🦔', title: 'Ouriço Manso', text: 'Combina com Maçã 🍎 para o Espinho Coletor!' },
+      apple:     { icon: '🍎', title: 'Maçã Doce', text: 'Combina com Ouriço 🦔 para bônus de harmonia!' },
+    };
+
+    const tip = tips[tile.value] || {
+      icon: '🐾',
+      title: tile.label,
+      text: 'Combine duas peças iguais ou use peças coringa para liberar!',
+    };
+
+    soundManager.playTileClick();
+    this.showNatureToast(tip.icon, tip.title, tip.text);
   }
 
   // ─── Stats Render ─────────────────────────────────────────────────────────

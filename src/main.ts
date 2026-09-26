@@ -35,6 +35,18 @@ window.addEventListener('DOMContentLoaded', () => {
     onBoardCleared: () => {
       uiManager?.handleVictory();
     },
+    onWaveCleared: (currentWave, totalWaves) => {
+      uiManager?.handleWaveCleared(currentWave, totalWaves);
+    },
+    onSynergyTriggered: (synergy) => {
+      uiManager?.handleSynergy(synergy);
+    },
+    onClimateTriggered: (climate) => {
+      uiManager?.handleClimate(climate);
+    },
+    onTileLongPress: (tile) => {
+      uiManager?.handleTileLongPress(tile);
+    },
     onStateChanged: () => {
       uiManager?.updateHUD();
     },

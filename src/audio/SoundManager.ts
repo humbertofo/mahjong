@@ -350,6 +350,57 @@ export class SoundManager {
     });
   }
 
+  /**
+   * Som de celebração ao concluir uma onda intermediária
+   */
+  public playWaveSuccess(): void {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx) return;
+
+    const t = this.ctx.currentTime;
+    const chords = [523.25, 659.25, 783.99, 987.77, 1046.5];
+    chords.forEach((freq, idx) => {
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, t + idx * 0.07);
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.setValueAtTime(this.volume * 0.28, t + idx * 0.07);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + idx * 0.07 + 0.5);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t + idx * 0.07);
+      osc.stop(t + idx * 0.07 + 0.52);
+    });
+  }
+
+  /**
+   * Som de sinergia ou clima da natureza ativado
+   */
+  public playSynergyBonus(): void {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx) return;
+
+    const t = this.ctx.currentTime;
+    const notes = [440, 554.37, 659.25, 880];
+    notes.forEach((freq, idx) => {
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, t + idx * 0.05);
+      gain.gain.setValueAtTime(this.volume * 0.22, t + idx * 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + idx * 0.05 + 0.4);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t + idx * 0.05);
+      osc.stop(t + idx * 0.05 + 0.42);
+    });
+  }
+
   private playTransientClick(time: number, duration: number): void {
     if (!this.ctx) return;
     const bufferSize = this.ctx.sampleRate * duration;

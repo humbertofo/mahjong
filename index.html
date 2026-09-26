@@ -105,6 +105,7 @@
               <span class="wisdom-label">Nível</span>
               <span id="wisdom-level" class="wisdom-number">1</span>
               <span class="wisdom-sparkle">🌟</span>
+              <span id="hud-wave-badge" class="hud-wave-pill hidden">Onda 1/2</span>
               <span class="hud-timer-sep">·</span>
               <span id="hud-timer" class="hud-timer">00:00</span>
             </div>
@@ -179,7 +180,29 @@
             </div>
           </div>
         </footer>
+
+        <!-- TOAST FLUTUANTE DA NATUREZA (SINERGIAS & CLIMAS) -->
+        <div id="nature-toast" class="nature-toast hidden">
+          <div id="nature-toast-icon" class="nature-toast-icon">✨</div>
+          <div class="nature-toast-body">
+            <div id="nature-toast-title" class="nature-toast-title">Sinergia!</div>
+            <div id="nature-toast-desc" class="nature-toast-desc">Efeito ativado com sucesso</div>
+          </div>
+        </div>
       </div><!-- /screen-game -->
+
+      <!-- MODAL: TRANSIÇÃO DE ONDA (MULTI-WAVE) -->
+      <div id="modal-wave-cleared" class="modal-backdrop hidden">
+        <div class="modal-card wave-cleared-card">
+          <div class="wave-cleared-icon">🌸</div>
+          <h2 id="wave-cleared-title" class="wave-cleared-title">Onda 1 Concluída!</h2>
+          <p id="wave-cleared-subtitle" class="wave-cleared-subtitle">A mesa está pronta para a próxima onda!</p>
+          <div class="wave-cleared-reward">
+            <span>✨ Bônus de Harmonia: <strong>+500 pts</strong></span>
+          </div>
+          <button id="btn-next-wave" class="btn-primary wave-cleared-btn">Continuar Próxima Onda ➔</button>
+        </div>
+      </div>
 
       <!-- ═══════════════════════════════════════════════════════════════════
            MODAL: ESTATÍSTICAS
