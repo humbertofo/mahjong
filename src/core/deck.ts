@@ -126,5 +126,10 @@ export function canMatch(tileA: TileDefinition, tileB: TileDefinition): boolean 
     return true;
   }
 
+  // Gato + Peixe
+  if ((vA === 'cat' && vB === 'fish') || (vA === 'fish' && vB === 'cat')) {
+    return true;
+  }
+
   return false;
 }

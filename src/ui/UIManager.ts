@@ -685,7 +685,19 @@ export class UIManager {
     soundManager.playMatchSuccess();
     hapticManager.impactLight();
     this.triggerHudPulse();
-    this.showNatureToast('🐾', synergy.title, synergy.description);
+
+    let icon = '🐾';
+    if (synergy.type === 'frog_tongue') icon = '🐸';
+    else if (synergy.type === 'cat_paw') icon = '🐱';
+    else if (synergy.type === 'bear_feast') icon = '🐻';
+    else if (synergy.type === 'squirrel_acorn') icon = '🐿️';
+    else if (synergy.type === 'dolphin_sonar') icon = '🐬';
+    else if (synergy.type === 'hedgehog_apple') icon = '🦔';
+    else if (synergy.type === 'bee_honey') icon = '🐝';
+    else if (synergy.type === 'monkey_banana') icon = '🐒';
+    else if (synergy.type === 'wildcard_chameleon') icon = '🦎';
+
+    this.showNatureEvent(icon, synergy.title, synergy.description);
     this.updateHUD();
   }
 
@@ -699,48 +711,50 @@ export class UIManager {
       this.updatePowerUpBadges();
     }
 
-    this.showNatureToast(climate.icon, climate.title, climate.description);
+    this.showNatureEvent(climate.icon, climate.title, climate.description);
     this.updateHUD();
   }
 
-  public showNatureToast(icon: string, title: string, desc: string): void {
-    const toast = document.getElementById('nature-toast');
-    const toastIcon = document.getElementById('nature-toast-icon');
-    const toastTitle = document.getElementById('nature-toast-title');
-    const toastDesc = document.getElementById('nature-toast-desc');
+  public showNatureEvent(icon: string, title: string, desc: string): void {
+    const box = document.getElementById('nature-event-box');
+    const boxIcon = document.getElementById('nature-event-icon');
+    const boxTitle = document.getElementById('nature-event-title');
+    const boxDesc = document.getElementById('nature-event-desc');
 
-    if (!toast || !toastIcon || !toastTitle || !toastDesc) return;
+    if (boxIcon) boxIcon.textContent = icon;
+    if (boxTitle) boxTitle.textContent = title;
+    if (boxDesc) boxDesc.textContent = desc;
 
-    toastIcon.textContent = icon;
-    toastTitle.textContent = title;
-    toastDesc.textContent = desc;
-
-    // Reinicia a barra de progresso do timer
-    const timerBar = toast.querySelector('.nature-toast-timer-bar') as HTMLElement | null;
-    if (timerBar) {
-      timerBar.style.animation = 'none';
-      void timerBar.offsetWidth; // trigger reflow
-      timerBar.style.animation = '';
+    if (box) {
+      box.classList.remove('event-pulse');
+      void box.offsetWidth; // trigger reflow
+      box.classList.add('event-pulse');
     }
 
-    toast.classList.remove('hidden');
-    clearTimeout((this as unknown as { _natureToastTimer?: ReturnType<typeof setTimeout> })._natureToastTimer);
-    (this as unknown as { _natureToastTimer?: ReturnType<typeof setTimeout> })._natureToastTimer = setTimeout(() => {
-      toast.classList.add('hidden');
-    }, 3500);
+    clearTimeout((this as unknown as { _natureEventTimer?: ReturnType<typeof setTimeout> })._natureEventTimer);
+    (this as unknown as { _natureEventTimer?: ReturnType<typeof setTimeout> })._natureEventTimer = setTimeout(() => {
+      if (boxIcon) boxIcon.textContent = '🌿';
+      if (boxTitle) boxTitle.textContent = 'Bosque Sereno';
+      if (boxDesc) boxDesc.textContent = 'Toque nas peças livres';
+    }, 4500);
+  }
+
+  public showNatureToast(icon: string, title: string, desc: string): void {
+    this.showNatureEvent(icon, title, desc);
   }
 
   public handleTileLongPress(tile: PlacedTile): void {
     const tips: Partial<Record<string, { icon: string; title: string; text: string }>> = {
       chameleon: { icon: '🦎', title: 'Camaleão Dourado', text: 'Peça Coringa! Combina com qualquer peça livre.' },
-      bear:      { icon: '🐻', title: 'Urso Marrom', text: 'Combina com Mel 🍯 ou Peixe 🐟 para quebrar rochas!' },
+      cat:       { icon: '🐱', title: 'Gato Curioso', text: 'Combina com Peixe 🐟 para a Pata Ágil pescar na lagoa!' },
+      bear:      { icon: '🐻', title: 'Urso Marrom', text: 'Combina com Mel 🍯 ou Peixe 🐟 para devorar o par da mesa!' },
       honeycomb: { icon: '🍯', title: 'Favo de Mel', text: 'Combina com Abelha 🐝 ou Urso 🐻 para abrir espaço!' },
       bee:       { icon: '🐝', title: 'Abelhinha', text: 'Combina com Favo de Mel 🍯 para o Enxame Dourado!' },
       monkey:    { icon: '🐒', title: 'Macaco Esperto', text: 'Combina com Banana 🍌 para o Salto na Copa!' },
       banana:    { icon: '🍌', title: 'Cacho de Bananas', text: 'Combina com Macaco 🐒 para reorganizar a mesa!' },
-      squirrel:  { icon: '🐿️', title: 'Esquilo Tagarela', text: 'Combina com Noz 🌰 para a Reserva Secreta!' },
+      squirrel:  { icon: '🐿️', title: 'Esquilo Tagarela', text: 'Combina com Noz 🌰 para a Toca Segura!' },
       acorn:     { icon: '🌰', title: 'Noz Silvestre', text: 'Combina com Esquilo 🐿️ para guardar peças!' },
-      frog:      { icon: '🐸', title: 'Sapo Saltador', text: 'Combina com Joaninha 🐞 ou Abelha 🐝!' },
+      frog:      { icon: '🐸', title: 'Sapo Saltador', text: 'Combina com Joaninha 🐞 ou Abelha 🐝 para a Língua Ágil!' },
       dolphin:   { icon: '🐬', title: 'Golfinho Encantado', text: 'Combina com Concha 🐚 para o Eco Sonar!' },
       shell:     { icon: '🐚', title: 'Concha Marinha', text: 'Combina com Golfinho 🐬 para iluminar pares!' },
       hedgehog:  { icon: '🦔', title: 'Ouriço Manso', text: 'Combina com Maçã 🍎 para o Espinho Coletor!' },
@@ -754,7 +768,7 @@ export class UIManager {
     };
 
     soundManager.playTileClick();
-    this.showNatureToast(tip.icon, tip.title, tip.text);
+    this.showNatureEvent(tip.icon, tip.title, tip.text);
   }
 
   // ─── Stats Render ─────────────────────────────────────────────────────────

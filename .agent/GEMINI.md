@@ -15,3 +15,6 @@ O produto tem foco extremo em usabilidade, ergonomia e acessibilidade para pesso
 1. **Legibilidade Suprema:** Peças nítidas com numerais arábicos sutis de auxílio nas pedras de Caracteres e Flores para identificação imediata.
 2. **Zero Punição:** Desfazer ilimitado, Dicas gratuitas que brilham suavemente e Embaralhamento sem perda de progresso.
 3. **Ergonomia Mobile:** Botões inferiores ampliados para toque com o polegar, suporte a tela cheia e orientação paisagem imersiva.
+
+## 🛑 Regras Operacionais de Git & Deploy
+* **NUNCA executar `git push` ou enviar alterações para o GitHub sem pedido explícito do usuário.** Todo o desenvolvimento, testes locais e validações devem permanecer estritamente no ambiente local.

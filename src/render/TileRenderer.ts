@@ -75,10 +75,11 @@ export const SYNERGY_FAMILIES: Partial<Record<AnimalValue, SynergyFamily>> = {
   squirrel:  { borderColor: '#B45309', badge: '🌰', name: 'Noz' },
   acorn:     { borderColor: '#B45309', badge: '🌰', name: 'Noz' },
 
-  // 🌊 Família Marinha / Oceano (Azul Turquesa)
+  // 🌊 Família Marinha / Oceano & Pescador (Azul Turquesa)
   dolphin:   { borderColor: '#06B6D4', badge: '🐚', name: 'Oceano' },
   shell:     { borderColor: '#06B6D4', badge: '🐚', name: 'Oceano' },
   fish:      { borderColor: '#06B6D4', badge: '🐚', name: 'Oceano' },
+  cat:       { borderColor: '#06B6D4', badge: '🐟', name: 'Pescador' },
 
   // 🌿 Família do Brejo / Lagoa (Verde Esmeralda)
   frog:      { borderColor: '#10B981', badge: '🍃', name: 'Brejo' },

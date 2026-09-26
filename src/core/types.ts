@@ -104,6 +104,7 @@ export type SynergyType =
   | 'frog_tongue'
   | 'dolphin_sonar'
   | 'hedgehog_apple'
+  | 'cat_paw'
   | 'wildcard_chameleon';
 
 export interface SynergyResult {

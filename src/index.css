@@ -1051,28 +1051,44 @@ html, body {
   transform: scale(0.92);
 }
 
-/* === BANDEJA DE 4 SLOTS (TRAY CONTAINER) === */
-.tray-bar-container {
+/* === FAIXA SUPERIOR DIVIDIDA: BANDEJA 4 SLOTS + CAIXA DE EVENTOS === */
+.sub-hud-strip {
   position: absolute;
-  top: calc(44px + env(safe-area-inset-top, 0px));
+  top: calc(42px + env(safe-area-inset-top, 0px));
   left: 0;
   right: 0;
-  z-index: 10;
+  z-index: 15;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 0 8px;
+  height: 54px;
   pointer-events: none;
+}
+
+.tray-half-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  pointer-events: auto;
 }
 
 .tray-slots {
   pointer-events: auto;
   display: flex;
-  gap: 5px;
-  padding: 4px 8px;
+  gap: 4px;
+  padding: 3px 5px;
   background: rgba(7, 30, 25, 0.92);
   border: 1.5px solid rgba(78, 125, 115, 0.6);
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45), inset 0 2px 4px rgba(0, 0, 0, 0.4);
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: space-between;
   transition: all 0.25s ease;
 }
 
@@ -1094,11 +1110,12 @@ html, body {
 }
 
 .tray-slot {
-  width: 44px;
-  height: 58px;
+  flex: 1;
+  height: 100%;
+  max-width: 38px;
   background: rgba(4, 18, 14, 0.85);
-  border: 1.5px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 7px;
   box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
@@ -1106,6 +1123,86 @@ html, body {
   position: relative;
   overflow: hidden;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* CAIXA DE CRÔNICAS DA NATUREZA */
+.nature-event-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: rgba(7, 30, 25, 0.92);
+  border: 1.5px solid rgba(245, 158, 11, 0.45);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45), inset 0 1px 3px rgba(245, 158, 11, 0.15);
+  padding: 4px 8px;
+  min-width: 0;
+  pointer-events: auto;
+  transition: all 0.3s ease;
+}
+
+.nature-event-box.event-pulse {
+  border-color: #fbbf24;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.7), inset 0 0 8px rgba(245, 158, 11, 0.3);
+  animation: eventBoxPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes eventBoxPop {
+  0% { transform: scale(0.97); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+.nature-event-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.nature-event-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+.nature-event-icon {
+  font-size: 0.92rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.nature-event-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #fde047;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.2px;
+}
+
+.nature-event-timer {
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: #94a3b8;
+  font-variant-numeric: tabular-nums;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.nature-event-desc {
+  font-size: 0.70rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  line-height: 1.15;
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.92;
 }
 
 .tray-slot.filled {
@@ -1651,30 +1748,35 @@ html, body {
 /* === RESPONSIVIDADE VERTICAL (20:9 E 16:9) === */
 @media (max-width: 600px), (orientation: portrait) {
   .hud-top {
-    padding: calc(8px + env(safe-area-inset-top, 0px)) 12px 4px 12px;
+    padding: calc(6px + env(safe-area-inset-top, 0px)) 8px 4px 8px;
   }
 
   .hud-icon-btn {
-    width: 42px;
-    height: 42px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .hud-icon-btn svg {
+    width: 16px !important;
+    height: 16px !important;
   }
 
   .wisdom-label {
-    font-size: 1.3rem;
+    font-size: 0.82rem;
   }
 
   .wisdom-number {
-    font-size: 1.5rem;
+    font-size: 0.98rem;
   }
 
   .tray-slots {
-    gap: 5px;
-    padding: 4px 8px;
+    gap: 4px;
+    padding: 3px 5px;
   }
 
   .tray-slot {
-    width: 44px;
-    height: 58px;
+    height: 100%;
+    max-width: 38px;
   }
 
   .hud-bottom {

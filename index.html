@@ -107,8 +107,6 @@
               <span id="wisdom-level" class="wisdom-number">1</span>
               <span class="wisdom-sparkle">🌟</span>
               <span id="hud-wave-badge" class="hud-wave-pill hidden">1/2</span>
-              <span class="hud-timer-sep">·</span>
-              <span id="hud-timer" class="hud-timer">00:00</span>
             </div>
           </div>
 
@@ -133,13 +131,28 @@
           </div>
         </header>
 
-        <!-- BANDEJA DE 4 SLOTS -->
-        <div id="tray-bar-container" class="tray-bar-container">
-          <div id="tray-slots" class="tray-slots">
-            <div class="tray-slot" data-slot="0"></div>
-            <div class="tray-slot" data-slot="1"></div>
-            <div class="tray-slot" data-slot="2"></div>
-            <div class="tray-slot" data-slot="3"></div>
+        <!-- FAIXA SUPERIOR DIVIDIDA: BANDEJA 4 SLOTS + CAIXA DE EVENTOS DA NATUREZA -->
+        <div id="sub-hud-strip" class="sub-hud-strip">
+          <!-- METADE 1: BANDEJA DE 4 SLOTS (ESQUERDA) -->
+          <div id="tray-bar-container" class="tray-half-container">
+            <div id="tray-slots" class="tray-slots">
+              <div class="tray-slot" data-slot="0"></div>
+              <div class="tray-slot" data-slot="1"></div>
+              <div class="tray-slot" data-slot="2"></div>
+              <div class="tray-slot" data-slot="3"></div>
+            </div>
+          </div>
+
+          <!-- METADE 2: CAIXA DE CRÔNICAS DA NATUREZA (DIREITA) -->
+          <div id="nature-event-box" class="nature-event-box" title="Diário Zen da Natureza">
+            <div class="nature-event-header">
+              <div class="nature-event-title-wrap">
+                <span id="nature-event-icon" class="nature-event-icon">🌿</span>
+                <span id="nature-event-title" class="nature-event-title">Bosque Sereno</span>
+              </div>
+              <span id="hud-timer" class="nature-event-timer">00:00</span>
+            </div>
+            <div id="nature-event-desc" class="nature-event-desc">Toque nas peças livres</div>
           </div>
         </div>
 
@@ -182,15 +195,6 @@
           </div>
         </footer>
 
-        <!-- TOAST FLUTUANTE DA NATUREZA (SINERGIAS & CLIMAS) -->
-        <div id="nature-toast" class="nature-toast hidden" title="Toque para fechar">
-          <div id="nature-toast-icon" class="nature-toast-icon">✨</div>
-          <div class="nature-toast-body">
-            <div id="nature-toast-title" class="nature-toast-title">Sinergia!</div>
-            <div id="nature-toast-desc" class="nature-toast-desc">Efeito ativado com sucesso</div>
-          </div>
-          <div class="nature-toast-timer-bar"></div>
-        </div>
       </div><!-- /screen-game -->
 
       <!-- MODAL: TRANSIÇÃO DE ONDA (MULTI-WAVE) -->
@@ -323,50 +327,26 @@
               <p class="guide-intro-text">Descubra as deliciosas combinações da natureza! Junte animais com seus elementos favoritos para liberar poderes mágicos:</p>
               
               <div class="synergy-card">
+                <div class="synergy-icons"><span>🐸</span> <span>+</span> <span>🐞</span> / <span>🐝</span></div>
+                <div class="synergy-info">
+                  <h4>Língua Ágil do Sapo</h4>
+                  <p>O Sapo estica sua língua elástica e <strong>pesca insetos da bandeja</strong> para abri-la ou captura um par de insetos direto da mesa!</p>
+                </div>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-icons"><span>🐱</span> <span>+</span> <span>🐟</span></div>
+                <div class="synergy-info">
+                  <h4>Pata Ágil do Gato</h4>
+                  <p>O Gato dá uma patada rápida na beira da lagoa e <strong>pesca um par completo de peixes</strong> do tabuleiro!</p>
+                </div>
+              </div>
+
+              <div class="synergy-card">
                 <div class="synergy-icons"><span>🐻</span> <span>+</span> <span>🍯</span> / <span>🐟</span></div>
                 <div class="synergy-info">
                   <h4>O Banquete do Urso</h4>
-                  <p>O Urso combina direto com o Mel ou Peixe e quebra até <strong>2 rochas ou peças de gelo</strong> ao redor!</p>
-                </div>
-              </div>
-
-              <div class="synergy-card">
-                <div class="synergy-icons"><span>🐒</span> <span>+</span> <span>🍌</span></div>
-                <div class="synergy-info">
-                  <h4>Salto na Copa</h4>
-                  <p>O Macaco combina com a Banana e <strong>pesca uma peça da camada mais profunda para o topo</strong> da mesa!</p>
-                </div>
-              </div>
-
-              <div class="synergy-card">
-                <div class="synergy-icons"><span>🐝</span> <span>+</span> <span>🍯</span></div>
-                <div class="synergy-info">
-                  <h4>Dança das Abelhas</h4>
-                  <p>Abelha combina com Favo de Mel! Se combinar 2 abelhas com 1 mel na mesa, solta um enxame que <strong>destrói 2 bloqueios e fecha o par da bandeja</strong>.</p>
-                </div>
-              </div>
-
-              <div class="synergy-card">
-                <div class="synergy-icons"><span>🐿️</span> <span>+</span> <span>🌰</span></div>
-                <div class="synergy-info">
-                  <h4>Reserva Secreta de Inverno</h4>
-                  <p>O Esquilo combina com a Noz e <strong>pega 1 peça da bandeja quase cheia e a guarda na toca</strong> para salvar você!</p>
-                </div>
-              </div>
-
-              <div class="synergy-card">
-                <div class="synergy-icons"><span>🐸</span> <span>+</span> <span>🐞</span> / <span>🐝</span></div>
-                <div class="synergy-info">
-                  <h4>Língua Certeira</h4>
-                  <p>O Sapo estica a língua e <strong>captura insetos livres mesmo com bloqueio lateral parcial</strong>!</p>
-                </div>
-              </div>
-
-              <div class="synergy-card">
-                <div class="synergy-icons"><span>🐬</span> <span>+</span> <span>🐚</span></div>
-                <div class="synergy-info">
-                  <h4>Eco Sonar do Mar</h4>
-                  <p>Golfinho combina com Concha e <strong>faz piscar em azul o par de qualquer peça que você tocar</strong>.</p>
+                  <p>O Urso combina com Mel ou Peixe e <strong>devora o par completo correspondente</strong> na mesa!</p>
                 </div>
               </div>
 
@@ -374,7 +354,39 @@
                 <div class="synergy-icons"><span>🦔</span> <span>+</span> <span>🍎</span></div>
                 <div class="synergy-info">
                   <h4>Espinho Coletor</h4>
-                  <p>O Ouriço carrega a maçã e seus espinhos <strong>cortam e estouram todas as vinhas de cipó vizinhas</strong>!</p>
+                  <p>O Ouriço rola pelo solo do pomar e <strong>espeta um par completo de maçãs</strong> em seus espinhos!</p>
+                </div>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-icons"><span>🐒</span> <span>+</span> <span>🍌</span></div>
+                <div class="synergy-info">
+                  <h4>Salto na Copa</h4>
+                  <p>O Macaco combina com a Banana e <strong>reorganiza a mesa alegremente</strong> abrindo novos caminhos!</p>
+                </div>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-icons"><span>🐝</span> <span>+</span> <span>🍯</span></div>
+                <div class="synergy-info">
+                  <h4>Dança das Abelhas</h4>
+                  <p>Abelha combina com Favo de Mel para soltar um enxame que <strong>abre espaço seguro na bandeja</strong>.</p>
+                </div>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-icons"><span>🐿️</span> <span>+</span> <span>🌰</span></div>
+                <div class="synergy-info">
+                  <h4>Toca de Inverno</h4>
+                  <p>O Esquilo combina com a Noz e <strong>recolhe nozes ou resgata peças da bandeja</strong> para a toca!</p>
+                </div>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-icons"><span>🐬</span> <span>+</span> <span>🐚</span></div>
+                <div class="synergy-info">
+                  <h4>Eco Sonar do Mar</h4>
+                  <p>Golfinho combina com Concha, <strong>ilumina pares livres e resgata conchas</strong> das profundezas.</p>
                 </div>
               </div>
             </div>

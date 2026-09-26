@@ -469,34 +469,125 @@ export class BoardEngine {
       };
     }
 
-    // Sapo + Insetos
+    // Sapo + Insetos OU Sapo + Sapo: Língua Elástica
     if ((v1 === 'frog' && (v2 === 'ladybug' || v2 === 'bee')) ||
-        ((v1 === 'ladybug' || v1 === 'bee') && v2 === 'frog')) {
+        ((v1 === 'ladybug' || v1 === 'bee') && v2 === 'frog') ||
+        (v1 === 'frog' && v2 === 'frog')) {
+      let clearedTrayTiles: PlacedTile[] = [];
+      let affectedBoardTiles: PlacedTile[] = [];
+
+      // 1. Verifica se há inseto preso na bandeja para aliviar a bandeja
+      const trayInsectIndex = this.tray.findIndex((t) => t.value === 'ladybug' || t.value === 'bee');
+      if (trayInsectIndex !== -1) {
+        const trayInsect = this.tray[trayInsectIndex];
+        const boardPartner = this.getActiveBoardTiles().find((t) => canMatch(t, trayInsect));
+        if (boardPartner) {
+          this.tray.splice(trayInsectIndex, 1);
+          trayInsect.isRemoved = true;
+          trayInsect.inTray = false;
+          boardPartner.isRemoved = true;
+          clearedTrayTiles.push(trayInsect);
+          affectedBoardTiles.push(boardPartner);
+        }
+      }
+
+      // 2. Se a bandeja não tinha inseto, puxa um par completo de insetos da mesa
+      if (affectedBoardTiles.length === 0) {
+        const active = this.getActiveBoardTiles();
+        const insectA = active.find((t) => t.value === 'ladybug' || t.value === 'bee');
+        if (insectA) {
+          const insectB = active.find((t) => t !== insectA && canMatch(t, insectA));
+          if (insectB) {
+            insectA.isRemoved = true;
+            insectB.isRemoved = true;
+            affectedBoardTiles.push(insectA, insectB);
+          }
+        }
+      }
+
       return {
         type: 'frog_tongue',
-        title: '🐸 Língua Certeira!',
-        description: 'O sapinho saltou com agilidade zen e capturou seu par!',
-        bonusScore: 220,
+        title: '🐸 Língua Ágil!',
+        description: clearedTrayTiles.length > 0
+          ? 'O sapo esticou a língua, limpou a bandeja e puxou o inseto da mesa!'
+          : affectedBoardTiles.length > 0
+            ? 'O sapo esticou a língua elástica e capturou um par de insetos!'
+            : 'O sapinho saltou com agilidade zen pela lagoa!',
+        bonusScore: 240,
+        clearedTrayTiles,
+        affectedBoardTiles,
       };
     }
 
-    // Golfinho + Concha
-    if ((v1 === 'dolphin' && v2 === 'shell') || (v1 === 'shell' && v2 === 'dolphin')) {
+    // Gato + Peixe OU Gato + Gato: Pata Ágil
+    if ((v1 === 'cat' && v2 === 'fish') || (v1 === 'fish' && v2 === 'cat') || (v1 === 'cat' && v2 === 'cat')) {
+      let affectedBoardTiles: PlacedTile[] = [];
+      const active = this.getActiveBoardTiles();
+      const fishA = active.find((t) => t.value === 'fish');
+      if (fishA) {
+        const fishB = active.find((t) => t !== fishA && canMatch(t, fishA));
+        if (fishB) {
+          fishA.isRemoved = true;
+          fishB.isRemoved = true;
+          affectedBoardTiles.push(fishA, fishB);
+        }
+      }
+      return {
+        type: 'cat_paw',
+        title: '🐱 Pata Ágil!',
+        description: affectedBoardTiles.length > 0
+          ? 'O gato deu uma patada rápida e pescou um par de peixes!'
+          : 'O gato ronronou suavemente e energizou o tabuleiro!',
+        bonusScore: 220,
+        affectedBoardTiles,
+      };
+    }
+
+    // Golfinho + Concha OU Golfinho + Golfinho: Eco Sonar
+    if ((v1 === 'dolphin' && v2 === 'shell') || (v1 === 'shell' && v2 === 'dolphin') || (v1 === 'dolphin' && v2 === 'dolphin')) {
+      let affectedBoardTiles: PlacedTile[] = [];
+      const active = this.getActiveBoardTiles();
+      const shellA = active.find((t) => t.value === 'shell');
+      if (shellA) {
+        const shellB = active.find((t) => t !== shellA && canMatch(t, shellA));
+        if (shellB) {
+          shellA.isRemoved = true;
+          shellB.isRemoved = true;
+          affectedBoardTiles.push(shellA, shellB);
+        }
+      }
       return {
         type: 'dolphin_sonar',
-        title: '🐬🐚 Eco Sonar!',
-        description: 'As ondas sonoras do golfinho iluminaram o mar sereno!',
-        bonusScore: 200,
+        title: '🐬 Eco Sonar!',
+        description: affectedBoardTiles.length > 0
+          ? 'O eco sonar das profundezas resgatou um par de conchas!'
+          : 'As ondas sonoras do golfinho iluminaram o mar sereno!',
+        bonusScore: 220,
+        affectedBoardTiles,
       };
     }
 
-    // Ouriço + Maçã
-    if ((v1 === 'hedgehog' && v2 === 'apple') || (v1 === 'apple' && v2 === 'hedgehog')) {
+    // Ouriço + Maçã OU Ouriço + Ouriço: Rolamento Coletor
+    if ((v1 === 'hedgehog' && v2 === 'apple') || (v1 === 'apple' && v2 === 'hedgehog') || (v1 === 'hedgehog' && v2 === 'hedgehog')) {
+      let affectedBoardTiles: PlacedTile[] = [];
+      const active = this.getActiveBoardTiles();
+      const appleA = active.find((t) => t.value === 'apple');
+      if (appleA) {
+        const appleB = active.find((t) => t !== appleA && canMatch(t, appleA));
+        if (appleB) {
+          appleA.isRemoved = true;
+          appleB.isRemoved = true;
+          affectedBoardTiles.push(appleA, appleB);
+        }
+      }
       return {
         type: 'hedgehog_apple',
-        title: '🦔🍎 Espinho Coletor!',
-        description: 'O ouriço carregou a maçã suculenta com seus espinhos macios!',
-        bonusScore: 250,
+        title: '🦔 Espinho Coletor!',
+        description: affectedBoardTiles.length > 0
+          ? 'O ouriço rolou pelo pomar e espetou um par de maçãs doces!'
+          : 'O ouriço aconchegou-se em paz entre as folhas secas!',
+        bonusScore: 240,
+        affectedBoardTiles,
       };
     }
 
