@@ -55,6 +55,43 @@ const EMOJIS_MAP: Record<AnimalValue, string> = {
   chameleon: '🦎',
 };
 
+export interface SynergyFamily {
+  borderColor: string;
+  badge: string;
+  name: string;
+}
+
+export const SYNERGY_FAMILIES: Partial<Record<AnimalValue, SynergyFamily>> = {
+  // 🍯 Família do Mel / Doce (Amarelo Âmbar)
+  bee:       { borderColor: '#F59E0B', badge: '🍯', name: 'Mel' },
+  bear:      { borderColor: '#F59E0B', badge: '🍯', name: 'Mel' },
+  honeycomb: { borderColor: '#F59E0B', badge: '🍯', name: 'Mel' },
+
+  // 🍌 Família da Fruta / Copa (Amarelo Solar)
+  monkey:    { borderColor: '#FACC15', badge: '🍌', name: 'Fruta' },
+  banana:    { borderColor: '#FACC15', badge: '🍌', name: 'Fruta' },
+
+  // 🌰 Família das Nozes / Toca (Marrom Avelã)
+  squirrel:  { borderColor: '#B45309', badge: '🌰', name: 'Noz' },
+  acorn:     { borderColor: '#B45309', badge: '🌰', name: 'Noz' },
+
+  // 🌊 Família Marinha / Oceano (Azul Turquesa)
+  dolphin:   { borderColor: '#06B6D4', badge: '🐚', name: 'Oceano' },
+  shell:     { borderColor: '#06B6D4', badge: '🐚', name: 'Oceano' },
+  fish:      { borderColor: '#06B6D4', badge: '🐚', name: 'Oceano' },
+
+  // 🌿 Família do Brejo / Lagoa (Verde Esmeralda)
+  frog:      { borderColor: '#10B981', badge: '🍃', name: 'Brejo' },
+  ladybug:   { borderColor: '#10B981', badge: '🍃', name: 'Brejo' },
+
+  // 🍎 Família do Pomar (Rubi Suave)
+  hedgehog:  { borderColor: '#F43F5E', badge: '🍎', name: 'Pomar' },
+  apple:     { borderColor: '#F43F5E', badge: '🍎', name: 'Pomar' },
+
+  // 🦎 Camaleão Coringa (Arco-Íris Holográfico)
+  chameleon: { borderColor: 'rainbow', badge: '✨', name: 'Coringa' },
+};
+
 export class TileRenderer {
   private cache: Map<string, HTMLCanvasElement> = new Map();
   private dpr: number = 1;
@@ -154,21 +191,30 @@ export class TileRenderer {
     this.drawRoundedRect(ctx, x, y, tileWidth - 2, tileHeight - 2, 8);
     ctx.fill();
 
-    // Borda fina
-    ctx.lineWidth = 1.2;
-    ctx.strokeStyle = isFree ? palette.accent + '55' : '#C0CBDA';
-    ctx.stroke();
-
-    // Efeito Especial: Camaleão Dourado / Holográfico (Peça Coringa)
-    if (tile.value === 'chameleon') {
-      const grad = ctx.createLinearGradient(x, y, x + tileWidth, y + tileHeight);
-      grad.addColorStop(0, '#FFD700');
-      grad.addColorStop(0.33, '#00E676');
-      grad.addColorStop(0.66, '#00B0FF');
-      grad.addColorStop(1, '#E040FB');
-      ctx.lineWidth = 2.2;
-      ctx.strokeStyle = grad;
-      this.drawRoundedRect(ctx, x - 1, y - 1, tileWidth, tileHeight, 9);
+    // Moldura Temática da Família de Sinergia ou Clássica
+    const syn = SYNERGY_FAMILIES[tile.value as AnimalValue];
+    if (syn) {
+      if (syn.borderColor === 'rainbow') {
+        const grad = ctx.createLinearGradient(x, y, x + tileWidth, y + tileHeight);
+        grad.addColorStop(0, '#FFD700');
+        grad.addColorStop(0.33, '#00E676');
+        grad.addColorStop(0.66, '#00B0FF');
+        grad.addColorStop(1, '#E040FB');
+        ctx.lineWidth = 2.2;
+        ctx.strokeStyle = grad;
+        this.drawRoundedRect(ctx, x, y, tileWidth - 2, tileHeight - 2, 8);
+        ctx.stroke();
+      } else {
+        ctx.lineWidth = 2.2;
+        ctx.strokeStyle = isFree ? syn.borderColor : '#94A3B8';
+        this.drawRoundedRect(ctx, x, y, tileWidth - 2, tileHeight - 2, 8);
+        ctx.stroke();
+      }
+    } else {
+      // Peça clássica / neutra
+      ctx.lineWidth = 1.2;
+      ctx.strokeStyle = isFree ? palette.accent + '55' : '#C0CBDA';
+      this.drawRoundedRect(ctx, x, y, tileWidth - 2, tileHeight - 2, 8);
       ctx.stroke();
     }
 
@@ -201,6 +247,23 @@ export class TileRenderer {
       ctx.globalAlpha = 1.0;
     } else {
       this.drawAnimalGlyph(ctx, tile.value as AnimalValue, cw, ch, x, y);
+    }
+
+    // 8. Micro-Badge de Sinergia no canto superior direito para leitura imediata por idosos
+    if (syn && syn.badge) {
+      const badgeSize = Math.max(9, Math.round(cw * 0.22));
+      const bx = x + cw - Math.round(cw * 0.16);
+      const by = y + Math.round(ch * 0.16);
+
+      ctx.save();
+      ctx.font = `${badgeSize}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Android Emoji", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      if (!isFree && this.dimBlockedTiles) {
+        ctx.globalAlpha = 0.55;
+      }
+      ctx.fillText(syn.badge, bx, by);
+      ctx.restore();
     }
 
     ctx.restore();

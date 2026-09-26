@@ -200,6 +200,13 @@ export class BoardEngine {
       const wave3 = sortedByZ.slice(part1 + part2);
       this.waves = [wave1, wave2, wave3];
     }
+
+    // Garantir estritamente paridade par em cada onda (zero peças órfãs)
+    for (let i = 0; i < this.waves.length; i++) {
+      if (this.waves[i].length % 2 !== 0) {
+        this.waves[i] = this.waves[i].slice(0, this.waves[i].length - 1);
+      }
+    }
   }
 
   // ─── Verificação de Liberdade de Peça ──────────────────────────────────────
@@ -347,38 +354,73 @@ export class BoardEngine {
 
     // Abelha + Mel
     if ((v1 === 'bee' && v2 === 'honeycomb') || (v1 === 'honeycomb' && v2 === 'bee')) {
-      // Enxame Dourado: se tiver peças sobrando na bandeja, limpa 1 peça órfã
+      // Enxame Dourado: para a peça da bandeja, encontra sua parceira na mesa e elimina o PAR COMPLETO!
       let clearedTrayTiles: PlacedTile[] = [];
+      let affectedBoardTiles: PlacedTile[] = [];
       if (this.tray.length > 0) {
-        const orphan = this.tray.pop()!;
-        orphan.isRemoved = true;
-        orphan.inTray = false;
-        clearedTrayTiles.push(orphan);
+        const candidate = this.tray[this.tray.length - 1];
+        const partner = this.getActiveBoardTiles().find((t) => canMatch(t, candidate));
+        if (partner) {
+          this.tray.pop();
+          candidate.isRemoved = true;
+          candidate.inTray = false;
+          partner.isRemoved = true;
+          clearedTrayTiles.push(candidate);
+          affectedBoardTiles.push(partner);
+        } else {
+          // Devolve suavemente a peça para a mesa (sem destruir solitária)
+          this.tray.pop();
+          candidate.inTray = false;
+          candidate.isRemoved = false;
+        }
       }
       return {
         type: 'bee_honey',
         title: '🐝🍯 Enxame Dourado!',
-        description: 'O aroma do mel doce atraiu a abelhinha e abriu espaço.',
+        description: affectedBoardTiles.length > 0
+          ? 'O enxame de abelhas encontrou o par completo e abriu espaço na bandeja!'
+          : 'O enxame de abelhas reorganizou a bandeja com doçura!',
         bonusScore: 250,
         clearedTrayTiles,
+        affectedBoardTiles,
       };
     }
 
     // Urso + Mel ou Urso + Peixe
     if ((v1 === 'bear' && (v2 === 'honeycomb' || v2 === 'fish')) ||
         ((v1 === 'honeycomb' || v1 === 'fish') && v2 === 'bear')) {
-      // Banquete do Urso: remove 1 peça vizinha bloqueadora na mesa
-      const free = this.getFreeTiles();
+      // Banquete do Urso: remove o PAR COMPLETO (2 peças correspondentes) na mesa!
       let affectedBoardTiles: PlacedTile[] = [];
-      if (free.length > 0) {
-        const target = free[Math.floor(Math.random() * free.length)];
-        target.isRemoved = true;
-        affectedBoardTiles.push(target);
+      const hint = this.getHintPair();
+      if (hint) {
+        const p1 = this.getActiveBoardTiles().find((t) => t.id === hint.tile1Id);
+        const p2 = this.getActiveBoardTiles().find((t) => t.id === hint.tile2Id);
+        if (p1 && p2 && p1 !== p2 && canMatch(p1, p2)) {
+          p1.isRemoved = true;
+          p2.isRemoved = true;
+          affectedBoardTiles = [p1, p2];
+        }
+      }
+      if (affectedBoardTiles.length === 0) {
+        const active = this.getActiveBoardTiles();
+        for (let i = 0; i < active.length; i++) {
+          for (let j = i + 1; j < active.length; j++) {
+            if (canMatch(active[i], active[j])) {
+              active[i].isRemoved = true;
+              active[j].isRemoved = true;
+              affectedBoardTiles = [active[i], active[j]];
+              break;
+            }
+          }
+          if (affectedBoardTiles.length > 0) break;
+        }
       }
       return {
         type: 'bear_feast',
         title: '🐻 Banquete do Urso!',
-        description: 'O grande urso saboreou seu banquete e desobstruiu o caminho!',
+        description: affectedBoardTiles.length > 0
+          ? 'O urso saboreou seu banquete e devorou um par completo do tabuleiro!'
+          : 'O urso saboreou seu banquete e concedeu energia zen!',
         bonusScore: 300,
         affectedBoardTiles,
       };
@@ -398,18 +440,32 @@ export class BoardEngine {
     // Esquilo + Noz
     if ((v1 === 'squirrel' && v2 === 'acorn') || (v1 === 'acorn' && v2 === 'squirrel')) {
       let clearedTrayTiles: PlacedTile[] = [];
+      let affectedBoardTiles: PlacedTile[] = [];
       if (this.tray.length > 0) {
-        const stored = this.tray.shift()!;
-        stored.isRemoved = true;
-        stored.inTray = false;
-        clearedTrayTiles.push(stored);
+        const candidate = this.tray[0];
+        const partner = this.getActiveBoardTiles().find((t) => canMatch(t, candidate));
+        if (partner) {
+          this.tray.shift();
+          candidate.isRemoved = true;
+          candidate.inTray = false;
+          partner.isRemoved = true;
+          clearedTrayTiles.push(candidate);
+          affectedBoardTiles.push(partner);
+        } else {
+          this.tray.shift();
+          candidate.inTray = false;
+          candidate.isRemoved = false;
+        }
       }
       return {
         type: 'squirrel_acorn',
         title: '🐿️🌰 Reserva Secreta!',
-        description: 'O esquilo recolheu sua noz e guardou a peça na toca segura!',
+        description: affectedBoardTiles.length > 0
+          ? 'O esquilo recolheu o par completo e guardou na toca segura!'
+          : 'O esquilo abriu espaço na sua bandeja com agilidade!',
         bonusScore: 200,
         clearedTrayTiles,
+        affectedBoardTiles,
       };
     }
 
@@ -458,13 +514,29 @@ export class BoardEngine {
       // Chance de ativar quando ocorrem 2 matches de água ou bandeja sob pressão
       const waterMatches = this.recentBiomeMatches.filter((b) => b === 'water').length;
       if (waterMatches >= 2 || (this.tray.length >= 2 && Math.random() < 0.6)) {
-        // Lava e esvazia COMPLETAMENTE os 3 slots da bandeja!
-        const clearedTray = [...this.tray];
-        this.tray.forEach((t) => {
-          t.isRemoved = true;
-          t.inTray = false;
-        });
+        // Lava e esvazia a bandeja com segurança matemática de paridade:
+        const clearedTray: PlacedTile[] = [];
+        const affectedBoardTiles: PlacedTile[] = [];
+        const tilesToProcess = [...this.tray];
         this.tray = [];
+
+        for (const t of tilesToProcess) {
+          // Procura parceira correspondente na mesa
+          const partner = this.getActiveBoardTiles().find(
+            (b) => !b.isRemoved && !b.inTray && canMatch(b, t)
+          );
+          if (partner) {
+            t.isRemoved = true;
+            t.inTray = false;
+            partner.isRemoved = true;
+            clearedTray.push(t);
+            affectedBoardTiles.push(partner);
+          } else {
+            // Se não encontrou parceira livre imediata, devolve com segurança para a mesa
+            t.inTray = false;
+            t.isRemoved = false;
+          }
+        }
 
         // Chance de 50% de eliminar mais 1 par livre da mesa!
         let eliminatedBoardPairs: [PlacedTile, PlacedTile] | undefined;
@@ -472,7 +544,7 @@ export class BoardEngine {
         if (hint && Math.random() < 0.5) {
           const p1 = this.getActiveBoardTiles().find((t) => t.id === hint.tile1Id);
           const p2 = this.getActiveBoardTiles().find((t) => t.id === hint.tile2Id);
-          if (p1 && p2) {
+          if (p1 && p2 && p1 !== p2 && canMatch(p1, p2)) {
             p1.isRemoved = true;
             p2.isRemoved = true;
             eliminatedBoardPairs = [p1, p2];
@@ -483,8 +555,9 @@ export class BoardEngine {
           climate: 'ocean_surge',
           icon: '🌊',
           title: 'Maré Alta Purificadora!',
-          description: 'As ondas do oceano lavaram e limparam toda a sua bandeja!',
+          description: 'As ondas do oceano lavaram e esvaziaram a bandeja com segurança zen!',
           clearedTrayTiles: clearedTray,
+          affectedBoardTiles: affectedBoardTiles.length > 0 ? affectedBoardTiles : undefined,
           eliminatedBoardPairs,
         };
       }
@@ -492,18 +565,23 @@ export class BoardEngine {
 
     // 2. ONDA DE CALOR ☀️
     if (biome === 'savanna' && this.recentBiomeMatches.filter((b) => b === 'savanna').length >= 2) {
-      // Transforma uma peça livre da mesa em Camaleão Coringa!
-      const free = this.getFreeTiles();
-      if (free.length > 0) {
-        const candidate = free[Math.floor(Math.random() * free.length)];
-        candidate.value = 'chameleon';
-        candidate.label = '🦎 Camaleão';
+      // Transforma um PAR completo em Camaleões Coringa, mantendo a paridade estrita!
+      const hint = this.getHintPair();
+      if (hint) {
+        const p1 = this.getActiveBoardTiles().find((t) => t.id === hint.tile1Id);
+        const p2 = this.getActiveBoardTiles().find((t) => t.id === hint.tile2Id);
+        if (p1 && p2) {
+          p1.value = 'chameleon';
+          p1.label = '🦎 Camaleão';
+          p2.value = 'chameleon';
+          p2.label = '🦎 Camaleão';
+        }
       }
       return {
         climate: 'heat_wave',
         icon: '☀️',
         title: 'Onda de Calor Solar!',
-        description: 'O calor da savana fez brotar um Camaleão Coringa no tabuleiro!',
+        description: 'O calor da savana transformou um par em Camaleões Coringa!',
       };
     }
 
@@ -633,19 +711,30 @@ export class BoardEngine {
   // ─── Geração de Tabuleiro / Onda ──────────────────────────────────────────
 
   private generateCurrentWave(): void {
-    const slots = this.waves[this.currentWaveIndex] || this.layout.slots;
-    const totalSlots = slots.length;
+    const rawSlots = this.waves[this.currentWaveIndex] || this.layout.slots;
+    // Garante que o total de slots seja rigorosamente PAR (sem peças órfãs)
+    const totalSlots = rawSlots.length % 2 === 0 ? rawSlots.length : rawSlots.length - 1;
+    const slots = rawSlots.slice(0, totalSlots);
     const deck = createAnimalDeck();
 
-    const pairsNeeded = Math.ceil(totalSlots / 2);
+    const pairsNeeded = totalSlots / 2;
     const selectedPairs: [TileDefinition, TileDefinition][] = [];
 
     // Embaralhar o deck
     const shuffledDeck = [...deck].sort(() => Math.random() - 0.5);
 
     let pairCount = 0;
-    for (let i = 0; i < shuffledDeck.length - 1 && pairCount < pairsNeeded; i += 2) {
-      selectedPairs.push([shuffledDeck[i], { ...shuffledDeck[i], id: `${shuffledDeck[i].id}_w${this.currentWaveIndex}` }]);
+    for (let i = 0; pairCount < pairsNeeded; i++) {
+      const src = shuffledDeck[i % shuffledDeck.length];
+      const p1: TileDefinition = {
+        ...src,
+        id: `${src.id}_w${this.currentWaveIndex}_p1_${pairCount}`,
+      };
+      const p2: TileDefinition = {
+        ...src,
+        id: `${src.id}_w${this.currentWaveIndex}_p2_${pairCount}`,
+      };
+      selectedPairs.push([p1, p2]);
       pairCount++;
     }
 
@@ -657,7 +746,10 @@ export class BoardEngine {
         value: 'chameleon',
         label: '🦎 Camaleão',
       };
-      selectedPairs[0] = [chameleonDef, { ...chameleonDef, id: `${chameleonDef.id}_pair` }];
+      selectedPairs[0] = [
+        chameleonDef,
+        { ...chameleonDef, id: `${chameleonDef.id}_pair` },
+      ];
     }
 
     const allPieces: TileDefinition[] = [];
@@ -667,7 +759,7 @@ export class BoardEngine {
     allPieces.sort(() => Math.random() - 0.5);
 
     this.tiles = slots.map((s, idx) => {
-      const def = allPieces[idx % allPieces.length];
+      const def = allPieces[idx];
       return {
         id: `tile-w${this.currentWaveIndex}-${idx}`,
         suit: def.suit,

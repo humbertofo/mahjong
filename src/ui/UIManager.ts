@@ -318,6 +318,11 @@ export class UIManager {
       });
     });
 
+    // Fechar toast da natureza ao tocar
+    document.getElementById('nature-toast')?.addEventListener('click', () => {
+      document.getElementById('nature-toast')?.classList.add('hidden');
+    });
+
     // Vitória — botões
     document.getElementById('btn-next-level')?.addEventListener('click', () => {
       this.victoryModal.classList.add('hidden');
@@ -667,9 +672,19 @@ export class UIManager {
 
   // ─── Sinergias & Climas da Natureza ───────────────────────────────────────
 
+  public triggerHudPulse(): void {
+    const hudTitle = document.querySelector('.wisdom-title-container');
+    if (hudTitle) {
+      hudTitle.classList.remove('pulse-glow');
+      void (hudTitle as HTMLElement).offsetWidth; // trigger reflow
+      hudTitle.classList.add('pulse-glow');
+    }
+  }
+
   public handleSynergy(synergy: SynergyResult): void {
     soundManager.playMatchSuccess();
     hapticManager.impactLight();
+    this.triggerHudPulse();
     this.showNatureToast('🐾', synergy.title, synergy.description);
     this.updateHUD();
   }
@@ -677,6 +692,7 @@ export class UIManager {
   public handleClimate(climate: ClimateEffectResult): void {
     soundManager.playMatchSuccess();
     hapticManager.impactMedium();
+    this.triggerHudPulse();
 
     if (climate.rechargedTool === 'hammer') {
       this.hammerCount = Math.min(UIManager.MAX_HAMMER, this.hammerCount + 1);
@@ -699,11 +715,19 @@ export class UIManager {
     toastTitle.textContent = title;
     toastDesc.textContent = desc;
 
+    // Reinicia a barra de progresso do timer
+    const timerBar = toast.querySelector('.nature-toast-timer-bar') as HTMLElement | null;
+    if (timerBar) {
+      timerBar.style.animation = 'none';
+      void timerBar.offsetWidth; // trigger reflow
+      timerBar.style.animation = '';
+    }
+
     toast.classList.remove('hidden');
     clearTimeout((this as unknown as { _natureToastTimer?: ReturnType<typeof setTimeout> })._natureToastTimer);
     (this as unknown as { _natureToastTimer?: ReturnType<typeof setTimeout> })._natureToastTimer = setTimeout(() => {
       toast.classList.add('hidden');
-    }, 4000);
+    }, 3500);
   }
 
   public handleTileLongPress(tile: PlacedTile): void {

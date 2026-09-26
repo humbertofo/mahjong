@@ -926,8 +926,8 @@ html, body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: calc(8px + env(safe-area-inset-top, 0px)) max(74px, env(safe-area-inset-right, 16px)) 4px max(74px, env(safe-area-inset-left, 16px));
-  background: linear-gradient(to bottom, rgba(5, 25, 20, 0.8), rgba(5, 25, 20, 0));
+  padding: calc(6px + env(safe-area-inset-top, 0px)) calc(8px + env(safe-area-inset-right, 0px)) 4px calc(8px + env(safe-area-inset-left, 0px));
+  background: linear-gradient(to bottom, rgba(5, 25, 20, 0.85), rgba(5, 25, 20, 0));
   pointer-events: none;
 }
 
@@ -938,60 +938,97 @@ html, body {
 .hud-left, .hud-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
+  flex-shrink: 0;
 }
 
 .hud-center {
   display: flex;
   flex-direction: column;
   align-items: center;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 .wisdom-title-container {
   display: flex;
   align-items: center;
-  gap: 5px;
-  text-shadow: 0 2px 10px rgba(245, 158, 11, 0.6);
+  gap: 4px;
+  text-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);
+  background: rgba(4, 20, 16, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 3px 8px;
+  border-radius: 9999px;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  transition: all 0.3s ease;
+}
+
+.wisdom-title-container.pulse-glow {
+  animation: hud-pulse-glow 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes hud-pulse-glow {
+  0% {
+    box-shadow: 0 0 0 rgba(245, 158, 11, 0);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(245, 158, 11, 0.8), 0 0 28px rgba(251, 191, 36, 0.5);
+    transform: scale(1.06);
+    border-color: rgba(251, 191, 36, 0.9);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(245, 158, 11, 0);
+    transform: scale(1);
+  }
 }
 
 .wisdom-label {
-  font-size: 1.35rem;
+  font-size: 0.92rem;
   font-weight: 800;
   color: #fde047;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .wisdom-number {
-  font-size: 1.55rem;
+  font-size: 1.1rem;
   font-weight: 900;
   color: #fef08a;
 }
 
 .wisdom-sparkle {
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   animation: sparkle-pulse 2s infinite ease-in-out;
 }
 
 @keyframes sparkle-pulse {
   0%, 100% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.25); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 1; }
 }
 
 .hud-icon-btn {
-  background: rgba(14, 38, 48, 0.75);
+  background: rgba(14, 38, 48, 0.8);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
   color: var(--color-text-main);
-  width: 44px;
-  height: 44px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.18s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.hud-icon-btn svg {
+  width: 17px !important;
+  height: 17px !important;
 }
 
 .hud-icon-btn:active {
@@ -2061,38 +2098,52 @@ html, body {
    ESTILOS: ONDAS (MULTI-WAVE) & TOASTS DA NATUREZA
    ═══════════════════════════════════════════════════════════════════ */
 .hud-wave-pill {
-  background: rgba(16, 185, 129, 0.22);
-  border: 1px solid rgba(52, 211, 153, 0.45);
+  background: rgba(16, 185, 129, 0.25);
+  border: 1px solid rgba(52, 211, 153, 0.5);
   color: #a7f3d0;
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 2px 7px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 1px 6px;
   border-radius: 9999px;
   letter-spacing: 0.02em;
   display: inline-flex;
   align-items: center;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+  animation: wave-badge-flow 2.5s infinite ease-in-out;
+}
+
+@keyframes wave-badge-flow {
+  0%, 100% {
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.3);
+    border-color: rgba(52, 211, 153, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 14px rgba(16, 185, 129, 0.75), inset 0 0 6px rgba(52, 211, 153, 0.4);
+    border-color: rgba(52, 211, 153, 0.9);
+  }
 }
 
 .nature-toast {
   position: absolute;
-  top: 98px;
+  top: calc(112px + env(safe-area-inset-top, 0px));
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: rgba(10, 30, 24, 0.94);
+  gap: 10px;
+  background: rgba(8, 26, 20, 0.96);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1.5px solid rgba(245, 158, 11, 0.55);
+  border: 1.5px solid rgba(245, 158, 11, 0.65);
   border-radius: 14px;
-  padding: 10px 16px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5), 0 0 16px rgba(245, 158, 11, 0.25);
+  padding: 8px 14px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55), 0 0 16px rgba(245, 158, 11, 0.25);
   max-width: 90%;
   animation: natureToastPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
+  overflow: hidden;
 }
 
 @keyframes natureToastPop {
@@ -2107,21 +2158,36 @@ html, body {
 }
 
 .nature-toast-icon {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   flex-shrink: 0;
 }
 
 .nature-toast-title {
   color: #fde047;
   font-weight: 800;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   line-height: 1.2;
 }
 
 .nature-toast-desc {
   color: #e2e8f0;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   margin-top: 2px;
+}
+
+.nature-toast-timer-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #10b981, #fbbf24);
+  width: 100%;
+  animation: toast-timer-drain 3.5s linear forwards;
+}
+
+@keyframes toast-timer-drain {
+  from { width: 100%; }
+  to { width: 0%; }
 }
 
 /* Modal Conclusão de Onda Intermediária */

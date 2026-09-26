@@ -121,6 +121,7 @@ export interface ClimateEffectResult {
   description: string;
   icon: string;
   clearedTrayTiles?: PlacedTile[];
+  affectedBoardTiles?: PlacedTile[];
   eliminatedBoardPairs?: [PlacedTile, PlacedTile];
   frozenTimerSeconds?: number;
   rechargedTool?: 'hammer' | 'shuffle' | 'hint' | 'undo';
