@@ -436,7 +436,7 @@ export class UIManager {
     const waveBadgeEl = document.getElementById('hud-wave-badge');
     if (waveBadgeEl) {
       if (this.engine.getTotalWaves() > 1) {
-        waveBadgeEl.textContent = `Onda ${this.engine.getCurrentWave()}/${this.engine.getTotalWaves()}`;
+        waveBadgeEl.textContent = `${this.engine.getCurrentWave()}/${this.engine.getTotalWaves()}`;
         waveBadgeEl.classList.remove('hidden');
       } else {
         waveBadgeEl.classList.add('hidden');
