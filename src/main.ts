@@ -2,6 +2,7 @@ import { BoardEngine } from './core/BoardEngine';
 import { BoardRenderer } from './render/BoardRenderer';
 import { UIManager } from './ui/UIManager';
 import { garden36Layout } from './core/layouts/garden36';
+import { LiveUpdateManager } from './core/LiveUpdateManager';
 
 window.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('board-canvas') as HTMLCanvasElement;
@@ -52,4 +53,9 @@ window.addEventListener('DOMContentLoaded', () => {
       .wakeLock.request('screen')
       .catch(() => {});
   }
+
+  // 5. Verificação silenciosa de Live Update em segundo plano (Android)
+  LiveUpdateManager.checkForUpdates((notes) => {
+    uiManager?.showToast(notes ? `✨ ${notes}` : '✨ Novas fases atualizadas! Reinicie o jogo para aplicar.');
+  });
 });

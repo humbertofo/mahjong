@@ -1,15 +1,18 @@
-name: 🚀 Compilar APK Android (GitHub Actions)
+name: 🚀 Compilar APK & Live Update (GitHub Actions)
 
 on:
   push:
     branches: [ main, master ]
     tags:
       - 'v*'
-  workflow_dispatch: # Permite disparar o build manualmente pelo botão no site do GitHub
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
-  build-apk:
-    name: 📱 Gerar APK do Mahjong
+  build-and-deploy:
+    name: 📱 Gerar APK e Pacote Live Update
     runs-on: ubuntu-latest
 
     steps:
@@ -35,6 +38,12 @@ jobs:
       - name: 🔨 Compilar Frontend (Vite + TypeScript)
         run: npm run build
 
+      - name: 📦 Compactar Pacote Web para Live Update (dist.zip)
+        run: |
+          cd dist
+          zip -r ../dist.zip .
+          cd ..
+
       - name: 🔄 Sincronizar Assets com Capacitor Android
         run: npx cap sync android
 
@@ -45,7 +54,7 @@ jobs:
         working-directory: android
         run: ./gradlew assembleDebug --stacktrace
 
-      - name: 📦 Renomear APK com data e commit
+      - name: 📦 Organizar APKs de saída
         run: |
           mkdir -p output-apk
           SHORT_SHA=$(git rev-parse --short HEAD)
@@ -60,12 +69,27 @@ jobs:
           path: output-apk/*.apk
           retention-days: 30
 
-      # Se o commit for uma Tag (ex: git tag v1.0.1 && git push origin v1.0.1), cria automaticamente uma Release com o APK anexado
-      - name: 🌟 Criar GitHub Release (se for uma tag)
+      - name: 🌐 Atualizar Release de Live Update Silencioso
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: live-update
+          name: "Live Update (Auto)"
+          body: "Pacote de atualização remota OTA silenciosa e APK mais recente para o Mahjong."
+          files: |
+            dist.zip
+            output-apk/Mahjong-Animal-latest.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🌟 Criar GitHub Release Oficial (se for uma tag v*)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: output-apk/*.apk
+          files: |
+            output-apk/*.apk
+            dist.zip
           draft: false
           prerelease: false
           generate_release_notes: true

@@ -1057,7 +1057,7 @@ export class UIManager {
     }
   }
 
-  private showToast(message: string, durationMs: number = 3200, isDanger: boolean = false): void {
+  public showToast(message: string, durationMs: number = 3200, isDanger: boolean = false): void {
     const existing = document.querySelector('.mahjong-toast');
     if (existing) existing.remove();
 
