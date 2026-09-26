@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "bundleId": "v1.0.0",
+  "version": "1.0.1",
+  "bundleId": "v1.0.1",
   "url": "https://github.com/humbertofo/mahjong/releases/download/live-update/dist.zip",
-  "notes": "50 fases oficiais Mahseum, constelação atômica e áudios autênticos"
+  "notes": "v1.0.1: Tipografia ampliada, 50 fases oficiais Mahseum e Live Update integrado"
 }
