@@ -16,10 +16,53 @@ export class LiveUpdateManager {
   private static isChecking = false;
 
   /**
+   * Obtém o identificador do bundle atualmente em execução.
+   * Retorna o SHA do commit ou null se estiver executando a versão base do APK.
+   */
+  public static async getActiveBundleId(): Promise<string | null> {
+    if (!Capacitor.isNativePlatform()) return null;
+    try {
+      const bundleInfo = await (LiveUpdate.getCurrentBundle ? LiveUpdate.getCurrentBundle() : LiveUpdate.getBundle());
+      return bundleInfo?.bundleId || null;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Confirma que o bundle atual carregou com sucesso, impede o rollback automático
+   * e limpa bloqueios de versões anteriores.
+   */
+  public static async notifyAppReady(): Promise<void> {
+    if (!Capacitor.isNativePlatform()) return;
+    try {
+      // 1. Limpar bundles bloqueados por rollbacks anteriores
+      try {
+        await LiveUpdate.clearBlockedBundles();
+      } catch {
+        // Ignora se não suportado
+      }
+
+      // 2. Avisar ao plugin nativo que o app inicializou sem travar
+      const res = await LiveUpdate.ready();
+      console.log('[LiveUpdate] Bundle ativo confirmado como estável via ready():', res);
+
+      // 3. Atualizar o localStorage de acordo com a realidade do bundle ativo
+      const activeBundle = await this.getActiveBundleId();
+      if (activeBundle) {
+        localStorage.setItem(CURRENT_BUNDLE_KEY, activeBundle);
+      } else {
+        localStorage.removeItem(CURRENT_BUNDLE_KEY);
+      }
+    } catch (err) {
+      console.warn('[LiveUpdate] Erro ao chamar ready():', err);
+    }
+  }
+
+  /**
    * Verifica em segundo plano se há um novo commit/versão no GitHub
    */
   public static async checkForUpdates(callbacks?: LiveUpdateCallbacks | ((message: string) => void)): Promise<void> {
-    // Live update só roda no aplicativo nativo Android/iOS, não no browser
     if (!Capacitor.isNativePlatform()) {
       return;
     }
@@ -28,16 +71,9 @@ export class LiveUpdateManager {
     this.isChecking = true;
 
     try {
-      // 1. Obter o SHA do bundle ativo
-      let currentSha = localStorage.getItem(CURRENT_BUNDLE_KEY) || '';
-      try {
-        const bundleInfo = await LiveUpdate.getBundle();
-        if (bundleInfo && bundleInfo.bundleId) {
-          currentSha = bundleInfo.bundleId;
-        }
-      } catch {
-        // Fallback para valor no localStorage
-      }
+      // 1. Obter o SHA do bundle REAL que está ativo agora
+      const activeBundle = await this.getActiveBundleId();
+      const currentSha = activeBundle || '';
 
       // 2. Consultar o último commit da branch main no GitHub (sem cache)
       const res = await fetch(`${COMMITS_API}?_t=${Date.now()}`, {
@@ -57,26 +93,40 @@ export class LiveUpdateManager {
 
       if (!latestSha) return;
 
-      // 3. Se for a mesma versão já instalada, encerra
+      // 3. Se o bundle ativo REAL já for essa versão, não precisa atualizar
       if (currentSha && currentSha.startsWith(latestSha)) {
         localStorage.setItem(LAST_CHECK_KEY, Date.now().toString());
         return;
       }
 
-      console.log(`[LiveUpdate] Nova versão detectada (${latestSha}). Baixando dist.zip...`);
+      console.log(`[LiveUpdate] Nova versão detectada (${latestSha}). Ativo: ${currentSha || 'APK base'}. Baixando dist.zip...`);
 
-      // Notificar que o download começou (exibe tela de carregando)
+      // Notificar início do download (exibe tela de progresso)
       if (typeof callbacks === 'object' && callbacks?.onDownloading) {
         callbacks.onDownloading(commitMessage);
       }
 
-      // 4. Baixar o bundle dist.zip da release 'live-update'
-      await LiveUpdate.downloadBundle({
-        bundleId: latestSha,
-        url: `${BUNDLE_ZIP_URL}?_v=${latestSha}`,
-      });
+      // 4. Limpar cópia anterior do mesmo bundleId caso tenha ficado corrompida
+      try {
+        await LiveUpdate.deleteBundle({ bundleId: latestSha });
+      } catch {
+        // Ignora se não existir
+      }
 
-      // 5. Definir como o próximo bundle ativo (para recarregar sem rollback)
+      // 5. Baixar o bundle dist.zip da release 'live-update'
+      try {
+        await LiveUpdate.downloadBundle({
+          bundleId: latestSha,
+          url: `${BUNDLE_ZIP_URL}?_v=${latestSha}`,
+        });
+      } catch (dlErr: any) {
+        // Se já existia e não pôde ser deletado, tenta prosseguir
+        if (!dlErr?.message?.includes('already exists')) {
+          throw dlErr;
+        }
+      }
+
+      // 6. Definir como o próximo bundle ativo permanente
       try {
         await LiveUpdate.setNextBundle({
           bundleId: latestSha,
@@ -87,12 +137,10 @@ export class LiveUpdateManager {
         });
       }
 
-      localStorage.setItem(CURRENT_BUNDLE_KEY, latestSha);
       localStorage.setItem(LAST_CHECK_KEY, Date.now().toString());
+      console.log(`[LiveUpdate] Sucesso! Bundle ${latestSha} preparado para reinício.`);
 
-      console.log(`[LiveUpdate] Sucesso! Bundle ${latestSha} preparado.`);
-
-      // Notificar que o download terminou e pode reiniciar
+      // 7. Notificar conclusão do download para o usuário confirmar o reinício
       if (typeof callbacks === 'object' && callbacks?.onReady) {
         callbacks.onReady(commitMessage);
       } else if (typeof callbacks === 'function') {
@@ -102,19 +150,6 @@ export class LiveUpdateManager {
       console.warn('[LiveUpdate] Verificação em background ignorada (offline ou conexão lenta):', err);
     } finally {
       this.isChecking = false;
-    }
-  }
-
-  /**
-   * Confirma que o bundle atual carregou com sucesso e IMPEDE o rollback automático
-   */
-  public static async notifyAppReady(): Promise<void> {
-    if (!Capacitor.isNativePlatform()) return;
-    try {
-      await LiveUpdate.ready();
-      console.log('[LiveUpdate] Bundle ativo confirmado como estável via ready(). Rollback desativado.');
-    } catch (err) {
-      console.warn('[LiveUpdate] Erro ao chamar ready():', err);
     }
   }
 
@@ -130,3 +165,6 @@ export class LiveUpdateManager {
     }
   }
 }
+
+// Executar confirmação de prontidão imediatamente ao carregar o script JS
+LiveUpdateManager.notifyAppReady();

@@ -17,6 +17,7 @@ const config: CapacitorConfig = {
     LiveUpdate: {
       autoUpdateStrategy: 'none',
       resetOnUpdate: false,
+      readyTimeout: 0,
     },
   },
 };

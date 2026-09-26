@@ -308,8 +308,20 @@ export class UIManager {
   private showMenu(): void {
     this.stopTimer();
     this.updateMenuProgress();
+    this.updateMenuVersion();
     this.screenMenu.classList.remove('hidden');
     this.screenGame.classList.add('hidden');
+  }
+
+  private async updateMenuVersion(): Promise<void> {
+    const el = document.getElementById('menu-version-text');
+    if (!el) return;
+    const activeBundle = await LiveUpdateManager.getActiveBundleId();
+    if (activeBundle) {
+      el.textContent = `v1.0.1 (${activeBundle}) · 100% Offline`;
+    } else {
+      el.textContent = `v1.0.1 · 100% Offline`;
+    }
   }
 
   private showGame(): void {
