@@ -144,11 +144,12 @@ export class BoardRenderer {
     const gridRows = (maxY - minY + 2) / 2;
 
     const isPortrait = viewH > viewW;
-    // Margens adaptativas:
-    // Em retrato, o topo agora acomoda o HUD + a Bandeja de 4 slots (~148px)
-    const topMargin = isPortrait ? 152 : 56;
-    const bottomMargin = isPortrait ? 96 : 72;
-    const sideMargin = isPortrait ? 12 : 72;
+    // Margens adaptativas otimizadas:
+    // Em retrato, o topo acomoda o HUD inline + Bandeja compacta (~104px)
+    // A base acomoda os 4 botões compactos (~68px)
+    const topMargin = isPortrait ? 104 : 52;
+    const bottomMargin = isPortrait ? 68 : 64;
+    const sideMargin = isPortrait ? 6 : 64;
 
     const availW = Math.max(100, viewW - sideMargin * 2);
     const availH = Math.max(100, viewH - topMargin - bottomMargin);
@@ -156,8 +157,8 @@ export class BoardRenderer {
     const scaleX = availW / (gridCols * this.baseTileWidth + maxZ * this.baseTileDepth);
     const scaleY = availH / (gridRows * this.baseTileHeight + maxZ * this.baseTileDepth);
 
-    // Zoom ideal ampliado para o Galaxy A12 — portrait tem mais espaço vertical
-    this.scale = Math.min(scaleX, scaleY, isPortrait ? 2.6 : 1.6);
+    // Zoom ideal ampliado com as novas margens compactas
+    this.scale = Math.min(scaleX, scaleY, isPortrait ? 2.8 : 1.8);
 
     const curTileW = Math.round(this.baseTileWidth * this.scale);
     const curTileH = Math.round(this.baseTileHeight * this.scale);

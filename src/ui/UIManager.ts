@@ -277,6 +277,32 @@ export class UIManager {
       this.settingsModal.classList.remove('hidden');
     });
 
+    // Modal Guia da Natureza (Botão ❓)
+    const helpBtn = document.getElementById('btn-help');
+    const natureGuideModal = document.getElementById('modal-nature-guide');
+    if (helpBtn && natureGuideModal) {
+      helpBtn.addEventListener('click', () => {
+        natureGuideModal.classList.remove('hidden');
+        soundManager.playTileClick();
+      });
+    }
+
+    // Abas do Guia da Natureza
+    document.querySelectorAll('.guide-tab-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const target = e.currentTarget as HTMLElement;
+        const tab = target.dataset.tab;
+        if (!tab) return;
+
+        document.querySelectorAll('.guide-tab-btn').forEach((b) => b.classList.remove('active'));
+        target.classList.add('active');
+
+        document.querySelectorAll('.guide-tab-pane').forEach((pane) => pane.classList.add('hidden'));
+        document.getElementById(`guide-tab-${tab}`)?.classList.remove('hidden');
+        soundManager.playTileClick();
+      });
+    });
+
     // Fechar todos os modais
     document.querySelectorAll('.modal-close').forEach((btn) => {
       btn.addEventListener('click', (e) => {

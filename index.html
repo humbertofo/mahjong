@@ -105,11 +105,15 @@
               <span class="wisdom-label">Nível</span>
               <span id="wisdom-level" class="wisdom-number">1</span>
               <span class="wisdom-sparkle">🌟</span>
+              <span class="hud-timer-sep">·</span>
+              <span id="hud-timer" class="hud-timer">00:00</span>
             </div>
-            <div id="hud-timer" class="hud-timer">00:00</div>
           </div>
 
           <div class="hud-right">
+            <button id="btn-help" class="hud-icon-btn" title="Guia da Natureza">
+              <span style="font-weight: 900; font-size: 1.15rem; color: #fde047;">❓</span>
+            </button>
             <button id="btn-levels" class="hud-icon-btn" title="Fases">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="7" height="7"></rect>
@@ -264,6 +268,218 @@
           <div class="victory-actions">
             <button id="btn-replay" class="btn-secondary">↩ Jogar de Novo</button>
             <button id="btn-next-level" class="btn-primary">Próxima Fase ➔</button>
+          </div>
+        </div>
+      <!-- MODAL: GUIA DA NATUREZA (ENCICLOPÉDIA DE COMBINAÇÕES E CLIMAS) -->
+      <div id="modal-nature-guide" class="modal-container hidden">
+        <div class="modal-card nature-guide-card">
+          <div class="modal-header">
+            <div class="nature-guide-title-box">
+              <span class="guide-title-icon">📖</span>
+              <h2>Guia da Natureza</h2>
+            </div>
+            <button class="modal-close">&times;</button>
+          </div>
+
+          <!-- Abas de Navegação -->
+          <div class="guide-nav-tabs">
+            <button class="guide-tab-btn active" data-tab="synergies">🐾 Sinergias</button>
+            <button class="guide-tab-btn" data-tab="climates">🌦️ Climas</button>
+            <button class="guide-tab-btn" data-tab="specials">🪺 Especiais</button>
+            <button class="guide-tab-btn" data-tab="tips">💡 Dicas</button>
+          </div>
+
+          <!-- Conteúdo rolável das abas -->
+          <div class="modal-body guide-body-content">
+            <!-- ABA 1: SINERGIAS ANIMAIS -->
+            <div id="guide-tab-synergies" class="guide-tab-pane active">
+              <p class="guide-intro-text">Descubra as deliciosas combinações da natureza! Junte animais com seus elementos favoritos para liberar poderes mágicos:</p>
+              
+              <div class="synergy-card">
+                <div class="synergy-icons"><span>🐻</span> <span>+</span> <span>🍯</span> / <span>🐟</span></div>
+                <div class="synergy-info">
+                  <h4>O Banquete do Urso</h4>
+                  <p>O Urso combina direto com o Mel ou Peixe e quebra até <strong>2 rochas ou peças de gelo</strong> ao redor!</p>
+                </div>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-icons"><span>🐒</span> <span>+</span> <span>🍌</span></div>
+                <div class="synergy-info">
+                  <h4>Salto na Copa</h4>
+                  <p>O Macaco combina com a Banana e <strong>pesca uma peça da camada mais profunda para o topo</strong> da mesa!</p>
+                </div>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-icons"><span>🐝</span> <span>+</span> <span>🍯</span></div>
+                <div class="synergy-info">
+                  <h4>Dança das Abelhas</h4>
+                  <p>Abelha combina com Favo de Mel! Se combinar 2 abelhas com 1 mel na mesa, solta um enxame que <strong>destrói 2 bloqueios e fecha o par da bandeja</strong>.</p>
+                </div>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-icons"><span>🐿️</span> <span>+</span> <span>🌰</span></div>
+                <div class="synergy-info">
+                  <h4>Reserva Secreta de Inverno</h4>
+                  <p>O Esquilo combina com a Noz e <strong>pega 1 peça da bandeja quase cheia e a guarda na toca</strong> para salvar você!</p>
+                </div>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-icons"><span>🐸</span> <span>+</span> <span>🐞</span> / <span>🐝</span></div>
+                <div class="synergy-info">
+                  <h4>Língua Certeira</h4>
+                  <p>O Sapo estica a língua e <strong>captura insetos livres mesmo com bloqueio lateral parcial</strong>!</p>
+                </div>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-icons"><span>🐬</span> <span>+</span> <span>🐚</span></div>
+                <div class="synergy-info">
+                  <h4>Eco Sonar do Mar</h4>
+                  <p>Golfinho combina com Concha e <strong>faz piscar em azul o par de qualquer peça que você tocar</strong>.</p>
+                </div>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-icons"><span>🦔</span> <span>+</span> <span>🍎</span></div>
+                <div class="synergy-info">
+                  <h4>Espinho Coletor</h4>
+                  <p>O Ouriço carrega a maçã e seus espinhos <strong>cortam e estouram todas as vinhas de cipó vizinhas</strong>!</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- ABA 2: CLIMAS DA NATUREZA -->
+            <div id="guide-tab-climates" class="guide-tab-pane hidden">
+              <p class="guide-intro-text">Combine pares de animais de uma mesma família para despertar o poder dos elementos:</p>
+
+              <div class="climate-card climate-water">
+                <div class="climate-badge">🌊 Maré Alta Purificadora</div>
+                <p class="climate-req">Gatilho: 2 pares aquáticos (Peixe, Golfinho, Pato)</p>
+                <p class="climate-desc">Uma onda d'água <strong>lava e limpa totalmente as 3 peças da bandeja</strong> e a correnteza tem chance de <strong>eliminar +1 par na mesa</strong>!</p>
+              </div>
+
+              <div class="climate-card climate-sun">
+                <div class="climate-badge">☀️ Onda de Calor</div>
+                <p class="climate-req">Gatilho: 2 pares da savana (Leão, Camelo, Zebra)</p>
+                <p class="climate-desc">Derrete peças de gelo, afugenta o frio e o solo fértil faz <strong>brotar 1 Camaleão Coringa</strong>!</p>
+              </div>
+
+              <div class="climate-card climate-ice">
+                <div class="climate-badge">❄️ Nevasca Ártica</div>
+                <p class="climate-req">Gatilho: 2 pares polares (Pinguim, Urso Polar, Foca)</p>
+                <p class="climate-desc">Congela o timer por 30s e concede <strong>1 passo livre</strong> (permite retirar uma peça bloqueada pelas laterais).</p>
+              </div>
+
+              <div class="climate-card climate-wind">
+                <div class="climate-badge">🌪️ Vendaval de Outono</div>
+                <p class="climate-req">Gatilho: 2 pares de aves (Tucano, Pato, Coruja)</p>
+                <p class="climate-desc">Corta todas as vinhas de cipó e <strong>embaralha gratuitamente apenas as peças travadas</strong>.</p>
+              </div>
+
+              <div class="climate-card climate-storm">
+                <div class="climate-badge">🌧️ Tempestade Zen</div>
+                <p class="climate-req">Gatilho: 3 pares rápidos com 1 inseto/sapo</p>
+                <p class="climate-desc">Um raio dourado <strong>vaporiza a peça mais bloqueada</strong> e recarrega +1 Marreta gratuita!</p>
+              </div>
+
+              <div class="climate-card climate-spring">
+                <div class="climate-badge">🌸 Brisa da Primavera</div>
+                <p class="climate-req">Gatilho: 2 pares de polinizadores (Borboleta, Abelha)</p>
+                <p class="climate-desc">Faz <strong>chocar todos os Casulos e Ovos</strong> e ativa um escudo que protege a bandeja de travar.</p>
+              </div>
+
+              <div class="climate-card climate-moon">
+                <div class="climate-badge">🌙 Noite de Lua Cheia</div>
+                <p class="climate-req">Gatilho: 2 pares noturnos (Coruja, Morcego, Gato)</p>
+                <p class="climate-desc">Vaga-lumes brilhantes pousam e <strong>iluminam todos os pares livres da mesa</strong>.</p>
+              </div>
+            </div>
+
+            <!-- ABA 3: PEÇAS ESPECIAIS -->
+            <div id="guide-tab-specials" class="guide-tab-pane hidden">
+              <div class="special-card">
+                <div class="special-icon">🦎</div>
+                <div class="special-info">
+                  <h4>O Camaleão Dourado (Coringa)</h4>
+                  <p>Combina com <strong>qualquer animal</strong>! Se você colocar um bicho na bandeja e tocar no Camaleão, ele assume a mesma forma e fecha o par!</p>
+                </div>
+              </div>
+
+              <div class="special-card">
+                <div class="special-icon">❄️</div>
+                <div class="special-info">
+                  <h4>Peça de Gelo</h4>
+                  <p>Precisa ter seus lados desimpedidos ou receber a <strong>Onda de Calor ☀️</strong> para derreter o gelo e poder ser jogada.</p>
+                </div>
+              </div>
+
+              <div class="special-card">
+                <div class="special-icon">🥚</div>
+                <div class="special-info">
+                  <h4>Casulo / Ovo Surpresa</h4>
+                  <p>Choca quando você combina pares ao lado dele ou quando a <strong>Brisa da Primavera 🌸</strong> sopra, revelando coringas!</p>
+                </div>
+              </div>
+
+              <div class="special-card">
+                <div class="special-icon">🪨</div>
+                <div class="special-info">
+                  <h4>Rocha Ancestral</h4>
+                  <p>Pedra sólida que bloqueia passagens. Pode ser quebrada com a Marreta ou racha quando os dois lados são liberados.</p>
+                </div>
+              </div>
+
+              <div class="special-card">
+                <div class="special-icon">🌿</div>
+                <div class="special-info">
+                  <h4>Vinhas de Cipó</h4>
+                  <p>Prendem a peça até que as peças vizinhas sejam removidas ou o <strong>Vendaval de Outono 🌪️</strong> corte os galhos.</p>
+                </div>
+              </div>
+
+              <div class="special-card">
+                <div class="special-icon">🎁</div>
+                <div class="special-info">
+                  <h4>Baú da Fortuna</h4>
+                  <p>Uma pedra de baú dourado que dá de presente <strong>+1 Marreta, +1 Dica ou +1 Embaralhar</strong>!</p>
+                </div>
+              </div>
+
+              <div class="special-card">
+                <div class="special-icon">🪞</div>
+                <div class="special-info">
+                  <h4>Espelho Místico</h4>
+                  <p>Reflete e assume a forma do <strong>último animal que você combinou</strong>!</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- ABA 4: DICAS & REGRAS -->
+            <div id="guide-tab-tips" class="guide-tab-pane hidden">
+              <div class="tip-box">
+                <h4>🎯 A Bandeja de 4 Slots</h4>
+                <p>Ao tocar em uma peça livre, ela vai para a bandeja. Quando duas peças iguais se encontram na bandeja, elas se eliminam com festa! Mas atenção: se encher os 4 slots sem pares, a partida termina.</p>
+              </div>
+
+              <div class="tip-box">
+                <h4>↩️ Desfazer e Dicas sem Punição</h4>
+                <p>Errou ou quer repensar a jogada? O botão <strong>Desfazer</strong> devolve as peças para a mesa. O botão <strong>Dica</strong> brilha o melhor par livre. Use à vontade!</p>
+              </div>
+
+              <div class="tip-box">
+                <h4>🔨 A Marreta Salvador</h4>
+                <p>Se a bandeja estiver quase cheia, ative a <strong>Marreta</strong> e toque na peça que quer quebrar para abrir espaço.</p>
+              </div>
+
+              <div class="tip-box">
+                <h4>👆 Toque Longo para Dica Rápida</h4>
+                <p>Durante a partida, você pode <strong>segurar o dedo por 1 segundo</strong> em qualquer animal ou elemento para ver sua dica instantânea na tela.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
