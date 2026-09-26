@@ -1,0 +1,73 @@
+name: 🚀 Compilar APK Android (GitHub Actions)
+
+on:
+  push:
+    branches: [ main, master ]
+    tags:
+      - 'v*'
+  workflow_dispatch: # Permite disparar o build manualmente pelo botão no site do GitHub
+
+jobs:
+  build-apk:
+    name: 📱 Gerar APK do Mahjong
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Clonar repositório
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: ☕ Configurar Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: 📦 Instalar Dependências do Projeto
+        run: npm ci
+
+      - name: 🔨 Compilar Frontend (Vite + TypeScript)
+        run: npm run build
+
+      - name: 🔄 Sincronizar Assets com Capacitor Android
+        run: npx cap sync android
+
+      - name: 🛡️ Dar Permissão de Execução ao Gradle Wrapper
+        run: chmod +x android/gradlew
+
+      - name: 📱 Compilar APK (assembleDebug)
+        working-directory: android
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: 📦 Renomear APK com data e commit
+        run: |
+          mkdir -p output-apk
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          DATE=$(date +'%Y%m%d')
+          cp android/app/build/outputs/apk/debug/app-debug.apk output-apk/Mahjong-Animal-${DATE}-${SHORT_SHA}.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk output-apk/Mahjong-Animal-latest.apk
+
+      - name: ☁️ Publicar APK como Artefato de Download (GitHub Actions)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mahjong-Animal-APK
+          path: output-apk/*.apk
+          retention-days: 30
+
+      # Se o commit for uma Tag (ex: git tag v1.0.1 && git push origin v1.0.1), cria automaticamente uma Release com o APK anexado
+      - name: 🌟 Criar GitHub Release (se for uma tag)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: output-apk/*.apk
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

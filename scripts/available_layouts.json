@@ -1,0 +1,3738 @@
+[
+  {
+    "path": "public/boards/ogs-mahjong/test_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "test_2.layout",
+    "name": "Test 2",
+    "count": 6,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/ogs-mahjong/test_short.layout",
+    "dir": "ogs-mahjong",
+    "file": "test_short.layout",
+    "name": "Test Short",
+    "count": 8,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/pysolfc/mini-layout_3.layout",
+    "dir": "pysolfc",
+    "file": "mini-layout_3.layout",
+    "name": "Mini-Layout",
+    "count": 8,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/solitile/beginner.layout",
+    "dir": "solitile",
+    "file": "beginner.layout",
+    "name": "Beginner",
+    "count": 32,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/mini_traditional_3.layout",
+    "dir": "pysolfc",
+    "file": "mini_traditional_3.layout",
+    "name": "Mini Traditional",
+    "count": 48,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/reindeer_3.layout",
+    "dir": "pysolfc",
+    "file": "reindeer_3.layout",
+    "name": "Reindeer",
+    "count": 64,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/half_abstract.layout",
+    "dir": "pysolfc",
+    "file": "half_abstract.layout",
+    "name": "Half Abstract",
+    "count": 72,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/half_happy_new_year.layout",
+    "dir": "pysolfc",
+    "file": "half_happy_new_year.layout",
+    "name": "Half Happy New Year",
+    "count": 72,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/half_k_2.layout",
+    "dir": "pysolfc",
+    "file": "half_k_2.layout",
+    "name": "Half K 2",
+    "count": 72,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/half_smile.layout",
+    "dir": "pysolfc",
+    "file": "half_smile.layout",
+    "name": "Half Smile",
+    "count": 72,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/half_star.layout",
+    "dir": "pysolfc",
+    "file": "half_star.layout",
+    "name": "Half Star",
+    "count": 72,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/half_wall.layout",
+    "dir": "pysolfc",
+    "file": "half_wall.layout",
+    "name": "Half Wall",
+    "count": 72,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/clubs.layout",
+    "dir": "kmahjongg",
+    "file": "clubs.layout",
+    "name": "Clubs",
+    "count": 74,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/ogs-mahjong/clubs_4.layout",
+    "dir": "ogs-mahjong",
+    "file": "clubs_4.layout",
+    "name": "Clubs",
+    "count": 74,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/ogs-mahjong/test_short_4_winds.layout",
+    "dir": "ogs-mahjong",
+    "file": "test_short_4_winds.layout",
+    "name": "Test Short 4 Winds",
+    "count": 74,
+    "maxZ": 0
+  },
+  {
+    "path": "public/boards/step5/tf1_2.layout",
+    "dir": "step5",
+    "file": "tf1_2.layout",
+    "name": "TF1",
+    "count": 76,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/step5/viva.layout",
+    "dir": "step5",
+    "file": "viva.layout",
+    "name": "Viva",
+    "count": 76,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/pysolfc/orbital_3.layout",
+    "dir": "pysolfc",
+    "file": "orbital_3.layout",
+    "name": "Orbital",
+    "count": 84,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/step5/sinus_twins_2.layout",
+    "dir": "step5",
+    "file": "sinus_twins_2.layout",
+    "name": "Sinus Twins",
+    "count": 84,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/step5/joystick_2.layout",
+    "dir": "step5",
+    "file": "joystick_2.layout",
+    "name": "Joystick",
+    "count": 88,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/step5/dsf_2.layout",
+    "dir": "step5",
+    "file": "dsf_2.layout",
+    "name": "DSF",
+    "count": 88,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/step5/ld-converter_3.layout",
+    "dir": "step5",
+    "file": "ld-converter_3.layout",
+    "name": "LD-Converter",
+    "count": 88,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/step5/ta-internal.layout",
+    "dir": "step5",
+    "file": "ta-internal.layout",
+    "name": "TA-Internal",
+    "count": 88,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/step5/triumph-adler_2.layout",
+    "dir": "step5",
+    "file": "triumph-adler_2.layout",
+    "name": "Triumph-Adler",
+    "count": 88,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/step5/quake_3_arena_2.layout",
+    "dir": "step5",
+    "file": "quake_3_arena_2.layout",
+    "name": "Quake 3 Arena",
+    "count": 92,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/pysolfc/japan_3.layout",
+    "dir": "pysolfc",
+    "file": "japan_3.layout",
+    "name": "Japan",
+    "count": 96,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/step5/heart_2.layout",
+    "dir": "step5",
+    "file": "heart_2.layout",
+    "name": "Heart",
+    "count": 96,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/step5/711_2.layout",
+    "dir": "step5",
+    "file": "711_2.layout",
+    "name": "711",
+    "count": 100,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/step5/$tep5s_challenge.layout",
+    "dir": "step5",
+    "file": "$tep5s_challenge.layout",
+    "name": "$tep5's Challenge",
+    "count": 100,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/step5/saturn_3.layout",
+    "dir": "step5",
+    "file": "saturn_3.layout",
+    "name": "Saturn",
+    "count": 100,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/step5/re-pfanne_2.layout",
+    "dir": "step5",
+    "file": "re-pfanne_2.layout",
+    "name": "RE-Pfanne",
+    "count": 100,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/step5/pong_2.layout",
+    "dir": "step5",
+    "file": "pong_2.layout",
+    "name": "Pong",
+    "count": 100,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/step5/stahl-pfanne_2.layout",
+    "dir": "step5",
+    "file": "stahl-pfanne_2.layout",
+    "name": "Stahl-Pfanne",
+    "count": 100,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/step5/kiss_2.layout",
+    "dir": "step5",
+    "file": "kiss_2.layout",
+    "name": "Kiss",
+    "count": 104,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/step5/pioneer_2.layout",
+    "dir": "step5",
+    "file": "pioneer_2.layout",
+    "name": "Pioneer",
+    "count": 104,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/step5/roland_2.layout",
+    "dir": "step5",
+    "file": "roland_2.layout",
+    "name": "Roland",
+    "count": 104,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/step5/coffee_cup_4.layout",
+    "dir": "step5",
+    "file": "coffee_cup_4.layout",
+    "name": "Coffee Cup",
+    "count": 108,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/kmahjongg/labyrinth.layout",
+    "dir": "kmahjongg",
+    "file": "labyrinth.layout",
+    "name": "Labyrinth",
+    "count": 110,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/labyrinth_3.layout",
+    "dir": "ogs-mahjong",
+    "file": "labyrinth_3.layout",
+    "name": "Labyrinth",
+    "count": 110,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/totem.layout",
+    "dir": "kmahjongg",
+    "file": "totem.layout",
+    "name": "Totem",
+    "count": 114,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/totem_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "totem_2.layout",
+    "name": "Totem",
+    "count": 114,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/river_bridge_3.layout",
+    "dir": "pysolfc",
+    "file": "river_bridge_3.layout",
+    "name": "River Bridge",
+    "count": 116,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/step5/euro_2.layout",
+    "dir": "step5",
+    "file": "euro_2.layout",
+    "name": "Euro",
+    "count": 116,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/step5/red_red_wine.layout",
+    "dir": "step5",
+    "file": "red_red_wine.layout",
+    "name": "Red Red Wine",
+    "count": 116,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/step5/the_nightmare_2.layout",
+    "dir": "step5",
+    "file": "the_nightmare_2.layout",
+    "name": "The Nightmare",
+    "count": 116,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/step5/united_artists_2.layout",
+    "dir": "step5",
+    "file": "united_artists_2.layout",
+    "name": "United Artists",
+    "count": 116,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/kmahjongg/pillars_2.layout",
+    "dir": "kmahjongg",
+    "file": "pillars_2.layout",
+    "name": "Pillars",
+    "count": 118,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/ogs-mahjong/pillars_4.layout",
+    "dir": "ogs-mahjong",
+    "file": "pillars_4.layout",
+    "name": "Pillars",
+    "count": 118,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/kmahjongg/chains.layout",
+    "dir": "kmahjongg",
+    "file": "chains.layout",
+    "name": "Chains",
+    "count": 120,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/ogs-mahjong/chains_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "chains_2.layout",
+    "name": "Chains",
+    "count": 120,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/step5/3_crowns_2.layout",
+    "dir": "step5",
+    "file": "3_crowns_2.layout",
+    "name": "3 Crowns",
+    "count": 120,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/step5/atari_2.layout",
+    "dir": "step5",
+    "file": "atari_2.layout",
+    "name": "ATARI",
+    "count": 120,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/step5/schneider_2.layout",
+    "dir": "step5",
+    "file": "schneider_2.layout",
+    "name": "Schneider",
+    "count": 120,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/step5/vestax_2.layout",
+    "dir": "step5",
+    "file": "vestax_2.layout",
+    "name": "Vestax",
+    "count": 120,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/kmahjongg/swirl.layout",
+    "dir": "kmahjongg",
+    "file": "swirl.layout",
+    "name": "Swirl",
+    "count": 122,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/star.layout",
+    "dir": "kmahjongg",
+    "file": "star.layout",
+    "name": "Star",
+    "count": 122,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/star_4.layout",
+    "dir": "ogs-mahjong",
+    "file": "star_4.layout",
+    "name": "Star",
+    "count": 122,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/swirl_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "swirl_2.layout",
+    "name": "Swirl",
+    "count": 122,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/step5/commodore_2.layout",
+    "dir": "step5",
+    "file": "commodore_2.layout",
+    "name": "Commodore",
+    "count": 124,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/step5/electronic_arts_2.layout",
+    "dir": "step5",
+    "file": "electronic_arts_2.layout",
+    "name": "Electronic Arts",
+    "count": 124,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/step5/the_dome_1.layout",
+    "dir": "step5",
+    "file": "the_dome_1.layout",
+    "name": "The Dome 1",
+    "count": 124,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/step5/walzengeruest.layout",
+    "dir": "step5",
+    "file": "walzengeruest.layout",
+    "name": "Walzengeruest",
+    "count": 124,
+    "maxZ": 0
+  },
+  {
+    "path": "public/boards/kmahjongg/4_winds.layout",
+    "dir": "kmahjongg",
+    "file": "4_winds.layout",
+    "name": "4 Winds",
+    "count": 128,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/stadion.layout",
+    "dir": "kmahjongg",
+    "file": "stadion.layout",
+    "name": "Stadion",
+    "count": 128,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/4_winds_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "4_winds_2.layout",
+    "name": "4 Winds",
+    "count": 128,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/stadion_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "stadion_2.layout",
+    "name": "Stadion",
+    "count": 128,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/step5/cross_10.layout",
+    "dir": "step5",
+    "file": "cross_10.layout",
+    "name": "Cross",
+    "count": 128,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/step5/dollar_4.layout",
+    "dir": "step5",
+    "file": "dollar_4.layout",
+    "name": "Dollar",
+    "count": 128,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/step5/reloop_2_2.layout",
+    "dir": "step5",
+    "file": "reloop_2_2.layout",
+    "name": "Reloop 2",
+    "count": 128,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/kmahjongg/key.layout",
+    "dir": "kmahjongg",
+    "file": "key.layout",
+    "name": "Key",
+    "count": 130,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/penta.layout",
+    "dir": "kmahjongg",
+    "file": "penta.layout",
+    "name": "Penta",
+    "count": 130,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/key_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "key_2.layout",
+    "name": "Key",
+    "count": 130,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/penta_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "penta_2.layout",
+    "name": "Penta",
+    "count": 130,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/atlantis.layout",
+    "dir": "kmahjongg",
+    "file": "atlantis.layout",
+    "name": "Atlantis",
+    "count": 132,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/atlantis_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "atlantis_2.layout",
+    "name": "Atlantis",
+    "count": 132,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/step5/boeder_2.layout",
+    "dir": "step5",
+    "file": "boeder_2.layout",
+    "name": "Boeder",
+    "count": 132,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/step5/p_for_pappnase_3.layout",
+    "dir": "step5",
+    "file": "p_for_pappnase_3.layout",
+    "name": "P For Pappnase",
+    "count": 132,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/step5/carnival_2.layout",
+    "dir": "step5",
+    "file": "carnival_2.layout",
+    "name": "Carnival",
+    "count": 132,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/kmahjongg/grid.layout",
+    "dir": "kmahjongg",
+    "file": "grid.layout",
+    "name": "Grid",
+    "count": 134,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/x_shaped.layout",
+    "dir": "kmahjongg",
+    "file": "x_shaped.layout",
+    "name": "X Shaped",
+    "count": 134,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/grid_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "grid_2.layout",
+    "name": "Grid",
+    "count": 134,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/x_shaped_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "x_shaped_2.layout",
+    "name": "X Shaped",
+    "count": 134,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/explosion.layout",
+    "dir": "kmahjongg",
+    "file": "explosion.layout",
+    "name": "Explosion",
+    "count": 138,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/explosion_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "explosion_2.layout",
+    "name": "Explosion",
+    "count": 138,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/galaxy.layout",
+    "dir": "kmahjongg",
+    "file": "galaxy.layout",
+    "name": "Galaxy",
+    "count": 140,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/galaxy_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "galaxy_2.layout",
+    "name": "Galaxy",
+    "count": 140,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/another_round_3.layout",
+    "dir": "pysolfc",
+    "file": "another_round_3.layout",
+    "name": "Another Round",
+    "count": 140,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/ogs-mahjong/volcano.layout",
+    "dir": "ogs-mahjong",
+    "file": "volcano.layout",
+    "name": "Volcano",
+    "count": 140,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/diamond_3.layout",
+    "dir": "pysolfc",
+    "file": "diamond_3.layout",
+    "name": "Diamond",
+    "count": 140,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/aztec.layout",
+    "dir": "kmahjongg",
+    "file": "aztec.layout",
+    "name": "Aztec",
+    "count": 142,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/aztec_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "aztec_2.layout",
+    "name": "Aztec",
+    "count": 142,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/gnome-mahjongg/cloud.layout",
+    "dir": "gnome-mahjongg",
+    "file": "cloud.layout",
+    "name": "Cloud",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/gnome-mahjongg/taipei.layout",
+    "dir": "gnome-mahjongg",
+    "file": "taipei.layout",
+    "name": "Taipei",
+    "count": 144,
+    "maxZ": 6
+  },
+  {
+    "path": "public/boards/gnome-mahjongg/red_dragon.layout",
+    "dir": "gnome-mahjongg",
+    "file": "red_dragon.layout",
+    "name": "Red Dragon",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/gnome-mahjongg/overpass.layout",
+    "dir": "gnome-mahjongg",
+    "file": "overpass.layout",
+    "name": "Overpass",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/gnome-mahjongg/four_bridges.layout",
+    "dir": "gnome-mahjongg",
+    "file": "four_bridges.layout",
+    "name": "Four Bridges",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/gnome-mahjongg/pyramids_walls.layout",
+    "dir": "gnome-mahjongg",
+    "file": "pyramids_walls.layout",
+    "name": "Pyramid's Walls",
+    "count": 144,
+    "maxZ": 6
+  },
+  {
+    "path": "public/boards/gnome-mahjongg/the_ziggurat.layout",
+    "dir": "gnome-mahjongg",
+    "file": "the_ziggurat.layout",
+    "name": "The Ziggurat",
+    "count": 144,
+    "maxZ": 5
+  },
+  {
+    "path": "public/boards/gnome-mahjongg/confounding_cross.layout",
+    "dir": "gnome-mahjongg",
+    "file": "confounding_cross.layout",
+    "name": "Confounding Cross",
+    "count": 144,
+    "maxZ": 5
+  },
+  {
+    "path": "public/boards/gnome-mahjongg/turtle.layout",
+    "dir": "gnome-mahjongg",
+    "file": "turtle.layout",
+    "name": "Turtle",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/green-mahjong/flower.layout",
+    "dir": "green-mahjong",
+    "file": "flower.layout",
+    "name": "Flower",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/green-mahjong/bug.layout",
+    "dir": "green-mahjong",
+    "file": "bug.layout",
+    "name": "Bug",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/gnome-mahjongg/tic-tac-toe.layout",
+    "dir": "gnome-mahjongg",
+    "file": "tic-tac-toe.layout",
+    "name": "Tic-Tac-Toe",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/green-mahjong/cloud_2.layout",
+    "dir": "green-mahjong",
+    "file": "cloud_2.layout",
+    "name": "Cloud",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/green-mahjong/four_hills.layout",
+    "dir": "green-mahjong",
+    "file": "four_hills.layout",
+    "name": "Four Hills",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/green-mahjong/spider.layout",
+    "dir": "green-mahjong",
+    "file": "spider.layout",
+    "name": "Spider",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/arrow.layout",
+    "dir": "kmahjongg",
+    "file": "arrow.layout",
+    "name": "Arrow",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/arena.layout",
+    "dir": "kmahjongg",
+    "file": "arena.layout",
+    "name": "Arena",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/cat.layout",
+    "dir": "kmahjongg",
+    "file": "cat.layout",
+    "name": "Cat",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/bug_2.layout",
+    "dir": "kmahjongg",
+    "file": "bug_2.layout",
+    "name": "Bug",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/bat.layout",
+    "dir": "kmahjongg",
+    "file": "bat.layout",
+    "name": "Bat",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/green-mahjong/turtle_2.layout",
+    "dir": "green-mahjong",
+    "file": "turtle_2.layout",
+    "name": "Turtle",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/altar.layout",
+    "dir": "kmahjongg",
+    "file": "altar.layout",
+    "name": "Altar",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/balance.layout",
+    "dir": "kmahjongg",
+    "file": "balance.layout",
+    "name": "Balance",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/flowers.layout",
+    "dir": "kmahjongg",
+    "file": "flowers.layout",
+    "name": "Flowers",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/crab.layout",
+    "dir": "kmahjongg",
+    "file": "crab.layout",
+    "name": "Crab",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/columns.layout",
+    "dir": "kmahjongg",
+    "file": "columns.layout",
+    "name": "Columns",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/chip.layout",
+    "dir": "kmahjongg",
+    "file": "chip.layout",
+    "name": "Chip",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/checkered.layout",
+    "dir": "kmahjongg",
+    "file": "checkered.layout",
+    "name": "Checkered",
+    "count": 144,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/kmahjongg/garden.layout",
+    "dir": "kmahjongg",
+    "file": "garden.layout",
+    "name": "Garden",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/crab_2.layout",
+    "dir": "kmahjongg",
+    "file": "crab_2.layout",
+    "name": "Crab",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/future.layout",
+    "dir": "kmahjongg",
+    "file": "future.layout",
+    "name": "Future",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/enterprise.layout",
+    "dir": "kmahjongg",
+    "file": "enterprise.layout",
+    "name": "Enterprise",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/eagle.layout",
+    "dir": "kmahjongg",
+    "file": "eagle.layout",
+    "name": "Eagle",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/mesh.layout",
+    "dir": "kmahjongg",
+    "file": "mesh.layout",
+    "name": "Mesh",
+    "count": 144,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/kmahjongg/moth.layout",
+    "dir": "kmahjongg",
+    "file": "moth.layout",
+    "name": "Moth",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/order.layout",
+    "dir": "kmahjongg",
+    "file": "order.layout",
+    "name": "Order",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/inner_circle.layout",
+    "dir": "kmahjongg",
+    "file": "inner_circle.layout",
+    "name": "Inner Circle",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/maya.layout",
+    "dir": "kmahjongg",
+    "file": "maya.layout",
+    "name": "Maya",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/pattern.layout",
+    "dir": "kmahjongg",
+    "file": "pattern.layout",
+    "name": "Pattern",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/kmahjongg/helios.layout",
+    "dir": "kmahjongg",
+    "file": "helios.layout",
+    "name": "Helios",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/km.layout",
+    "dir": "kmahjongg",
+    "file": "km.layout",
+    "name": "Km",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/glade.layout",
+    "dir": "kmahjongg",
+    "file": "glade.layout",
+    "name": "Glade",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/stairs.layout",
+    "dir": "kmahjongg",
+    "file": "stairs.layout",
+    "name": "Stairs",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/squaring.layout",
+    "dir": "kmahjongg",
+    "file": "squaring.layout",
+    "name": "Squaring",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/shield.layout",
+    "dir": "kmahjongg",
+    "file": "shield.layout",
+    "name": "Shield",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/pirates.layout",
+    "dir": "kmahjongg",
+    "file": "pirates.layout",
+    "name": "Pirates",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/star_ship.layout",
+    "dir": "kmahjongg",
+    "file": "star_ship.layout",
+    "name": "Star Ship",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/spider_2.layout",
+    "dir": "kmahjongg",
+    "file": "spider_2.layout",
+    "name": "Spider",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/rocket.layout",
+    "dir": "kmahjongg",
+    "file": "rocket.layout",
+    "name": "Rocket",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/squares.layout",
+    "dir": "kmahjongg",
+    "file": "squares.layout",
+    "name": "Squares",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/tomb.layout",
+    "dir": "kmahjongg",
+    "file": "tomb.layout",
+    "name": "Tomb",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/the_door.layout",
+    "dir": "kmahjongg",
+    "file": "the_door.layout",
+    "name": "The Door",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/time_tunnel.layout",
+    "dir": "kmahjongg",
+    "file": "time_tunnel.layout",
+    "name": "Time Tunnel",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/temple.layout",
+    "dir": "kmahjongg",
+    "file": "temple.layout",
+    "name": "Temple",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/well.layout",
+    "dir": "kmahjongg",
+    "file": "well.layout",
+    "name": "Well",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/vi.layout",
+    "dir": "kmahjongg",
+    "file": "vi.layout",
+    "name": "Vi",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/altar_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "altar_2.layout",
+    "name": "Altar",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/checkered_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "checkered_2.layout",
+    "name": "Checkered",
+    "count": 144,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/ogs-mahjong/butterfly_4.layout",
+    "dir": "ogs-mahjong",
+    "file": "butterfly_4.layout",
+    "name": "Butterfly",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/bat_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "bat_2.layout",
+    "name": "Bat",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/balance_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "balance_2.layout",
+    "name": "Balance",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/chip_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "chip_2.layout",
+    "name": "Chip",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/arena_4.layout",
+    "dir": "ogs-mahjong",
+    "file": "arena_4.layout",
+    "name": "Arena",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/arrow_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "arrow_2.layout",
+    "name": "Arrow",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/cat_3.layout",
+    "dir": "ogs-mahjong",
+    "file": "cat_3.layout",
+    "name": "Cat",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/bug_3.layout",
+    "dir": "ogs-mahjong",
+    "file": "bug_3.layout",
+    "name": "Bug",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/future_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "future_2.layout",
+    "name": "Future",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/enterprise_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "enterprise_2.layout",
+    "name": "Enterprise",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/crab_3.layout",
+    "dir": "ogs-mahjong",
+    "file": "crab_3.layout",
+    "name": "Crab",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/garden_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "garden_2.layout",
+    "name": "Garden",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/columns_3.layout",
+    "dir": "ogs-mahjong",
+    "file": "columns_3.layout",
+    "name": "Columns",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/helios_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "helios_2.layout",
+    "name": "Helios",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/glade_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "glade_2.layout",
+    "name": "Glade",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/eagle_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "eagle_2.layout",
+    "name": "Eagle",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/flowers_4.layout",
+    "dir": "ogs-mahjong",
+    "file": "flowers_4.layout",
+    "name": "Flowers",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/eye.layout",
+    "dir": "ogs-mahjong",
+    "file": "eye.layout",
+    "name": "Eye",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/pirates_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "pirates_2.layout",
+    "name": "Pirates",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/moth_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "moth_2.layout",
+    "name": "Moth",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/inner_circle_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "inner_circle_2.layout",
+    "name": "Inner Circle",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/pattern_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "pattern_2.layout",
+    "name": "Pattern",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/ogs-mahjong/mesh_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "mesh_2.layout",
+    "name": "Mesh",
+    "count": 144,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/ogs-mahjong/maya_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "maya_2.layout",
+    "name": "Maya",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/km_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "km_2.layout",
+    "name": "Km",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/order_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "order_2.layout",
+    "name": "Order",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/squaring_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "squaring_2.layout",
+    "name": "Squaring",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/spider_3.layout",
+    "dir": "ogs-mahjong",
+    "file": "spider_3.layout",
+    "name": "Spider",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/shield_3.layout",
+    "dir": "ogs-mahjong",
+    "file": "shield_3.layout",
+    "name": "Shield",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/star_ship_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "star_ship_2.layout",
+    "name": "Star Ship",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/temple_5.layout",
+    "dir": "ogs-mahjong",
+    "file": "temple_5.layout",
+    "name": "Temple",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/rocket_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "rocket_2.layout",
+    "name": "Rocket",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/squares_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "squares_2.layout",
+    "name": "Squares",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/stairs_7.layout",
+    "dir": "ogs-mahjong",
+    "file": "stairs_7.layout",
+    "name": "Stairs",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/robot/robot.layout",
+    "dir": "ogs-mahjong",
+    "file": "robot.layout",
+    "name": "Robot",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/altar_3.layout",
+    "dir": "pysolfc",
+    "file": "altar_3.layout",
+    "name": "Altar",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/the_door_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "the_door_2.layout",
+    "name": "The Door",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/vi_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "vi_2.layout",
+    "name": "Vi",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/time_tunnel_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "time_tunnel_2.layout",
+    "name": "Time Tunnel",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/tomb_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "tomb_2.layout",
+    "name": "Tomb",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/well_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "well_2.layout",
+    "name": "Well",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/big_x.layout",
+    "dir": "pysolfc",
+    "file": "big_x.layout",
+    "name": "Big X",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/art_moderne_3.layout",
+    "dir": "pysolfc",
+    "file": "art_moderne_3.layout",
+    "name": "Art Moderne",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/big_hole_4.layout",
+    "dir": "pysolfc",
+    "file": "big_hole_4.layout",
+    "name": "Big Hole",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/boat_3.layout",
+    "dir": "pysolfc",
+    "file": "boat_3.layout",
+    "name": "Boat",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/axis.layout",
+    "dir": "pysolfc",
+    "file": "axis.layout",
+    "name": "Axis",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/bat_3.layout",
+    "dir": "pysolfc",
+    "file": "bat_3.layout",
+    "name": "Bat",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/big_mountain_3.layout",
+    "dir": "pysolfc",
+    "file": "big_mountain_3.layout",
+    "name": "Big Mountain",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/boar.layout",
+    "dir": "pysolfc",
+    "file": "boar.layout",
+    "name": "Boar",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/balance_3.layout",
+    "dir": "pysolfc",
+    "file": "balance_3.layout",
+    "name": "Balance",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/bizarre_3.layout",
+    "dir": "pysolfc",
+    "file": "bizarre_3.layout",
+    "name": "Bizarre",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/beetle.layout",
+    "dir": "pysolfc",
+    "file": "beetle.layout",
+    "name": "Beetle",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/aqabs.layout",
+    "dir": "pysolfc",
+    "file": "aqabs.layout",
+    "name": "Aqab's",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/arrow_3.layout",
+    "dir": "pysolfc",
+    "file": "arrow_3.layout",
+    "name": "Arrow",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/arena_2_2.layout",
+    "dir": "pysolfc",
+    "file": "arena_2_2.layout",
+    "name": "Arena 2",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/arena_1.layout",
+    "dir": "pysolfc",
+    "file": "arena_1.layout",
+    "name": "Arena 1",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/columns_5.layout",
+    "dir": "pysolfc",
+    "file": "columns_5.layout",
+    "name": "Columns",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/cross_9.layout",
+    "dir": "pysolfc",
+    "file": "cross_9.layout",
+    "name": "Cross",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/chip_3.layout",
+    "dir": "pysolfc",
+    "file": "chip_3.layout",
+    "name": "Chip",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/candy.layout",
+    "dir": "pysolfc",
+    "file": "candy.layout",
+    "name": "Candy",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/checkered_3.layout",
+    "dir": "pysolfc",
+    "file": "checkered_3.layout",
+    "name": "Checkered",
+    "count": 144,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/pysolfc/bridge_2_2.layout",
+    "dir": "pysolfc",
+    "file": "bridge_2_2.layout",
+    "name": "Bridge 2",
+    "count": 144,
+    "maxZ": 5
+  },
+  {
+    "path": "public/boards/pysolfc/cobweb.layout",
+    "dir": "pysolfc",
+    "file": "cobweb.layout",
+    "name": "Cobweb",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/chessmania_3.layout",
+    "dir": "pysolfc",
+    "file": "chessmania_3.layout",
+    "name": "ChessMania",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/bridge_1.layout",
+    "dir": "pysolfc",
+    "file": "bridge_1.layout",
+    "name": "Bridge 1",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/butterfly_1.layout",
+    "dir": "pysolfc",
+    "file": "butterfly_1.layout",
+    "name": "Butterfly 1",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/cat_and_mouse_3.layout",
+    "dir": "pysolfc",
+    "file": "cat_and_mouse_3.layout",
+    "name": "Cat And Mouse",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/castle_6.layout",
+    "dir": "pysolfc",
+    "file": "castle_6.layout",
+    "name": "Castle",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/butterfly_2_2.layout",
+    "dir": "pysolfc",
+    "file": "butterfly_2_2.layout",
+    "name": "Butterfly 2",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/bug_4.layout",
+    "dir": "pysolfc",
+    "file": "bug_4.layout",
+    "name": "Bug",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/ceremonial_3.layout",
+    "dir": "pysolfc",
+    "file": "ceremonial_3.layout",
+    "name": "Ceremonial",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/crown_5.layout",
+    "dir": "pysolfc",
+    "file": "crown_5.layout",
+    "name": "Crown",
+    "count": 144,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/pysolfc/cupidos_heart_3.layout",
+    "dir": "pysolfc",
+    "file": "cupidos_heart_3.layout",
+    "name": "Cupido's Heart",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/cupola_3.layout",
+    "dir": "pysolfc",
+    "file": "cupola_3.layout",
+    "name": "Cupola",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/dog_2.layout",
+    "dir": "pysolfc",
+    "file": "dog_2.layout",
+    "name": "Dog",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/deep_well_3.layout",
+    "dir": "pysolfc",
+    "file": "deep_well_3.layout",
+    "name": "Deep Well",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/dragon_1.layout",
+    "dir": "pysolfc",
+    "file": "dragon_1.layout",
+    "name": "Dragon 1",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/dragon_2.layout",
+    "dir": "pysolfc",
+    "file": "dragon_2.layout",
+    "name": "Dragon 2",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/dude_3.layout",
+    "dir": "pysolfc",
+    "file": "dude_3.layout",
+    "name": "Dude",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/eagle_3.layout",
+    "dir": "pysolfc",
+    "file": "eagle_3.layout",
+    "name": "Eagle",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/enterprise_3.layout",
+    "dir": "pysolfc",
+    "file": "enterprise_3.layout",
+    "name": "Enterprise",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/empty_pyramids_3.layout",
+    "dir": "pysolfc",
+    "file": "empty_pyramids_3.layout",
+    "name": "Empty Pyramids",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/fish_4.layout",
+    "dir": "pysolfc",
+    "file": "fish_4.layout",
+    "name": "Fish",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/fish_face_3.layout",
+    "dir": "pysolfc",
+    "file": "fish_face_3.layout",
+    "name": "Fish Face",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/farandole_3.layout",
+    "dir": "pysolfc",
+    "file": "farandole_3.layout",
+    "name": "Farandole",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/five_pyramids_2_3.layout",
+    "dir": "pysolfc",
+    "file": "five_pyramids_2_3.layout",
+    "name": "Five Pyramids 2",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/floating_city_4.layout",
+    "dir": "pysolfc",
+    "file": "floating_city_4.layout",
+    "name": "Floating City",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/f-15_eagle_2.layout",
+    "dir": "pysolfc",
+    "file": "f-15_eagle_2.layout",
+    "name": "F-15 Eagle",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/eye_2.layout",
+    "dir": "pysolfc",
+    "file": "eye_2.layout",
+    "name": "Eye",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/five_pyramids_1.layout",
+    "dir": "pysolfc",
+    "file": "five_pyramids_1.layout",
+    "name": "Five Pyramids 1",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/flowers_1.layout",
+    "dir": "pysolfc",
+    "file": "flowers_1.layout",
+    "name": "Flowers 1",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/flowers_2_2.layout",
+    "dir": "pysolfc",
+    "file": "flowers_2_2.layout",
+    "name": "Flowers 2",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/full_vision_1.layout",
+    "dir": "pysolfc",
+    "file": "full_vision_1.layout",
+    "name": "Full Vision 1",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/full_vision_3_3.layout",
+    "dir": "pysolfc",
+    "file": "full_vision_3_3.layout",
+    "name": "Full Vision 3",
+    "count": 144,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/pysolfc/future_3.layout",
+    "dir": "pysolfc",
+    "file": "future_3.layout",
+    "name": "Future",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/full_vision_2_3.layout",
+    "dir": "pysolfc",
+    "file": "full_vision_2_3.layout",
+    "name": "Full Vision 2",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/garden_3.layout",
+    "dir": "pysolfc",
+    "file": "garden_3.layout",
+    "name": "Garden",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/fortress_towers.layout",
+    "dir": "pysolfc",
+    "file": "fortress_towers.layout",
+    "name": "Fortress Towers",
+    "count": 144,
+    "maxZ": 5
+  },
+  {
+    "path": "public/boards/pysolfc/gayles_2.layout",
+    "dir": "pysolfc",
+    "file": "gayles_2.layout",
+    "name": "Gayle's",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/glade_3.layout",
+    "dir": "pysolfc",
+    "file": "glade_3.layout",
+    "name": "Glade",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/h_for_haga_traditional_2.layout",
+    "dir": "pysolfc",
+    "file": "h_for_haga_traditional_2.layout",
+    "name": "H For Haga Traditional",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/h_for_haga_3.layout",
+    "dir": "pysolfc",
+    "file": "h_for_haga_3.layout",
+    "name": "H For Haga",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/high_and_low_2.layout",
+    "dir": "pysolfc",
+    "file": "high_and_low_2.layout",
+    "name": "High And Low",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/helios_3.layout",
+    "dir": "pysolfc",
+    "file": "helios_3.layout",
+    "name": "Helios",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/hare.layout",
+    "dir": "pysolfc",
+    "file": "hare.layout",
+    "name": "Hare",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/hidden_words.layout",
+    "dir": "pysolfc",
+    "file": "hidden_words.layout",
+    "name": "Hidden Words",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/hot_coffee.layout",
+    "dir": "pysolfc",
+    "file": "hot_coffee.layout",
+    "name": "Hot Coffee",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/horse_2.layout",
+    "dir": "pysolfc",
+    "file": "horse_2.layout",
+    "name": "Horse",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/hovercraft_3.layout",
+    "dir": "pysolfc",
+    "file": "hovercraft_3.layout",
+    "name": "Hovercraft",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/hourglass_4.layout",
+    "dir": "pysolfc",
+    "file": "hourglass_4.layout",
+    "name": "Hourglass",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/i_love_u.layout",
+    "dir": "pysolfc",
+    "file": "i_love_u.layout",
+    "name": "I Love U",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/hurdles_3.layout",
+    "dir": "pysolfc",
+    "file": "hurdles_3.layout",
+    "name": "Hurdles",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/inazuma_3.layout",
+    "dir": "pysolfc",
+    "file": "inazuma_3.layout",
+    "name": "Inazuma",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/inca_3.layout",
+    "dir": "pysolfc",
+    "file": "inca_3.layout",
+    "name": "Inca",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/joker_3.layout",
+    "dir": "pysolfc",
+    "file": "joker_3.layout",
+    "name": "Joker",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/inner_circle_3.layout",
+    "dir": "pysolfc",
+    "file": "inner_circle_3.layout",
+    "name": "Inner Circle",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/jps.layout",
+    "dir": "pysolfc",
+    "file": "jps.layout",
+    "name": "JPs",
+    "count": 144,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/pysolfc/k_for_kyodai_traditional_2.layout",
+    "dir": "pysolfc",
+    "file": "k_for_kyodai_traditional_2.layout",
+    "name": "K For Kyodai Traditional",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/k_for_kyodai_3.layout",
+    "dir": "pysolfc",
+    "file": "k_for_kyodai_3.layout",
+    "name": "K For Kyodai",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/km_3.layout",
+    "dir": "pysolfc",
+    "file": "km_3.layout",
+    "name": "KM",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/kujaku.layout",
+    "dir": "pysolfc",
+    "file": "kujaku.layout",
+    "name": "Kujaku",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/krebs_3.layout",
+    "dir": "pysolfc",
+    "file": "krebs_3.layout",
+    "name": "Krebs",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/kyodai_14.layout",
+    "dir": "pysolfc",
+    "file": "kyodai_14.layout",
+    "name": "Kyodai 14",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/kumo_3.layout",
+    "dir": "pysolfc",
+    "file": "kumo_3.layout",
+    "name": "Kumo",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/kyodai_18.layout",
+    "dir": "pysolfc",
+    "file": "kyodai_18.layout",
+    "name": "Kyodai 18",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/kyodai_20.layout",
+    "dir": "pysolfc",
+    "file": "kyodai_20.layout",
+    "name": "Kyodai 20",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/kyodai_17.layout",
+    "dir": "pysolfc",
+    "file": "kyodai_17.layout",
+    "name": "Kyodai 17",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/kyodai_23.layout",
+    "dir": "pysolfc",
+    "file": "kyodai_23.layout",
+    "name": "Kyodai 23",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/kyodai_24.layout",
+    "dir": "pysolfc",
+    "file": "kyodai_24.layout",
+    "name": "Kyodai 24",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/kyodai_26.layout",
+    "dir": "pysolfc",
+    "file": "kyodai_26.layout",
+    "name": "Kyodai 26",
+    "count": 144,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/pysolfc/kyodai_27.layout",
+    "dir": "pysolfc",
+    "file": "kyodai_27.layout",
+    "name": "Kyodai 27",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/kyodai_28.layout",
+    "dir": "pysolfc",
+    "file": "kyodai_28.layout",
+    "name": "Kyodai 28",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/kyodai_25.layout",
+    "dir": "pysolfc",
+    "file": "kyodai_25.layout",
+    "name": "Kyodai 25",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/kyodai_41.layout",
+    "dir": "pysolfc",
+    "file": "kyodai_41.layout",
+    "name": "Kyodai 41",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/labyrinth_4.layout",
+    "dir": "pysolfc",
+    "file": "labyrinth_4.layout",
+    "name": "Labyrinth",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/kyodai_42.layout",
+    "dir": "pysolfc",
+    "file": "kyodai_42.layout",
+    "name": "Kyodai 42",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/lion_2_2.layout",
+    "dir": "pysolfc",
+    "file": "lion_2_2.layout",
+    "name": "Lion 2",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/lattice_3.layout",
+    "dir": "pysolfc",
+    "file": "lattice_3.layout",
+    "name": "Lattice",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/loose_ends.layout",
+    "dir": "pysolfc",
+    "file": "loose_ends.layout",
+    "name": "Loose Ends",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/lion_1.layout",
+    "dir": "pysolfc",
+    "file": "lion_1.layout",
+    "name": "Lion 1",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/lizard.layout",
+    "dir": "pysolfc",
+    "file": "lizard.layout",
+    "name": "Lizard",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/lost.layout",
+    "dir": "pysolfc",
+    "file": "lost.layout",
+    "name": "Lost",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/maya_3.layout",
+    "dir": "pysolfc",
+    "file": "maya_3.layout",
+    "name": "Maya",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/mesh_6.layout",
+    "dir": "pysolfc",
+    "file": "mesh_6.layout",
+    "name": "Mesh",
+    "count": 144,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/pysolfc/mission_impossible.layout",
+    "dir": "pysolfc",
+    "file": "mission_impossible.layout",
+    "name": "Mission Impossible",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/monkey.layout",
+    "dir": "pysolfc",
+    "file": "monkey.layout",
+    "name": "Monkey",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/moth_3.layout",
+    "dir": "pysolfc",
+    "file": "moth_3.layout",
+    "name": "Moth",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/n_for_namida_3.layout",
+    "dir": "pysolfc",
+    "file": "n_for_namida_3.layout",
+    "name": "N For Namida",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/multi_x.layout",
+    "dir": "pysolfc",
+    "file": "multi_x.layout",
+    "name": "Multi X",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/n_for_namida_traditional_2.layout",
+    "dir": "pysolfc",
+    "file": "n_for_namida_traditional_2.layout",
+    "name": "N For Namida Traditional",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/naoki_haga_traditional_2.layout",
+    "dir": "pysolfc",
+    "file": "naoki_haga_traditional_2.layout",
+    "name": "Naoki Haga Traditional",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/order_3.layout",
+    "dir": "pysolfc",
+    "file": "order_3.layout",
+    "name": "Order",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/owl.layout",
+    "dir": "pysolfc",
+    "file": "owl.layout",
+    "name": "Owl",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/ox_2.layout",
+    "dir": "pysolfc",
+    "file": "ox_2.layout",
+    "name": "Ox",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/okies_nitemare_3.layout",
+    "dir": "pysolfc",
+    "file": "okies_nitemare_3.layout",
+    "name": "Okie's Nitemare",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/pantheon_3.layout",
+    "dir": "pysolfc",
+    "file": "pantheon_3.layout",
+    "name": "Pantheon",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/pattern_4.layout",
+    "dir": "pysolfc",
+    "file": "pattern_4.layout",
+    "name": "Pattern",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/phoenix_5.layout",
+    "dir": "pysolfc",
+    "file": "phoenix_5.layout",
+    "name": "Phoenix",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/papillon_3.layout",
+    "dir": "pysolfc",
+    "file": "papillon_3.layout",
+    "name": "Papillon",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/portal_3.layout",
+    "dir": "pysolfc",
+    "file": "portal_3.layout",
+    "name": "Portal",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/pyramid_1_3.layout",
+    "dir": "pysolfc",
+    "file": "pyramid_1_3.layout",
+    "name": "Pyramid 1",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/pyramids.layout",
+    "dir": "pysolfc",
+    "file": "pyramids.layout",
+    "name": "Pyramids",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/pyramid_2_5.layout",
+    "dir": "pysolfc",
+    "file": "pyramid_2_5.layout",
+    "name": "Pyramid 2",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/ram.layout",
+    "dir": "pysolfc",
+    "file": "ram.layout",
+    "name": "Ram",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/quad_3.layout",
+    "dir": "pysolfc",
+    "file": "quad_3.layout",
+    "name": "Quad",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/rectangle_3.layout",
+    "dir": "pysolfc",
+    "file": "rectangle_3.layout",
+    "name": "Rectangle",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/rings_3.layout",
+    "dir": "pysolfc",
+    "file": "rings_3.layout",
+    "name": "Rings",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/rat_2.layout",
+    "dir": "pysolfc",
+    "file": "rat_2.layout",
+    "name": "Rat",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/rocket_3.layout",
+    "dir": "pysolfc",
+    "file": "rocket_3.layout",
+    "name": "Rocket",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/scorpion_2.layout",
+    "dir": "pysolfc",
+    "file": "scorpion_2.layout",
+    "name": "Scorpion",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/rugby_3.layout",
+    "dir": "pysolfc",
+    "file": "rugby_3.layout",
+    "name": "Rugby",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/roman_arena_3.layout",
+    "dir": "pysolfc",
+    "file": "roman_arena_3.layout",
+    "name": "Roman Arena",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/screw_up_3.layout",
+    "dir": "pysolfc",
+    "file": "screw_up_3.layout",
+    "name": "Screw Up",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/shield_5.layout",
+    "dir": "pysolfc",
+    "file": "shield_5.layout",
+    "name": "Shield",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/shapeshifter_3.layout",
+    "dir": "pysolfc",
+    "file": "shapeshifter_3.layout",
+    "name": "Shapeshifter",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/seven_3.layout",
+    "dir": "pysolfc",
+    "file": "seven_3.layout",
+    "name": "Seven",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/siam_3.layout",
+    "dir": "pysolfc",
+    "file": "siam_3.layout",
+    "name": "Siam",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/space_bridge.layout",
+    "dir": "pysolfc",
+    "file": "space_bridge.layout",
+    "name": "Space Bridge",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/rooster.layout",
+    "dir": "pysolfc",
+    "file": "rooster.layout",
+    "name": "Rooster",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/space_shuttle_3.layout",
+    "dir": "pysolfc",
+    "file": "space_shuttle_3.layout",
+    "name": "Space Shuttle",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/snake_2.layout",
+    "dir": "pysolfc",
+    "file": "snake_2.layout",
+    "name": "Snake",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/spider_4.layout",
+    "dir": "pysolfc",
+    "file": "spider_4.layout",
+    "name": "Spider",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/seven_pyramids_3.layout",
+    "dir": "pysolfc",
+    "file": "seven_pyramids_3.layout",
+    "name": "Seven Pyramids",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/square_2.layout",
+    "dir": "pysolfc",
+    "file": "square_2.layout",
+    "name": "Square",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/stage_1_3.layout",
+    "dir": "pysolfc",
+    "file": "stage_1_3.layout",
+    "name": "Stage 1",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/squaring_3.layout",
+    "dir": "pysolfc",
+    "file": "squaring_3.layout",
+    "name": "Squaring",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/star_ship_3.layout",
+    "dir": "pysolfc",
+    "file": "star_ship_3.layout",
+    "name": "Star Ship",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/stairs_2_2.layout",
+    "dir": "pysolfc",
+    "file": "stairs_2_2.layout",
+    "name": "Stairs 2",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/stairs_3_2.layout",
+    "dir": "pysolfc",
+    "file": "stairs_3_2.layout",
+    "name": "Stairs 3",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/stairs_1.layout",
+    "dir": "pysolfc",
+    "file": "stairs_1.layout",
+    "name": "Stairs 1",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/squares_3.layout",
+    "dir": "pysolfc",
+    "file": "squares_3.layout",
+    "name": "Squares",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/stage_2_3.layout",
+    "dir": "pysolfc",
+    "file": "stage_2_3.layout",
+    "name": "Stage 2",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/stargate_3.layout",
+    "dir": "pysolfc",
+    "file": "stargate_3.layout",
+    "name": "Stargate",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/steps_pyramid.layout",
+    "dir": "pysolfc",
+    "file": "steps_pyramid.layout",
+    "name": "Steps Pyramid",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/sukis_3.layout",
+    "dir": "pysolfc",
+    "file": "sukis_3.layout",
+    "name": "Sukis",
+    "count": 144,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/pysolfc/sun_and_moon.layout",
+    "dir": "pysolfc",
+    "file": "sun_and_moon.layout",
+    "name": "Sun And Moon",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/stonehenge_3.layout",
+    "dir": "pysolfc",
+    "file": "stonehenge_3.layout",
+    "name": "Stonehenge",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/taipei_2.layout",
+    "dir": "pysolfc",
+    "file": "taipei_2.layout",
+    "name": "Taipei",
+    "count": 144,
+    "maxZ": 6
+  },
+  {
+    "path": "public/boards/pysolfc/temple_1_3.layout",
+    "dir": "pysolfc",
+    "file": "temple_1_3.layout",
+    "name": "Temple 1",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/temple_3_3.layout",
+    "dir": "pysolfc",
+    "file": "temple_3_3.layout",
+    "name": "Temple 3",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/temple_4_3.layout",
+    "dir": "pysolfc",
+    "file": "temple_4_3.layout",
+    "name": "Temple 4",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/temple_2_5.layout",
+    "dir": "pysolfc",
+    "file": "temple_2_5.layout",
+    "name": "Temple 2",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/teotihucan_3.layout",
+    "dir": "pysolfc",
+    "file": "teotihucan_3.layout",
+    "name": "Teotihucan",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/the_door_3.layout",
+    "dir": "pysolfc",
+    "file": "the_door_3.layout",
+    "name": "The Door",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/tornado.layout",
+    "dir": "pysolfc",
+    "file": "tornado.layout",
+    "name": "Tornado",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/tiger_2.layout",
+    "dir": "pysolfc",
+    "file": "tiger_2.layout",
+    "name": "Tiger",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/tile_fighter_3.layout",
+    "dir": "pysolfc",
+    "file": "tile_fighter_3.layout",
+    "name": "Tile Fighter",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/time_tunnel_3.layout",
+    "dir": "pysolfc",
+    "file": "time_tunnel_3.layout",
+    "name": "Time Tunnel",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/tilepiles_3.layout",
+    "dir": "pysolfc",
+    "file": "tilepiles_3.layout",
+    "name": "Tilepiles",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/totally_random-made.layout",
+    "dir": "pysolfc",
+    "file": "totally_random-made.layout",
+    "name": "Totally Random-Made",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/tomb_3.layout",
+    "dir": "pysolfc",
+    "file": "tomb_3.layout",
+    "name": "Tomb",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/the_great_wall_3.layout",
+    "dir": "pysolfc",
+    "file": "the_great_wall_3.layout",
+    "name": "The Great Wall",
+    "count": 144,
+    "maxZ": 0
+  },
+  {
+    "path": "public/boards/pysolfc/theater_3.layout",
+    "dir": "pysolfc",
+    "file": "theater_3.layout",
+    "name": "Theater",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/tower_and_walls_3.layout",
+    "dir": "pysolfc",
+    "file": "tower_and_walls_3.layout",
+    "name": "Tower And Walls",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/traditional_reviewed_3.layout",
+    "dir": "pysolfc",
+    "file": "traditional_reviewed_3.layout",
+    "name": "Traditional Reviewed",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/twin_3.layout",
+    "dir": "pysolfc",
+    "file": "twin_3.layout",
+    "name": "Twin",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/tree_of_life_3.layout",
+    "dir": "pysolfc",
+    "file": "tree_of_life_3.layout",
+    "name": "Tree Of Life",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/twin_temples.layout",
+    "dir": "pysolfc",
+    "file": "twin_temples.layout",
+    "name": "Twin Temples",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/trika_3.layout",
+    "dir": "pysolfc",
+    "file": "trika_3.layout",
+    "name": "Trika",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/waves.layout",
+    "dir": "pysolfc",
+    "file": "waves.layout",
+    "name": "Waves",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/well_1.layout",
+    "dir": "pysolfc",
+    "file": "well_1.layout",
+    "name": "Well 1",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/vagues_3.layout",
+    "dir": "pysolfc",
+    "file": "vagues_3.layout",
+    "name": "Vagues",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/victory_arrow_3.layout",
+    "dir": "pysolfc",
+    "file": "victory_arrow_3.layout",
+    "name": "Victory Arrow",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/two_domes_3.layout",
+    "dir": "pysolfc",
+    "file": "two_domes_3.layout",
+    "name": "Two Domes",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/vi_3.layout",
+    "dir": "pysolfc",
+    "file": "vi_3.layout",
+    "name": "Vi",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/traditional_3.layout",
+    "dir": "pysolfc",
+    "file": "traditional_3.layout",
+    "name": "Traditional",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/wavelets_3.layout",
+    "dir": "pysolfc",
+    "file": "wavelets_3.layout",
+    "name": "Wavelets",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/wedges.layout",
+    "dir": "pysolfc",
+    "file": "wedges.layout",
+    "name": "Wedges",
+    "count": 144,
+    "maxZ": 5
+  },
+  {
+    "path": "public/boards/pysolfc/well_2_2.layout",
+    "dir": "pysolfc",
+    "file": "well_2_2.layout",
+    "name": "Well 2",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/wicker.layout",
+    "dir": "pysolfc",
+    "file": "wicker.layout",
+    "name": "Wicker",
+    "count": 144,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/pysolfc/whatever_3.layout",
+    "dir": "pysolfc",
+    "file": "whatever_3.layout",
+    "name": "Whatever",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/what_a_pyramid.layout",
+    "dir": "pysolfc",
+    "file": "what_a_pyramid.layout",
+    "name": "What A Pyramid",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/win_3.layout",
+    "dir": "pysolfc",
+    "file": "win_3.layout",
+    "name": "Win",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/pysolfc/x-files_5.layout",
+    "dir": "pysolfc",
+    "file": "x-files_5.layout",
+    "name": "X-Files",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/yummy_3.layout",
+    "dir": "pysolfc",
+    "file": "yummy_3.layout",
+    "name": "Yummy",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/x-shape_3.layout",
+    "dir": "pysolfc",
+    "file": "x-shape_3.layout",
+    "name": "X-Shape",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/zigzag.layout",
+    "dir": "pysolfc",
+    "file": "zigzag.layout",
+    "name": "Zigzag",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/solitile/forum.layout",
+    "dir": "solitile",
+    "file": "forum.layout",
+    "name": "Forum",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/solitile/bridge_5.layout",
+    "dir": "solitile",
+    "file": "bridge_5.layout",
+    "name": "Bridge",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/solitile/grant/grant_squares.layout",
+    "dir": "solitile",
+    "file": "grant_squares.layout",
+    "name": "Grant Squares",
+    "count": 144,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/step5/breakout_2.layout",
+    "dir": "step5",
+    "file": "breakout_2.layout",
+    "name": "Breakout",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/solitile/starship.layout",
+    "dir": "solitile",
+    "file": "starship.layout",
+    "name": "Starship",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/solitile/valley.layout",
+    "dir": "solitile",
+    "file": "valley.layout",
+    "name": "Valley",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/solitile/spider_5.layout",
+    "dir": "solitile",
+    "file": "spider_5.layout",
+    "name": "Spider",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/solitile/pyramid_5.layout",
+    "dir": "solitile",
+    "file": "pyramid_5.layout",
+    "name": "Pyramid",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/solitile/wedges_2.layout",
+    "dir": "solitile",
+    "file": "wedges_2.layout",
+    "name": "Wedges",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/solitile/temple_7.layout",
+    "dir": "solitile",
+    "file": "temple_7.layout",
+    "name": "Temple",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/solitile/sun_6.layout",
+    "dir": "solitile",
+    "file": "sun_6.layout",
+    "name": "Sun",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/step5/calculations.layout",
+    "dir": "step5",
+    "file": "calculations.layout",
+    "name": "Calculations",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/step5/qix.layout",
+    "dir": "step5",
+    "file": "qix.layout",
+    "name": "QIX",
+    "count": 144,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/xmahjongg/deepwell.layout",
+    "dir": "xmahjongg",
+    "file": "deepwell.layout",
+    "name": "Deepwell",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/step5/whom_the_bell_tolls_2.layout",
+    "dir": "step5",
+    "file": "whom_the_bell_tolls_2.layout",
+    "name": "Whom The Bell Tolls",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/step5/what_the.layout",
+    "dir": "step5",
+    "file": "what_the.layout",
+    "name": "What The ...?",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/xmahjongg/arena_5.layout",
+    "dir": "xmahjongg",
+    "file": "arena_5.layout",
+    "name": "Arena",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/xmahjongg/ceremonial_4.layout",
+    "dir": "xmahjongg",
+    "file": "ceremonial_4.layout",
+    "name": "Ceremonial",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/xmahjongg/bridge_6.layout",
+    "dir": "xmahjongg",
+    "file": "bridge_6.layout",
+    "name": "Bridge",
+    "count": 144,
+    "maxZ": 5
+  },
+  {
+    "path": "public/boards/xmahjongg/default.layout",
+    "dir": "xmahjongg",
+    "file": "default.layout",
+    "name": "Default",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/xmahjongg/boar_2.layout",
+    "dir": "xmahjongg",
+    "file": "boar_2.layout",
+    "name": "Boar",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/step5/unterteil_rh-anlage_2_3.layout",
+    "dir": "step5",
+    "file": "unterteil_rh-anlage_2_3.layout",
+    "name": "Unterteil RH-Anlage 2",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/xmahjongg/arrow_4.layout",
+    "dir": "xmahjongg",
+    "file": "arrow_4.layout",
+    "name": "Arrow",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/xmahjongg/schoon.layout",
+    "dir": "xmahjongg",
+    "file": "schoon.layout",
+    "name": "Schoon",
+    "count": 144,
+    "maxZ": 6
+  },
+  {
+    "path": "public/boards/xmahjongg/papillon_4.layout",
+    "dir": "xmahjongg",
+    "file": "papillon_4.layout",
+    "name": "Papillon",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/xmahjongg/monkey_2.layout",
+    "dir": "xmahjongg",
+    "file": "monkey_2.layout",
+    "name": "Monkey",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/xmahjongg/horse_3.layout",
+    "dir": "xmahjongg",
+    "file": "horse_3.layout",
+    "name": "Horse",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/xmahjongg/dog_3.layout",
+    "dir": "xmahjongg",
+    "file": "dog_3.layout",
+    "name": "Dog",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/xmahjongg/rat_3.layout",
+    "dir": "xmahjongg",
+    "file": "rat_3.layout",
+    "name": "Rat",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/xmahjongg/farandole_4.layout",
+    "dir": "xmahjongg",
+    "file": "farandole_4.layout",
+    "name": "Farandole",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/xmahjongg/hare_2.layout",
+    "dir": "xmahjongg",
+    "file": "hare_2.layout",
+    "name": "Hare",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/xmahjongg/theater_4.layout",
+    "dir": "xmahjongg",
+    "file": "theater_4.layout",
+    "name": "Theater",
+    "count": 144,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/xmahjongg/snake_3.layout",
+    "dir": "xmahjongg",
+    "file": "snake_3.layout",
+    "name": "Snake",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/xmahjongg/old_dragon_3.layout",
+    "dir": "xmahjongg",
+    "file": "old_dragon_3.layout",
+    "name": "Old Dragon",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/xmahjongg/hourglass_5.layout",
+    "dir": "xmahjongg",
+    "file": "hourglass_5.layout",
+    "name": "Hourglass",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/xmahjongg/ram_2.layout",
+    "dir": "xmahjongg",
+    "file": "ram_2.layout",
+    "name": "Ram",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/xmahjongg/rooster_2.layout",
+    "dir": "xmahjongg",
+    "file": "rooster_2.layout",
+    "name": "Rooster",
+    "count": 144,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/xmahjongg/ox_3.layout",
+    "dir": "xmahjongg",
+    "file": "ox_3.layout",
+    "name": "Ox",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/xmahjongg/tiger_3.layout",
+    "dir": "xmahjongg",
+    "file": "tiger_3.layout",
+    "name": "Tiger",
+    "count": 144,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/xmahjongg/wedges_3.layout",
+    "dir": "xmahjongg",
+    "file": "wedges_3.layout",
+    "name": "Wedges",
+    "count": 144,
+    "maxZ": 5
+  },
+  {
+    "path": "public/boards/kmahjongg/castle2.layout",
+    "dir": "kmahjongg",
+    "file": "castle2.layout",
+    "name": "Castle2",
+    "count": 146,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/castle2_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "castle2_2.layout",
+    "name": "Castle2",
+    "count": 146,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/alien.layout",
+    "dir": "kmahjongg",
+    "file": "alien.layout",
+    "name": "Alien",
+    "count": 152,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/alien_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "alien_2.layout",
+    "name": "Alien",
+    "count": 152,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/theatre.layout",
+    "dir": "kmahjongg",
+    "file": "theatre.layout",
+    "name": "Theatre",
+    "count": 154,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/castle.layout",
+    "dir": "kmahjongg",
+    "file": "castle.layout",
+    "name": "Castle",
+    "count": 156,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/castle_4.layout",
+    "dir": "ogs-mahjong",
+    "file": "castle_4.layout",
+    "name": "Castle",
+    "count": 156,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/stax.layout",
+    "dir": "kmahjongg",
+    "file": "stax.layout",
+    "name": "Stax",
+    "count": 164,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/stax_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "stax_2.layout",
+    "name": "Stax",
+    "count": 164,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/mask.layout",
+    "dir": "kmahjongg",
+    "file": "mask.layout",
+    "name": "Mask",
+    "count": 168,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/mask_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "mask_2.layout",
+    "name": "Mask",
+    "count": 168,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/solitile/encircle.layout",
+    "dir": "solitile",
+    "file": "encircle.layout",
+    "name": "Encircle",
+    "count": 168,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/solitile/grant/grant_knarly_works.layout",
+    "dir": "solitile",
+    "file": "grant_knarly_works.layout",
+    "name": "Grant Knarly Works",
+    "count": 168,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/solitile/grant/grant_watsons_map.layout",
+    "dir": "solitile",
+    "file": "grant_watsons_map.layout",
+    "name": "Grant Watsons Map",
+    "count": 168,
+    "maxZ": 2
+  },
+  {
+    "path": "public/boards/solitile/karl/karl-4.layout",
+    "dir": "solitile",
+    "file": "karl-4.layout",
+    "name": "Karl-4",
+    "count": 168,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/girl.layout",
+    "dir": "kmahjongg",
+    "file": "girl.layout",
+    "name": "Girl",
+    "count": 178,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/girl_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "girl_2.layout",
+    "name": "Girl",
+    "count": 178,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/triangle.layout",
+    "dir": "kmahjongg",
+    "file": "triangle.layout",
+    "name": "Triangle",
+    "count": 190,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/triangle_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "triangle_2.layout",
+    "name": "Triangle",
+    "count": 190,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/maze.layout",
+    "dir": "kmahjongg",
+    "file": "maze.layout",
+    "name": "Maze",
+    "count": 194,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/ogs-mahjong/maze_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "maze_2.layout",
+    "name": "Maze",
+    "count": 194,
+    "maxZ": 1
+  },
+  {
+    "path": "public/boards/kmahjongg/pyramid.layout",
+    "dir": "kmahjongg",
+    "file": "pyramid.layout",
+    "name": "Pyramid",
+    "count": 204,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/pyramid_4.layout",
+    "dir": "ogs-mahjong",
+    "file": "pyramid_4.layout",
+    "name": "Pyramid",
+    "count": 204,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/hole.layout",
+    "dir": "kmahjongg",
+    "file": "hole.layout",
+    "name": "Hole",
+    "count": 208,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/hole_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "hole_2.layout",
+    "name": "Hole",
+    "count": 208,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/cross.layout",
+    "dir": "kmahjongg",
+    "file": "cross.layout",
+    "name": "Cross",
+    "count": 222,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/kmahjongg/up&down.layout",
+    "dir": "kmahjongg",
+    "file": "up&down.layout",
+    "name": "Up&down",
+    "count": 222,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/cross_7.layout",
+    "dir": "ogs-mahjong",
+    "file": "cross_7.layout",
+    "name": "Cross",
+    "count": 222,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/ogs-mahjong/up&down_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "up&down_2.layout",
+    "name": "Up&down",
+    "count": 222,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/kmahjongg/tower.layout",
+    "dir": "kmahjongg",
+    "file": "tower.layout",
+    "name": "Tower",
+    "count": 228,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/ogs-mahjong/tower_2.layout",
+    "dir": "ogs-mahjong",
+    "file": "tower_2.layout",
+    "name": "Tower",
+    "count": 228,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/double_eight_squares.layout",
+    "dir": "pysolfc",
+    "file": "double_eight_squares.layout",
+    "name": "Double Eight Squares",
+    "count": 288,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/double_twin_picks.layout",
+    "dir": "pysolfc",
+    "file": "double_twin_picks.layout",
+    "name": "Double Twin Picks",
+    "count": 288,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/double_faro.layout",
+    "dir": "pysolfc",
+    "file": "double_faro.layout",
+    "name": "Double Faro",
+    "count": 288,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/double_roost.layout",
+    "dir": "pysolfc",
+    "file": "double_roost.layout",
+    "name": "Double Roost",
+    "count": 288,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/double_big_square.layout",
+    "dir": "pysolfc",
+    "file": "double_big_square.layout",
+    "name": "Double Big Square",
+    "count": 288,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/double_big_traditional.layout",
+    "dir": "pysolfc",
+    "file": "double_big_traditional.layout",
+    "name": "Double Big Traditional",
+    "count": 288,
+    "maxZ": 5
+  },
+  {
+    "path": "public/boards/pysolfc/double_sphere.layout",
+    "dir": "pysolfc",
+    "file": "double_sphere.layout",
+    "name": "Double Sphere",
+    "count": 288,
+    "maxZ": 3
+  },
+  {
+    "path": "public/boards/pysolfc/double_big_castle.layout",
+    "dir": "pysolfc",
+    "file": "double_big_castle.layout",
+    "name": "Double Big Castle",
+    "count": 288,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/double_rows.layout",
+    "dir": "pysolfc",
+    "file": "double_rows.layout",
+    "name": "Double Rows",
+    "count": 288,
+    "maxZ": 4
+  },
+  {
+    "path": "public/boards/pysolfc/double_two_squares.layout",
+    "dir": "pysolfc",
+    "file": "double_two_squares.layout",
+    "name": "Double Two Squares",
+    "count": 288,
+    "maxZ": 3
+  }
+]

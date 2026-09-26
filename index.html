@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#062520" />
+    <meta name="description" content="Mahjong Animal — Jogo de combinação de animais, offline e relaxante" />
+    <title>🐾 Mahjong Animal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./src/index.css" />
+  </head>
+  <body>
+    <div id="app-container">
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+           TELA 1: MENU INICIAL (visível ao abrir o app)
+           ═══════════════════════════════════════════════════════════════════ -->
+      <div id="screen-menu" class="screen screen-menu">
+        <!-- Fundo decorativo com animação de animais flutuantes -->
+        <div class="menu-bg-emojis" aria-hidden="true">
+          <span class="bg-emoji" style="--x:10%;--delay:0s">🐱</span>
+          <span class="bg-emoji" style="--x:80%;--delay:1.2s">🐼</span>
+          <span class="bg-emoji" style="--x:45%;--delay:0.5s">🦋</span>
+          <span class="bg-emoji" style="--x:25%;--delay:2s">🐸</span>
+          <span class="bg-emoji" style="--x:68%;--delay:0.8s">🐧</span>
+          <span class="bg-emoji" style="--x:90%;--delay:1.7s">🦊</span>
+          <span class="bg-emoji" style="--x:5%;--delay:1.4s">🐝</span>
+          <span class="bg-emoji" style="--x:55%;--delay:2.5s">🦁</span>
+        </div>
+
+        <div class="menu-content">
+          <!-- Logo -->
+          <div class="menu-logo">
+            <div class="menu-logo-emoji">🐾</div>
+            <h1 class="menu-title">Mahjong<br/><span class="menu-title-accent">Animal</span></h1>
+            <p class="menu-tagline">Combine os pares e liberte o tabuleiro!</p>
+          </div>
+
+          <!-- Barra de progresso geral -->
+          <div class="menu-progress-bar-container">
+            <div class="menu-progress-label">
+              <span id="menu-levels-done">0</span>/<span id="menu-levels-total">7</span> fases
+            </div>
+            <div class="menu-progress-track">
+              <div id="menu-progress-fill" class="menu-progress-fill" style="width:0%"></div>
+            </div>
+            <div id="menu-stars-total" class="menu-stars-count">⭐ 0 estrelas</div>
+          </div>
+
+          <!-- Botões do menu -->
+          <div class="menu-buttons">
+            <button id="btn-menu-play" class="menu-btn menu-btn-primary">
+              <span class="menu-btn-icon">▶</span>
+              <span>Continuar Jogando</span>
+            </button>
+            <button id="btn-menu-levels" class="menu-btn menu-btn-secondary">
+              <span class="menu-btn-icon">🗺️</span>
+              <span>Escolher Fase</span>
+            </button>
+            <button id="btn-menu-stats" class="menu-btn menu-btn-secondary">
+              <span class="menu-btn-icon">📊</span>
+              <span>Minhas Estatísticas</span>
+            </button>
+          </div>
+
+          <!-- Versão / créditos -->
+          <p class="menu-version">v1.0 · Jogo 100% Offline</p>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+           TELA 2: JOGO (canvas + HUD)
+           ═══════════════════════════════════════════════════════════════════ -->
+      <div id="screen-game" class="screen screen-game hidden">
+        <!-- MESA CANVAS -->
+        <div id="board-canvas-container">
+          <canvas id="board-canvas"></canvas>
+        </div>
+
+        <!-- HUD SUPERIOR -->
+        <header class="hud-top">
+          <div class="hud-left">
+            <button id="btn-menu-back" class="hud-icon-btn" title="Menu">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M19 12H5M12 5l-7 7 7 7"/>
+              </svg>
+            </button>
+            <button id="btn-restart" class="hud-icon-btn" title="Reiniciar">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="hud-center">
+            <div class="wisdom-title-container">
+              <span class="wisdom-label">Nível</span>
+              <span id="wisdom-level" class="wisdom-number">1</span>
+              <span class="wisdom-sparkle">🌟</span>
+            </div>
+            <div id="hud-timer" class="hud-timer">00:00</div>
+          </div>
+
+          <div class="hud-right">
+            <button id="btn-levels" class="hud-icon-btn" title="Fases">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+              </svg>
+            </button>
+            <button id="btn-settings" class="hud-icon-btn" title="Configurações">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <!-- BANDEJA DE 4 SLOTS -->
+        <div id="tray-bar-container" class="tray-bar-container">
+          <div id="tray-slots" class="tray-slots">
+            <div class="tray-slot" data-slot="0"></div>
+            <div class="tray-slot" data-slot="1"></div>
+            <div class="tray-slot" data-slot="2"></div>
+            <div class="tray-slot" data-slot="3"></div>
+          </div>
+        </div>
+
+        <!-- BANNER DE ORIENTAÇÃO -->
+        <div id="tutorial-tip-banner" class="tutorial-tip-banner hidden">
+          <span id="tutorial-tip-text">Limpa as peças da borda para libertar as bloqueadas.</span>
+        </div>
+
+        <!-- HUD INFERIOR -->
+        <footer class="hud-bottom">
+          <div class="hud-bottom-actions">
+            <div class="action-btn-wrapper">
+              <button id="btn-hammer" class="circle-action-btn" title="Marreta">
+                <span class="btn-icon">🔨</span>
+              </button>
+              <span id="badge-hammer" class="action-badge badge-count">3</span>
+              <span class="action-btn-label">Marreta</span>
+            </div>
+            <div class="action-btn-wrapper">
+              <button id="btn-shuffle" class="circle-action-btn" title="Misturar">
+                <span class="btn-icon">🔀</span>
+              </button>
+              <span id="badge-shuffle" class="action-badge badge-count">3</span>
+              <span class="action-btn-label">Misturar</span>
+            </div>
+            <div class="action-btn-wrapper">
+              <button id="btn-hint" class="circle-action-btn" title="Dica">
+                <span class="btn-icon">💡</span>
+              </button>
+              <span id="badge-hint" class="action-badge badge-count">3</span>
+              <span class="action-btn-label">Dica</span>
+            </div>
+            <div class="action-btn-wrapper">
+              <button id="btn-undo" class="circle-action-btn" title="Desfazer">
+                <span class="btn-icon">↩️</span>
+              </button>
+              <span id="badge-undo" class="action-badge badge-count">5</span>
+              <span class="action-btn-label">Desfazer</span>
+            </div>
+          </div>
+        </footer>
+      </div><!-- /screen-game -->
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+           MODAL: ESTATÍSTICAS
+           ═══════════════════════════════════════════════════════════════════ -->
+      <div id="modal-stats" class="modal-container hidden">
+        <div class="modal-card">
+          <div class="modal-header">
+            <h2>📊 Minhas Estatísticas</h2>
+            <button class="modal-close">&times;</button>
+          </div>
+          <div class="modal-body" id="stats-content">
+            <!-- preenchido dinamicamente -->
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL: MAPA DE FASES (CONSTELAÇÃO ATÔMICA FULL SCREEN) -->
+      <div id="modal-levels" class="modal-container map-fullscreen-container hidden">
+        <div class="modal-card modal-card-map">
+          <div class="modal-header map-header-fullscreen">
+            <div class="map-header-left">
+              <button id="btn-levels-back" class="hud-icon-btn modal-back-btn" title="Voltar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M19 12H5M12 5l-7 7 7 7"/>
+                </svg>
+              </button>
+              <h2>⚛️ Mapa de Fases</h2>
+            </div>
+            <div class="map-header-right">
+              <div id="levels-header-stars" class="levels-header-stars">⭐ 0/150</div>
+              <button class="modal-close">&times;</button>
+            </div>
+          </div>
+          <!-- Barra rápida de mundos (Chips fixos) -->
+          <div id="levels-world-tabs" class="world-nav-tabs"></div>
+          <!-- Viewport do mapa rolável -->
+          <div class="modal-body map-viewport" id="levels-map-viewport">
+            <div id="levels-map-content" class="map-content">
+              <!-- SVG de conexões atômicas inserido dinamicamente -->
+              <svg id="levels-map-svg" class="map-svg-connections"></svg>
+              <!-- Nós atômicos e portais inseridos dinamicamente -->
+            </div>
+          </div>
+          <!-- Bottom Sheet / Pop-up de Detalhes da Fase selecionada -->
+          <div id="atom-level-preview" class="atom-preview-card hidden">
+            <div class="atom-preview-header">
+              <div id="atom-preview-badge" class="atom-preview-num">1</div>
+              <div class="atom-preview-titles">
+                <h3 id="atom-preview-name">Nome da Fase</h3>
+                <div id="atom-preview-meta" class="atom-preview-meta">Fácil · 30 peças</div>
+              </div>
+              <button id="atom-preview-close" class="atom-preview-close-btn">&times;</button>
+            </div>
+            <p id="atom-preview-desc" class="atom-preview-desc">Descrição da fase...</p>
+            <div class="atom-preview-stats">
+              <span id="atom-preview-stars">⭐⭐⭐</span>
+              <span id="atom-preview-best">Recorde: --</span>
+            </div>
+            <button id="btn-atom-play" class="btn-primary btn-play-atom">▶ Jogar Fase</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL: CONFIGURAÇÕES -->
+      <div id="modal-settings" class="modal-container hidden">
+        <div class="modal-card">
+          <div class="modal-header">
+            <h2>⚙️ Configurações</h2>
+            <button class="modal-close">&times;</button>
+          </div>
+          <div class="modal-body" id="settings-options-container"></div>
+        </div>
+      </div>
+
+      <!-- MODAL: VITÓRIA -->
+      <div id="modal-victory" class="modal-container hidden">
+        <div class="modal-card victory-card">
+          <div class="victory-icon">🎉</div>
+          <h2 class="victory-title">Parabéns!</h2>
+          <p class="victory-subtitle">Tabuleiro limpo com maestria!</p>
+          <div id="victory-stars" class="victory-stars">⭐⭐⭐</div>
+          <div id="victory-time" class="victory-time">Tempo: --</div>
+          <div id="victory-next-unlock" class="victory-unlock hidden">
+            🔓 <span id="victory-unlock-name">Próxima fase desbloqueada!</span>
+          </div>
+          <div class="victory-actions">
+            <button id="btn-replay" class="btn-secondary">↩ Jogar de Novo</button>
+            <button id="btn-next-level" class="btn-primary">Próxima Fase ➔</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /app-container -->
+
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
