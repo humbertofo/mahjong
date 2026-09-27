@@ -25,17 +25,18 @@ export class SoundManager {
     this.currentTrackIndex = Math.floor(Math.random() * this.playlist.length);
 
     if (typeof window !== 'undefined') {
+      const unlockEvents = ['pointerup', 'touchend', 'click', 'keydown'];
       const unlockAudio = () => {
         this.hasUserInteracted = true;
+        unlockEvents.forEach((evt) => window.removeEventListener(evt, unlockAudio));
         this.initContext();
         if (this.musicEnabled) {
           this.playBGM();
         }
       };
-      window.addEventListener('pointerdown', unlockAudio, { passive: true, once: true });
-      window.addEventListener('pointerup', unlockAudio, { passive: true, once: true });
-      window.addEventListener('click', unlockAudio, { passive: true, once: true });
-      window.addEventListener('keydown', unlockAudio, { passive: true, once: true });
+      unlockEvents.forEach((evt) => {
+        window.addEventListener(evt, unlockAudio, { passive: true });
+      });
     }
   }
 
@@ -140,8 +141,20 @@ export class SoundManager {
     return this.musicVolume;
   }
 
+  private canResumeAudio(): boolean {
+    if (this.hasUserInteracted) return true;
+    if (typeof navigator !== 'undefined' && 'userActivation' in navigator) {
+      return (navigator as { userActivation?: { hasBeenActive: boolean } }).userActivation?.hasBeenActive ?? false;
+    }
+    return false;
+  }
+
   private initContext(): void {
-    if (!this.ctx && typeof window !== 'undefined') {
+    if (typeof window === 'undefined') return;
+
+    const hasActivation = this.canResumeAudio();
+
+    if (!this.ctx && hasActivation) {
       const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (AudioCtx) {
         try {
@@ -152,7 +165,7 @@ export class SoundManager {
         }
       }
     }
-    if (this.ctx && this.ctx.state === 'suspended') {
+    if (this.ctx && this.ctx.state === 'suspended' && hasActivation) {
       this.ctx.resume().catch(() => {});
     }
   }
