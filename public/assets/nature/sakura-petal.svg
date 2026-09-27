@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="sakuraGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbcfe8" />
+      <stop offset="50%" stop-color="#f472b6" />
+      <stop offset="100%" stop-color="#db2777" />
+    </linearGradient>
+  </defs>
+  <path d="M 16,3 C 9,8 4,16 6,24 C 8,28 13,30 16,28 C 19,30 24,28 26,24 C 28,16 23,8 16,3 Z" fill="url(#sakuraGrad)" />
+  <path d="M 16,7 Q 16,18 16,26" stroke="#ffffff" stroke-width="0.75" fill="none" opacity="0.45" />
+</svg>

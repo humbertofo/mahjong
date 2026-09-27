@@ -28,6 +28,7 @@ export interface GlobalStats {
   currentStreak: number;   // dias consecutivos
   lastPlayedDate: string;  // ISO date string
   highestLevelUnlocked: number; // índice 0-based
+  totalSynergiesTriggered?: number;
 }
 
 export interface SavedProgress {
@@ -42,7 +43,7 @@ const PROGRESS_KEY = 'mahjong_progress_v2';
 
 export class StorageManager {
   private static defaultPrefs: UserPreferences = {
-    theme: 'felt-green',
+    theme: 'mist-emerald',
     soundEnabled: true,
     soundVolume: 0.8,
     musicEnabled: true,
@@ -133,6 +134,7 @@ export class StorageManager {
       currentStreak: 0,
       lastPlayedDate: '',
       highestLevelUnlocked: 0,
+      totalSynergiesTriggered: 0,
     };
   }
 
@@ -149,11 +151,17 @@ export class StorageManager {
     try { localStorage.setItem(GLOBAL_KEY, JSON.stringify(g)); } catch { /* silent */ }
   }
 
-  public static incrementGamesWon(timeSeconds: number, pairsMatched: number, levelIndex: number): void {
+  public static incrementGamesWon(
+    timeSeconds: number,
+    pairsMatched: number,
+    levelIndex: number,
+    synergiesTriggered: number = 0
+  ): void {
     const g = this.getGlobalStats();
     g.totalGamesWon += 1;
     g.totalPairsMatched += pairsMatched;
     g.totalTimePlayed += timeSeconds;
+    g.totalSynergiesTriggered = (g.totalSynergiesTriggered || 0) + synergiesTriggered;
     if (levelIndex > g.highestLevelUnlocked) g.highestLevelUnlocked = levelIndex;
     try { localStorage.setItem(GLOBAL_KEY, JSON.stringify(g)); } catch { /* silent */ }
   }
@@ -183,5 +191,35 @@ export class StorageManager {
     if (levelIndex === 0) return true;
     const p = this.getProgress();
     return p.unlockedLevels.includes(levelIndex);
+  }
+
+  public static resetAllProgress(): void {
+    try {
+      // 1. Redefinir progresso para a Fase 1
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify({ currentLevelIndex: 0, unlockedLevels: [0] }));
+
+      // 2. Zerar estatísticas globais
+      const resetGlobal: GlobalStats = {
+        totalGamesPlayed: 0,
+        totalGamesWon: 0,
+        totalPairsMatched: 0,
+        totalTimePlayed: 0,
+        currentStreak: 0,
+        lastPlayedDate: '',
+        highestLevelUnlocked: 0,
+        totalSynergiesTriggered: 0,
+      };
+      localStorage.setItem(GLOBAL_KEY, JSON.stringify(resetGlobal));
+
+      // 3. Remover recordes e estatísticas de todas as pranchas
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && (key.startsWith(STATS_KEY) || key.startsWith('mahjong_stats'))) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach((key) => localStorage.removeItem(key));
+    } catch { /* silent */ }
   }
 }

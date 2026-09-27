@@ -1,76 +1,61 @@
 import { TileDefinition, AnimalValue } from './types';
+import { SynergyRegistry } from './nature/synergies/SynergyRegistry';
+import { TileRegistry } from './nature/tiles';
 
 export interface AnimalDeckItem {
   val: AnimalValue;
   label: string;
 }
 
-export const ANIMALS: AnimalDeckItem[] = [
-  // Clássicos
-  { val: 'cat',       label: '🐱 Gatinho'    },
-  { val: 'dog',       label: '🐶 Cachorro'   },
-  { val: 'rabbit',    label: '🐰 Coelho'     },
-  { val: 'fish',      label: '🐟 Peixinho'   },
-  { val: 'bird',      label: '🐦 Passarinho' },
-  { val: 'butterfly', label: '🦋 Borboleta'  },
-  { val: 'turtle',    label: '🐢 Tartaruga'  },
-  { val: 'frog',      label: '🐸 Sapo'       },
-  { val: 'bee',       label: '🐝 Abelhinha'  },
-  { val: 'elephant',  label: '🐘 Elefante'   },
-  { val: 'lion',      label: '🦁 Leão'       },
-  { val: 'fox',       label: '🦊 Raposa'     },
-  { val: 'monkey',    label: '🐒 Macaco'     },
-  { val: 'panda',     label: '🐼 Panda'      },
-  { val: 'penguin',   label: '🐧 Pinguim'    },
-  { val: 'duck',      label: '🦆 Pato'       },
-  { val: 'snail',     label: '🐌 Lesma'      },
-  { val: 'ladybug',   label: '🐞 Joaninha'   },
+/**
+ * Catálogo derivado do TileRegistry para manter retrocompatibilidade pública
+ */
+export const ANIMALS: AnimalDeckItem[] = TileRegistry.getAll().map((t) => ({
+  val: t.value,
+  label: t.label,
+}));
 
-  // Novos Animais do Ecossistema
-  { val: 'bear',      label: '🐻 Urso'       },
-  { val: 'squirrel',  label: '🐿️ Esquilo'    },
-  { val: 'dolphin',   label: '🐬 Golfinho'   },
-  { val: 'hedgehog',  label: '🦔 Ouriço'     },
-
-  // Adereços Naturais de Sinergia
-  { val: 'banana',    label: '🍌 Banana'     },
-  { val: 'acorn',     label: '🌰 Noz'        },
-  { val: 'shell',     label: '🐚 Concha'     },
-  { val: 'apple',     label: '🍎 Maçã'       },
-  { val: 'honeycomb', label: '🍯 Favo de Mel'},
-
-  // Peça Coringa Especial
-  { val: 'chameleon', label: '🦎 Camaleão'   },
-];
-
-export function createAnimalDeck(): TileDefinition[] {
+/**
+ * ═══════════════════════════════════════════════════════════════════════════
+ *  FÁBRICA DE BARALHO (DECK FACTORY)
+ *  Orquestra a criação do monte de peças com multiplicidade garantida
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
+export function createAnimalDeck(includeChameleon: boolean = false): TileDefinition[] {
   const deck: TileDefinition[] = [];
-  ANIMALS.forEach(({ val, label }) => {
+  const tiles = includeChameleon
+    ? TileRegistry.getAll()
+    : TileRegistry.getAll().filter((t) => t.value !== 'chameleon');
+
+  tiles.forEach(({ value, label, category }) => {
+    const suit =
+      category === 'flora'
+        ? 'flora'
+        : category === 'mythic'
+        ? 'mythic'
+        : category === 'natural_element'
+        ? 'element'
+        : 'animal';
+
     // 4 cópias de cada tipo para garantir multiplicidade de pares
     for (let copy = 0; copy < 4; copy++) {
       deck.push({
-        id: `animal-${val}-${copy}`,
-        suit: 'animal',
-        value: val,
+        id: `animal-${value}-${copy}`,
+        suit,
+        value,
         label,
       });
     }
   });
+
   return deck;
 }
 
 /**
- * Regra de combinação entre duas peças:
- * 1. O Camaleão Dourado (Coringa) combina com QUALQUER outra peça!
+ * Regra mestra de combinação entre duas peças:
+ * 1. O Camaleão Dourado (Coringa) combina com QUALQUER outra peça.
  * 2. Peças idênticas (mesmo valor) combinam.
- * 3. Sinergias da Natureza (cruzadas):
- *    - Abelha 🐝 + Favo de Mel 🍯
- *    - Urso 🐻 + Mel 🍯 ou Peixe 🐟
- *    - Macaco 🐒 + Banana 🍌
- *    - Esquilo 🐿️ + Noz 🌰
- *    - Sapo 🐸 + Joaninha 🐞 ou Abelha 🐝
- *    - Golfinho 🐬 + Concha 🐚
- *    - Ouriço 🦔 + Maçã 🍎
+ * 3. Sinergias da Natureza avaliadas declarativamente pelo SynergyRegistry.
  */
 export function canMatch(tileA: TileDefinition, tileB: TileDefinition): boolean {
   if (tileA.id === tileB.id) return false;
@@ -78,62 +63,12 @@ export function canMatch(tileA: TileDefinition, tileB: TileDefinition): boolean 
   const vA = tileA.value;
   const vB = tileB.value;
 
-  // 1. Coringa (Camaleão combina com qualquer coisa)
-  if (vA === 'chameleon' || vB === 'chameleon') {
-    return true;
-  }
+  // 1. Coringa
+  if (vA === 'chameleon' || vB === 'chameleon') return true;
 
-  // 2. Mesma espécie / valor (Regra Mestra do Mahjong)
-  if (vA === vB) {
-    return true;
-  }
+  // 2. Mesma espécie / valor
+  if (vA === vB) return true;
 
-  // 3. Sinergias da Natureza (Pares cruzados de predador/alimento e ecossistema)
-  // 🐱🐟 Gato + Peixe (Pata Ágil na Lagoa)
-  if ((vA === 'cat' && vB === 'fish') || (vA === 'fish' && vB === 'cat')) {
-    return true;
-  }
-
-  // 🐝🍯 Abelha + Favo de Mel (Enxame Dourado)
-  if ((vA === 'bee' && vB === 'honeycomb') || (vA === 'honeycomb' && vB === 'bee')) {
-    return true;
-  }
-
-  // 🐻🍯/🐟 Urso + Mel ou Peixe (Banquete do Urso)
-  if (
-    (vA === 'bear' && (vB === 'honeycomb' || vB === 'fish')) ||
-    ((vA === 'honeycomb' || vA === 'fish') && vB === 'bear')
-  ) {
-    return true;
-  }
-
-  // 🐸🐞/🐝 Sapo + Joaninha ou Abelha (Língua Elástica na Lagoa)
-  if (
-    (vA === 'frog' && (vB === 'ladybug' || vB === 'bee')) ||
-    ((vA === 'ladybug' || vA === 'bee') && vB === 'frog')
-  ) {
-    return true;
-  }
-
-  // 🐒🍌 Macaco + Banana (Salto na Copa)
-  if ((vA === 'monkey' && vB === 'banana') || (vA === 'banana' && vB === 'monkey')) {
-    return true;
-  }
-
-  // 🐿️🌰 Esquilo + Noz (Toca Secreta)
-  if ((vA === 'squirrel' && vB === 'acorn') || (vA === 'acorn' && vB === 'squirrel')) {
-    return true;
-  }
-
-  // 🐬🐚 Golfinho + Concha (Eco Sonar das Profundezas)
-  if ((vA === 'dolphin' && vB === 'shell') || (vA === 'shell' && vB === 'dolphin')) {
-    return true;
-  }
-
-  // 🦔🍎 Ouriço + Maçã (Pomar das Frutas)
-  if ((vA === 'hedgehog' && vB === 'apple') || (vA === 'apple' && vB === 'hedgehog')) {
-    return true;
-  }
-
-  return false;
+  // 3. Sinergias da Natureza
+  return SynergyRegistry.areSynergistic(vA, vB);
 }

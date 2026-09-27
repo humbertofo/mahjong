@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" width="140" height="140">
+  <defs>
+    <radialGradient id="g3-bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7c2d12" />
+      <stop offset="70%" stop-color="#431407" />
+      <stop offset="100%" stop-color="#1c0702" />
+    </radialGradient>
+    <linearGradient id="g-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffeaa7" />
+      <stop offset="50%" stop-color="#d4af37" />
+      <stop offset="100%" stop-color="#9a7b1c" />
+    </linearGradient>
+    <linearGradient id="fox-fur" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </linearGradient>
+  </defs>
+
+  <!-- Medalhão Base -->
+  <circle cx="70" cy="70" r="66" fill="url(#g3-bg)" stroke="url(#g-gold)" stroke-width="4" />
+  <circle cx="70" cy="70" r="59" fill="none" stroke="url(#g-gold)" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.7" />
+
+  <!-- Animal: Raposa Zen das Montanhas -->
+  <g transform="translate(18, 14) scale(0.74)">
+    <!-- Orelhas pontudas expressivas -->
+    <polygon points="35,50 48,15 62,45" fill="url(#fox-fur)" stroke="#431407" stroke-width="1.5" />
+    <polygon points="40,46 48,22 56,44" fill="#fdfbf7" />
+
+    <polygon points="105,50 92,15 78,45" fill="url(#fox-fur)" stroke="#431407" stroke-width="1.5" />
+    <polygon points="100,46 92,22 84,44" fill="#fdfbf7" />
+
+    <!-- Formato da cabeça da Raposa -->
+    <path d="M 32,55 C 32,75 55,105 70,110 C 85,105 108,75 108,55 C 108,45 92,42 70,42 C 48,42 32,45 32,55 Z" 
+          fill="url(#fox-fur)" stroke="#431407" stroke-width="2" />
+
+    <!-- Bochechas Brancas Acolhedoras -->
+    <path d="M 35,62 C 45,78 60,98 70,108 C 80,98 95,78 105,62 C 90,68 70,68 35,62 Z" fill="#fdfbf7" />
+
+    <!-- Olhos orientais serenos fechados/semicerrados de sabedoria zen -->
+    <path d="M 45,64 Q 54,60 62,65" stroke="#1c0702" stroke-width="3" stroke-linecap="round" fill="none" />
+    <circle cx="53" cy="62" r="1.5" fill="#d4af37" />
+
+    <path d="M 95,64 Q 86,60 78,65" stroke="#1c0702" stroke-width="3" stroke-linecap="round" fill="none" />
+    <circle cx="87" cy="62" r="1.5" fill="#d4af37" />
+
+    <!-- Focinho e Nariz preto -->
+    <circle cx="70" cy="98" r="3.5" fill="#1c0702" />
+    <path d="M 70,98 L 70,103" stroke="#1c0702" stroke-width="1.8" />
+
+    <!-- Marca mágica na testa (Pétala crepuscular) -->
+    <path d="M 70,46 C 66,54 66,58 70,62 C 74,58 74,54 70,46 Z" fill="#ffd166" />
+  </g>
+
+  <!-- Ornato Floral Base -->
+  <path d="M 50,118 C 62,112 78,112 90,118 C 82,126 58,126 50,118 Z" fill="url(#g-gold)" />
+</svg>

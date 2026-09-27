@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" fill="none">
+  <defs>
+    <linearGradient id="scroll-paper" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="100%" stop-color="#fef3c7" />
+    </linearGradient>
+    <linearGradient id="scroll-wood" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+
+  <!-- Corpo do Pergaminho Aberto -->
+  <rect x="11" y="9" width="26" height="30" rx="3" 
+        fill="url(#scroll-paper)" stroke="#fbbf24" stroke-width="2.2" />
+  
+  <!-- Rolos laterais decorativos de madeira nobre e ouro -->
+  <path d="M11 7C8.8 7 7 8.8 7 11V37C7 39.2 8.8 41 11 41" 
+        stroke="url(#scroll-wood)" stroke-width="3" stroke-linecap="round" />
+  <path d="M37 7C39.2 7 41 8.8 41 11V37C41 39.2 39.2 41 37 41" 
+        stroke="url(#scroll-wood)" stroke-width="3" stroke-linecap="round" />
+
+  <!-- Rota da trilha zen esmeralda -->
+  <path d="M17 32C19 25 29 27 30 18" stroke="#059669" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="3 3" />
+  <circle cx="17" cy="32" r="3" fill="#10b981" stroke="#065f46" stroke-width="1" />
+  <circle cx="30" cy="18" r="4" fill="#fbbf24" stroke="#d97706" stroke-width="1.2" />
+  <circle cx="30" cy="18" r="1.8" fill="#ffffff" />
+</svg>

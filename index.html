@@ -9,6 +9,8 @@
     <meta name="theme-color" content="#062520" />
     <meta name="description" content="Mahjong Animal — Jogo de combinação de animais, offline e relaxante" />
     <title>🐾 Mahjong Animal</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" href="/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -24,50 +26,108 @@
            TELA 1: MENU INICIAL (visível ao abrir o app)
            ═══════════════════════════════════════════════════════════════════ -->
       <div id="screen-menu" class="screen screen-menu">
-        <!-- Fundo decorativo com animação de animais flutuantes -->
-        <div class="menu-bg-emojis" aria-hidden="true">
-          <span class="bg-emoji" style="--x:10%;--delay:0s">🐱</span>
-          <span class="bg-emoji" style="--x:80%;--delay:1.2s">🐼</span>
-          <span class="bg-emoji" style="--x:45%;--delay:0.5s">🦋</span>
-          <span class="bg-emoji" style="--x:25%;--delay:2s">🐸</span>
-          <span class="bg-emoji" style="--x:68%;--delay:0.8s">🐧</span>
-          <span class="bg-emoji" style="--x:90%;--delay:1.7s">🦊</span>
-          <span class="bg-emoji" style="--x:5%;--delay:1.4s">🐝</span>
-          <span class="bg-emoji" style="--x:55%;--delay:2.5s">🦁</span>
+        <!-- Barra Superior de Ações Rápidas do Menu (Configurações) -->
+        <div class="menu-top-bar">
+          <button id="btn-menu-settings" class="menu-settings-btn" title="Configurações" aria-label="Configurações">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Cenografia Botânica & Mata Zen em SVG -->
+        <div class="menu-scenery-layer" aria-hidden="true"></div>
+
+        <!-- Partículas da Natureza: Folhas de Bambu, Pétalas de Lótus e Vaga-lumes -->
+        <div class="zen-wind-particles" aria-hidden="true">
+          <span class="zen-particle zen-leaf" style="--x:10%;--delay:0s;--scale:0.95"></span>
+          <span class="zen-particle zen-petal" style="--x:82%;--delay:1.6s;--scale:1.1"></span>
+          <span class="zen-particle zen-leaf" style="--x:45%;--delay:3.4s;--scale:0.8"></span>
+          <span class="zen-particle zen-petal" style="--x:25%;--delay:4.8s;--scale:1.0"></span>
+          <span class="zen-particle zen-leaf" style="--x:68%;--delay:2.2s;--scale:1.15"></span>
+          <span class="zen-particle zen-petal" style="--x:92%;--delay:5.6s;--scale:0.85"></span>
+          <span class="zen-firefly-ambient" style="--x:18%;--y:25%;--delay:0.2s"></span>
+          <span class="zen-firefly-ambient" style="--x:82%;--y:28%;--delay:1.5s"></span>
+          <span class="zen-firefly-ambient" style="--x:12%;--y:70%;--delay:2.4s"></span>
+          <span class="zen-firefly-ambient" style="--x:88%;--y:76%;--delay:0.9s"></span>
         </div>
 
         <div class="menu-content">
-          <!-- Logo -->
+          <!-- Logo com Selo Nobre Marfim, Jade & Ouro Esculpido -->
           <div class="menu-logo">
-            <div class="menu-logo-emoji">🐾</div>
+            <div class="menu-emblem">
+              <div class="menu-emblem-ring"></div>
+              <img src="./assets/nature/noble-seal.svg" alt="Selo Nobre Mahjong Animal" class="menu-noble-seal" />
+            </div>
             <h1 class="menu-title">Mahjong<br/><span class="menu-title-accent">Animal</span></h1>
             <p class="menu-tagline">Combine os pares e liberte o tabuleiro!</p>
           </div>
 
-          <!-- Barra de progresso geral -->
-          <div class="menu-progress-bar-container">
-            <div class="menu-progress-label">
-              <span id="menu-levels-done">0</span>/<span id="menu-levels-total">50</span> fases
+          <!-- Mascote Panda Zen Guardião com Micro-Expressões e Toque Interativo -->
+          <div id="menu-mascot-container" class="menu-mascot-container" role="button" aria-label="Mascote Panda Zen" tabindex="0">
+            <div id="mascot-speech-bubble" class="mascot-speech-bubble hidden">
+              <span id="mascot-speech-text">Que a serenidade guie seus pares! 🌿</span>
             </div>
-            <div class="menu-progress-track">
-              <div id="menu-progress-fill" class="menu-progress-fill" style="width:0%"></div>
+            <div class="mascot-avatar-frame">
+              <img id="menu-panda-mascot" src="./assets/nature/mascot-panda-zen.svg" alt="Panda Zen Mestre" class="menu-panda-mascot-img" />
             </div>
-            <div id="menu-stars-total" class="menu-stars-count">⭐ 0 estrelas</div>
           </div>
 
-          <!-- Botões do menu -->
+          <!-- Botões e Ações do Menu Principal -->
           <div class="menu-buttons">
+            <!-- Botão Heroico Primário: Jogar Imediato -->
             <button id="btn-menu-play" class="menu-btn menu-btn-primary">
-              <span class="menu-btn-icon">▶</span>
-              <span>Continuar Jogando</span>
+              <span class="menu-btn-icon">
+                <img src="./assets/icons/icon-play-zen.svg" class="menu-svg-icon" alt="" />
+              </span>
+              <div class="menu-btn-content">
+                <span class="menu-btn-title">Continuar Jogando</span>
+                <span id="menu-play-sub" class="menu-btn-sub">Fase 1</span>
+              </div>
+              <span class="menu-btn-badge">JOGAR</span>
             </button>
-            <button id="btn-menu-levels" class="menu-btn menu-btn-secondary">
-              <span class="menu-btn-icon">🗺️</span>
-              <span>Escolher Fase</span>
-            </button>
+
+            <!-- Card Unificado Heroico: Trilha dos Biomas (Jornada Interativa com Progresso) -->
+            <div id="btn-menu-levels" class="menu-journey-card interactive-journey-card" role="button" tabindex="0" title="Explorar Trilha dos Biomas">
+              <div class="journey-card-header">
+                <div class="journey-card-title">
+                  <div class="journey-icon-frame">
+                    <img src="./assets/icons/icon-map-zen.svg" class="journey-svg-icon" alt="" />
+                  </div>
+                  <div class="journey-titles-column">
+                    <span class="journey-main-title">Trilha dos Biomas</span>
+                    <span id="menu-biome-current" class="journey-sub-title">5 Mundos · 50 Fases</span>
+                  </div>
+                </div>
+                <div class="journey-header-badges">
+                  <div id="menu-stars-total" class="journey-stars-badge">⭐ 0</div>
+                  <span class="journey-action-tag">MAPA ➔</span>
+                </div>
+              </div>
+              
+              <div class="menu-progress-track">
+                <div id="menu-progress-fill" class="menu-progress-fill" style="width:0%"></div>
+              </div>
+              
+              <div class="journey-card-footer">
+                <div class="menu-progress-label">
+                  <span id="menu-levels-done">0</span>/<span id="menu-levels-total">50</span> fases concluídas
+                </div>
+                <div id="menu-journey-status" class="journey-status-text">🌿 Em harmonia</div>
+              </div>
+            </div>
+
+            <!-- Botão Secundário: Estatísticas e Fauna -->
             <button id="btn-menu-stats" class="menu-btn menu-btn-secondary">
-              <span class="menu-btn-icon">📊</span>
-              <span>Minhas Estatísticas</span>
+              <span class="menu-btn-icon">
+                <img src="./assets/icons/icon-stats-zen.svg" class="menu-svg-icon" alt="" />
+              </span>
+              <div class="menu-btn-content">
+                <span class="menu-btn-title">Minhas Estatísticas</span>
+                <span class="menu-btn-sub">Recordes & Fauna</span>
+              </div>
+              <span class="menu-btn-tag">DADOS</span>
             </button>
           </div>
 
@@ -106,14 +166,14 @@
             <div class="wisdom-title-container">
               <span class="wisdom-label">Fase</span>
               <span id="wisdom-level" class="wisdom-number">1</span>
-              <span class="wisdom-sparkle">🌟</span>
+              <span id="hud-biome-badge" class="hud-biome-pill" title="Jardim das Lótus">🌿</span>
               <span id="hud-wave-badge" class="hud-wave-pill hidden">1/2</span>
             </div>
           </div>
 
           <div class="hud-right">
             <button id="btn-help" class="hud-icon-btn" title="Guia da Natureza">
-              <span style="font-weight: 900; font-size: 1.15rem; color: #fde047;">❓</span>
+              <img src="./assets/icons/icon-guide-zen.svg" class="hud-svg-icon" alt="Guia Zen" />
             </button>
             <button id="btn-levels" class="hud-icon-btn" title="Fases">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -162,6 +222,16 @@
           <span id="tutorial-tip-text">Limpa as peças da borda para libertar as bloqueadas.</span>
         </div>
 
+        <!-- TOAST FLUTUANTE DA NATUREZA -->
+        <div id="nature-toast" class="nature-toast hidden" title="Toque para fechar">
+          <span id="nature-toast-icon" class="nature-toast-icon">🌿</span>
+          <div class="nature-toast-text">
+            <div id="nature-toast-title" class="nature-toast-title">Bosque Sereno</div>
+            <div id="nature-toast-desc" class="nature-toast-desc">Toque nas peças livres</div>
+          </div>
+          <div class="nature-toast-timer-bar"></div>
+        </div>
+
         <!-- HUD INFERIOR -->
         <footer class="hud-bottom">
           <div class="hud-bottom-actions">
@@ -201,13 +271,65 @@
       <!-- MODAL: TRANSIÇÃO DE ONDA (MULTI-WAVE) -->
       <div id="modal-wave-cleared" class="modal-container hidden">
         <div class="modal-card wave-cleared-card">
-          <div class="wave-cleared-icon">🌸</div>
-          <h2 id="wave-cleared-title" class="wave-cleared-title">Onda 1 Concluída!</h2>
-          <p id="wave-cleared-subtitle" class="wave-cleared-subtitle">A mesa está pronta para a próxima onda!</p>
-          <div class="wave-cleared-reward">
-            <span>✨ Bônus de Harmonia: <strong>+500 pts</strong></span>
+          <!-- Aura luminosa e emblema floral zen -->
+          <div class="completion-emblem-wrap">
+            <div class="emblem-halo-spin"></div>
+            <div class="wave-cleared-icon">
+              <svg width="54" height="54" viewBox="0 0 100 100" fill="none" class="zen-blossom-svg">
+                <circle cx="50" cy="50" r="42" fill="url(#blossom-glow)" opacity="0.3" />
+                <path d="M50 18 C42 32, 42 42, 50 50 C58 42, 58 32, 50 18 Z" fill="#F472B6" />
+                <path d="M82 50 C68 42, 58 42, 50 50 C58 58, 68 58, 82 50 Z" fill="#FB7185" />
+                <path d="M50 82 C58 68, 58 58, 50 50 C42 58, 42 68, 50 82 Z" fill="#F472B6" />
+                <path d="M18 50 C32 58, 42 58, 50 50 C42 42, 32 42, 18 50 Z" fill="#FB7185" />
+                <path d="M72 28 C60 38, 56 46, 50 50 C54 44, 62 40, 72 28 Z" fill="#FBCFE8" />
+                <path d="M72 72 C62 60, 54 56, 50 50 C56 54, 60 62, 72 72 Z" fill="#FDA4AF" />
+                <path d="M28 72 C40 62, 44 54, 50 50 C46 56, 38 60, 28 72 Z" fill="#FBCFE8" />
+                <path d="M28 28 C38 40, 46 44, 50 50 C44 46, 40 38, 28 28 Z" fill="#FDA4AF" />
+                <circle cx="50" cy="50" r="10" fill="#FDE047" stroke="#F59E0B" stroke-width="2" />
+                <circle cx="50" cy="50" r="4" fill="#FFFFFF" />
+                <defs>
+                  <radialGradient id="blossom-glow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#F472B6" stop-opacity="0.9" />
+                    <stop offset="100%" stop-color="#F472B6" stop-opacity="0" />
+                  </radialGradient>
+                </defs>
+              </svg>
+            </div>
           </div>
-          <button id="btn-next-wave" class="btn-primary wave-cleared-btn">Continuar Próxima Onda ➔</button>
+
+          <div class="wave-cleared-header">
+            <span class="wave-pill-tag">PROGRESSO NA FASE</span>
+            <h2 id="wave-cleared-title" class="wave-cleared-title">Onda 1 Concluída!</h2>
+            <p id="wave-cleared-subtitle" class="wave-cleared-subtitle">A mesa está pronta para a próxima onda!</p>
+          </div>
+
+          <!-- Indicador Visual de Etapas das Ondas -->
+          <div id="wave-cleared-stepper" class="wave-stepper-wrap"></div>
+
+          <!-- Cartão de Recompensa de Onda -->
+          <div class="wave-reward-card">
+            <div class="wave-reward-item">
+              <span class="reward-icon">🌸</span>
+              <div class="reward-text">
+                <span class="reward-label">Bônus de Harmonia</span>
+                <span class="reward-val">+500 pts</span>
+              </div>
+            </div>
+            <div class="wave-reward-divider"></div>
+            <div class="wave-reward-item">
+              <span class="reward-icon">🌿</span>
+              <div class="reward-text">
+                <span class="reward-label">Próximo Passo</span>
+                <span id="wave-reward-next-info" class="reward-val">Nova Camada</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botão de Ação Ergonômico de Polegar -->
+          <button id="btn-next-wave" class="btn-primary wave-cleared-btn">
+            <span>Continuar Próxima Onda</span>
+            <span class="btn-arrow-icon">➔</span>
+          </button>
         </div>
       </div>
 
@@ -236,11 +358,10 @@
                   <path d="M19 12H5M12 5l-7 7 7 7"/>
                 </svg>
               </button>
-              <h2>⚛️ Mapa de Fases</h2>
+              <h2>🌿 Trilha dos Biomas</h2>
             </div>
             <div class="map-header-right">
               <div id="levels-header-stars" class="levels-header-stars">⭐ 0/150</div>
-              <button class="modal-close">&times;</button>
             </div>
           </div>
           <!-- Barra rápida de mundos (Chips fixos) -->
@@ -264,6 +385,7 @@
               <button id="atom-preview-close" class="atom-preview-close-btn">&times;</button>
             </div>
             <p id="atom-preview-desc" class="atom-preview-desc">Descrição da fase...</p>
+            <div id="atom-preview-synergies" class="atom-preview-synergies"></div>
             <div class="atom-preview-stats">
               <span id="atom-preview-stars">⭐⭐⭐</span>
               <span id="atom-preview-best">Recorde: --</span>
@@ -284,34 +406,113 @@
         </div>
       </div>
 
-      <!-- MODAL: VITÓRIA -->
+      <!-- MODAL: CONFIRMAÇÃO DE RESET TOTAL DE DADOS -->
+      <div id="modal-reset-confirm" class="modal-container hidden">
+        <div class="modal-card reset-confirm-card">
+          <div class="reset-confirm-icon">⚠️</div>
+          <h2 class="reset-confirm-title">Limpar Todo o Progresso?</h2>
+          <p class="reset-confirm-desc">
+            Deseja apagar todo o seu progresso no jogo?
+            <span class="reset-confirm-warning">Todas as 50 fases, estrelas e recordes serão redefinidos para a Fase 1.</span>
+          </p>
+          <div class="reset-confirm-actions">
+            <button id="btn-reset-cancel" class="btn-secondary">Cancelar</button>
+            <button id="btn-reset-confirm-action" class="btn-danger-confirm">Sim, Limpar Tudo</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL: VITÓRIA (CONCLUSÃO DA FASE) -->
       <div id="modal-victory" class="modal-container hidden">
         <div class="modal-card victory-card">
-          <div class="victory-icon">🎉</div>
-          <h2 class="victory-title">Parabéns!</h2>
-          <div id="victory-stars" class="victory-stars">⭐⭐⭐</div>
-          <div id="victory-stars-detail" class="victory-stars-detail"></div>
-          <div id="victory-time" class="victory-time">Tempo Zen: --</div>
-          <div id="victory-score" class="victory-score">🌸 Harmonia Zen: 0 pts</div>
-          <div id="victory-next-unlock" class="victory-unlock hidden">
-            🔓 <span id="victory-unlock-name">Próxima fase desbloqueada!</span>
+          <!-- Emblema de Louros & Troféu Zen Dourado -->
+          <div class="victory-emblem-wrap">
+            <div class="victory-halo-spin"></div>
+            <div class="victory-icon">
+              <svg width="56" height="56" viewBox="0 0 100 100" fill="none" class="zen-trophy-svg">
+                <circle cx="50" cy="50" r="44" fill="url(#victory-glow)" opacity="0.35" />
+                <path d="M22 64 C20 48, 28 34, 40 24 C38 32, 34 44, 38 52 C32 44, 30 36, 32 28 C24 38, 22 52, 28 66 Z" fill="#FBBF24" />
+                <path d="M78 64 C80 48, 72 34, 60 24 C62 32, 66 44, 62 52 C68 44, 70 36, 68 28 C76 38, 78 52, 72 66 Z" fill="#FBBF24" />
+                <path d="M34 32 L66 32 C64 54, 58 64, 50 66 C42 64, 36 54, 34 32 Z" fill="url(#gold-cup)" stroke="#F59E0B" stroke-width="2" />
+                <path d="M45 66 L55 66 L57 76 L43 76 Z" fill="#D97706" />
+                <rect x="38" y="76" width="24" height="6" rx="3" fill="#F59E0B" />
+                <polygon points="50,40 57,48 50,56 43,48" fill="#10B981" stroke="#34D399" stroke-width="1.5" />
+                <circle cx="50" cy="48" r="2" fill="#FFFFFF" />
+                <defs>
+                  <radialGradient id="victory-glow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#FBBF24" stop-opacity="0.9" />
+                    <stop offset="100%" stop-color="#F59E0B" stop-opacity="0" />
+                  </radialGradient>
+                  <linearGradient id="gold-cup" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#FFFBEB" />
+                    <stop offset="40%" stop-color="#FBBF24" />
+                    <stop offset="100%" stop-color="#D97706" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
           </div>
+
+          <div class="victory-header">
+            <span class="victory-level-chip" id="victory-level-subtitle">FASE CONCLUÍDA</span>
+            <h2 id="victory-title" class="victory-title">Vitória Iluminada!</h2>
+          </div>
+
+          <!-- Estrelas Zen Tridimensionais Esculpidas -->
+          <div class="victory-stars-container">
+            <div id="victory-stars" class="victory-stars">⭐⭐⭐</div>
+          </div>
+
+          <!-- Detalhamento dos Critérios das Estrelas -->
+          <div id="victory-stars-detail" class="victory-stars-detail"></div>
+
+          <!-- Grid Moderno de Estatísticas Zen -->
+          <div class="victory-stats-grid">
+            <div class="victory-stat-item">
+              <span class="stat-zen-icon">⏱️</span>
+              <div class="stat-zen-info">
+                <span class="stat-zen-label">Tempo Zen</span>
+                <span id="victory-time" class="stat-zen-value">--:--</span>
+              </div>
+            </div>
+            <div class="victory-stat-item">
+              <span class="stat-zen-icon">🌸</span>
+              <div class="stat-zen-info">
+                <span class="stat-zen-label">Harmonia</span>
+                <span id="victory-score" class="stat-zen-value">0 pts</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Banner de Próxima Fase Desbloqueada -->
+          <div id="victory-next-unlock" class="victory-unlock hidden">
+            <span class="unlock-icon">🔓</span>
+            <span id="victory-unlock-name" class="unlock-text">Próxima fase desbloqueada!</span>
+          </div>
+
+          <!-- Ações Ergonômicas do Rodapé -->
           <div class="victory-actions">
-            <button id="btn-replay" class="btn-secondary">↩ Jogar de Novo</button>
-            <button id="btn-next-level" class="btn-primary">Próxima Fase ➔</button>
+            <button id="btn-replay" class="btn-secondary victory-btn-secondary" title="Jogar de Novo">
+              <span class="btn-icon">↩</span>
+              <span>Repetir</span>
+            </button>
+            <button id="btn-next-level" class="btn-primary victory-btn-primary" title="Próxima Fase">
+              <span>Próxima Fase</span>
+              <span class="btn-arrow-icon">➔</span>
+            </button>
           </div>
         </div>
       </div><!-- /modal-victory -->
 
-      <!-- MODAL: GUIA DA NATUREZA (ENCICLOPÉDIA DE COMBINAÇÕES E CLIMAS) -->
-      <div id="modal-nature-guide" class="modal-container hidden">
+      <!-- MODAL: GUIA DA NATUREZA (ENCICLOPÉDIA COMPLETA DE REGRAS, SINERGIAS E CLIMAS) -->
+      <div id="modal-nature-guide" class="modal-container guide-fullscreen-container hidden">
         <div class="modal-card nature-guide-card">
           <div class="modal-header">
             <div class="nature-guide-title-box">
               <span class="guide-title-icon">📖</span>
               <h2>Guia da Natureza</h2>
             </div>
-            <button class="modal-close">&times;</button>
+            <button class="modal-close" aria-label="Fechar Guia">&times;</button>
           </div>
 
           <!-- Abas de Navegação -->
@@ -324,16 +525,21 @@
 
           <!-- Conteúdo rolável das abas -->
           <div class="modal-body guide-body-content">
-            <!-- ABA 1: SINERGIAS ANIMAIS -->
+            <!-- ABA 1: SINERGIAS ANIMAIS & NATUREZA -->
             <div id="guide-tab-synergies" class="guide-tab-pane active">
-              <p class="guide-intro-text">Descubra as deliciosas combinações da natureza! Junte animais com seus elementos favoritos para liberar poderes mágicos:</p>
-              
+              <p class="guide-intro-text">
+                Descubra as deliciosas conexões ecológicas da natureza! Ao combinar animais com seus alimentos favoritos ou habitat, você ativa a <strong>Resolução em Cascata</strong>: resgate de peças presas na bandeja, colheita de pares do tabuleiro ou dádivas de harmonia zen:
+              </p>
+
+              <!-- Seção 1: Caça & Banquete -->
+              <div class="guide-section-title">👑 Caça & Banquete Silvestre</div>
+
               <div class="synergy-card">
                 <div class="synergy-header">
                   <div class="synergy-icons"><span>🐸</span> <span class="math-op">+</span> <span>🐞</span> <span class="math-sep">/</span> <span>🐝</span></div>
                   <h4>Língua Ágil do Sapo</h4>
                 </div>
-                <p class="synergy-desc">O Sapo estica sua língua elástica e <strong>pesca insetos da bandeja</strong> para abri-la ou captura um par de insetos direto da mesa!</p>
+                <p class="synergy-desc">O Sapo estica sua língua elástica e <strong>pesca insetos da bandeja</strong> para abri-la ou captura um par completo de insetos direto da mesa!</p>
               </div>
 
               <div class="synergy-card">
@@ -341,7 +547,7 @@
                   <div class="synergy-icons"><span>🐱</span> <span class="math-op">+</span> <span>🐟</span></div>
                   <h4>Pata Ágil do Gato</h4>
                 </div>
-                <p class="synergy-desc">O Gato dá uma patada rápida na beira da lagoa e <strong>pesca um par completo de peixes</strong> do tabuleiro!</p>
+                <p class="synergy-desc">O Gato dá uma patada rápida na beira da lagoa e <strong>pesca peixes que estejam ocupando a bandeja</strong> ou colhe um par completo do tabuleiro!</p>
               </div>
 
               <div class="synergy-card">
@@ -349,23 +555,34 @@
                   <div class="synergy-icons"><span>🐻</span> <span class="math-op">+</span> <span>🍯</span> <span class="math-sep">/</span> <span>🐟</span></div>
                   <h4>O Banquete do Urso</h4>
                 </div>
-                <p class="synergy-desc">O Urso combina com Mel ou Peixe e <strong>devora o par completo correspondente</strong> na mesa!</p>
+                <p class="synergy-desc">O Urso combina com Mel ou Peixe, <strong>devora o alimento preso na bandeja</strong> para liberar espaço ou recolhe o banquete completo na mesa!</p>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-header">
+                  <div class="synergy-icons"><span>🐧</span> <span class="math-op">+</span> <span>🐟</span></div>
+                  <h4>Deslize Glacial do Pinguim</h4>
+                </div>
+                <p class="synergy-desc">O Pinguim desliza veloz pelo manto de gelo e <strong>recolhe peixes no caminho</strong> ou desocupa peixes que estavam retidos na sua bandeja!</p>
               </div>
 
               <div class="synergy-card">
                 <div class="synergy-header">
                   <div class="synergy-icons"><span>🦔</span> <span class="math-op">+</span> <span>🍎</span></div>
-                  <h4>Espinho Coletor</h4>
+                  <h4>Espinho Coletor do Ouriço</h4>
                 </div>
-                <p class="synergy-desc">O Ouriço rola pelo solo do pomar e <strong>espeta um par completo de maçãs</strong> em seus espinhos!</p>
+                <p class="synergy-desc">O Ouriço rola pelo pomar e <strong>espeta um par completo de maçãs</strong> em seus espinhos ou recolhe a fruta esquecida na bandeja!</p>
               </div>
+
+              <!-- Seção 2: Coleta & Forrageamento -->
+              <div class="guide-section-title">🌰 Coleta & Forrageamento</div>
 
               <div class="synergy-card">
                 <div class="synergy-header">
                   <div class="synergy-icons"><span>🐒</span> <span class="math-op">+</span> <span>🍌</span></div>
-                  <h4>Salto na Copa</h4>
+                  <h4>Salto na Copa do Macaco</h4>
                 </div>
-                <p class="synergy-desc">O Macaco combina com a Banana e <strong>reorganiza a mesa alegremente</strong> abrindo novos caminhos!</p>
+                <p class="synergy-desc">O Macaco combina com a Banana, salta acrobaticamente pelas árvores e <strong>reorganiza as peças da mesa alegremente</strong> abrindo novos caminhos livres!</p>
               </div>
 
               <div class="synergy-card">
@@ -373,75 +590,210 @@
                   <div class="synergy-icons"><span>🐝</span> <span class="math-op">+</span> <span>🍯</span></div>
                   <h4>Dança das Abelhas</h4>
                 </div>
-                <p class="synergy-desc">Abelha combina com Favo de Mel para soltar um enxame que <strong>abre espaço seguro na bandeja</strong>.</p>
+                <p class="synergy-desc">A Abelha combina com o Favo de Mel para soltar um enxame dourado que <strong>colhe mel da bandeja com doçura</strong> ou recolhe o favo da mesa!</p>
               </div>
 
               <div class="synergy-card">
                 <div class="synergy-header">
                   <div class="synergy-icons"><span>🐿️</span> <span class="math-op">+</span> <span>🌰</span></div>
-                  <h4>Toca de Inverno</h4>
+                  <h4>Toca de Inverno do Esquilo</h4>
                 </div>
-                <p class="synergy-desc">O Esquilo combina com a Noz e <strong>recolhe nozes ou resgata peças da bandeja</strong> para a toca!</p>
+                <p class="synergy-desc">O Esquilo combina com a Noz e <strong>recolhe nozes ou resgata sementes da bandeja</strong> para sua despensa secreta de inverno!</p>
               </div>
 
               <div class="synergy-card">
                 <div class="synergy-header">
-                  <div class="synergy-icons"><span>🐬</span> <span class="math-op">+</span> <span>🐚</span></div>
-                  <h4>Eco Sonar do Mar</h4>
+                  <div class="synergy-icons"><span>🐰</span> <span class="math-op">+</span> <span>🍎</span></div>
+                  <h4>Salto Ágil do Coelho</h4>
                 </div>
-                <p class="synergy-desc">Golfinho combina com Concha, <strong>ilumina pares livres e resgata conchas</strong> das profundezas.</p>
+                <p class="synergy-desc">O Coelho dá um salto gracioso pelo pomar, <strong>colhe maçãs no tabuleiro</strong> e mordisca frutas da bandeja para abrir espaço!</p>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-header">
+                  <div class="synergy-icons"><span>🦊</span> <span class="math-op">+</span> <span>🍇</span></div>
+                  <h4>Rastro Astuto da Raposa</h4>
+                </div>
+                <p class="synergy-desc">A Raposa entra sorrateiramente nos vinhedos, <strong>recolhendo cachos de uvas do tabuleiro e da bandeja</strong> com elegância sem deixar rastros!</p>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-header">
+                  <div class="synergy-icons"><span>🐦</span> <span class="math-op">+</span> <span>🍇</span></div>
+                  <h4>Voo Rasante do Pássaro</h4>
+                </div>
+                <p class="synergy-desc">O Pássaro sobrevoa o vinhedo em voo rasante, <strong>colhe o par de uvas</strong> e acalma o tabuleiro com seu canto matinal sereno!</p>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-header">
+                  <div class="synergy-icons"><span>🐌</span> <span class="math-op">+</span> <span>🍃</span></div>
+                  <h4>Passo Sereno do Caracol</h4>
+                </div>
+                <p class="synergy-desc">O Caracol desliza com máxima calma sobre a folha fresca, <strong>trazendo foco pleno, desocupando a bandeja</strong> e espalhando harmonia zen!</p>
+              </div>
+
+              <!-- Seção 3: Guardiões dos Mares & Savana -->
+              <div class="guide-section-title">🌊 Guardiões dos Mares & Savana</div>
+
+              <div class="synergy-card">
+                <div class="synergy-header">
+                  <div class="synergy-icons"><span>🐬</span> <span class="math-op">+</span> <span>🐚</span></div>
+                  <h4>Eco Sonar do Golfinho</h4>
+                </div>
+                <p class="synergy-desc">O Golfinho emite ondas de sonar cristalinas, <strong>ilumina conchas livres e resgata conchas da bandeja</strong> para as profundezas marinhas!</p>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-header">
+                  <div class="synergy-icons"><span>🐢</span> <span class="math-op">+</span> <span>🐚</span></div>
+                  <h4>Escudo de Carapaça da Tartaruga</h4>
+                </div>
+                <p class="synergy-desc">A Tartaruga usa sua paciência milenar para <strong>proteger e recolher conchas da bandeja</strong> e do tabuleiro com equilíbrio inabalável!</p>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-header">
+                  <div class="synergy-icons"><span>🐼</span> <span class="math-op">+</span> <span>🎋</span> <span class="math-sep">/</span> <span>🌰</span></div>
+                  <h4>Bambu Zen do Panda</h4>
+                </div>
+                <p class="synergy-desc">O Panda colhe brotos de bambu e sementes com sabedoria ancestral, <strong>aliviando a bandeja com serenidade</strong> e concedendo harmonia extra!</p>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-header">
+                  <div class="synergy-icons"><span>🐘</span> <span class="math-op">+</span> <span>🌰</span> <span class="math-sep">/</span> <span>🪨</span></div>
+                  <h4>Impacto Monumental do Elefante</h4>
+                </div>
+                <p class="synergy-desc">A manada de elefantes pisa com força colossal, <strong>estremecendo peças pesadas para fora do tabuleiro</strong> e resgatando a bandeja com sua tromba!</p>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-header">
+                  <div class="synergy-icons"><span>🦆</span> <span class="math-op">+</span> <span>🐟</span></div>
+                  <h4>Mergulho na Lagoa do Pato</h4>
+                </div>
+                <p class="synergy-desc">O Patinho mergulha na água límpida e <strong>pesca peixes da bandeja e da mesa</strong> gerando marolas calmantes de serenidade!</p>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-header">
+                  <div class="synergy-icons"><span>🐶</span> <span class="math-op">+</span> <span>🐱</span> <span class="math-sep">/</span> <span>🐟</span></div>
+                  <h4>Harmonia Doméstica</h4>
+                </div>
+                <p class="synergy-desc">Cão e Gato brincam juntos em pura amizade e lealdade, <strong>unindo forças para resgatar peças da bandeja</strong> com carinho fraternal!</p>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-header">
+                  <div class="synergy-icons"><span>🦁</span> <span class="math-op">+</span> <span>☀️</span></div>
+                  <h4>Rugido Radiante do Leão</h4>
+                </div>
+                <p class="synergy-desc">O Rei da Savana ruge majestoso sob o sol dourado, <strong>iluminando a mesa, recolhendo o sol da bandeja</strong> e trazendo calor nobre!</p>
+              </div>
+
+              <!-- Seção 4: Flores & Botânica -->
+              <div class="guide-section-title">🌺 Flores & Botânica Zen</div>
+
+              <div class="synergy-card">
+                <div class="synergy-header">
+                  <div class="synergy-icons"><span>🦋</span> <span class="math-op">+</span> <span>🌸</span> <span class="math-sep">/</span> <span>🪷</span></div>
+                  <h4>Metamorfose Floral da Borboleta</h4>
+                </div>
+                <p class="synergy-desc">O bater de asas suave da Borboleta poliniza flores de lótus e cerejeiras, <strong>purificando a bandeja com leveza zen</strong> e graça natural!</p>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-header">
+                  <div class="synergy-icons"><span>🌺</span> <span class="math-op">+</span> <span>🌸</span> <span class="math-sep">/</span> <span>🌻</span></div>
+                  <h4>Jardim Zen & Polinizadores</h4>
+                </div>
+                <p class="synergy-desc">Flores de lótus, girassóis, cerejeiras e rosas se unem a abelhas e joaninhas, <strong>espalhando pólen curativo e concedendo grandes bônus de harmonia</strong>!</p>
+              </div>
+
+              <!-- Seção 5: Santuário Místico & Coringa -->
+              <div class="guide-section-title">🐉 Santuário Místico & Coringa</div>
+
+              <div class="synergy-card">
+                <div class="synergy-header">
+                  <div class="synergy-icons"><span>🦎</span> <span class="math-op">+</span> <span>✨</span></div>
+                  <h4>Camaleão Holográfico (Coringa)</h4>
+                </div>
+                <p class="synergy-desc">A criatura mais adaptável da natureza! O Camaleão se <strong>transforma instantaneamente em qualquer animal</strong> com quem for pareado para fechar a jogada!</p>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-header">
+                  <div class="synergy-icons"><span>🐉</span> <span class="math-op">+</span> <span>🪷</span> <span class="math-sep">/</span> <span>🦄</span></div>
+                  <h4>Harmonia Celestial Mística</h4>
+                </div>
+                <p class="synergy-desc">Dragão Celestial, Fênix Sagrada e Unicórnio Místico despertam energias transcendentais, <strong>concedendo a bênção suprema de pontuação (+300 pts)</strong>!</p>
+              </div>
+
+              <div class="synergy-card">
+                <div class="synergy-header">
+                  <div class="synergy-icons"><span>🐋</span> <span class="math-op">+</span> <span>🦭</span> <span class="math-sep">/</span> <span>🦈</span></div>
+                  <h4>Abismo Oceânico & Polar</h4>
+                </div>
+                <p class="synergy-desc">Baleias, focas, orcas e tubarões conectam as marés profundas, <strong>purificando as correntes marítimas do tabuleiro</strong> com harmonia glacial!</p>
               </div>
             </div>
 
             <!-- ABA 2: CLIMAS DA NATUREZA -->
             <div id="guide-tab-climates" class="guide-tab-pane hidden">
-              <p class="guide-intro-text">Combine pares de animais de uma mesma família para despertar o poder dos elementos:</p>
+              <p class="guide-intro-text">
+                Ao combinar pares consecutivos da mesma família ecológica ou manter um ritmo ágil de combinações (<em>Streak</em>), você desperta os 7 Grandes Poderes Elementais da Natureza:
+              </p>
 
               <div class="climate-card climate-water">
                 <div class="climate-badge">🌊 Maré Alta Purificadora</div>
-                <p class="climate-req">Gatilho: 2 pares aquáticos (Peixe, Golfinho, Pato, Tartaruga)</p>
-                <p class="climate-desc">Uma onda d'água <strong>lava e limpa totalmente as peças da bandeja</strong> e a correnteza tem chance de <strong>eliminar +1 par na mesa</strong>!</p>
+                <p class="climate-req">Gatilho: 2 pares aquáticos em sequência (Peixe, Golfinho, Pato, Tartaruga, Baleia, Foca)</p>
+                <p class="climate-desc">Uma onda límpida <strong>lava e esvazia totalmente as peças da bandeja</strong>, e a correnteza tem chance de <strong>eliminar +1 par extra na mesa</strong>!</p>
               </div>
 
               <div class="climate-card climate-sun">
                 <div class="climate-badge">☀️ Onda de Calor</div>
-                <p class="climate-req">Gatilho: 2 pares da savana (Leão, Elefante, Macaco, Gato, Cão)</p>
-                <p class="climate-desc">Derrete peças de gelo e transforma um par em <strong>Camaleões Coringa 🦎</strong>!</p>
+                <p class="climate-req">Gatilho: 2 pares da savana / sol (Leão, Elefante, Macaco, Girafa, Camelo, Cão)</p>
+                <p class="climate-desc">Derrete instantaneamente todas as <strong>Peças de Gelo ❄️</strong> do tabuleiro e transmuta uma peça comum em <strong>Camaleão Coringa 🦎</strong>!</p>
               </div>
 
               <div class="climate-card climate-ice">
                 <div class="climate-badge">❄️ Nevasca Ártica</div>
-                <p class="climate-req">Gatilho: 2 pares polares (Pinguim, Urso)</p>
-                <p class="climate-desc">O sopro congelante colhe um par completo e concede <strong>+1 Dica 💡</strong>!</p>
+                <p class="climate-req">Gatilho: 2 pares polares (Pinguim, Urso Polar, Lobo, Foca)</p>
+                <p class="climate-desc">O sopro congelante colhe um par completo do tabuleiro e presenteia você com <strong>+1 Dica Gratuita 💡</strong>!</p>
               </div>
 
               <div class="climate-card climate-wind">
-                <div class="climate-badge">🌪️ Vendaval de Outono</div>
-                <p class="climate-req">Gatilho: 2 pares florestais (Pássaro, Raposa, Esquilo, Panda)</p>
-                <p class="climate-desc">Corta todas as vinhas de cipó e <strong>restaura +1 Misturar 🔀</strong>!</p>
-              </div>
-
-              <div class="climate-card climate-storm">
-                <div class="climate-badge">🌧️ Tempestade Zen</div>
-                <p class="climate-req">Gatilho: Sequência de 3 acertos rápidos</p>
-                <p class="climate-desc">Um raio dourado ilumina o tabuleiro e <strong>recarrega +1 Marreta 🔨</strong>!</p>
+                <div class="climate-badge">🍂 Vendaval de Outono</div>
+                <p class="climate-req">Gatilho: 2 pares florestais (Pássaro, Raposa, Esquilo, Panda, Ouriço, Coruja)</p>
+                <p class="climate-desc">Uma revoada de folhas douradas <strong>corta todas as Vinhas de Cipó 🌿</strong> da mesa e restaura <strong>+1 Misturar 🔀</strong>!</p>
               </div>
 
               <div class="climate-card climate-spring">
                 <div class="climate-badge">🌸 Brisa da Primavera</div>
-                <p class="climate-req">Gatilho: 2 pares de jardim (Borboleta, Abelha, Coelho, Joaninha)</p>
-                <p class="climate-desc">Faz <strong>chocar todos os Casulos e Ovos 🥚</strong> e concede <strong>+1 Dica 💡</strong>!</p>
+                <p class="climate-req">Gatilho: 2 pares de jardim / flora (Borboleta, Abelha, Coelho, Joaninha, Flores, Brotos)</p>
+                <p class="climate-desc">Faz desabrochar a vida silvestre: <strong>choca todos os Casulos e Ovos 🥚</strong> do tabuleiro em peças livres e concede bônus de harmonia zen!</p>
               </div>
 
               <div class="climate-card climate-moon">
-                <div class="climate-badge">🌙 Noite de Lua Cheia</div>
-                <p class="climate-req">Gatilho: Sequência de 4 acertos consecutivos</p>
-                <p class="climate-desc">Vaga-lumes brilhantes pousam e <strong>iluminam todos os pares livres da mesa</strong>.</p>
+                <div class="climate-badge">🌕 Noite de Lua Cheia</div>
+                <p class="climate-req">Gatilho: Sequência contínua de 4 acertos rápidos sem pausa (Streak 4+)</p>
+                <p class="climate-desc">O tabuleiro é banhado por vaga-lumes reluzentes que <strong>iluminam todos os pares livres disponíveis</strong> na mesa!</p>
+              </div>
+
+              <div class="climate-card climate-storm">
+                <div class="climate-badge">🌧️ Tempestade Zen</div>
+                <p class="climate-req">Gatilho: Sequência de 3 acertos ágeis consecutivos</p>
+                <p class="climate-desc">Um relâmpago dourado abençoa a partida e <strong>recarrega +1 Marreta Zen 🔨</strong>!</p>
               </div>
             </div>
 
-            <!-- ABA 3: PEÇAS ESPECIAIS -->
+            <!-- ABA 3: PEÇAS ESPECIAIS & ELEMENTOS -->
             <div id="guide-tab-specials" class="guide-tab-pane hidden">
+              <p class="guide-intro-text">
+                Conheça os elementos vivos, obstáculos e relíquias que habitam os tabuleiros ancestrais:
+              </p>
+
               <div class="special-card">
                 <div class="special-icon">🦎</div>
                 <div class="special-info">
@@ -453,8 +805,8 @@
               <div class="special-card">
                 <div class="special-icon">❄️</div>
                 <div class="special-info">
-                  <h4>Peça de Gelo</h4>
-                  <p>Precisa ter seus lados desimpedidos ou receber a <strong>Onda de Calor ☀️</strong> para derreter o gelo e poder ser jogada.</p>
+                  <h4>Peça Congelada (Gelo)</h4>
+                  <p>Trancada e imóvel pelo frio. Para libertá-la, desobstrua suas laterais ou invoque o calor radiante da <strong>Onda de Calor ☀️</strong>!</p>
                 </div>
               </div>
 
@@ -462,15 +814,15 @@
                 <div class="special-icon">🥚</div>
                 <div class="special-info">
                   <h4>Casulo / Ovo Surpresa</h4>
-                  <p>Choca quando você combina pares ao lado dele ou quando a <strong>Brisa da Primavera 🌸</strong> sopra, revelando coringas!</p>
+                  <p>Guarda um ser misterioso em seu interior. Choca ao combinar pares ao seu redor ou com a <strong>Brisa da Primavera 🌸</strong>, revelando peças livres!</p>
                 </div>
               </div>
 
               <div class="special-card">
                 <div class="special-icon">🪨</div>
                 <div class="special-info">
-                  <h4>Rocha Ancestral</h4>
-                  <p>Pedra sólida que bloqueia passagens. Pode ser quebrada com a Marreta ou racha quando os dois lados são liberados.</p>
+                  <h4>Rocha Ancestral (Bloqueio)</h4>
+                  <p>Pedra milenar que bloqueia passagens e corredores. Pode ser quebrada com a <strong>Marreta Zen 🔨</strong> ou desobstruída liberando ambos os lados.</p>
                 </div>
               </div>
 
@@ -478,7 +830,7 @@
                 <div class="special-icon">🌿</div>
                 <div class="special-info">
                   <h4>Vinhas de Cipó</h4>
-                  <p>Prendem a peça até que as peças vizinhas sejam removidas ou o <strong>Vendaval de Outono 🌪️</strong> corte os galhos.</p>
+                  <p>Raízes que enlaçam a peça impedindo seu movimento até que as vizinhas sejam removidas ou o <strong>Vendaval de Outono 🍂</strong> corte as amarras.</p>
                 </div>
               </div>
 
@@ -486,7 +838,7 @@
                 <div class="special-icon">🎁</div>
                 <div class="special-info">
                   <h4>Baú da Fortuna</h4>
-                  <p>Uma pedra de baú dourado que dá de presente <strong>+1 Marreta, +1 Dica ou +1 Embaralhar</strong>!</p>
+                  <p>Um relicário dourado escondido no tabuleiro! Ao combinar o par, você ganha de presente <strong>+1 Marreta 🔨, +1 Dica 💡 ou +1 Embaralhar 🔀</strong>!</p>
                 </div>
               </div>
 
@@ -494,33 +846,72 @@
                 <div class="special-icon">🪞</div>
                 <div class="special-info">
                   <h4>Espelho Místico</h4>
-                  <p>Reflete e assume a forma do <strong>último animal que você combinou</strong>!</p>
+                  <p>Superfície mágica reluzente que assume a forma exata do <strong>último animal que você combinou</strong> na mesa!</p>
                 </div>
               </div>
             </div>
 
-            <!-- ABA 4: DICAS & REGRAS -->
+            <!-- ABA 4: DICAS & MECÂNICAS ZEN -->
             <div id="guide-tab-tips" class="guide-tab-pane hidden">
+              <p class="guide-intro-text">
+                Regras suaves, acessibilidade sênior e recursos de conforto pensados para um jogo 100% relaxante e livre de estresse:
+              </p>
+
               <div class="tip-box">
-                <h4>🎯 A Bandeja de 4 Slots</h4>
-                <p>Ao tocar em uma peça livre, ela vai para a bandeja. Quando duas peças iguais se encontram na bandeja, elas se eliminam com festa! Mas atenção: se encher os 4 slots sem pares, a partida termina.</p>
+                <h4>🎯 A Bandeja Zen de 4 Slots</h4>
+                <p>Ao tocar em uma peça livre, ela é guardada com carinho na bandeja inferior. Quando duas peças iguais se encontram na bandeja, o par se une e evapora com festa! Atenção: mantenha sempre espaço livre nos 4 slots para continuar combinando.</p>
               </div>
 
               <div class="tip-box">
-                <h4>↩️ Desfazer e Dicas sem Punição</h4>
-                <p>Errou ou quer repensar a jogada? O botão <strong>Desfazer</strong> devolve as peças para a mesa. O botão <strong>Dica</strong> brilha o melhor par livre. Use à vontade!</p>
+                <h4>↩️ Desfazer Ilimitado & Sem Pressa</h4>
+                <p>Aqui não existe punição nem pressa! Errou uma jogada ou quer tentar um caminho diferente? O botão <strong>Desfazer ↩️</strong> devolve as peças para o tabuleiro sem perda de estrelas ou pontuação.</p>
               </div>
 
               <div class="tip-box">
-                <h4>🔨 A Marreta Salvador</h4>
-                <p>Se a bandeja estiver quase cheia, ative a <strong>Marreta</strong> e toque na peça que quer quebrar para abrir espaço.</p>
+                <h4>💡 Dicas Gratuitas & Guiadas</h4>
+                <p>Travou o olhar? O botão <strong>Dica 💡</strong> acende suavemente o melhor par disponível no momento para que você nunca fique preso, sem custo de recursos.</p>
               </div>
 
               <div class="tip-box">
-                <h4>👆 Toque Longo para Dica Rápida</h4>
-                <p>Durante a partida, você pode <strong>segurar o dedo por 1 segundo</strong> em qualquer animal ou elemento para ver sua dica instantânea na tela.</p>
+                <h4>🔨 A Marreta Salvadora</h4>
+                <p>A bandeja está cheia ou uma pedra bloqueia seu caminho? Ative a <strong>Marreta 🔨</strong> e toque na peça que deseja remover instantaneamente para reabrir o fluxo da partida.</p>
+              </div>
+
+              <div class="tip-box">
+                <h4>🔀 Misturar com Garantia de Vitória</h4>
+                <p>Reorganiza todas as peças restantes na mesa com validação matemática garantida: todo tabuleiro gerado possui solução comprovada sem empates forçados.</p>
+              </div>
+
+              <div class="tip-box">
+                <h4>🌟 Resgate Cósmico (Proteção Anti-Derrota)</h4>
+                <p>Se a sua bandeja encher sem pares ou o tabuleiro ficar sem jogadas, o <strong>Resgate Cósmico</strong> entra em ação automaticamente para salvar o jogo e reabrir espaços seguros!</p>
+              </div>
+
+              <div class="tip-box">
+                <h4>👆 Toque Longo / Inspetor de Peças</h4>
+                <p>Durante a partida, você pode <strong>segurar o dedo por 1 segundo</strong> em qualquer animal ou elemento para inspecionar seu nome, bioma, família e parceiros sinérgicos.</p>
+              </div>
+
+              <div class="tip-box">
+                <h4>🔢 Numeração de Acessibilidade Sênior</h4>
+                <p>Todas as peças contam com numerais arábicos sutis no cantinho (1 a 28) para facilitar a identificação visual imediata de espécies semelhantes para idosos e baixa visão.</p>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL: CONFIRMAÇÃO DE REINÍCIO (RESTART CONFIRM ZEN) -->
+      <div id="modal-restart-confirm" class="modal-container hidden">
+        <div class="modal-card" style="max-width: 330px; text-align: center; padding: 26px 20px;">
+          <div style="font-size: 2.8rem; margin-bottom: 0.5rem; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4));">🔄</div>
+          <h2 style="font-size: 1.3rem; font-weight: 800; color: #ffffff; margin-bottom: 0.4rem;">Recomeçar Fase?</h2>
+          <p style="font-size: 0.92rem; color: #a7f3d0; line-height: 1.4; margin-bottom: 1.4rem;">
+            Deseja reiniciar todas as peças desta fase para a posição inicial?
+          </p>
+          <div style="display: flex; gap: 10px; justify-content: center;">
+            <button id="btn-restart-cancel" class="btn-secondary" style="flex: 1; padding: 12px 10px; font-weight: 600;">Continuar</button>
+            <button id="btn-restart-confirm" class="btn-primary" style="flex: 1; padding: 12px 10px; font-weight: 700; background: linear-gradient(135deg, #10b981, #059669); border: 1px solid #34d399;">Recomeçar</button>
           </div>
         </div>
       </div>
@@ -546,6 +937,66 @@
               <button id="btn-update-later" class="btn-secondary btn-update-secondary">Depois</button>
               <button id="btn-update-restart" class="btn-primary btn-update-primary">🔄 Reiniciar Agora</button>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+           TRANSIÇÃO ORGÂNICA: CORTINA DE FOLHAGENS & BRIEFING DA FASE ZEN
+           ═══════════════════════════════════════════════════════════════════ -->
+      <div id="foliage-curtain" class="foliage-curtain hidden" aria-hidden="true" inert>
+        <!-- Cortina de Folhagem Esquerda -->
+        <div class="foliage-curtain-panel foliage-curtain-left">
+          <img src="./assets/nature/foliage-curtain-left.svg" alt="" class="foliage-curtain-svg" />
+        </div>
+
+        <!-- Cortina de Folhagem Direita -->
+        <div class="foliage-curtain-panel foliage-curtain-right">
+          <img src="./assets/nature/foliage-curtain-right.svg" alt="" class="foliage-curtain-svg" />
+        </div>
+
+        <!-- Centro de Revelação & Briefing da Fase -->
+        <div id="foliage-guardian-center" class="foliage-guardian-center">
+          <img id="foliage-guardian-avatar" src="./assets/nature/guardian-1-panda.svg" alt="Guardião" class="foliage-guardian-avatar" />
+          
+          <div class="foliage-guardian-meta">
+            <!-- Bioma e Título da Fase -->
+            <span id="foliage-biome-tag" class="foliage-biome-tag">MUNDO 1 · JARDIM DAS LÓTUS</span>
+            <h3 id="foliage-level-title" class="foliage-level-title">Fase 1: O Começo</h3>
+
+            <!-- Estatísticas da Fase: Peças, Ondas, Dificuldade -->
+            <div id="foliage-level-stats" class="foliage-level-stats">
+              <span id="foliage-stat-tiles" class="foliage-stat-badge">🧩 72 Peças</span>
+              <span id="foliage-stat-waves" class="foliage-stat-badge">🌊 Onda Única</span>
+              <span id="foliage-stat-diff" class="foliage-stat-badge">⭐ Fácil</span>
+            </div>
+
+            <!-- Caixa de Destaque: Nova Mecânica / Dica do Guardião -->
+            <div id="foliage-mechanic-box" class="foliage-mechanic-box">
+              <div class="foliage-mechanic-badge">
+                <span id="foliage-mechanic-icon" class="foliage-mechanic-icon">✨</span>
+                <span id="foliage-mechanic-label" class="foliage-mechanic-label">NOVA MECÂNICA</span>
+              </div>
+              <p id="foliage-mechanic-text" class="foliage-mechanic-text">
+                "A serenidade revela os pares ocultos."
+              </p>
+            </div>
+
+            <!-- Sinergias Disponíveis na Fase -->
+            <div id="foliage-synergies-section" class="foliage-synergies-section">
+              <div class="foliage-synergies-title">🐾 Sinergias deste Bioma</div>
+              <div id="foliage-synergies-list" class="foliage-synergies-list">
+                <!-- Pills gerados dinamicamente via TypeScript -->
+              </div>
+            </div>
+
+            <!-- Botão de Ação Primária para Continuar -->
+            <button id="btn-foliage-continue" class="foliage-continue-btn" type="button">
+              <span>Continuar</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </button>
           </div>
         </div>
       </div>

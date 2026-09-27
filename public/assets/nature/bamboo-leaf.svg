@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="bambooLeafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="50%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+  </defs>
+  <path d="M 4,28 C 6,18 12,8 28,4 C 24,14 18,24 4,28 Z" fill="url(#bambooLeafGrad)" />
+  <path d="M 5,27 Q 14,17 26,6" stroke="#a7f3d0" stroke-width="0.8" fill="none" opacity="0.6" />
+</svg>

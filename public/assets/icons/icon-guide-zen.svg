@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" fill="none">
+  <defs>
+    <linearGradient id="lotus-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff9ebb" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+    <linearGradient id="lotus-center" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+
+  <!-- Base da água -->
+  <path d="M12 39C18 37 30 37 36 39" stroke="#6ee7b7" stroke-width="2.2" stroke-linecap="round" opacity="0.8" />
+
+  <!-- Pétala Esquerda -->
+  <path d="M24 35C14 34 10 24 13 18C17 25 21 31 24 35Z" 
+        fill="url(#lotus-grad)" stroke="#fbcfe8" stroke-width="1.8" stroke-linejoin="round" />
+  
+  <!-- Pétala Direita -->
+  <path d="M24 35C34 34 38 24 35 18C31 25 27 31 24 35Z" 
+        fill="url(#lotus-grad)" stroke="#fbcfe8" stroke-width="1.8" stroke-linejoin="round" />
+
+  <!-- Pétala Central Radiante -->
+  <path d="M24 10C20 18 20 28 24 35C28 28 28 18 24 10Z" 
+        fill="url(#lotus-center)" stroke="#ffffff" stroke-width="2" stroke-linejoin="round" />
+
+  <!-- Centro Dourado de Iluminação -->
+  <circle cx="24" cy="7" r="2.4" fill="#fbbf24" stroke="#ffffff" stroke-width="1" />
+</svg>

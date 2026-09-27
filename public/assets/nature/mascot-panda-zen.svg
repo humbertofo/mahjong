@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" id="zen-mascot" class="mascot-svg">
+  <defs>
+    <!-- Gradiente da sombra -->
+    <radialGradient id="panda-shadow-grad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0a1a0f" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#0a1a0f" stop-opacity="0" />
+    </radialGradient>
+    
+    <!-- Gradiente suave do corpo de marfim -->
+    <linearGradient id="panda-fur-white" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#ece6d8" />
+    </linearGradient>
+
+    <!-- Gradiente suave das partes pretas / carvão nobre -->
+    <linearGradient id="panda-fur-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#32383e" />
+      <stop offset="100%" stop-color="#181c20" />
+    </linearGradient>
+
+    <!-- Gradiente do bambu esmeralda -->
+    <linearGradient id="bamboo-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#52b788" />
+      <stop offset="100%" stop-color="#2d6a4f" />
+    </linearGradient>
+
+    <!-- Gradiente da flor de lótus no topo -->
+    <linearGradient id="lotus-pink" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ff9ebb" />
+      <stop offset="100%" stop-color="#d93b74" />
+    </linearGradient>
+  </defs>
+
+  <!-- Sombra meditativa no solo -->
+  <ellipse id="mascot-shadow" cx="100" cy="184" rx="55" ry="12" fill="url(#panda-shadow-grad)" />
+
+  <!-- Grupo Mestre do Corpo (para respiração / pulo de vitória) -->
+  <g id="mascot-body" class="rig-body">
+    
+    <!-- Perninhas em lótus / base sentada -->
+    <g id="legs-group">
+      <!-- Pata esquerda -->
+      <ellipse cx="64" cy="168" rx="22" ry="14" fill="url(#panda-fur-dark)" transform="rotate(-15 64 168)" />
+      <ellipse cx="58" cy="167" rx="10" ry="7" fill="#444b52" opacity="0.6" transform="rotate(-15 58 167)" />
+      <circle cx="50" cy="160" r="3.5" fill="#444b52" opacity="0.7" />
+      <circle cx="56" cy="155" r="3.5" fill="#444b52" opacity="0.7" />
+      <circle cx="64" cy="154" r="3.5" fill="#444b52" opacity="0.7" />
+      
+      <!-- Pata direita -->
+      <ellipse cx="136" cy="168" rx="22" ry="14" fill="url(#panda-fur-dark)" transform="rotate(15 136 168)" />
+      <ellipse cx="142" cy="167" rx="10" ry="7" fill="#444b52" opacity="0.6" transform="rotate(15 142 167)" />
+      <circle cx="150" cy="160" r="3.5" fill="#444b52" opacity="0.7" />
+      <circle cx="144" cy="155" r="3.5" fill="#444b52" opacity="0.7" />
+      <circle cx="136" cy="154" r="3.5" fill="#444b52" opacity="0.7" />
+    </g>
+
+    <!-- Tronco Fofo / Barriga Branca -->
+    <path id="torso" d="M 68,105 C 50,120 46,155 65,172 C 85,182 115,182 135,172 C 154,155 150,120 132,105 Z" 
+          fill="url(#panda-fur-white)" stroke="#1a201c" stroke-width="2.5" stroke-linejoin="round" />
+    
+    <!-- Faixa Zen de Jade e Ouro na cintura -->
+    <path d="M 62,154 C 84,162 116,162 138,154 C 137,160 115,168 85,168 C 65,168 62,158 62,154 Z" 
+          fill="#1b4332" stroke="#d4af37" stroke-width="1.5" />
+    <circle cx="100" cy="161" r="5" fill="#d4af37" />
+    <circle cx="100" cy="161" r="2.5" fill="#2d6a4f" />
+
+    <!-- Braço Esquerdo (em repouso meditativo sobre o joelho) -->
+    <g id="arm-left" class="rig-limb limb-arm-left">
+      <path d="M 66,110 C 42,118 36,140 50,154 C 58,162 70,152 70,142 C 70,128 72,118 66,110 Z" 
+            fill="url(#panda-fur-dark)" stroke="#1a201c" stroke-width="2" stroke-linejoin="round" />
+    </g>
+
+    <!-- Braço Direito (segurando o raminho de bambu) -->
+    <g id="arm-right" class="rig-limb limb-arm-right">
+      <path d="M 134,110 C 158,118 164,138 150,152 C 142,160 130,150 130,140 C 130,128 128,118 134,110 Z" 
+            fill="url(#panda-fur-dark)" stroke="#1a201c" stroke-width="2" stroke-linejoin="round" />
+      
+      <!-- Haste e Folhas de Bambu Mágico -->
+      <g id="bamboo-sprout" transform="translate(150, 105) rotate(15)">
+        <!-- Talo -->
+        <path d="M0,45 C-2,20 -1,0 2,-25" stroke="url(#bamboo-grad)" stroke-width="3.5" stroke-linecap="round" fill="none" />
+        <ellipse cx="0" cy="22" rx="3.5" ry="1.2" fill="#d4af37" />
+        <ellipse cx="1" cy="-2" rx="3" ry="1" fill="#d4af37" />
+        <!-- Folha 1 -->
+        <path d="M0,20 C10,18 20,24 24,30 C20,30 10,26 0,21" fill="url(#bamboo-grad)" />
+        <!-- Folha 2 -->
+        <path d="M1,-2 C12,-8 22,-6 26,0 C20,2 10,0 1,-1" fill="url(#bamboo-grad)" />
+        <!-- Folha Topo -->
+        <path d="M2,-25 C8,-38 2,-45 0,-48 C-2,-42 -2,-32 2,-25" fill="url(#bamboo-grad)" />
+        <path d="M2,-25 C-8,-35 -14,-32 -18,-30 C-14,-26 -6,-24 2,-25" fill="url(#bamboo-grad)" />
+      </g>
+    </g>
+
+    <!-- Cabeça Expressiva (Pivô na base do pescoço 50% 90%) -->
+    <g id="mascot-head" class="rig-head">
+      <!-- Orelha Esquerda com interior sutil -->
+      <circle id="ear-left" cx="58" cy="50" r="16" fill="url(#panda-fur-dark)" stroke="#1a201c" stroke-width="2" />
+      <circle cx="60" cy="51" r="8" fill="#444b52" opacity="0.5" />
+
+      <!-- Orelha Direita com interior sutil -->
+      <circle id="ear-right" cx="142" cy="50" r="16" fill="url(#panda-fur-dark)" stroke="#1a201c" stroke-width="2" />
+      <circle cx="140" cy="51" r="8" fill="#444b52" opacity="0.5" />
+
+      <!-- Formato da Cabeça (Suavemente achatada e fofa) -->
+      <ellipse id="head-base" cx="100" cy="84" rx="46" ry="40" 
+               fill="url(#panda-fur-white)" stroke="#1a201c" stroke-width="2.5" />
+
+      <!-- Manchas pretas dos olhos características do Panda -->
+      <ellipse cx="80" cy="82" rx="13" ry="11" fill="url(#panda-fur-dark)" transform="rotate(-15 80 82)" />
+      <ellipse cx="120" cy="82" rx="13" ry="11" fill="url(#panda-fur-dark)" transform="rotate(15 120 82)" />
+
+      <!-- Bochechas Rosadas Fofas -->
+      <ellipse cx="66" cy="94" rx="7" ry="4" fill="#ff758f" opacity="0.35" />
+      <ellipse cx="134" cy="94" rx="7" ry="4" fill="#ff758f" opacity="0.35" />
+
+      <!-- Grupo dos Olhos (Animável: Piscar / Expressões) -->
+      <g id="eyes-group">
+        <!-- Olho Esquerdo -->
+        <circle id="eye-left" cx="82" cy="81" r="5.5" fill="#111" />
+        <circle cx="80" cy="79" r="2" fill="#fff" />
+        <circle cx="83.5" cy="82.5" r="1" fill="#fff" />
+
+        <!-- Olho Direito -->
+        <circle id="eye-right" cx="118" cy="81" r="5.5" fill="#111" />
+        <circle cx="116" cy="79" r="2" fill="#fff" />
+        <circle cx="119.5" cy="82.5" r="1" fill="#fff" />
+      </g>
+
+      <!-- Focinho e Nariz Fofinho -->
+      <path id="snout-nose" d="M 94,88 C 94,85 106,85 106,88 C 106,93 94,93 94,88 Z" fill="#2d3135" />
+      
+      <!-- Boca Feliz e Pacífica -->
+      <path id="mouth" d="M 100,92 L 100,95 M 95,95 C 97,99 100,99 100,95 C 100,99 103,99 105,95" 
+            stroke="#2d3135" stroke-width="2" stroke-linecap="round" fill="none" />
+
+      <!-- Flor de Lótus no Topo da Cabeça (Símbolo de Iluminação Zen) -->
+      <g id="head-lotus" transform="translate(100, 42) scale(0.65)">
+        <path d="M0,0 C-12,-8 -18,-25 0,-36 C18,-25 12,-8 0,0 Z" fill="url(#lotus-pink)" />
+        <path d="M-4,-2 C-16,-6 -25,-18 -15,-28 C-5,-24 -2,-12 -4,-2 Z" fill="url(#lotus-pink)" opacity="0.8" />
+        <path d="M4,-2 C16,-6 25,-18 15,-28 C5,-24 2,-12 4,-2 Z" fill="url(#lotus-pink)" opacity="0.8" />
+        <circle cx="0" cy="-6" r="3" fill="#ffd166" />
+      </g>
+
+    </g> <!-- Fim mascot-head -->
+
+  </g> <!-- Fim mascot-body -->
+</svg>

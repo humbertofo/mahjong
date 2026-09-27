@@ -1,104 +1,19 @@
 import { PlacedTile, AnimalValue } from '../core/types';
+import {
+  SynergyFamily,
+  SYNERGY_FAMILIES,
+  ANIMAL_HELPER_INDEX,
+} from '../core/nature/synergies/SynergyFamilies';
+import { TileRegistry } from '../core/nature/tiles';
+
+export type { SynergyFamily };
+export { SYNERGY_FAMILIES, ANIMAL_HELPER_INDEX };
 
 export interface TileDimensions {
   tileWidth: number;
   tileHeight: number;
   tileDepth: number;
 }
-
-// Paleta de cores — bg diferente para cada animal, sem duplicatas
-const ANIMAL_PALETTE: Record<AnimalValue, { bg: string; accent: string; dark: string }> = {
-  cat:       { bg: '#FFF3E0', accent: '#FF8F00', dark: '#E65100' },
-  dog:       { bg: '#E8F5E9', accent: '#D7995B', dark: '#5D4037' },
-  rabbit:    { bg: '#FCE4EC', accent: '#E91E63', dark: '#880E4F' },
-  fish:      { bg: '#E3F2FD', accent: '#1976D2', dark: '#0D47A1' },
-  bird:      { bg: '#E8EAF6', accent: '#3949AB', dark: '#1A237E' },
-  butterfly: { bg: '#F3E5F5', accent: '#9C27B0', dark: '#4A148C' },
-  turtle:    { bg: '#E0F2F1', accent: '#00897B', dark: '#004D40' },
-  frog:      { bg: '#F1F8E9', accent: '#43A047', dark: '#1B5E20' },
-  bee:       { bg: '#FFFDE7', accent: '#FFB300', dark: '#212121' },
-  elephant:  { bg: '#EDE7F6', accent: '#7E57C2', dark: '#311B92' },
-  lion:      { bg: '#FFF8E1', accent: '#FFB300', dark: '#BF6000' },
-  fox:       { bg: '#FBE9E7', accent: '#F4511E', dark: '#BF360C' },
-  monkey:    { bg: '#EFEBE9', accent: '#A1662F', dark: '#4E342E' },
-  panda:     { bg: '#FAFAFA', accent: '#212121', dark: '#000000' },
-  penguin:   { bg: '#E1F5FE', accent: '#0288D1', dark: '#01579B' },
-  duck:      { bg: '#E0F7FA', accent: '#00ACC1', dark: '#1B5E20' },
-  snail:     { bg: '#FFF9C4', accent: '#F57F17', dark: '#4E342E' },
-  ladybug:   { bg: '#FFEBEE', accent: '#C62828', dark: '#B71C1C' },
-
-  // Novos Animais
-  bear:      { bg: '#EFEBE9', accent: '#795548', dark: '#3E2723' },
-  squirrel:  { bg: '#FFF3E0', accent: '#E65100', dark: '#BF360C' },
-  dolphin:   { bg: '#E0F7FA', accent: '#0097A7', dark: '#006064' },
-  hedgehog:  { bg: '#F5EBE6', accent: '#8D6E63', dark: '#4E342E' },
-
-  // Adereços e Elementos Naturais
-  banana:    { bg: '#FFFDE7', accent: '#FBC02D', dark: '#F57F17' },
-  acorn:     { bg: '#EFEBE9', accent: '#8D6E63', dark: '#4E342E' },
-  shell:     { bg: '#EDE7F6', accent: '#7E57C2', dark: '#4527A0' },
-  apple:     { bg: '#FFEBEE', accent: '#E53935', dark: '#B71C1C' },
-  honeycomb: { bg: '#FFF8E1', accent: '#FFA000', dark: '#FF6F00' },
-
-  // Peça Coringa
-  chameleon: { bg: '#E8F5E9', accent: '#00E676', dark: '#00B0FF' },
-};
-
-const EMOJIS_MAP: Record<AnimalValue, string> = {
-  cat: '🐱', dog: '🐶', rabbit: '🐰', fish: '🐟',
-  bird: '🐦', butterfly: '🦋', turtle: '🐢', frog: '🐸',
-  bee: '🐝', elephant: '🐘', lion: '🦁', fox: '🦊',
-  monkey: '🐒', panda: '🐼', penguin: '🐧', duck: '🦆',
-  snail: '🐌', ladybug: '🐞',
-  bear: '🐻', squirrel: '🐿️', dolphin: '🐬', hedgehog: '🦔',
-  banana: '🍌', acorn: '🌰', shell: '🐚', apple: '🍎', honeycomb: '🍯',
-  chameleon: '🦎',
-};
-
-export interface SynergyFamily {
-  borderColor: string;
-  badge: string;
-  name: string;
-}
-
-export const SYNERGY_FAMILIES: Partial<Record<AnimalValue, SynergyFamily>> = {
-  // 🍯 Família do Mel / Doce (Amarelo Âmbar)
-  bee:       { borderColor: '#F59E0B', badge: '🍯', name: 'Mel' },
-  bear:      { borderColor: '#F59E0B', badge: '🍯', name: 'Mel' },
-  honeycomb: { borderColor: '#F59E0B', badge: '🍯', name: 'Mel' },
-
-  // 🍌 Família da Fruta / Copa (Amarelo Solar)
-  monkey:    { borderColor: '#FACC15', badge: '🍌', name: 'Fruta' },
-  banana:    { borderColor: '#FACC15', badge: '🍌', name: 'Fruta' },
-
-  // 🌰 Família das Nozes / Toca (Marrom Avelã)
-  squirrel:  { borderColor: '#B45309', badge: '🌰', name: 'Noz' },
-  acorn:     { borderColor: '#B45309', badge: '🌰', name: 'Noz' },
-
-  // 🌊 Família Marinha / Oceano & Pescador (Azul Turquesa)
-  dolphin:   { borderColor: '#06B6D4', badge: '🐚', name: 'Oceano' },
-  shell:     { borderColor: '#06B6D4', badge: '🐚', name: 'Oceano' },
-  fish:      { borderColor: '#06B6D4', badge: '🐟', name: 'Pescador' },
-  cat:       { borderColor: '#06B6D4', badge: '🐟', name: 'Pescador' },
-
-  // 🌿 Família do Brejo / Lagoa (Verde Esmeralda)
-  frog:      { borderColor: '#10B981', badge: '🍃', name: 'Brejo' },
-  ladybug:   { borderColor: '#10B981', badge: '🍃', name: 'Brejo' },
-
-  // 🍎 Família do Pomar (Rubi Suave)
-  hedgehog:  { borderColor: '#F43F5E', badge: '🍎', name: 'Pomar' },
-  apple:     { borderColor: '#F43F5E', badge: '🍎', name: 'Pomar' },
-
-  // 🦎 Camaleão Coringa (Arco-Íris Holográfico)
-  chameleon: { borderColor: 'rainbow', badge: '✨', name: 'Coringa' },
-};
-
-const ALL_ANIMALS: AnimalValue[] = [
-  'cat', 'dog', 'rabbit', 'fish', 'bird', 'butterfly', 'turtle', 'frog',
-  'bee', 'elephant', 'lion', 'fox', 'monkey', 'panda', 'penguin', 'duck',
-  'snail', 'ladybug', 'bear', 'squirrel', 'dolphin', 'hedgehog',
-  'banana', 'acorn', 'shell', 'apple', 'honeycomb', 'chameleon',
-];
 
 export interface AtlasUV {
   sx: number;
@@ -113,34 +28,52 @@ export class TileRenderer {
   private dpr: number = 1;
   private dims: TileDimensions = { tileWidth: 56, tileHeight: 74, tileDepth: 7 };
   private dimBlockedTiles: boolean = true;
+  private showHelperNumbers: boolean = true;
   public useEmojiMode: boolean = true;
 
-  // Master Texture Atlas (Sprite Sheet Unificado em GPU)
+  // Master Texture Atlas (Sprite Sheet Unificado em GPU) com Bake On-Demand
   private masterAtlas: HTMLCanvasElement | null = null;
   private atlasCoords: Map<AnimalValue, AtlasUV> = new Map();
+  private static animalIndexMap: Map<AnimalValue, number> | null = null;
 
   private cachedGlyphFontSize: number = 0;
   private cachedGlyphFont: string = '';
 
   constructor() {
     this.dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 3) : 1;
-    this.buildMasterAtlas();
+  }
+
+  private static getAnimalIndex(animal: AnimalValue): number {
+    if (!TileRenderer.animalIndexMap) {
+      TileRenderer.animalIndexMap = new Map();
+      const all = TileRegistry.getAll();
+      for (let i = 0; i < all.length; i++) {
+        TileRenderer.animalIndexMap.set(all[i].value, i);
+      }
+    }
+    return TileRenderer.animalIndexMap.get(animal) ?? -1;
   }
 
   public setDimensions(dims: TileDimensions): void {
     if (
+      !this.masterAtlas ||
       this.dims.tileWidth !== dims.tileWidth ||
-      this.dims.tileHeight !== dims.tileHeight ||
-      this.dims.tileDepth !== dims.tileDepth
+      this.dims.tileHeight !== dims.tileHeight
     ) {
       this.dims = dims;
       this.clearCache();
-      this.buildMasterAtlas();
+      this.initMasterAtlas();
+    } else {
+      this.dims = dims;
     }
   }
 
-  public setOptions(_showHelperNumbers: boolean, dimBlockedTiles: boolean, useEmojiMode?: boolean): void {
+  public setOptions(showHelperNumbers: boolean, dimBlockedTiles: boolean, useEmojiMode?: boolean): void {
     let changed = false;
+    if (this.showHelperNumbers !== showHelperNumbers) {
+      this.showHelperNumbers = showHelperNumbers;
+      changed = true;
+    }
     if (this.dimBlockedTiles !== dimBlockedTiles) {
       this.dimBlockedTiles = dimBlockedTiles;
       changed = true;
@@ -151,7 +84,7 @@ export class TileRenderer {
     }
     if (changed) {
       this.clearCache();
-      this.buildMasterAtlas();
+      this.initMasterAtlas();
     }
   }
 
@@ -159,84 +92,193 @@ export class TileRenderer {
     this.cache.clear();
     this.desaturateCache.clear();
     this.atlasCoords.clear();
-    this.masterAtlas = null;
     this.cachedGlyphFont = '';
+    this.cachedGlyphFontSize = 0;
   }
 
-  public buildMasterAtlas(): HTMLCanvasElement {
+  /**
+   * Aloca e dimensiona a superfície do Master Atlas offscreen instantaneamente (< 0.1ms).
+   * Inclui margem de segurança (gutter) entre as células para garantir zero sangramento (bleeding) entre peças.
+   */
+  public initMasterAtlas(): HTMLCanvasElement {
+    const totalTiles = TileRegistry.getAll().length;
+    const pad = 4;
     const cw = this.dims.tileWidth - 4;
     const ch = this.dims.tileHeight - 4;
-    const cellW = Math.round(cw * this.dpr);
-    const cellH = Math.round(ch * this.dpr);
+    const cellW = Math.round((cw + pad) * this.dpr);
+    const cellH = Math.round((ch + pad) * this.dpr);
 
     const cols = 8;
-    const rows = 4;
+    const rows = Math.max(4, Math.ceil(totalTiles / cols));
     const totalW = cols * cellW;
     const totalH = rows * cellH;
 
     if (!this.masterAtlas) {
       this.masterAtlas = document.createElement('canvas');
     }
-    this.masterAtlas.width = totalW;
-    this.masterAtlas.height = totalH;
-
-    const g = this.masterAtlas.getContext('2d');
-    if (!g) return this.masterAtlas;
+    if (this.masterAtlas.width !== totalW || this.masterAtlas.height !== totalH) {
+      this.masterAtlas.width = totalW;
+      this.masterAtlas.height = totalH;
+    } else {
+      const g = this.masterAtlas.getContext('2d');
+      g?.clearRect(0, 0, totalW, totalH);
+    }
 
     this.atlasCoords.clear();
+    return this.masterAtlas;
+  }
 
-    const badgeSize = Math.max(9, Math.round(cw * 0.22));
+  /**
+   * Renderiza os glifos dos animais, badges de sinergia e chips de numerais de acessibilidade
+   * no Master Atlas em lote com clipping estrito e margem de isolamento por célula.
+   */
+  public prewarmTiles(animals: AnimalValue[]): void {
+    if (!this.masterAtlas) {
+      this.initMasterAtlas();
+    }
+    const unbaked: { animal: AnimalValue; sx: number; sy: number }[] = [];
+    const pad = 4;
+    const cols = 8;
+    const cw = this.dims.tileWidth - 4;
+    const ch = this.dims.tileHeight - 4;
+    const cellW = Math.round((cw + pad) * this.dpr);
+    const cellH = Math.round((ch + pad) * this.dpr);
+    const sw = Math.round(cw * this.dpr);
+    const sh = Math.round(ch * this.dpr);
+
+    for (let i = 0; i < animals.length; i++) {
+      const animal = animals[i];
+      if (!this.atlasCoords.has(animal)) {
+        const idx = TileRenderer.getAnimalIndex(animal);
+        if (idx >= 0) {
+          const col = idx % cols;
+          const row = Math.floor(idx / cols);
+          const sx = col * cellW;
+          const sy = row * cellH;
+          this.atlasCoords.set(animal, { sx, sy, sw, sh });
+          unbaked.push({ animal, sx, sy });
+        }
+      }
+    }
+
+    if (unbaked.length === 0) return;
+
+    const g = this.masterAtlas!.getContext('2d');
+    if (!g) return;
+
+    const emojiFontSize = Math.round(cw * 0.70);
+    const emojiFont = `${emojiFontSize}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Android Emoji", sans-serif`;
+    const badgeSize = Math.max(10, Math.round(cw * 0.22));
     const badgeFont = `${badgeSize}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Android Emoji", sans-serif`;
 
-    for (let i = 0; i < ALL_ANIMALS.length; i++) {
-      const animal = ALL_ANIMALS[i];
-      const col = i % cols;
-      const row = Math.floor(i / cols);
-      const sx = col * cellW;
-      const sy = row * cellH;
-
-      this.atlasCoords.set(animal, { sx, sy, sw: cellW, sh: cellH });
-
+    for (let i = 0; i < unbaked.length; i++) {
+      const item = unbaked[i];
       g.save();
       g.setTransform(1, 0, 0, 1, 0, 0);
-      g.translate(sx, sy);
+      g.translate(item.sx, item.sy);
       g.scale(this.dpr, this.dpr);
 
-      this.drawAnimalGlyph(g, animal, cw, ch, 0, 0);
+      // CLIPPING ESTRITO ÚNICO POR CÉLULA
+      g.beginPath();
+      g.rect(0, 0, cw, ch);
+      g.clip();
 
-      const syn = SYNERGY_FAMILIES[animal];
+      // 1. Glifo Principal do Animal / Emoji
+      g.font = emojiFont;
+      g.textAlign = 'center';
+      g.textBaseline = 'middle';
+      const emoji = TileRegistry.getEmoji(item.animal);
+      g.fillText(emoji, cw / 2, ch * 0.49);
+
+      // 2. Badge de Sinergia
+      const syn = SYNERGY_FAMILIES[item.animal];
       if (syn && syn.badge) {
+        g.font = badgeFont;
         const bx = cw - Math.round(cw * 0.16);
         const by = Math.round(ch * 0.16);
-
-        g.save();
-        g.font = badgeFont;
-        g.textAlign = 'center';
-        g.textBaseline = 'middle';
         g.fillText(syn.badge, bx, by);
-        g.restore();
+      }
+
+      // 3. Chip de Numeral Arábico de Acessibilidade
+      if (this.showHelperNumbers) {
+        const helperNum = TileRegistry.getHelperIndex(item.animal);
+        if (helperNum !== undefined) {
+          const isThreeDigits = helperNum.length >= 3;
+          const numH = Math.max(11, Math.round(ch * 0.15));
+          const numW = Math.max(isThreeDigits ? 18 : 13, Math.round(cw * (isThreeDigits ? 0.28 : 0.20)));
+          const nx = 3.5;
+          const ny = ch - numH - 3.5;
+
+          g.fillStyle = 'rgba(255, 255, 255, 0.94)';
+          this.drawRoundedRect(g, nx, ny, numW, numH, 3.5);
+          g.fill();
+
+          g.strokeStyle = 'rgba(71, 85, 105, 0.45)';
+          g.lineWidth = 0.8;
+          g.stroke();
+
+          const numFontSize = Math.max(isThreeDigits ? 7.5 : 8.5, Math.round(numH * (isThreeDigits ? 0.64 : 0.72)));
+          g.font = `bold ${numFontSize}px system-ui, -apple-system, sans-serif`;
+          g.fillStyle = '#0F172A';
+          g.fillText(helperNum, nx + numW / 2, ny + numH / 2 + 0.5);
+        }
       }
 
       g.restore();
     }
+  }
 
-    return this.masterAtlas;
+  public bakeAnimalSlot(animal: AnimalValue): AtlasUV | null {
+    if (!this.masterAtlas) {
+      this.initMasterAtlas();
+    }
+    const cached = this.atlasCoords.get(animal);
+    if (cached) return cached;
+    this.prewarmTiles([animal]);
+    return this.atlasCoords.get(animal) || null;
+  }
+
+  public buildMasterAtlas(): HTMLCanvasElement {
+    this.initMasterAtlas();
+    const allAnimals = TileRegistry.getAll().map((t) => t.value);
+    this.prewarmTiles(allAnimals);
+    return this.masterAtlas!;
   }
 
   public getAtlasUV(animal: AnimalValue): AtlasUV | null {
-    if (!this.masterAtlas || this.atlasCoords.size === 0) {
-      this.buildMasterAtlas();
+    if (!this.masterAtlas) {
+      this.initMasterAtlas();
     }
+    const cached = this.atlasCoords.get(animal);
+    if (cached) return cached;
+    this.prewarmTiles([animal]);
     return this.atlasCoords.get(animal) || null;
   }
 
   private getDimmedColor(hex: string): string {
     let cached = this.desaturateCache.get(hex);
     if (!cached) {
-      cached = this.desaturate(hex, 0.5);
+      cached = this.darkenAndDesaturate(hex, 0.28, 0.45);
       this.desaturateCache.set(hex, cached);
     }
     return cached;
+  }
+
+  private darkenAndDesaturate(hex: string, darkenFactor: number, desaturateFactor: number): string {
+    let r = 255, g = 255, b = 255;
+    if (hex.startsWith('#')) {
+      r = parseInt(hex.slice(1, 3), 16);
+      g = parseInt(hex.slice(3, 5), 16);
+      b = parseInt(hex.slice(5, 7), 16);
+    }
+    const gray = Math.round(r * 0.299 + g * 0.587 + b * 0.114);
+    const nr = Math.round(r + (gray - r) * desaturateFactor);
+    const ng = Math.round(g + (gray - g) * desaturateFactor);
+    const nb = Math.round(b + (gray - b) * desaturateFactor);
+    const finalR = Math.max(0, Math.round(nr * (1 - darkenFactor)));
+    const finalG = Math.max(0, Math.round(ng * (1 - darkenFactor)));
+    const finalB = Math.max(0, Math.round(nb * (1 - darkenFactor)));
+    return `rgb(${finalR},${finalG},${finalB})`;
   }
 
   // =========================================================================
@@ -307,12 +349,7 @@ export class TileRenderer {
     const ivorySplitY = y + Math.round(faceH * 0.62);
 
     // Topo de Marfim da lateral direita
-    const gradRightIvory = ctx.createLinearGradient(x + faceW, y, x + faceW + dX, y + faceH);
-    gradRightIvory.addColorStop(0, '#FAF6EE');
-    gradRightIvory.addColorStop(0.5, '#EAE2D2');
-    gradRightIvory.addColorStop(1, '#D8CFBC');
-
-    ctx.fillStyle = gradRightIvory;
+    ctx.fillStyle = isFree || !this.dimBlockedTiles ? '#EAE2D2' : '#B8B0A2';
     ctx.beginPath();
     ctx.moveTo(x + faceW, y + 6);
     ctx.lineTo(x + faceW + dX, y + 6 + dY);
@@ -322,11 +359,7 @@ export class TileRenderer {
     ctx.fill();
 
     // Fundo de Jade da lateral direita (base clássica de Mahjong)
-    const gradRightJade = ctx.createLinearGradient(x + faceW, ivorySplitY, x + faceW + dX, y + faceH + dY);
-    gradRightJade.addColorStop(0, '#0F766E');
-    gradRightJade.addColorStop(1, '#044E46');
-
-    ctx.fillStyle = gradRightJade;
+    ctx.fillStyle = isFree || !this.dimBlockedTiles ? '#09534C' : '#05332E';
     ctx.beginPath();
     ctx.moveTo(x + faceW, ivorySplitY);
     ctx.lineTo(x + faceW + dX, ivorySplitY + dY);
@@ -336,7 +369,7 @@ export class TileRenderer {
     ctx.fill();
 
     // Filete de separação entre marfim e jade
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)';
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.18)';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(x + faceW, ivorySplitY);
@@ -347,11 +380,7 @@ export class TileRenderer {
     const ivoryBottomH = dY * 0.62;
 
     // Seção Marfim inferior
-    const gradBottomIvory = ctx.createLinearGradient(x, y + faceH, x, y + faceH + ivoryBottomH);
-    gradBottomIvory.addColorStop(0, '#D6CCBD');
-    gradBottomIvory.addColorStop(1, '#BFB3A0');
-
-    ctx.fillStyle = gradBottomIvory;
+    ctx.fillStyle = isFree || !this.dimBlockedTiles ? '#D0C5B4' : '#9E9484';
     ctx.beginPath();
     ctx.moveTo(x + 6, y + faceH);
     ctx.lineTo(x + 6 + dX * 0.62, y + faceH + ivoryBottomH);
@@ -361,11 +390,7 @@ export class TileRenderer {
     ctx.fill();
 
     // Seção Jade inferior
-    const gradBottomJade = ctx.createLinearGradient(x, y + faceH + ivoryBottomH, x, y + faceH + dY);
-    gradBottomJade.addColorStop(0, '#09534C');
-    gradBottomJade.addColorStop(1, '#022E29');
-
-    ctx.fillStyle = gradBottomJade;
+    ctx.fillStyle = isFree || !this.dimBlockedTiles ? '#033B34' : '#02241F';
     ctx.beginPath();
     ctx.moveTo(x + 6 + dX * 0.62, y + faceH + ivoryBottomH);
     ctx.lineTo(x + 6 + dX, y + faceH + dY);
@@ -375,7 +400,7 @@ export class TileRenderer {
     ctx.fill();
 
     // Contorno da lateral 3D
-    ctx.strokeStyle = 'rgba(15, 23, 42, 0.35)';
+    ctx.strokeStyle = isFree || !this.dimBlockedTiles ? 'rgba(15, 23, 42, 0.35)' : 'rgba(15, 23, 42, 0.55)';
     ctx.lineWidth = 1.2;
     ctx.beginPath();
     ctx.moveTo(x + faceW, y + 6);
@@ -386,8 +411,8 @@ export class TileRenderer {
     ctx.stroke();
 
     // 3. FACE PRINCIPAL DA PEDRA
-    const palette = ANIMAL_PALETTE[tile.value as AnimalValue] || ANIMAL_PALETTE.cat;
-    let bgColor = isFree ? palette.bg : this.getDimmedColor(palette.bg);
+    const palette = TileRegistry.getPalette(tile.value as AnimalValue);
+    let bgColor = isFree || !this.dimBlockedTiles ? palette.bg : this.getDimmedColor(palette.bg);
 
     // Ajuste de luminosidade por nível Z: Peças mais altas recebem mais luz ambiente
     if (z === 1 && isFree) {
@@ -403,7 +428,11 @@ export class TileRenderer {
     // 4. CHANFRO TÁTIL 3D (SPECULAR BEVEL HIGHLIGHT)
     ctx.save();
     // Borda superior e esquerda com reflexo de luz
-    ctx.strokeStyle = z >= 1 ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 0.78)';
+    if (isFree || !this.dimBlockedTiles) {
+      ctx.strokeStyle = z >= 1 ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 0.78)';
+    } else {
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
+    }
     ctx.lineWidth = 1.6;
     ctx.beginPath();
     ctx.moveTo(x + 7, y + 1.2);
@@ -427,32 +456,37 @@ export class TileRenderer {
     const syn = SYNERGY_FAMILIES[tile.value as AnimalValue];
     if (syn) {
       if (syn.borderColor === 'rainbow') {
-        const cycle = animTime > 0 ? (animTime / 1400) % 1 : 0;
-        const angle = cycle * Math.PI * 2;
-        const cosA = Math.cos(angle);
-        const sinA = Math.sin(angle);
-        const grad = ctx.createLinearGradient(
-          x + faceW * (0.5 - cosA * 0.5),
-          y + faceH * (0.5 - sinA * 0.5),
-          x + faceW * (0.5 + cosA * 0.5),
-          y + faceH * (0.5 + sinA * 0.5)
-        );
-        grad.addColorStop(0, '#FFD700');
-        grad.addColorStop(0.33, '#00E676');
-        grad.addColorStop(0.66, '#00B0FF');
-        grad.addColorStop(1, '#E040FB');
-        ctx.lineWidth = 2.6;
-        ctx.strokeStyle = grad;
+        if (isFree || !this.dimBlockedTiles) {
+          const cycle = animTime > 0 ? (animTime / 1400) % 1 : 0;
+          const angle = cycle * Math.PI * 2;
+          const cosA = Math.cos(angle);
+          const sinA = Math.sin(angle);
+          const grad = ctx.createLinearGradient(
+            x + faceW * (0.5 - cosA * 0.5),
+            y + faceH * (0.5 - sinA * 0.5),
+            x + faceW * (0.5 + cosA * 0.5),
+            y + faceH * (0.5 + sinA * 0.5)
+          );
+          grad.addColorStop(0, '#FFD700');
+          grad.addColorStop(0.33, '#00E676');
+          grad.addColorStop(0.66, '#00B0FF');
+          grad.addColorStop(1, '#E040FB');
+          ctx.lineWidth = 2.6;
+          ctx.strokeStyle = grad;
+        } else {
+          ctx.lineWidth = 1.6;
+          ctx.strokeStyle = 'rgba(100, 116, 139, 0.70)';
+        }
       } else {
-        ctx.lineWidth = 2.4;
-        ctx.strokeStyle = isFree ? syn.borderColor : '#94A3B8';
+        ctx.lineWidth = isFree ? 2.4 : 1.6;
+        ctx.strokeStyle = isFree ? syn.borderColor : (this.dimBlockedTiles ? 'rgba(100, 116, 139, 0.65)' : syn.borderColor);
       }
       this.drawRoundedRect(ctx, x, y, faceW, faceH, 8);
       ctx.stroke();
     } else {
       // Peça neutra: contorno nítido que demarca o limite mesmo entre peças da mesma cor
-      ctx.lineWidth = 1.4;
-      ctx.strokeStyle = isFree ? 'rgba(71, 85, 105, 0.65)' : '#94A3B8';
+      ctx.lineWidth = isFree ? 1.4 : 1.2;
+      ctx.strokeStyle = isFree ? 'rgba(71, 85, 105, 0.65)' : (this.dimBlockedTiles ? 'rgba(100, 116, 139, 0.55)' : 'rgba(71, 85, 105, 0.65)');
       this.drawRoundedRect(ctx, x, y, faceW, faceH, 8);
       ctx.stroke();
     }
@@ -481,60 +515,33 @@ export class TileRenderer {
     // 8. GLIFO DO ANIMAL E MICRO-BADGE (MASTER TEXTURE ATLAS)
     const uv = this.getAtlasUV(tile.value as AnimalValue);
     if (uv && this.masterAtlas) {
-      if (!isFree && this.dimBlockedTiles) {
-        ctx.globalAlpha = 0.76;
-        ctx.drawImage(this.masterAtlas, uv.sx, uv.sy, uv.sw, uv.sh, x, y, faceW, faceH);
-        ctx.globalAlpha = 1.0;
-      } else {
-        ctx.drawImage(this.masterAtlas, uv.sx, uv.sy, uv.sw, uv.sh, x, y, faceW, faceH);
-      }
+      ctx.drawImage(this.masterAtlas, uv.sx, uv.sy, uv.sw, uv.sh, x, y, faceW, faceH);
     } else {
       const face = this.getOrGenerateTileFace(tile);
-      if (!isFree && this.dimBlockedTiles) {
-        ctx.globalAlpha = 0.76;
-        ctx.drawImage(face, x, y, faceW, faceH);
-        ctx.globalAlpha = 1.0;
-      } else {
-        ctx.drawImage(face, x, y, faceW, faceH);
-      }
+      ctx.drawImage(face, x, y, faceW, faceH);
     }
 
     // 8.1. CAMADAS E OVERLAYS ESPECIAIS (Gelo, Cipó, Rocha, Casulo, Baú, Espelho)
     this.drawSpecialOverlay(ctx, tile, x, y, faceW, faceH, isFree);
 
-    // 9. INDICADOR DE NÍVEL / ANDAR (ACESSIBILIDADE VISUAL PARA Z >= 1)
-    if (z >= 1) {
-      const badgeH = Math.max(13, Math.round(faceH * 0.16));
-      const badgeW = Math.max(17, Math.round(faceW * 0.26));
-      const bx = x + 3.5;
-      const by = y + 3.5;
-
+    // 8.2. ESCURECIMENTO TÁTIL DE PEÇAS BLOQUEADAS (Sombra translúcida rica para destacar peças livres)
+    if (!isFree && this.dimBlockedTiles) {
       ctx.save();
-      // Mini-chip elegante translúcido
-      ctx.fillStyle = z >= 2 ? 'rgba(217, 119, 6, 0.92)' : 'rgba(15, 23, 42, 0.75)';
-      this.drawRoundedRect(ctx, bx, by, badgeW, badgeH, 4);
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.35)'; // sombra ardósia zen para contraste imediato
+      this.drawRoundedRect(ctx, x, y, faceW, faceH, 8);
       ctx.fill();
-
-      // Borda do mini-chip
-      ctx.strokeStyle = z >= 2 ? '#FEF3C7' : 'rgba(255, 255, 255, 0.45)';
-      ctx.lineWidth = 0.8;
-      ctx.stroke();
-
-      // Rótulo: ▲2 ou ▲3
-      const fontSize = Math.max(9, Math.round(badgeH * 0.72));
-      ctx.font = `bold ${fontSize}px system-ui, -apple-system, sans-serif`;
-      ctx.fillStyle = '#FFFFFF';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(`▲${z + 1}`, bx + badgeW / 2, by + badgeH / 2 + 0.5);
       ctx.restore();
     }
+
+
+    // 10. NÚMERO ARÁBICO DE AUXÍLIO / ACESSIBILIDADE
+    // Já pré-renderizado diretamente na textura do Master Atlas (passo 8) com zero custo de CPU por frame.
 
     ctx.restore();
   }
 
   public getOrGenerateTileFace(tile: PlacedTile): HTMLCanvasElement {
-    const key = `${tile.value}_${this.dims.tileWidth}_${this.dims.tileHeight}`;
+    const key = `${tile.value}_${this.dims.tileWidth}_${this.dims.tileHeight}_${this.showHelperNumbers}`;
     let cached = this.cache.get(key);
     if (cached) return cached;
 
@@ -552,9 +559,9 @@ export class TileRenderer {
     // Micro-badge de sinergia pré-renderizado no cache offscreen
     const syn = SYNERGY_FAMILIES[tile.value as AnimalValue];
     if (syn && syn.badge) {
-      const badgeSize = Math.max(9, Math.round(cw * 0.22));
-      const bx = cw - Math.round(cw * 0.16);
-      const by = Math.round(ch * 0.16);
+      const badgeSize = Math.max(11, Math.round(cw * 0.28));
+      const bx = cw - Math.round(cw * 0.18);
+      const by = Math.round(ch * 0.18);
 
       g.save();
       g.font = `${badgeSize}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Android Emoji", sans-serif`;
@@ -562,6 +569,34 @@ export class TileRenderer {
       g.textBaseline = 'middle';
       g.fillText(syn.badge, bx, by);
       g.restore();
+    }
+
+    if (this.showHelperNumbers) {
+      const helperNum = TileRegistry.getHelperIndex(tile.value as AnimalValue);
+      if (helperNum !== undefined) {
+        const isThreeDigits = helperNum.length >= 3;
+        const numH = Math.max(12, Math.round(ch * 0.16));
+        const numW = Math.max(isThreeDigits ? 19 : 14, Math.round(cw * (isThreeDigits ? 0.30 : 0.22)));
+        const nx = 3.5;
+        const ny = ch - numH - 3.5;
+
+        g.save();
+        g.fillStyle = 'rgba(255, 255, 255, 0.94)';
+        this.drawRoundedRect(g, nx, ny, numW, numH, 3.5);
+        g.fill();
+
+        g.strokeStyle = 'rgba(71, 85, 105, 0.45)';
+        g.lineWidth = 0.8;
+        g.stroke();
+
+        const numFontSize = Math.max(isThreeDigits ? 7.5 : 8.5, Math.round(numH * (isThreeDigits ? 0.64 : 0.72)));
+        g.font = `bold ${numFontSize}px system-ui, -apple-system, sans-serif`;
+        g.fillStyle = '#0F172A';
+        g.textAlign = 'center';
+        g.textBaseline = 'middle';
+        g.fillText(helperNum, nx + numW / 2, ny + numH / 2 + 0.5);
+        g.restore();
+      }
     }
 
     this.cache.set(key, off);
@@ -580,12 +615,12 @@ export class TileRenderer {
     offsetX: number = 0,
     offsetY: number = 0
   ): void {
-    const emoji = EMOJIS_MAP[animal] || '🐾';
+    const emoji = TileRegistry.getEmoji(animal);
     const cx = offsetX + cw / 2;
-    const cy = offsetY + ch * 0.48;
-    const fontSize = Math.round(cw * 0.62);
+    const cy = offsetY + ch * 0.49;
+    const fontSize = Math.max(14, Math.round(cw * 0.70));
 
-    if (this.cachedGlyphFontSize !== fontSize) {
+    if (this.cachedGlyphFontSize !== fontSize || !this.cachedGlyphFont) {
       this.cachedGlyphFontSize = fontSize;
       this.cachedGlyphFont = `${fontSize}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Android Emoji", sans-serif`;
     }
@@ -597,6 +632,125 @@ export class TileRenderer {
 
     g.fillText(emoji, cx, cy);
     g.restore();
+  }
+
+  /**
+   * Renderiza um card completo de peça com alta resolução e proporções perfeitamente calibradas
+   * para os slots da bandeja (Tray) e flyers de animação, independente do zoom do tabuleiro da fase.
+   */
+  public renderTrayCard(
+    canvas: HTMLCanvasElement,
+    tile: PlacedTile,
+    w: number = 62,
+    h: number = 82
+  ): void {
+    const dpr = this.dpr;
+    const targetW = Math.round(w * dpr);
+    const targetH = Math.round(h * dpr);
+
+    if (canvas.width !== targetW || canvas.height !== targetH) {
+      canvas.width = targetW;
+      canvas.height = targetH;
+    }
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, targetW, targetH);
+    ctx.scale(dpr, dpr);
+
+    const pad = 1.5;
+    const cardW = w - pad * 2;
+    const cardH = h - pad * 2;
+
+    // 1. Corpo / Fundo da Peça de Marfim Suave
+    ctx.fillStyle = '#FFFFFF';
+    this.drawRoundedRect(ctx, pad, pad, cardW, cardH, 7);
+    ctx.fill();
+
+    // 2. Borda Temática de Sinergia (ou contorno nítido suave)
+    const syn = SYNERGY_FAMILIES[tile.value as AnimalValue];
+    if (syn) {
+      if (syn.borderColor === 'rainbow') {
+        const grad = ctx.createLinearGradient(pad, pad, cardW, cardH);
+        grad.addColorStop(0, '#FFD700');
+        grad.addColorStop(0.33, '#00E676');
+        grad.addColorStop(0.66, '#00B0FF');
+        grad.addColorStop(1, '#E040FB');
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 2.4;
+      } else {
+        ctx.strokeStyle = syn.borderColor;
+        ctx.lineWidth = 2.4;
+      }
+    } else {
+      ctx.strokeStyle = '#CBD5E1';
+      ctx.lineWidth = 1.2;
+    }
+    this.drawRoundedRect(ctx, pad, pad, cardW, cardH, 7);
+    ctx.stroke();
+
+    // 3. Glifo Central do Animal (Grande, Nítido e Proeminente para Idosos)
+    const cw = cardW - 2;
+    const ch = cardH - 2;
+    const glyphFontSize = Math.round(cw * 0.70); // ~39px para slot 62px
+    ctx.save();
+    ctx.font = `${glyphFontSize}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Android Emoji", sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const emoji = TileRegistry.getEmoji(tile.value as AnimalValue);
+    ctx.fillText(emoji, pad + 1 + cw / 2, pad + 1 + ch * 0.49);
+    ctx.restore();
+
+    // 4. Micro-badge de Sinergia no Canto Superior Direito
+    if (syn && syn.badge) {
+      const badgeSize = Math.max(12, Math.round(cw * 0.28));
+      const bx = pad + 1 + cw - Math.round(cw * 0.16);
+      const by = pad + 1 + Math.round(ch * 0.16);
+
+      ctx.save();
+      ctx.font = `${badgeSize}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Android Emoji", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(syn.badge, bx, by);
+      ctx.restore();
+    }
+
+    // 5. Chip de Numeral Arábico de Acessibilidade no Canto Inferior Esquerdo
+    if (this.showHelperNumbers) {
+      const helperNum = TileRegistry.getHelperIndex(tile.value as AnimalValue);
+      if (helperNum !== undefined) {
+        const isThreeDigits = helperNum.length >= 3;
+        const numH = Math.max(12, Math.round(ch * 0.16));
+        const numW = Math.max(isThreeDigits ? 19 : 14, Math.round(cw * (isThreeDigits ? 0.30 : 0.22)));
+        const nx = pad + 2.5;
+        const ny = pad + 1 + ch - numH - 2.5;
+
+        ctx.save();
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.94)';
+        this.drawRoundedRect(ctx, nx, ny, numW, numH, 3.5);
+        ctx.fill();
+
+        ctx.strokeStyle = 'rgba(71, 85, 105, 0.45)';
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+
+        const numFontSize = Math.max(isThreeDigits ? 7.5 : 8.5, Math.round(numH * (isThreeDigits ? 0.64 : 0.72)));
+        ctx.font = `bold ${numFontSize}px system-ui, -apple-system, sans-serif`;
+        ctx.fillStyle = '#0F172A';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(helperNum, nx + numW / 2, ny + numH / 2 + 0.5);
+        ctx.restore();
+      }
+    }
+
+    // 6. Overlays de Peças Especiais (se houver)
+    this.drawSpecialOverlay(ctx, tile, pad, pad, cardW, cardH, true);
+
+    ctx.restore();
   }
 
   // =========================================================================
@@ -694,11 +848,7 @@ export class TileRenderer {
       }
       case 'mirror': {
         // Espelho místico com moldura prateada cintilante
-        const grad = ctx.createLinearGradient(x, y, x + w, y + h);
-        grad.addColorStop(0, '#E2E8F0');
-        grad.addColorStop(0.5, '#94A3B8');
-        grad.addColorStop(1, '#CBD5E1');
-        ctx.strokeStyle = grad;
+        ctx.strokeStyle = '#94A3B8';
         ctx.lineWidth = 2.6;
         this.drawRoundedRect(ctx, x, y, w, h, 8);
         ctx.stroke();
@@ -730,16 +880,6 @@ export class TileRenderer {
     return color;
   }
 
-  private desaturate(hex: string, factor: number): string {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    const gray = Math.round(r * 0.3 + g * 0.59 + b * 0.11);
-    const nr = Math.round(r + (gray - r) * factor);
-    const ng = Math.round(g + (gray - g) * factor);
-    const nb = Math.round(b + (gray - b) * factor);
-    return `rgb(${nr},${ng},${nb})`;
-  }
 
   private drawRoundedRect(
     ctx: CanvasRenderingContext2D,

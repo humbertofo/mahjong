@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 1000" width="500" height="1000" preserveAspectRatio="none">
+  <defs>
+    <!-- Gradientes de profundidade da folhagem da esquerda -->
+    <linearGradient id="foliage-base-l" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#031109" />
+      <stop offset="65%" stop-color="#072314" />
+      <stop offset="100%" stop-color="#0f3d24" />
+    </linearGradient>
+
+    <linearGradient id="leaf-primary-l" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#14532d" />
+      <stop offset="60%" stop-color="#15803d" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </linearGradient>
+
+    <linearGradient id="leaf-accent-l" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="50%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#6ee7b7" />
+    </linearGradient>
+
+    <linearGradient id="leaf-dark-l" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#052e16" />
+      <stop offset="100%" stop-color="#0f3d24" />
+    </linearGradient>
+
+    <radialGradient id="jasmine-glow-l" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="60%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </radialGradient>
+  </defs>
+
+  <!-- Camada 1: Tronco e Ramagem Estrutural à Esquerda -->
+  <path d="M 0,0 L 260,0 
+           C 290,70 330,130 350,190 
+           C 280,240 290,310 360,370 
+           C 410,410 340,490 320,540 
+           C 370,610 390,690 340,750 
+           C 300,810 350,890 370,940 
+           L 280,1000 L 0,1000 Z" 
+        fill="url(#foliage-base-l)" />
+
+  <!-- Camada 2: Folhas Maiores & Frondes Completas com Pontas Naturais -->
+  
+  <!-- CLUSTER 1 (Topo: y=30 a 220) - Folha de Palmeira Curvada para a Direita -->
+  <g>
+    <!-- Folha base escura -->
+    <path d="M 160,50 C 260,20 370,60 450,130 C 400,165 310,160 210,130 C 170,110 150,80 160,50 Z" 
+          fill="url(#leaf-dark-l)" stroke="#052e16" stroke-width="2" />
+    <!-- Nervura central -->
+    <path d="M 160,50 Q 300,95 450,130" stroke="#34d399" stroke-width="2.5" fill="none" opacity="0.75" />
+    <!-- Nervuras secundárias -->
+    <path d="M 230,85 Q 270,70 310,75" stroke="#6ee7b7" stroke-width="1.2" fill="none" opacity="0.6" />
+    <path d="M 290,105 Q 340,95 380,105" stroke="#6ee7b7" stroke-width="1.2" fill="none" opacity="0.6" />
+    <path d="M 250,100 Q 290,120 340,130" stroke="#6ee7b7" stroke-width="1.2" fill="none" opacity="0.6" />
+
+    <!-- Folha frontal mais clara sobreposta -->
+    <path d="M 200,90 C 290,75 380,110 440,165 C 380,185 300,175 230,150 C 200,135 190,110 200,90 Z" 
+          fill="url(#leaf-primary-l)" stroke="#0f3d24" stroke-width="2" />
+    <path d="M 200,90 Q 320,130 440,165" stroke="#6ee7b7" stroke-width="2" fill="none" opacity="0.8" />
+  </g>
+
+  <!-- CLUSTER 2 (Médio-Superior: y=260 a 440) - Frondes de Monstera Zen -->
+  <g>
+    <!-- Folha de Monstera com recortes delicados -->
+    <path d="M 220,270 C 320,230 410,290 460,350 C 430,390 350,395 270,360 C 220,335 205,295 220,270 Z" 
+          fill="url(#leaf-accent-l)" stroke="#065f46" stroke-width="2" />
+    <path d="M 220,270 Q 340,320 460,350" stroke="#d1fae5" stroke-width="2.5" fill="none" />
+    <!-- Fendas orgânicas -->
+    <ellipse cx="320" cy="295" rx="22" ry="7" transform="rotate(-15 320 295)" fill="#072314" />
+    <ellipse cx="380" cy="325" rx="26" ry="8" transform="rotate(5 380 325)" fill="#072314" />
+    <ellipse cx="300" cy="335" rx="20" ry="6" transform="rotate(30 300 335)" fill="#072314" />
+
+    <!-- Folha lanceolada de bambu companheira -->
+    <path d="M 260,370 C 340,350 420,390 465,420 C 400,440 330,420 260,370 Z" 
+          fill="url(#leaf-primary-l)" stroke="#064e3b" stroke-width="1.8" />
+    <path d="M 260,370 Q 370,395 465,420" stroke="#a7f3d0" stroke-width="1.8" fill="none" />
+  </g>
+
+  <!-- CLUSTER 3 (Médio-Inferior: y=500 a 700) - Ramagem Exuberante de Selva -->
+  <g>
+    <!-- Haste curvada -->
+    <path d="M 240,530 Q 340,560 430,620" stroke="#047857" stroke-width="4" stroke-linecap="round" fill="none" />
+
+    <!-- Folha 1 da haste -->
+    <path d="M 300,545 C 360,515 425,540 450,575 C 410,595 350,580 300,545 Z" 
+          fill="url(#leaf-accent-l)" stroke="#065f46" stroke-width="1.8" />
+    <!-- Folha 2 da haste -->
+    <path d="M 340,570 C 400,555 455,590 470,630 C 420,645 365,620 340,570 Z" 
+          fill="url(#leaf-primary-l)" stroke="#064e3b" stroke-width="1.8" />
+    <!-- Folha 3 ponta -->
+    <path d="M 380,600 C 430,605 460,650 455,675 C 415,670 380,640 380,600 Z" 
+          fill="url(#leaf-dark-l)" stroke="#052e16" stroke-width="1.8" />
+  </g>
+
+  <!-- CLUSTER 4 (Inferior: y=730 a 960) - Folha de Leque e Samambaias Nobres -->
+  <g>
+    <!-- Folha de leque inferior completa -->
+    <path d="M 200,770 C 300,720 400,760 450,820 C 390,870 290,875 210,830 C 180,810 185,785 200,770 Z" 
+          fill="url(#leaf-primary-l)" stroke="#052e16" stroke-width="2" />
+    <path d="M 200,770 Q 325,800 450,820" stroke="#34d399" stroke-width="2.5" fill="none" />
+    <!-- Nervuras do leque -->
+    <path d="M 270,785 Q 350,770 410,780" stroke="#a7f3d0" stroke-width="1.3" fill="none" opacity="0.6" />
+    <path d="M 280,810 Q 360,825 420,845" stroke="#a7f3d0" stroke-width="1.3" fill="none" opacity="0.6" />
+
+    <!-- Folha menor fresca no rodapé -->
+    <path d="M 240,860 C 320,840 400,880 435,920 C 360,935 290,915 240,860 Z" 
+          fill="url(#leaf-accent-l)" stroke="#065f46" stroke-width="1.8" />
+  </g>
+
+  <!-- Flores Douradas e Pérolas de Orvalho nos Nós das Folhas -->
+  <g transform="translate(320, 220)">
+    <circle cx="0" cy="0" r="10" fill="url(#jasmine-glow-l)" stroke="#92400e" stroke-width="1.5" />
+    <circle cx="-11" cy="-5" r="7" fill="#ffffff" opacity="0.95" />
+    <circle cx="11" cy="-5" r="7" fill="#ffffff" opacity="0.95" />
+    <circle cx="0" cy="12" r="7" fill="#ffffff" opacity="0.95" />
+    <circle cx="-8" cy="9" r="6" fill="#ffffff" opacity="0.95" />
+    <circle cx="8" cy="9" r="6" fill="#ffffff" opacity="0.95" />
+    <circle cx="0" cy="0" r="4.5" fill="#f59e0b" />
+  </g>
+
+  <g transform="translate(310, 680)">
+    <circle cx="0" cy="0" r="9" fill="url(#jasmine-glow-l)" stroke="#92400e" stroke-width="1.5" />
+    <circle cx="-10" cy="-4" r="6.5" fill="#ffffff" opacity="0.95" />
+    <circle cx="10" cy="-4" r="6.5" fill="#ffffff" opacity="0.95" />
+    <circle cx="0" cy="11" r="6.5" fill="#ffffff" opacity="0.95" />
+    <circle cx="0" cy="0" r="4" fill="#f59e0b" />
+  </g>
+
+  <!-- Gotas de Orvalho Translúcidas com Brilho Especular -->
+  <circle cx="410" cy="140" r="5" fill="#ffffff" opacity="0.65" />
+  <circle cx="430" cy="365" r="6" fill="#ffffff" opacity="0.7" />
+  <circle cx="415" cy="830" r="5.5" fill="#ffffff" opacity="0.65" />
+</svg>

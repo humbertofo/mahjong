@@ -119,9 +119,10 @@ export class LiveUpdateManager {
           bundleId: latestSha,
           url: `${BUNDLE_ZIP_URL}?_v=${latestSha}`,
         });
-      } catch (dlErr: any) {
+      } catch (dlErr: unknown) {
         // Se já existia e não pôde ser deletado, tenta prosseguir
-        if (!dlErr?.message?.includes('already exists')) {
+        const msg = dlErr instanceof Error ? dlErr.message : String(dlErr);
+        if (!msg.includes('already exists')) {
           throw dlErr;
         }
       }

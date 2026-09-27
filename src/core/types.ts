@@ -1,5 +1,5 @@
-// Apenas um suit: 'animal' — cada value é o nome do animal ou adereço natural
-export type TileSuit = 'animal';
+// Naipes do Mahjong Nature: 'animal', 'flora', 'element' e 'mythic'
+export type TileSuit = 'animal' | 'flora' | 'element' | 'mythic';
 
 export type AnimalValue =
   | 'cat'
@@ -32,7 +32,144 @@ export type AnimalValue =
   | 'apple'
   | 'honeycomb'
   // Peça Coringa
-  | 'chameleon';
+  | 'chameleon'
+  // ─── FLORA ZEN (12 Flores) ───
+  | 'cherry_blossom'
+  | 'lotus'
+  | 'sunflower'
+  | 'rose'
+  | 'hibiscus'
+  | 'tulip'
+  | 'white_flower'
+  | 'daisy'
+  | 'hyacinth'
+  | 'rosette'
+  | 'bouquet'
+  | 'wilted_flower'
+  // ─── REINO MARINHO & ÁRTICO (10 Animais Aquáticos) ───
+  | 'whale'
+  | 'spouting_whale'
+  | 'orca'
+  | 'seal'
+  | 'tropical_fish'
+  | 'blowfish'
+  | 'shark'
+  | 'octopus'
+  | 'coral'
+  | 'jellyfish'
+  // ─── AVES MAJESTOSAS & SANTUÁRIO MÍSTICO (22 Entidades - Fase 2) ───
+  | 'dragon'
+  | 'dragon_face'
+  | 'phoenix'
+  | 'owl'
+  | 'eagle'
+  | 'peacock'
+  | 'dove'
+  | 'swan'
+  | 'flamingo'
+  | 'parrot'
+  | 'bat'
+  | 'turkey'
+  | 'chicken'
+  | 'rooster'
+  | 'hatching_chick'
+  | 'baby_chick'
+  | 'front_chick'
+  | 'dodo'
+  | 'goose'
+  | 'black_bird'
+  | 'feather'
+  | 'wing'
+  // ─── FAUNA POLAR, SELVA & RÉPTEIS (30 Entidades - Fase 3) ───
+  | 'wolf'
+  | 'polar_bear'
+  | 'moose'
+  | 'llama'
+  | 'ram'
+  | 'goat'
+  | 'giraffe'
+  | 'zebra'
+  | 'rhino'
+  | 'hippo'
+  | 'leopard'
+  | 'tiger_face'
+  | 'tiger'
+  | 'gorilla'
+  | 'orangutan'
+  | 'camel'
+  | 'two_hump_camel'
+  | 'kangaroo'
+  | 'sloth'
+  | 'koala'
+  | 'skunk'
+  | 'badger'
+  | 'beaver'
+  | 'otter'
+  | 'crocodile'
+  | 'snake'
+  | 'sauropod'
+  | 't_rex'
+  | 'mammoth'
+  | 'paw_prints'
+  // ─── PLANTAS, INSETOS & FAUNA ADICIONAL (Fase 4) ───
+  // Plantas & Árvores (16)
+  | 'sprout'
+  | 'potted_plant'
+  | 'pine_tree'
+  | 'deciduous_tree'
+  | 'palm_tree'
+  | 'cactus'
+  | 'rice_plant'
+  | 'herb'
+  | 'shamrock'
+  | 'four_leaf_clover'
+  | 'maple_leaf'
+  | 'fallen_leaves'
+  | 'wind_leaf'
+  | 'empty_nest'
+  | 'nest_eggs'
+  | 'bare_tree'
+  // Insetos (12)
+  | 'caterpillar'
+  | 'ant'
+  | 'beetle'
+  | 'cricket'
+  | 'cockroach'
+  | 'spider'
+  | 'spider_web'
+  | 'scorpion'
+  | 'mosquito'
+  | 'fly'
+  | 'worm'
+  | 'microbe'
+  // Mamíferos Adicionais & Domésticos (27)
+  | 'monkey_face'
+  | 'dog_full'
+  | 'guide_dog'
+  | 'service_dog'
+  | 'poodle'
+  | 'raccoon'
+  | 'cat_full'
+  | 'black_cat'
+  | 'horse_face'
+  | 'horse'
+  | 'donkey'
+  | 'unicorn'
+  | 'cow_face'
+  | 'cow'
+  | 'ox'
+  | 'water_buffalo'
+  | 'bison'
+  | 'pig_face'
+  | 'pig'
+  | 'boar'
+  | 'pig_nose'
+  | 'sheep'
+  | 'mouse_face'
+  | 'mouse'
+  | 'rat'
+  | 'hamster'
+  | 'rabbit_full';
 
 // TileValue apenas string (nome do animal ou adereço)
 export type TileValue = AnimalValue;
@@ -81,6 +218,20 @@ export interface WaveStage {
   slots: LayoutSlot[];
 }
 
+export interface LevelRuleDefinition {
+  levelNumber: number;
+  worldId: string;
+  worldTitle: string;
+  biome: TileBiome;
+  allowedSpecials: TileSpecialType[];
+  maxSpecialPairs: number;
+  allowChameleon: boolean;
+  chameleonChance: number;
+  worldTier?: number;
+  mechanicIntro?: string;
+  starThresholds: [number, number, number];
+}
+
 export interface BoardLayout {
   id: string;
   name: string;
@@ -88,6 +239,7 @@ export interface BoardLayout {
   difficulty: 'Fácil' | 'Médio' | 'Difícil';
   slots: LayoutSlot[];
   waves?: WaveStage[];
+  rules?: LevelRuleDefinition;
 }
 
 export type ClimateType =
@@ -100,6 +252,7 @@ export type ClimateType =
   | 'full_moon';       // Noite de Lua Cheia: vaga-lumes iluminam todos os pares livres
 
 export type SynergyType =
+  // Clássicas (9)
   | 'bee_honey'
   | 'bear_feast'
   | 'monkey_banana'
@@ -108,7 +261,25 @@ export type SynergyType =
   | 'dolphin_sonar'
   | 'hedgehog_apple'
   | 'cat_paw'
-  | 'wildcard_chameleon';
+  | 'wildcard_chameleon'
+  // Novas da Fauna (12)
+  | 'penguin_slide'
+  | 'panda_zen'
+  | 'turtle_shield'
+  | 'rabbit_hop'
+  | 'fox_trail'
+  | 'dog_cat_harmony'
+  | 'butterfly_flap'
+  | 'elephant_crush'
+  | 'duck_splash'
+  | 'lion_roar'
+  | 'bird_swoop'
+  | 'snail_zen'
+  // Sinergias da Flora, Oceano Profundo & Santuário Místico
+  | 'floral_harmony'
+  | 'marine_abyss'
+  | 'mythic_harmony'
+  | 'nature_harmony';
 
 export interface SynergyResult {
   type: SynergyType;
@@ -161,5 +332,5 @@ export interface MoveHistoryItem {
   rechargedTool?: 'hammer' | 'shuffle' | 'hint' | 'undo';
 }
 
-export type ThemeType = 'mist-emerald' | 'felt-green' | 'wood-dark' | 'zen-dark';
+export type ThemeType = 'mist-emerald' | 'felt-green' | 'wood-dark' | 'zen-dark' | 'parchment';
 

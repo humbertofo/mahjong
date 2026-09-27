@@ -1,5 +1,25 @@
 import { PlacedTile } from '../core/types';
 
+export type SynergyTheme =
+  | 'fruit'
+  | 'nut'
+  | 'orchard'
+  | 'zen'
+  | 'bee'
+  | 'chameleon'
+  | 'penguin'
+  | 'panda'
+  | 'shield'
+  | 'rabbit'
+  | 'fox'
+  | 'friends'
+  | 'butterfly'
+  | 'elephant'
+  | 'duck'
+  | 'lion'
+  | 'bird'
+  | 'snail';
+
 export type SynergyAnimation =
   | {
       id: string;
@@ -44,12 +64,63 @@ export type SynergyAnimation =
     }
   | {
       id: string;
+      type: 'bee_swarm';
+      startX: number;
+      startY: number;
+      targetX: number;
+      targetY: number;
+      startTime: number;
+      duration: number;
+      onComplete?: () => void;
+    }
+  | {
+      id: string;
+      type: 'monkey_jump';
+      startX: number;
+      startY: number;
+      targetX: number;
+      targetY: number;
+      startTime: number;
+      duration: number;
+      onComplete?: () => void;
+    }
+  | {
+      id: string;
+      type: 'penguin_slide';
+      startX: number;
+      startY: number;
+      targetX: number;
+      targetY: number;
+      startTime: number;
+      duration: number;
+      onComplete?: () => void;
+    }
+  | {
+      id: string;
+      type: 'panda_zen';
+      targetX: number;
+      targetY: number;
+      startTime: number;
+      duration: number;
+      onComplete?: () => void;
+    }
+  | {
+      id: string;
+      type: 'elephant_crush';
+      targetX: number;
+      targetY: number;
+      startTime: number;
+      duration: number;
+      onComplete?: () => void;
+    }
+  | {
+      id: string;
       type: 'micro_burst';
       targetX: number;
       targetY: number;
       startTime: number;
       duration: number;
-      theme: 'fruit' | 'nut' | 'orchard' | 'zen';
+      theme: SynergyTheme;
       onComplete?: () => void;
     };
 
@@ -156,12 +227,119 @@ export class SynergyAnimator {
   }
 
   /**
-   * Dispara micro-sinergias temáticas no Canvas FX (Fruta, Nozes, Pomar, etc.)
+   * Dispara o enxame de abelhas douradas em espiral
+   */
+  public triggerBeeSwarm(
+    startX: number,
+    startY: number,
+    targetX: number,
+    targetY: number,
+    onComplete?: () => void
+  ): void {
+    this.activeAnimations.push({
+      id: `bee_${Date.now()}_${Math.random()}`,
+      type: 'bee_swarm',
+      startX,
+      startY,
+      targetX,
+      targetY,
+      startTime: performance.now(),
+      duration: 850,
+      onComplete,
+    });
+  }
+
+  /**
+   * Dispara o salto do macaco na copa em arco de cipó
+   */
+  public triggerMonkeyJump(
+    startX: number,
+    startY: number,
+    targetX: number,
+    targetY: number,
+    onComplete?: () => void
+  ): void {
+    this.activeAnimations.push({
+      id: `monkey_${Date.now()}_${Math.random()}`,
+      type: 'monkey_jump',
+      startX,
+      startY,
+      targetX,
+      targetY,
+      startTime: performance.now(),
+      duration: 900,
+      onComplete,
+    });
+  }
+
+  /**
+   * Dispara o deslize glacial do pinguim
+   */
+  public triggerPenguinSlide(
+    startX: number,
+    startY: number,
+    targetX: number,
+    targetY: number,
+    onComplete?: () => void
+  ): void {
+    this.activeAnimations.push({
+      id: `penguin_${Date.now()}_${Math.random()}`,
+      type: 'penguin_slide',
+      startX,
+      startY,
+      targetX,
+      targetY,
+      startTime: performance.now(),
+      duration: 850,
+      onComplete,
+    });
+  }
+
+  /**
+   * Dispara a meditação zen do panda
+   */
+  public triggerPandaZen(
+    targetX: number,
+    targetY: number,
+    onComplete?: () => void
+  ): void {
+    this.activeAnimations.push({
+      id: `panda_${Date.now()}_${Math.random()}`,
+      type: 'panda_zen',
+      targetX,
+      targetY,
+      startTime: performance.now(),
+      duration: 950,
+      onComplete,
+    });
+  }
+
+  /**
+   * Dispara o impacto monumental do elefante
+   */
+  public triggerElephantCrush(
+    targetX: number,
+    targetY: number,
+    onComplete?: () => void
+  ): void {
+    this.activeAnimations.push({
+      id: `elephant_${Date.now()}_${Math.random()}`,
+      type: 'elephant_crush',
+      targetX,
+      targetY,
+      startTime: performance.now(),
+      duration: 800,
+      onComplete,
+    });
+  }
+
+  /**
+   * Dispara micro-sinergias temáticas no Canvas FX com temas ricos
    */
   public triggerMicroBurst(
     targetX: number,
     targetY: number,
-    theme: 'fruit' | 'nut' | 'orchard' | 'zen',
+    theme: SynergyTheme,
     onComplete?: () => void
   ): void {
     this.activeAnimations.push({
@@ -170,7 +348,7 @@ export class SynergyAnimator {
       targetX,
       targetY,
       startTime: performance.now(),
-      duration: 380,
+      duration: 480,
       theme,
       onComplete,
     });
@@ -206,6 +384,16 @@ export class SynergyAnimator {
         this.renderBearClaw(ctx, anim, progress);
       } else if (anim.type === 'dolphin_sonar') {
         this.renderDolphinSonar(ctx, anim, progress);
+      } else if (anim.type === 'bee_swarm') {
+        this.renderBeeSwarm(ctx, anim, progress);
+      } else if (anim.type === 'monkey_jump') {
+        this.renderMonkeyJump(ctx, anim, progress);
+      } else if (anim.type === 'penguin_slide') {
+        this.renderPenguinSlide(ctx, anim, progress);
+      } else if (anim.type === 'panda_zen') {
+        this.renderPandaZen(ctx, anim, progress);
+      } else if (anim.type === 'elephant_crush') {
+        this.renderElephantCrush(ctx, anim, progress);
       } else if (anim.type === 'micro_burst') {
         this.renderMicroBurst(ctx, anim, progress);
       }
@@ -479,7 +667,7 @@ export class SynergyAnimator {
         const currDist = waveP * totalDist;
         const wx = startX + Math.cos(angle) * currDist;
         const wy = startY + Math.sin(angle) * currDist;
-        const radius = 18 + waveP * 35;
+        const radius = Math.max(0.1, 18 + waveP * 35);
         const alpha = Math.sin(waveP * Math.PI) * 0.75;
 
         ctx.strokeStyle = `rgba(45, 212, 191, ${alpha})`;
@@ -493,7 +681,173 @@ export class SynergyAnimator {
     ctx.restore();
   }
 
-  // ─── 🍌🌰🍎 Renderização de Micro-Sinergias ────────────────────────────────
+  // ─── 🐝 Renderização do Enxame de Abelhas Douradas ─────────────────────────
+
+  private renderBeeSwarm(
+    ctx: CanvasRenderingContext2D,
+    anim: Extract<SynergyAnimation, { type: 'bee_swarm' }>,
+    p: number
+  ): void {
+    const { startX, startY, targetX, targetY } = anim;
+    ctx.save();
+
+    const currentX = startX + (targetX - startX) * p;
+    const currentY = startY + (targetY - startY) * p;
+
+    // Nuvem de 6 abelhinhas em espiral dourada
+    for (let i = 0; i < 6; i++) {
+      const angle = (i * Math.PI) / 3 + p * 12;
+      const spiralRadius = 15 + Math.sin(p * Math.PI) * 20;
+      const bx = currentX + Math.cos(angle) * spiralRadius;
+      const by = currentY + Math.sin(angle) * spiralRadius;
+
+      ctx.fillStyle = '#EAB308';
+      ctx.beginPath();
+      ctx.arc(bx, by, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Mini asas brancas
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.beginPath();
+      ctx.ellipse(bx - 2, by - 3, 2, 3.5, 0.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
+  // ─── 🐒 Renderização do Salto na Copa do Macaco ────────────────────────────
+
+  private renderMonkeyJump(
+    ctx: CanvasRenderingContext2D,
+    anim: Extract<SynergyAnimation, { type: 'monkey_jump' }>,
+    p: number
+  ): void {
+    const { startX, startY, targetX, targetY } = anim;
+    ctx.save();
+
+    const midX = (startX + targetX) / 2;
+    const peakY = Math.min(startY, targetY) - 90;
+
+    // Arco quadrático de salto
+    const u = 1 - p;
+    const x = u * u * startX + 2 * u * p * midX + p * p * targetX;
+    const y = u * u * startY + 2 * u * p * peakY + p * p * targetY;
+
+    // Rastro de folhas do cipó
+    ctx.strokeStyle = '#15803D';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.quadraticCurveTo(midX, peakY, x, y);
+    ctx.stroke();
+
+    // Emoji de macaco no topo do salto
+    ctx.font = '28px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🐒', x, y);
+
+    ctx.restore();
+  }
+
+  // ─── 🐧 Renderização do Deslize Glacial do Pinguim ─────────────────────────
+
+  private renderPenguinSlide(
+    ctx: CanvasRenderingContext2D,
+    anim: Extract<SynergyAnimation, { type: 'penguin_slide' }>,
+    p: number
+  ): void {
+    const { startX, startY, targetX, targetY } = anim;
+    ctx.save();
+
+    const currX = startX + (targetX - startX) * p;
+    const currY = startY + (targetY - startY) * p;
+
+    // Trilha de gelo ciano cintilante
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.6)';
+    ctx.lineWidth = 8;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.lineTo(currX, currY);
+    ctx.stroke();
+
+    // Cristais de gelo e pinguim
+    ctx.font = '26px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🐧', currX, currY);
+
+    ctx.restore();
+  }
+
+  // ─── 🐼 Renderização da Meditação Zen do Panda ─────────────────────────────
+
+  private renderPandaZen(
+    ctx: CanvasRenderingContext2D,
+    anim: Extract<SynergyAnimation, { type: 'panda_zen' }>,
+    p: number
+  ): void {
+    const { targetX, targetY } = anim;
+    ctx.save();
+
+    const alpha = Math.max(0, 1 - p);
+    const radius = 25 + p * 60;
+
+    // Anéis concêntricos de calmaria zen
+    ctx.strokeStyle = `rgba(34, 197, 94, ${alpha * 0.8})`;
+    ctx.lineWidth = 4 * (1 - p);
+    ctx.beginPath();
+    ctx.arc(targetX, targetY, radius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Símbolo do Panda central
+    ctx.globalAlpha = alpha;
+    ctx.font = '32px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🐼', targetX, targetY);
+
+    ctx.restore();
+  }
+
+  // ─── 🐘 Renderização do Impacto Monumental do Elefante ─────────────────────
+
+  private renderElephantCrush(
+    ctx: CanvasRenderingContext2D,
+    anim: Extract<SynergyAnimation, { type: 'elephant_crush' }>,
+    p: number
+  ): void {
+    const { targetX, targetY } = anim;
+    ctx.save();
+
+    const alpha = Math.max(0, 1 - p);
+    const waveRadius = 15 + p * 80;
+
+    // Onda de choque circular de impacto
+    ctx.strokeStyle = `rgba(139, 92, 246, ${alpha})`;
+    ctx.lineWidth = 6 * (1 - p);
+    ctx.beginPath();
+    ctx.arc(targetX, targetY, waveRadius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Pedregulhos voando para fora
+    ctx.fillStyle = '#64748B';
+    for (let i = 0; i < 6; i++) {
+      const ang = (i * Math.PI) / 3;
+      const d = waveRadius * 0.85;
+      const px = targetX + Math.cos(ang) * d;
+      const py = targetY + Math.sin(ang) * d;
+      ctx.beginPath();
+      ctx.arc(px, py, 4 * (1 - p), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
+  // ─── 🍌🌰🍎 Renderização de Micro-Sinergias & Temas Especiais ──────────────
 
   private renderMicroBurst(
     ctx: CanvasRenderingContext2D,
@@ -503,24 +857,32 @@ export class SynergyAnimator {
     const { targetX, targetY, theme } = anim;
     ctx.save();
 
-    const alpha = Math.max(0, 1 - p);
-    const radius = 20 + p * 35;
+    const clampedP = Math.max(0, Math.min(1, p));
+    const alpha = Math.max(0, 1 - clampedP);
+    const radius = Math.max(0.1, 20 + clampedP * 35);
 
-    let baseColor = '#FACC15'; // Amarelo fruta
+    let baseColor = '#FACC15';
     let accentChar = '✨';
 
-    if (theme === 'fruit') {
-      baseColor = '#FACC15';
-      accentChar = '🍌';
-    } else if (theme === 'nut') {
-      baseColor = '#B45309';
-      accentChar = '🌰';
-    } else if (theme === 'orchard') {
-      baseColor = '#F43F5E';
-      accentChar = '🍎';
-    } else if (theme === 'zen') {
-      baseColor = '#10B981';
-      accentChar = '🍃';
+    switch (theme) {
+      case 'fruit': baseColor = '#FACC15'; accentChar = '🍌'; break;
+      case 'nut': baseColor = '#B45309'; accentChar = '🌰'; break;
+      case 'orchard': baseColor = '#F43F5E'; accentChar = '🍎'; break;
+      case 'zen': baseColor = '#10B981'; accentChar = '🍃'; break;
+      case 'bee': baseColor = '#EAB308'; accentChar = '🍯'; break;
+      case 'chameleon': baseColor = '#00E676'; accentChar = '🦎'; break;
+      case 'penguin': baseColor = '#38BDF8'; accentChar = '❄️'; break;
+      case 'panda': baseColor = '#22C55E'; accentChar = '🎋'; break;
+      case 'shield': baseColor = '#0284C7'; accentChar = '🛡️'; break;
+      case 'rabbit': baseColor = '#EC4899'; accentChar = '🌸'; break;
+      case 'fox': baseColor = '#EA580C'; accentChar = '🔥'; break;
+      case 'friends': baseColor = '#F59E0B'; accentChar = '💖'; break;
+      case 'butterfly': baseColor = '#A855F7'; accentChar = '🦋'; break;
+      case 'elephant': baseColor = '#8B5CF6'; accentChar = '🪨'; break;
+      case 'duck': baseColor = '#00ACC1'; accentChar = '💧'; break;
+      case 'lion': baseColor = '#F59E0B'; accentChar = '☀️'; break;
+      case 'bird': baseColor = '#60A5FA'; accentChar = '🪶'; break;
+      case 'snail': baseColor = '#84CC16'; accentChar = '🐌'; break;
     }
 
     // 1. Halo expansivo de energia
@@ -528,19 +890,20 @@ export class SynergyAnimator {
     ctx.arc(targetX, targetY, radius, 0, Math.PI * 2);
     ctx.strokeStyle = baseColor;
     ctx.globalAlpha = alpha * 0.7;
-    ctx.lineWidth = 3.5 * (1 - p);
+    ctx.lineWidth = Math.max(0.1, 3.5 * (1 - clampedP));
     ctx.stroke();
 
     // 2. 4 Fagulinhas giratórias em órbita
     ctx.globalAlpha = alpha;
     ctx.fillStyle = baseColor;
     for (let i = 0; i < 4; i++) {
-      const ang = (i * Math.PI) / 2 + p * 4;
+      const ang = (i * Math.PI) / 2 + clampedP * 4;
       const dist = radius * 0.75;
       const px = targetX + Math.cos(ang) * dist;
       const py = targetY + Math.sin(ang) * dist;
+      const sparkRadius = Math.max(0.1, 3.5 * (1 - clampedP));
       ctx.beginPath();
-      ctx.arc(px, py, 3.5 * (1 - p), 0, Math.PI * 2);
+      ctx.arc(px, py, sparkRadius, 0, Math.PI * 2);
       ctx.fill();
     }
 

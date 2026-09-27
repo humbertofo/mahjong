@@ -9,88 +9,56 @@ import {
   SynergyResult,
   ClimateEffectResult,
   TileBiome,
-  AnimalValue,
   TileMutationRecord,
   TileSpecialType,
+  LevelRuleDefinition,
 } from './types';
-import { createAnimalDeck, canMatch } from './deck';
+import { canMatch } from './deck';
+import { getLevelRules } from './levelRules';
+import { TileRuleEngine } from './engine/TileRuleEngine';
+import { SynergyDirector, ANIMAL_BIOMES } from './engine/SynergyDirector';
+import { TrayController, UndoResult } from './engine/TrayController';
+import { ZenPowerManager } from './engine/ZenPowerManager';
+import { LevelDeckCurator } from './nature/LevelDeckCurator';
+
+export type { UndoResult };
 
 export interface TileSelectionResult {
-  action: 'added' | 'matched' | 'tray_full' | 'invalid';
+  action: 'added' | 'matched' | 'tray_full' | 'invalid' | 'special_action';
+  specialEffect?: 'ice_cracked' | 'rock_crushed' | 'vines_cut' | 'cocoon_hatched';
   matchedPair?: [PlacedTile, PlacedTile];
   tile?: PlacedTile;
   tray: PlacedTile[];
   isTrayFullWarning?: boolean;
   synergy?: SynergyResult;
   climateTriggered?: ClimateEffectResult;
+  cosmicRescue?: PlacedTile[];
   waveCleared?: boolean;
   waveInfo?: WaveInfo;
+  mutations?: TileMutationRecord[];
+  vinesCutCount?: number;
 }
 
-export interface UndoResult {
-  success: boolean;
-  type?: 'tile_restored' | 'pair_restored';
-  tile?: PlacedTile;
-  pair?: [PlacedTile, PlacedTile];
-  secondaryTiles?: PlacedTile[];
-  rechargedTool?: 'hammer' | 'shuffle' | 'hint' | 'undo';
-}
-
-// Mapeamento de cada animal para seu bioma elementar da natureza
-const ANIMAL_BIOMES: Record<AnimalValue, TileBiome> = {
-  // Água
-  fish: 'water',
-  turtle: 'water',
-  duck: 'water',
-  dolphin: 'water',
-  shell: 'water',
-
-  // Floresta / Vento
-  bird: 'forest',
-  butterfly: 'forest',
-  fox: 'forest',
-  squirrel: 'forest',
-  acorn: 'forest',
-  panda: 'forest',
-
-  // Savana / Calor
-  lion: 'savanna',
-  elephant: 'savanna',
-  monkey: 'savanna',
-  cat: 'savanna',
-  dog: 'savanna',
-  banana: 'savanna',
-
-  // Ártico / Frio
-  penguin: 'arctic',
-  bear: 'arctic',
-
-  // Jardim / Primavera
-  rabbit: 'garden',
-  frog: 'garden',
-  snail: 'garden',
-  ladybug: 'garden',
-  apple: 'garden',
-  bee: 'garden',
-  honeycomb: 'garden',
-  hedgehog: 'garden',
-
-  // Peça Coringa Mística
-  chameleon: 'forest',
-};
-
+/**
+ * ═══════════════════════════════════════════════════════════════════════════
+ *  FACHADA PRINCIPAL DO MOTOR DE JOGO (BOARD ENGINE FACADE)
+ *  Orquestra os módulos: TileRuleEngine, TrayController, ZenPowerManager,
+ *  SynergyDirector mantendo estabilidade e compatibilidade total de API.
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 export class BoardEngine {
   private tiles: PlacedTile[] = [];
-  private tray: PlacedTile[] = [];
   private history: MoveHistoryItem[] = [];
   private layout: BoardLayout;
-  private readonly maxTraySlots: number = 4;
+
+  // Submódulos especialistas
+  private trayController: TrayController = new TrayController();
 
   // Cache de alta performance para 60 FPS
   private cachedFreeTileIds: Set<string> | null = null;
   private cachedActiveTiles: PlacedTile[] | null = null;
 
-  // Estado Multi-Wave (Fases em Ondas para manter peças gigantescas no celular)
+  // Estado Multi-Wave
   private waves: LayoutSlot[][] = [];
   private currentWaveIndex: number = 0;
 
@@ -98,11 +66,20 @@ export class BoardEngine {
   private recentBiomeMatches: TileBiome[] = [];
   private consecutiveMatchesStreak: number = 0;
   private harmonyScore: number = 0;
+  private levelRules: LevelRuleDefinition;
 
-  constructor(layout: BoardLayout) {
+  constructor(layout: BoardLayout, levelIndex?: number) {
     this.layout = layout;
+    const lInput = typeof levelIndex === 'number' ? levelIndex : layout.id;
+    this.levelRules = layout.rules || getLevelRules(lInput, layout.slots.length);
     this.initWaves();
     this.generateCurrentWave();
+  }
+
+  // ─── Getters de Estado ───────────────────────────────────────────────────
+
+  public getLevelRules(): LevelRuleDefinition {
+    return this.levelRules;
   }
 
   public invalidateCache(): void {
@@ -118,12 +95,20 @@ export class BoardEngine {
     return this.tiles;
   }
 
+  public get tray(): PlacedTile[] {
+    return this.trayController.getTray();
+  }
+
+  public set tray(val: PlacedTile[]) {
+    this.trayController.setTray(val);
+  }
+
   public getTray(): PlacedTile[] {
-    return this.tray;
+    return this.trayController.getTray();
   }
 
   public getMaxTraySlots(): number {
-    return this.maxTraySlots;
+    return this.trayController.getMaxTraySlots();
   }
 
   public getActiveBoardTiles(): PlacedTile[] {
@@ -135,7 +120,7 @@ export class BoardEngine {
   }
 
   public getRemainingCount(): number {
-    return this.getActiveBoardTiles().length + this.tray.length;
+    return this.getActiveBoardTiles().length + this.getTray().length;
   }
 
   public getHistoryLength(): number {
@@ -165,33 +150,25 @@ export class BoardEngine {
   }
 
   public isWaveCleared(): boolean {
-    return this.getActiveBoardTiles().length === 0 && this.tray.length === 0;
-  }
-
-  /**
-   * Resgate Cósmico Zen: se o tabuleiro esvaziou mas restou qualquer peça na bandeja,
-   * a floresta purifica a bandeja com Harmonia (+200 pts) e conclui a onda com segurança total!
-   */
-  public checkAndResolveCosmicRescue(): PlacedTile[] | null {
-    if (this.getActiveBoardTiles().length === 0 && this.tray.length > 0) {
-      const rescued = [...this.tray];
-      for (const t of rescued) {
-        t.isRemoved = true;
-        t.inTray = false;
-        t.inSynergyAction = false;
+    this.invalidateCache();
+    if (this.getActiveBoardTiles().length === 0) {
+      if (this.getTray().length > 0) {
+        this.checkAndResolveCosmicRescue();
       }
-      this.tray = [];
-      this.harmonyScore += rescued.length * 200;
-      this.invalidateCache();
-      return rescued;
+      return true;
     }
-    return null;
+    return false;
   }
 
-  /**
-   * Conclui a remoção definitiva das peças que estavam participando de animações cênicas teatrais
-   */
-  public finalizeSynergyMatch(tiles: PlacedTile[]): void {
+  public checkAndResolveCosmicRescue(): PlacedTile[] | null {
+    return this.trayController.checkAndResolveCosmicRescue(
+      this.getActiveBoardTiles().length,
+      () => this.invalidateCache(),
+      (pts) => { this.harmonyScore += pts; }
+    );
+  }
+
+  public finalizeSynergyMatch(tiles: PlacedTile[]): PlacedTile[] | null {
     for (const t of tiles) {
       t.isRemoved = true;
       t.inSynergyAction = false;
@@ -200,6 +177,7 @@ export class BoardEngine {
       t.isSelected = false;
     }
     this.invalidateCache();
+    return this.checkAndResolveCosmicRescue();
   }
 
   public getWaveInfo(): WaveInfo {
@@ -210,29 +188,21 @@ export class BoardEngine {
     };
   }
 
-  /**
-   * Avança para a próxima onda da fase mantendo ou esvaziando a bandeja com bônus
-   */
   public advanceToNextWave(): boolean {
     if (!this.hasMoreWaves()) return false;
 
     this.currentWaveIndex++;
-    // Esvazia suavemente qualquer peça da bandeja com bônus zen entre ondas
-    this.tray.forEach((t) => {
+    this.getTray().forEach((t) => {
       t.isRemoved = true;
       t.inTray = false;
     });
-    this.tray = [];
+    this.trayController.clearTray();
     this.history = [];
 
     this.generateCurrentWave();
     return true;
   }
 
-  /**
-   * Particiona layouts com muitas peças em 2 ou 3 ondas de 36 a 44 peças,
-   * garantindo peças sempre grandes (55-65px) na tela do smartphone!
-   */
   private initWaves(): void {
     if (this.layout.waves && this.layout.waves.length > 0) {
       this.waves = this.layout.waves.map((w) => w.slots);
@@ -242,33 +212,26 @@ export class BoardEngine {
     const allSlots = [...this.layout.slots];
     const total = allSlots.length;
 
-    // Se a fase tem 44 ou menos peças, cabe perfeitamente em 1 única tela
-    if (total <= 44) {
+    if (total <= 60) {
       this.waves = [allSlots];
       return;
     }
 
-    // Ordenar slots priorizando peças mais altas (topo Z) para a primeira onda
-    // e a base/fundação para a segunda e terceira ondas
     const sortedByZ = [...allSlots].sort((a, b) => b.z - a.z);
 
     if (total <= 88) {
-      // 2 Ondas balanceadas com número par de peças
       const half = Math.floor(total / 4) * 2;
-      const wave1 = sortedByZ.slice(0, half);
-      const wave2 = sortedByZ.slice(half);
-      this.waves = [wave1, wave2];
+      this.waves = [sortedByZ.slice(0, half), sortedByZ.slice(half)];
     } else {
-      // 3 Ondas para fases épicas (ex: 144 peças em 3 ondas de 48 peças)
       const part1 = Math.floor(total / 6) * 2;
       const part2 = Math.floor(total / 6) * 2;
-      const wave1 = sortedByZ.slice(0, part1);
-      const wave2 = sortedByZ.slice(part1, part1 + part2);
-      const wave3 = sortedByZ.slice(part1 + part2);
-      this.waves = [wave1, wave2, wave3];
+      this.waves = [
+        sortedByZ.slice(0, part1),
+        sortedByZ.slice(part1, part1 + part2),
+        sortedByZ.slice(part1 + part2),
+      ];
     }
 
-    // Garantir estritamente paridade par em cada onda (zero peças órfãs)
     for (let i = 0; i < this.waves.length; i++) {
       if (this.waves[i].length % 2 !== 0) {
         this.waves[i] = this.waves[i].slice(0, this.waves[i].length - 1);
@@ -276,123 +239,91 @@ export class BoardEngine {
     }
   }
 
-  // ─── Verificação de Liberdade de Peça com Cache ──────────────────────────
+  // ─── Liberdade de Peças (Delegação TileRuleEngine) ─────────────────────────
 
-  /**
-   * Retorna o conjunto de IDs de todas as peças atualmente livres para clique/seleção.
-   * Executa em O(N) com early-exit e guarda o resultado em cache para 60 FPS contínuos.
-   */
   public getFreeTileIds(): Set<string> {
     if (this.cachedFreeTileIds) {
       return this.cachedFreeTileIds;
     }
-
-    const activeTiles = this.getActiveBoardTiles();
-    const freeSet = new Set<string>();
-    const n = activeTiles.length;
-
-    for (let i = 0; i < n; i++) {
-      const tile = activeTiles[i];
-      let hasTileAbove = false;
-
-      // 1. Checar se existe peça acima cobrindo
-      for (let j = 0; j < n; j++) {
-        if (i === j) continue;
-        const other = activeTiles[j];
-        if (other.position.z > tile.position.z) {
-          if (
-            Math.abs(other.position.x - tile.position.x) < 2 &&
-            Math.abs(other.position.y - tile.position.y) < 2
-          ) {
-            hasTileAbove = true;
-            break; // Já coberta por cima, não está livre!
-          }
-        }
-      }
-
-      if (hasTileAbove) {
-        continue;
-      }
-
-      // 2. Checar bloqueio lateral no mesmo nível Z
-      let hasLeftNeighbor = false;
-      let hasRightNeighbor = false;
-
-      for (let j = 0; j < n; j++) {
-        if (i === j) continue;
-        const other = activeTiles[j];
-        if (other.position.z !== tile.position.z) continue;
-
-        if (Math.abs(other.position.y - tile.position.y) < 2) {
-          if (other.position.x < tile.position.x && (tile.position.x - other.position.x) <= 2) {
-            hasLeftNeighbor = true;
-          } else if (other.position.x > tile.position.x && (other.position.x - tile.position.x) <= 2) {
-            hasRightNeighbor = true;
-          }
-
-          if (hasLeftNeighbor && hasRightNeighbor) {
-            break; // Bloqueada em ambos os lados!
-          }
-        }
-      }
-
-      // Se for rocha ancestral, só é liberada se ambos os lados estiverem desimpedidos
-      if (tile.specialType === 'rock' && (hasLeftNeighbor || hasRightNeighbor)) {
-        continue;
-      }
-
-      if (!hasLeftNeighbor || !hasRightNeighbor) {
-        freeSet.add(tile.id);
-      }
-    }
-
+    const freeSet = TileRuleEngine.computeFreeTileIds(this.getActiveBoardTiles());
     this.cachedFreeTileIds = freeSet;
     return freeSet;
   }
 
   public isTileFree(tile: PlacedTile): boolean {
-    if (tile.isRemoved || tile.inTray) return false;
-    return this.getFreeTileIds().has(tile.id);
+    return TileRuleEngine.isTileFree(tile, this.getFreeTileIds());
   }
 
   public getFreeTiles(): PlacedTile[] {
-    const freeIds = this.getFreeTileIds();
-    return this.getActiveBoardTiles().filter((t) => freeIds.has(t.id));
+    return TileRuleEngine.getFreeTiles(this.getActiveBoardTiles(), this.getFreeTileIds());
   }
 
-  // ─── Toque e Seleção de Peças ─────────────────────────────────────────────
+  // ─── Seleção e Jogadas ────────────────────────────────────────────────────
 
   public selectTile(tileId: string): TileSelectionResult {
     const tile = this.tiles.find((t) => t.id === tileId);
     if (!tile || tile.isRemoved || tile.inTray || !this.isTileFree(tile)) {
-      return { action: 'invalid', tray: [...this.tray] };
+      return { action: 'invalid', tray: [...this.getTray()] };
     }
 
-    if (this.tray.length >= this.maxTraySlots) {
-      return { action: 'tray_full', tray: [...this.tray], isTrayFullWarning: true };
+    // ─── Gelo (ice): 1º toque trinca na mesa sem entrar na bandeja ─────
+    if (tile.specialType === 'ice') {
+      tile.specialType = 'normal';
+      this.invalidateCache();
+      return {
+        action: 'special_action',
+        specialEffect: 'ice_cracked',
+        tile,
+        tray: [...this.getTray()],
+      };
     }
 
-    // Move para a bandeja
-    tile.inTray = true;
-    tile.isSelected = false;
-    tile.isHinted = false;
-    this.tray.push(tile);
+    // ─── Rocha (rock): esfarela na mesa sem entrar na bandeja ───────────
+    if (tile.specialType === 'rock') {
+      tile.isRemoved = true;
+      tile.inTray = false;
+      this.harmonyScore += 150;
+      this.invalidateCache();
+
+      let cosmicRescue: PlacedTile[] | undefined;
+      const rescued = this.checkAndResolveCosmicRescue();
+      if (rescued && rescued.length > 0) cosmicRescue = rescued;
+      const waveCleared = this.isWaveCleared();
+
+      return {
+        action: 'special_action',
+        specialEffect: 'rock_crushed',
+        tile,
+        tray: [...this.getTray()],
+        cosmicRescue,
+        waveCleared,
+      };
+    }
+
+    if (this.getTray().length >= this.getMaxTraySlots()) {
+      return { action: 'tray_full', tray: [...this.getTray()], isTrayFullWarning: true };
+    }
+
+    this.trayController.addTile(tile);
     this.invalidateCache();
 
-    // Checar se formou combinação com alguma peça já na bandeja
-    const matchingIdx = this.tray.findIndex(
+    const tray = this.getTray();
+    const matchingIdx = tray.findIndex(
       (t) => t.id !== tile.id && canMatch(t, tile)
     );
 
     if (matchingIdx !== -1) {
-      const match1 = this.tray[matchingIdx];
+      const match1 = tray[matchingIdx];
       const match2 = tile;
 
-      // 1. Resolver Camaleão Espelho (garante conservação bijeção estrita de pares)
-      const chamMutation = this.resolveChameleonMirror(match1, match2);
+      const chamMutation = SynergyDirector.resolveChameleonMirror(
+        match1,
+        match2,
+        this.tiles,
+        () => this.invalidateCache()
+      );
 
-      // Ambas as peças saem da bandeja
-      this.tray = this.tray.filter((t) => t.id !== match1.id && t.id !== match2.id);
+      this.trayController.removeTiles(new Set([match1.id, match2.id]));
 
       this.consecutiveMatchesStreak++;
       const biome = ANIMAL_BIOMES[match1.value] || 'forest';
@@ -401,28 +332,38 @@ export class BoardEngine {
         this.recentBiomeMatches.shift();
       }
 
-      // 2. Detectar Sinergia da Natureza
-      const synergy = this.evaluateSynergy(match1, match2);
-
-      const isTheatrical = synergy && (
-        synergy.type === 'frog_tongue' ||
-        synergy.type === 'cat_paw' ||
-        synergy.type === 'bear_feast' ||
-        synergy.type === 'dolphin_sonar'
+      const synergy = SynergyDirector.evaluateSynergy(
+        match1,
+        match2,
+        () => this.getActiveBoardTiles(),
+        () => this.shuffleRemaining(),
+        this.getTray()
       );
 
+      const secondaryRemovedTiles: PlacedTile[] = [];
+
+      // Alívio na Bandeja (Tray Rescue da Sinergia)
+      if (synergy?.clearedTrayTiles && synergy.clearedTrayTiles.length > 0) {
+        this.trayController.removeTiles(new Set(synergy.clearedTrayTiles.map((t) => t.id)));
+        synergy.clearedTrayTiles.forEach((t) => {
+          t.isRemoved = true;
+          t.inTray = false;
+        });
+        secondaryRemovedTiles.push(...synergy.clearedTrayTiles);
+      }
+
+      const isTheatrical = SynergyDirector.isTheatrical(synergy);
+
       if (isTheatrical) {
-        // match2 é a peça recém-clicada no tabuleiro que atua no efeito teatral!
         match2.inSynergyAction = true;
         match2.isRemoved = false;
         match2.inTray = false;
 
-        // match1 veio da bandeja, portanto já não está mais fisicamente na mesa
         match1.isRemoved = true;
         match1.inTray = false;
         match1.inSynergyAction = false;
 
-        if (synergy.affectedBoardTiles) {
+        if (synergy?.affectedBoardTiles) {
           synergy.affectedBoardTiles.forEach((t) => {
             t.inSynergyAction = true;
             t.isRemoved = false;
@@ -443,10 +384,18 @@ export class BoardEngine {
       }
       this.invalidateCache();
 
-      // 3. Detectar Clima da Natureza (se aplicável)
-      let climateTriggered = this.evaluateClimate(match1, match2);
+      let climateTriggered = SynergyDirector.evaluateClimate(
+        match1,
+        this.recentBiomeMatches,
+        this.getTray(),
+        this.consecutiveMatchesStreak,
+        () => this.getActiveBoardTiles(),
+        () => this.getHintPair(),
+        () => this.getFreeTiles(),
+        (pts) => { this.harmonyScore += pts; }
+      );
 
-      // Bônus especial de Baú da Fortuna 🎁
+      // Baú da Fortuna 🎁
       if (match1.specialType === 'chest' || match2.specialType === 'chest') {
         const tools: ('hammer' | 'shuffle' | 'hint')[] = ['hammer', 'shuffle', 'hint'];
         const awardedTool = tools[Math.floor(Math.random() * tools.length)];
@@ -461,33 +410,56 @@ export class BoardEngine {
         }
       }
 
-      // 4. Pontos de Harmonia Zen
       let pointsAwarded = 100;
       if (synergy?.bonusScore) pointsAwarded += synergy.bonusScore;
       if (climateTriggered) pointsAwarded += 200;
-      this.harmonyScore += pointsAwarded;
 
-      // Coletar peças secundárias removidas e mutações para o histórico atômico
-      const secondaryRemovedTiles: PlacedTile[] = [];
-      if (synergy?.affectedBoardTiles) {
-        secondaryRemovedTiles.push(...synergy.affectedBoardTiles);
-      }
-      if (climateTriggered?.affectedBoardTiles) {
-        secondaryRemovedTiles.push(...climateTriggered.affectedBoardTiles);
-      }
-      if (climateTriggered?.eliminatedBoardPairs) {
-        secondaryRemovedTiles.push(...climateTriggered.eliminatedBoardPairs);
-      }
+      // ─── Efeitos de Adjacência: Corte de Cipós & Eclosão de Casulos ─────
+      const activeBoard = this.getActiveBoardTiles();
+      const isAdjacent = (target: PlacedTile, source: PlacedTile) => {
+        return (
+          Math.abs(target.position.x - source.position.x) <= 1.5 &&
+          Math.abs(target.position.y - source.position.y) <= 1.5 &&
+          Math.abs(target.position.z - source.position.z) <= 1
+        );
+      };
 
       const mutations: TileMutationRecord[] = [];
-      if (chamMutation) {
-        mutations.push(chamMutation);
-      }
-      if (climateTriggered?.mutations) {
-        mutations.push(...climateTriggered.mutations);
+      if (chamMutation) mutations.push(chamMutation);
+
+      let vinesCutCount = 0;
+      for (const t of activeBoard) {
+        if (isAdjacent(t, match1) || isAdjacent(t, match2)) {
+          if (t.specialType === 'vines') {
+            t.specialType = 'normal';
+            this.harmonyScore += 50;
+            pointsAwarded += 50;
+            vinesCutCount++;
+          } else if (t.specialType === 'cocoon') {
+            mutations.push({
+              tile: t,
+              prevValue: t.value,
+              prevLabel: t.label,
+              prevSuit: t.suit,
+            });
+            t.specialType = 'normal';
+            t.value = 'chameleon';
+            t.label = 'Camaleão';
+            t.suit = 'animal';
+            this.harmonyScore += 100;
+            pointsAwarded += 100;
+          }
+        }
       }
 
-      // Espelho Místico 🪞: reflete o animal recém-combinado
+      this.harmonyScore += pointsAwarded;
+
+      if (synergy?.affectedBoardTiles) secondaryRemovedTiles.push(...synergy.affectedBoardTiles);
+      if (climateTriggered?.affectedBoardTiles) secondaryRemovedTiles.push(...climateTriggered.affectedBoardTiles);
+      if (climateTriggered?.eliminatedBoardPairs) secondaryRemovedTiles.push(...climateTriggered.eliminatedBoardPairs);
+
+      if (climateTriggered?.mutations) mutations.push(...climateTriggered.mutations);
+
       const mirrorTiles = this.getActiveBoardTiles().filter((t) => t.specialType === 'mirror');
       for (const mir of mirrorTiles) {
         if (!chamMutation || chamMutation.tile.id !== mir.id) {
@@ -503,7 +475,6 @@ export class BoardEngine {
         }
       }
 
-      // Registra o par combinado no histórico para permitir Desfazer completo
       this.history.push({
         actionType: 'matched_pair',
         matchedPair: [match1, match2],
@@ -513,777 +484,140 @@ export class BoardEngine {
         rechargedTool: climateTriggered?.rechargedTool,
       });
 
+      let cosmicRescue: PlacedTile[] | undefined;
+      const rescued = this.checkAndResolveCosmicRescue();
+      if (rescued && rescued.length > 0) cosmicRescue = rescued;
+
       const waveCleared = this.isWaveCleared();
 
       return {
         action: 'matched',
         matchedPair: [match1, match2],
-        tray: [...this.tray],
+        tray: [...this.getTray()],
         synergy: synergy || undefined,
         climateTriggered: climateTriggered || undefined,
+        cosmicRescue,
         waveCleared,
         waveInfo: this.getWaveInfo(),
+        mutations: mutations.length > 0 ? mutations : undefined,
+        vinesCutCount: vinesCutCount > 0 ? vinesCutCount : undefined,
       };
     }
 
-    // Não formou par: registra adição à bandeja e agrupa
     this.history.push({
       actionType: 'tray_add',
       tile: { ...tile },
-      fromBoardToTrayIndex: this.tray.length - 1,
+      fromBoardToTrayIndex: this.getTray().length - 1,
     });
 
-    this.sortTray();
+    this.trayController.sortTray();
 
-    // Se a mesa esvaziou, acionar resgate cósmico para prevenir qualquer softlock
-    this.checkAndResolveCosmicRescue();
+    let cosmicRescue: PlacedTile[] | undefined;
+    const rescued = this.checkAndResolveCosmicRescue();
+    if (rescued && rescued.length > 0) cosmicRescue = rescued;
 
-    const isFull = this.tray.length >= this.maxTraySlots;
+    const isFull = this.getTray().length >= this.getMaxTraySlots();
     const waveCleared = this.isWaveCleared();
 
     return {
       action: 'added',
       tile,
-      tray: [...this.tray],
+      tray: [...this.getTray()],
       isTrayFullWarning: isFull,
+      cosmicRescue,
       waveCleared,
       waveInfo: this.getWaveInfo(),
     };
   }
 
-  private resolveChameleonMirror(m1: PlacedTile, m2: PlacedTile): TileMutationRecord | null {
-    let chameleon: PlacedTile | null = null;
-    let target: PlacedTile | null = null;
-
-    if (m1.value === 'chameleon' && m2.value !== 'chameleon') {
-      chameleon = m1;
-      target = m2;
-    } else if (m2.value === 'chameleon' && m1.value !== 'chameleon') {
-      chameleon = m2;
-      target = m1;
-    }
-
-    if (!chameleon || !target) return null;
-
-    // Encontra o outro camaleão que ainda está no jogo
-    const otherChameleon = this.tiles.find(
-      (t) => !t.isRemoved && t.id !== chameleon!.id && t.value === 'chameleon'
-    );
-
-    if (otherChameleon) {
-      const record: TileMutationRecord = {
-        tile: otherChameleon,
-        prevValue: otherChameleon.value,
-        prevLabel: otherChameleon.label,
-        prevSuit: otherChameleon.suit,
-      };
-      // O camaleão espelho se transmuta para se tornar o par idêntico de target!
-      otherChameleon.value = target.value;
-      otherChameleon.label = target.label;
-      otherChameleon.suit = target.suit;
-      this.invalidateCache();
-      return record;
-    }
-    return null;
-  }
-
-  private sortTray(): void {
-    this.tray.sort((a, b) => String(a.value).localeCompare(String(b.value)));
-  }
-
-  // ─── Avaliação de Sinergias da Natureza ───────────────────────────────────
-
-  private evaluateSynergy(t1: PlacedTile, t2: PlacedTile): SynergyResult | null {
-    const v1 = t1.value;
-    const v2 = t2.value;
-
-    // Camaleão Coringa
-    if (v1 === 'chameleon' || v2 === 'chameleon') {
-      return {
-        type: 'wildcard_chameleon',
-        title: '🦎 Camaleão Holográfico!',
-        description: 'A peça coringa se adaptou e completou a combinação.',
-        bonusScore: 150,
-      };
-    }
-
-    // Abelha + Mel
-    if ((v1 === 'bee' && v2 === 'honeycomb') || (v1 === 'honeycomb' && v2 === 'bee') || (v1 === 'bee' && v2 === 'bee')) {
-      let affectedBoardTiles: PlacedTile[] = [];
-      const active = this.getActiveBoardTiles();
-      const h1 = active.find((t) => t.value === 'honeycomb');
-      if (h1) {
-        const h2 = active.find((t) => t !== h1 && t.value === 'honeycomb');
-        if (h2) {
-          affectedBoardTiles.push(h1, h2);
-        }
-      }
-      return {
-        type: 'bee_honey',
-        title: '🐝🍯 Enxame Dourado!',
-        description: affectedBoardTiles.length > 0
-          ? 'O enxame de abelhas colheu o par de mel com segurança!'
-          : 'O enxame de abelhas reorganizou o jardim com doçura!',
-        bonusScore: 250,
-        affectedBoardTiles,
-      };
-    }
-
-    // Urso + Mel ou Urso + Peixe
-    if ((v1 === 'bear' && (v2 === 'honeycomb' || v2 === 'fish')) ||
-        ((v1 === 'honeycomb' || v1 === 'fish') && v2 === 'bear') ||
-        (v1 === 'bear' && v2 === 'bear')) {
-      let affectedBoardTiles: PlacedTile[] = [];
-      const active = this.getActiveBoardTiles();
-      const p1 = active.find((t) => t.value === 'fish' || t.value === 'honeycomb');
-      if (p1) {
-        const p2 = active.find((t) => t !== p1 && t.value === p1.value);
-        if (p2) {
-          affectedBoardTiles.push(p1, p2);
-        }
-      }
-      return {
-        type: 'bear_feast',
-        title: '🐻 Banquete do Urso!',
-        description: affectedBoardTiles.length > 0
-          ? 'O urso saboreou seu banquete e devorou um par completo do tabuleiro!'
-          : 'O urso saboreou seu banquete e concedeu energia zen!',
-        bonusScore: 300,
-        affectedBoardTiles,
-      };
-    }
-
-    // Macaco + Banana
-    if ((v1 === 'monkey' && v2 === 'banana') || (v1 === 'banana' && v2 === 'monkey') || (v1 === 'monkey' && v2 === 'monkey')) {
-      this.shuffleRemaining();
-      return {
-        type: 'monkey_banana',
-        title: '🐒🍌 Salto na Copa!',
-        description: 'O macaco saltou alegremente entre as árvores e reorganizou as peças!',
-        bonusScore: 200,
-      };
-    }
-
-    // Esquilo + Noz
-    if ((v1 === 'squirrel' && v2 === 'acorn') || (v1 === 'acorn' && v2 === 'squirrel') || (v1 === 'squirrel' && v2 === 'squirrel')) {
-      let affectedBoardTiles: PlacedTile[] = [];
-      const active = this.getActiveBoardTiles();
-      const a1 = active.find((t) => t.value === 'acorn');
-      if (a1) {
-        const a2 = active.find((t) => t !== a1 && t.value === 'acorn');
-        if (a2) {
-          affectedBoardTiles.push(a1, a2);
-        }
-      }
-      return {
-        type: 'squirrel_acorn',
-        title: '🐿️🌰 Reserva Secreta!',
-        description: affectedBoardTiles.length > 0
-          ? 'O esquilo recolheu o par de nozes completo para sua toca!'
-          : 'O esquilo abriu espaço na sua bandeja com agilidade!',
-        bonusScore: 200,
-        affectedBoardTiles,
-      };
-    }
-
-    // Sapo + Joaninha OU Sapo + Abelha OU Sapo + Sapo: Língua Elástica
-    if ((v1 === 'frog' && (v2 === 'ladybug' || v2 === 'bee')) ||
-        ((v1 === 'ladybug' || v1 === 'bee') && v2 === 'frog') ||
-        (v1 === 'frog' && v2 === 'frog')) {
-      let affectedBoardTiles: PlacedTile[] = [];
-      const active = this.getActiveBoardTiles();
-      const insectA = active.find((t) => t.value === 'ladybug' || t.value === 'bee');
-      if (insectA) {
-        const insectB = active.find((t) => t !== insectA && t.value === insectA.value);
-        if (insectB) {
-          affectedBoardTiles.push(insectA, insectB);
-        }
-      }
-
-      return {
-        type: 'frog_tongue',
-        title: '🐸 Língua Ágil!',
-        description: affectedBoardTiles.length > 0
-          ? 'O sapo esticou a língua elástica e capturou o inseto no tabuleiro!'
-          : 'O sapinho saltou com agilidade zen pela lagoa!',
-        bonusScore: 240,
-        affectedBoardTiles,
-      };
-    }
-
-    // Gato + Peixe OU Gato + Gato: Pata Ágil
-    if ((v1 === 'cat' && v2 === 'fish') || (v1 === 'fish' && v2 === 'cat') || (v1 === 'cat' && v2 === 'cat')) {
-      let affectedBoardTiles: PlacedTile[] = [];
-      const active = this.getActiveBoardTiles();
-      const fishA = active.find((t) => t.value === 'fish');
-      if (fishA) {
-        const fishB = active.find((t) => t !== fishA && t.value === 'fish');
-        if (fishB) {
-          affectedBoardTiles.push(fishA, fishB);
-        }
-      }
-      return {
-        type: 'cat_paw',
-        title: '🐱 Pata Ágil!',
-        description: affectedBoardTiles.length > 0
-          ? 'O gato deu uma patada rápida e pescou um par de peixes!'
-          : 'O gato ronronou suavemente e energizou o tabuleiro!',
-        bonusScore: 220,
-        affectedBoardTiles,
-      };
-    }
-
-    // Golfinho + Concha OU Golfinho + Golfinho: Eco Sonar
-    if ((v1 === 'dolphin' && v2 === 'shell') || (v1 === 'shell' && v2 === 'dolphin') || (v1 === 'dolphin' && v2 === 'dolphin')) {
-      let affectedBoardTiles: PlacedTile[] = [];
-      const active = this.getActiveBoardTiles();
-      const shellA = active.find((t) => t.value === 'shell');
-      if (shellA) {
-        const shellB = active.find((t) => t !== shellA && t.value === 'shell');
-        if (shellB) {
-          affectedBoardTiles.push(shellA, shellB);
-        }
-      }
-      return {
-        type: 'dolphin_sonar',
-        title: '🐬 Eco Sonar!',
-        description: affectedBoardTiles.length > 0
-          ? 'O eco sonar das profundezas resgatou um par de conchas!'
-          : 'As ondas sonoras do golfinho iluminaram o mar sereno!',
-        bonusScore: 220,
-        affectedBoardTiles,
-      };
-    }
-
-    // Ouriço + Maçã OU Ouriço + Ouriço: Rolamento Coletor
-    if ((v1 === 'hedgehog' && v2 === 'apple') || (v1 === 'apple' && v2 === 'hedgehog') || (v1 === 'hedgehog' && v2 === 'hedgehog')) {
-      let affectedBoardTiles: PlacedTile[] = [];
-      const active = this.getActiveBoardTiles();
-      const appleA = active.find((t) => t.value === 'apple');
-      if (appleA) {
-        const appleB = active.find((t) => t !== appleA && t.value === 'apple');
-        if (appleB) {
-          affectedBoardTiles.push(appleA, appleB);
-        }
-      }
-      return {
-        type: 'hedgehog_apple',
-        title: '🦔 Espinho Coletor!',
-        description: affectedBoardTiles.length > 0
-          ? 'O ouriço rolou pelo pomar e espetou um par de maçãs doces!'
-          : 'O ouriço aconchegou-se em paz entre as folhas secas!',
-        bonusScore: 240,
-        affectedBoardTiles,
-      };
-    }
-
-    return null;
-  }
-
-  // ─── Avaliação dos 7 Climas da Natureza ────────────────────────────────────
-
-  private evaluateClimate(t1: PlacedTile, _t2: PlacedTile): ClimateEffectResult | null {
-    const biome = ANIMAL_BIOMES[t1.value] || 'forest';
-
-    // 1. MARÉ ALTA PURIFICADORA 🌊 (Prioridade máxima de alívio ergonômico)
-    // Se o jogador combinou água OU se a bandeja estava perigosamente cheia (3 peças)
-    if (biome === 'water' || this.tray.length >= 2) {
-      const waterMatches = this.recentBiomeMatches.filter((b) => b === 'water').length;
-      if (waterMatches >= 2 || (this.tray.length >= 2 && Math.random() < 0.6)) {
-        const clearedTray: PlacedTile[] = [];
-        const affectedBoardTiles: PlacedTile[] = [];
-        const tilesToProcess = [...this.tray];
-        this.tray = [];
-
-        for (const t of tilesToProcess) {
-          const partner = this.getActiveBoardTiles().find(
-            (b) => !b.isRemoved && !b.inTray && canMatch(b, t)
-          );
-          if (partner) {
-            t.isRemoved = true;
-            t.inTray = false;
-            partner.isRemoved = true;
-            clearedTray.push(t);
-            affectedBoardTiles.push(partner);
-          } else {
-            t.inTray = false;
-            t.isRemoved = false;
-          }
-        }
-
-        let eliminatedBoardPairs: [PlacedTile, PlacedTile] | undefined;
-        const hint = this.getHintPair();
-        if (hint && Math.random() < 0.5) {
-          const p1 = this.getActiveBoardTiles().find((t) => t.id === hint.tile1Id);
-          const p2 = this.getActiveBoardTiles().find((t) => t.id === hint.tile2Id);
-          if (p1 && p2 && p1 !== p2 && canMatch(p1, p2)) {
-            p1.isRemoved = true;
-            p2.isRemoved = true;
-            eliminatedBoardPairs = [p1, p2];
-          }
-        }
-
-        return {
-          climate: 'ocean_surge',
-          icon: '🌊',
-          title: 'Maré Alta Purificadora!',
-          description: 'As ondas do oceano lavaram e esvaziaram a bandeja com segurança zen!',
-          clearedTrayTiles: clearedTray,
-          affectedBoardTiles: affectedBoardTiles.length > 0 ? affectedBoardTiles : undefined,
-          eliminatedBoardPairs,
-        };
-      }
-    }
-
-    // 2. ONDA DE CALOR ☀️
-    if (biome === 'savanna' && this.recentBiomeMatches.filter((b) => b === 'savanna').length >= 2) {
-      const hint = this.getHintPair();
-      let mutations: TileMutationRecord[] | undefined;
-      if (hint) {
-        const p1 = this.getActiveBoardTiles().find((t) => t.id === hint.tile1Id);
-        const p2 = this.getActiveBoardTiles().find((t) => t.id === hint.tile2Id);
-        if (p1 && p2) {
-          mutations = [
-            { tile: p1, prevValue: p1.value, prevLabel: p1.label, prevSuit: p1.suit },
-            { tile: p2, prevValue: p2.value, prevLabel: p2.label, prevSuit: p2.suit },
-          ];
-          p1.value = 'chameleon';
-          p1.label = '🦎 Camaleão';
-          p2.value = 'chameleon';
-          p2.label = '🦎 Camaleão';
-        }
-      }
-      // 2.1. Derrete peças de gelo na mesa
-      const iceTiles = this.getActiveBoardTiles().filter((t) => t.specialType === 'ice');
-      for (const ice of iceTiles) {
-        ice.specialType = 'normal';
-      }
-
-      return {
-        climate: 'heat_wave',
-        icon: '☀️',
-        title: 'Onda de Calor Solar!',
-        description: iceTiles.length > 0
-          ? 'O calor da savana derreteu o gelo e transformou um par em Camaleões!'
-          : 'O calor da savana transformou um par em Camaleões Coringa!',
-        mutations,
-      };
-    }
-
-    // 3. NEVASCA ÁRTICA ❄️
-    if (biome === 'arctic') {
-      const arcticMatches = this.recentBiomeMatches.filter((b) => b === 'arctic').length;
-      if (arcticMatches >= 2) {
-        let affectedBoardTiles: PlacedTile[] = [];
-        const hint = this.getHintPair();
-        if (hint) {
-          const p1 = this.getActiveBoardTiles().find((t) => t.id === hint.tile1Id);
-          const p2 = this.getActiveBoardTiles().find((t) => t.id === hint.tile2Id);
-          if (p1 && p2 && p1 !== p2 && canMatch(p1, p2)) {
-            p1.isRemoved = true;
-            p2.isRemoved = true;
-            affectedBoardTiles = [p1, p2];
-          }
-        }
-        return {
-          climate: 'arctic_blizzard',
-          icon: '❄️',
-          title: 'Nevasca Ártica!',
-          description: affectedBoardTiles.length > 0
-            ? 'O sopro congelante serena o tabuleiro e colheu um par completo com pureza!'
-            : 'O ar puro dos picos nevados refrescou sua mente zen (+1 Dica)!',
-          affectedBoardTiles: affectedBoardTiles.length > 0 ? affectedBoardTiles : undefined,
-          rechargedTool: 'hint',
-        };
-      }
-    }
-
-    // 4. OUTONO DOURADO 🍂
-    const forestGardenCount = this.recentBiomeMatches.filter((b) => b === 'forest' || b === 'garden').length;
-    if ((biome === 'forest' || t1.value === 'acorn' || t1.value === 'apple' || t1.value === 'hedgehog') && forestGardenCount >= 2) {
-      // Corta vinhas de cipó presas
-      const vineTiles = this.getActiveBoardTiles().filter((t) => t.specialType === 'vines');
-      for (const vine of vineTiles) {
-        vine.specialType = 'normal';
-      }
-
-      return {
-        climate: 'autumn_gale',
-        icon: '🍂',
-        title: 'Outono Dourado!',
-        description: vineTiles.length > 0
-          ? 'O vendaval cortou todas as vinhas e restaurou +1 Misturar 🔀!'
-          : 'Folhas douradas rodopiam pelo bosque e restauram +1 Misturar 🔀!',
-        rechargedTool: 'shuffle',
-      };
-    }
-
-    // 5. BRISA DA PRIMAVERA 🌸
-    const gardenCount = this.recentBiomeMatches.filter((b) => b === 'garden').length;
-    if ((biome === 'garden' || t1.value === 'butterfly' || t1.value === 'bee' || t1.value === 'ladybug') && gardenCount >= 2) {
-      // Choca casulos/ovos revelando suas identidades
-      const cocoonTiles = this.getActiveBoardTiles().filter((t) => t.specialType === 'cocoon');
-      for (const coc of cocoonTiles) {
-        coc.specialType = 'normal';
-        this.harmonyScore += 100;
-      }
-
-      return {
-        climate: 'spring_breeze',
-        icon: '🌸',
-        title: 'Brisa da Primavera!',
-        description: cocoonTiles.length > 0
-          ? 'Pétalas florais chocaram os casulos da mesa (+1 Dica 💡)!'
-          : 'Pétalas florais sopram sobre a mesa e restauram +1 Dica 💡!',
-        rechargedTool: 'hint',
-      };
-    }
-
-    // 6. NOITE DE LUA CHEIA 🌕
-    if (this.consecutiveMatchesStreak >= 4 && (this.consecutiveMatchesStreak % 2 === 0)) {
-      const freeTiles = this.getFreeTiles();
-      for (const t of freeTiles) {
-        t.isHinted = true;
-      }
-      return {
-        climate: 'full_moon',
-        icon: '🌕',
-        title: 'Noite de Lua Cheia!',
-        description: 'Vaga-lumes iluminam a floresta e revelam todos os pares livres!',
-      };
-    }
-
-    // 7. TEMPESTADE ZEN 🌧️
-    if (this.consecutiveMatchesStreak >= 3 && Math.random() < 0.6) {
-      return {
-        climate: 'zen_storm',
-        icon: '🌧️',
-        title: 'Tempestade Zen!',
-        description: 'Um raio místico iluminou o horizonte e restaurou +1 Marreta 🔨!',
-        rechargedTool: 'hammer',
-      };
-    }
-
-    return null;
-  }
-
-  // ─── Dicas e Ferramentas ──────────────────────────────────────────────────
+  // ─── Dicas, Poderes Zen & Desfazer (Delegação Especialistas) ───────────────
 
   public getHintPair(): MatchPair | null {
-    const free = this.getFreeTiles();
-
-    // 1. Prioridade: combina com o que está na bandeja
-    for (const trayTile of this.tray) {
-      const matchOnBoard = free.find((b) => canMatch(b, trayTile));
-      if (matchOnBoard) {
-        return { tile1Id: matchOnBoard.id, tile2Id: trayTile.id };
-      }
-    }
-
-    // 2. Combinação entre duas peças livres da mesa
-    for (let i = 0; i < free.length; i++) {
-      for (let j = i + 1; j < free.length; j++) {
-        if (canMatch(free[i], free[j])) {
-          return { tile1Id: free[i].id, tile2Id: free[j].id };
-        }
-      }
-    }
-
-    return null;
+    return ZenPowerManager.getHintPair(this.getFreeTiles(), this.getTray());
   }
 
   public undo(): UndoResult {
-    if (this.history.length === 0) return { success: false };
-
-    // Se houver peças na bandeja, desfaz a última adição à bandeja
-    if (this.tray.length > 0) {
-      for (let i = this.history.length - 1; i >= 0; i--) {
-        const item = this.history[i];
-        if (item.actionType === 'tray_add' && item.tile) {
-          const trayTile = this.tray.find((t) => t.id === item.tile!.id);
-          if (trayTile) {
-            this.history.splice(i, 1);
-            trayTile.inTray = false;
-            trayTile.isRemoved = false;
-            trayTile.isSelected = false;
-            trayTile.isHinted = false;
-            this.tray = this.tray.filter((t) => t.id !== trayTile.id);
-            this.invalidateCache();
-            return { success: true, type: 'tile_restored', tile: trayTile };
-          }
-        }
-      }
-    }
-
-    // Se a bandeja está vazia, desfaz o último par combinado
-    const lastItem = this.history.pop();
-    if (!lastItem) return { success: false };
-
-    if (lastItem.actionType === 'matched_pair' && lastItem.matchedPair) {
-      const [m1, m2] = lastItem.matchedPair;
-      m1.isRemoved = false;
-      m1.inTray = false;
-      m1.isSelected = false;
-      m1.isHinted = false;
-      m1.inSynergyAction = false;
-      m1.inSynergyPulled = false;
-
-      m2.isRemoved = false;
-      m2.inTray = false;
-      m2.isSelected = false;
-      m2.isHinted = false;
-      m2.inSynergyAction = false;
-      m2.inSynergyPulled = false;
-
-      // Reverter peças secundárias dissolvidas por sinergias ou climas
-      if (lastItem.secondaryRemovedTiles) {
-        for (const sec of lastItem.secondaryRemovedTiles) {
-          sec.isRemoved = false;
-          sec.inTray = false;
-          sec.isSelected = false;
-          sec.isHinted = false;
-          sec.inSynergyAction = false;
-          sec.inSynergyPulled = false;
-        }
-      }
-
-      // Reverter transmutações (Camaleão Espelho, Onda de Calor)
-      if (lastItem.mutations) {
-        for (const mut of lastItem.mutations) {
-          mut.tile.value = mut.prevValue;
-          mut.tile.label = mut.prevLabel;
-          mut.tile.suit = mut.prevSuit;
-        }
-      }
-
-      if (lastItem.pointsAwarded && this.harmonyScore >= lastItem.pointsAwarded) {
-        this.harmonyScore -= lastItem.pointsAwarded;
-      }
-      this.invalidateCache();
-      return {
-        success: true,
-        type: 'pair_restored',
-        pair: [m1, m2],
-        secondaryTiles: lastItem.secondaryRemovedTiles,
-        rechargedTool: lastItem.rechargedTool,
-      };
-    } else if (lastItem.actionType === 'tray_add' && lastItem.tile) {
-      const trayTile = this.tray.find((t) => t.id === lastItem.tile!.id);
-      if (trayTile) {
-        trayTile.inTray = false;
-        trayTile.isRemoved = false;
-        trayTile.isSelected = false;
-        trayTile.isHinted = false;
-        trayTile.inSynergyAction = false;
-        trayTile.inSynergyPulled = false;
-        this.tray = this.tray.filter((t) => t.id !== trayTile.id);
-        this.invalidateCache();
-        return { success: true, type: 'tile_restored', tile: trayTile };
-      }
-    }
-
-    return { success: false };
+    return this.trayController.undo(
+      this.history,
+      () => this.harmonyScore,
+      (pts) => { this.harmonyScore -= pts; },
+      () => this.invalidateCache()
+    );
   }
 
   public undoSpecificTrayTile(tileId: string): UndoResult {
-    const trayTile = this.tray.find((t) => t.id === tileId);
-    if (!trayTile) return { success: false };
-
-    // Remove do histórico a adição desta peça
-    const histIdx = this.history.findIndex(
-      (h) => h.actionType === 'tray_add' && h.tile && h.tile.id === tileId
+    return this.trayController.undoSpecificTrayTile(
+      tileId,
+      this.history,
+      () => this.invalidateCache()
     );
-    if (histIdx !== -1) {
-      this.history.splice(histIdx, 1);
-    }
-
-    trayTile.inTray = false;
-    trayTile.isRemoved = false;
-    trayTile.isSelected = false;
-    trayTile.isHinted = false;
-    trayTile.inSynergyAction = false;
-    trayTile.inSynergyPulled = false;
-    this.tray = this.tray.filter((t) => t.id !== tileId);
-    this.invalidateCache();
-    return { success: true, type: 'tile_restored', tile: trayTile };
   }
 
   public hammerRemove(tileId: string): boolean {
-    const fromTray = this.tray.find((t) => t.id === tileId);
-    if (fromTray) {
-      fromTray.isRemoved = true;
-      fromTray.inTray = false;
-      this.tray = this.tray.filter((t) => t.id !== tileId);
-
-      let partner = this.getActiveBoardTiles().find((t) => canMatch(t, fromTray));
-      if (!partner) {
-        partner = this.tray.find((t) => canMatch(t, fromTray));
-        if (partner) {
-          this.tray = this.tray.filter((t) => t.id !== partner!.id);
-        }
-      }
-      if (partner) {
-        partner.isRemoved = true;
-        partner.inTray = false;
-        this.resolveChameleonMirror(fromTray, partner);
-      }
-
-      this.history = this.history.filter((h) => {
-        if (h.tile && (h.tile.id === fromTray.id || (partner && h.tile.id === partner.id))) return false;
-        if (h.matchedPair && (h.matchedPair[0].id === fromTray.id || h.matchedPair[1].id === fromTray.id || (partner && (h.matchedPair[0].id === partner.id || h.matchedPair[1].id === partner.id)))) return false;
-        return true;
-      });
-
-      this.checkAndResolveCosmicRescue();
-      this.invalidateCache();
-      return true;
-    }
-
-    const fromBoard = this.getActiveBoardTiles().find((t) => t.id === tileId && this.isTileFree(t));
-    if (fromBoard) {
-      fromBoard.isRemoved = true;
-      let partner = this.getActiveBoardTiles().find((t) => canMatch(t, fromBoard));
-      if (!partner) {
-        partner = this.tray.find((t) => canMatch(t, fromBoard));
-        if (partner) {
-          this.tray = this.tray.filter((t) => t.id !== partner!.id);
-        }
-      }
-      if (partner) {
-        partner.isRemoved = true;
-        partner.inTray = false;
-        this.resolveChameleonMirror(fromBoard, partner);
-      }
-      this.history = this.history.filter((h) => {
-        if (h.tile && (h.tile.id === fromBoard.id || (partner && h.tile.id === partner.id))) return false;
-        if (h.matchedPair && (h.matchedPair[0].id === fromBoard.id || h.matchedPair[1].id === fromBoard.id || (partner && (h.matchedPair[0].id === partner.id || h.matchedPair[1].id === partner.id)))) return false;
-        return true;
-      });
-      this.checkAndResolveCosmicRescue();
-      this.invalidateCache();
-      return true;
-    }
-
-    return false;
+    return ZenPowerManager.hammerRemove(
+      tileId,
+      this.trayController,
+      () => this.getActiveBoardTiles(),
+      this.tiles,
+      (tile) => this.isTileFree(tile),
+      () => this.history,
+      (h) => { this.history = h; },
+      () => this.invalidateCache(),
+      () => this.checkAndResolveCosmicRescue()
+    );
   }
 
   public shuffleRemaining(): boolean {
-    const active = this.getActiveBoardTiles();
-    if (active.length < 2) return false;
-
-    const tileDefs: TileDefinition[] = active.map((t) => ({
-      id: t.id,
-      suit: t.suit,
-      value: t.value,
-      label: t.label,
-    }));
-
-    for (let i = tileDefs.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [tileDefs[i], tileDefs[j]] = [tileDefs[j], tileDefs[i]];
-    }
-
-    for (let i = 0; i < active.length; i++) {
-      active[i].suit = tileDefs[i].suit;
-      active[i].value = tileDefs[i].value;
-      active[i].label = tileDefs[i].label;
-    }
-
-    this.invalidateCache();
-    return true;
+    return ZenPowerManager.shuffleRemaining(
+      this.getActiveBoardTiles(),
+      () => this.invalidateCache()
+    );
   }
 
   public isVictory(): boolean {
-    return this.isWaveCleared() && !this.hasMoreWaves() && this.tray.length === 0;
+    if (this.getActiveBoardTiles().length === 0 && this.getTray().length > 0) {
+      this.checkAndResolveCosmicRescue();
+    }
+    return this.isWaveCleared() && !this.hasMoreWaves() && this.getTray().length === 0;
   }
 
-  /**
-   * Checa se o tabuleiro entrou em impasse total (bandeja cheia de 4 slots
-   * sem nenhum par entre si e nenhuma peça livre na mesa que case com a bandeja).
-   */
   public isDeadlocked(): boolean {
-    if (this.tray.length < this.maxTraySlots) return false;
-
-    // 1. Checa se existe par dentro da própria bandeja
-    for (let i = 0; i < this.tray.length; i++) {
-      for (let j = i + 1; j < this.tray.length; j++) {
-        if (canMatch(this.tray[i], this.tray[j])) return false;
-      }
-    }
-
-    // 2. Checa se alguma peça livre da mesa combina com qualquer peça da bandeja
-    const free = this.getFreeTiles();
-    for (const trayTile of this.tray) {
-      if (free.some((b) => canMatch(b, trayTile))) return false;
-    }
-
-    return true;
+    return ZenPowerManager.isDeadlocked(
+      this.getTray(),
+      this.getMaxTraySlots(),
+      this.getFreeTiles()
+    );
   }
 
-  /**
-   * Resgate Zen: alivia a bandeja devolvendo a peça mais antiga suavemente ao tabuleiro
-   */
   public zenRescue(): PlacedTile | null {
-    if (this.tray.length === 0) return null;
-    const rescued = this.tray.shift()!;
-    rescued.inTray = false;
-    rescued.isRemoved = false;
-    rescued.isSelected = false;
-    rescued.isHinted = false;
-    this.invalidateCache();
-    return rescued;
+    return this.trayController.zenRescue(() => this.invalidateCache());
   }
 
   // ─── Geração de Tabuleiro / Onda ──────────────────────────────────────────
 
   private generateCurrentWave(): void {
     const rawSlots = this.waves[this.currentWaveIndex] || this.layout.slots;
-    // Garante que o total de slots seja rigorosamente PAR (sem peças órfãs)
     const totalSlots = rawSlots.length % 2 === 0 ? rawSlots.length : rawSlots.length - 1;
     const slots = rawSlots.slice(0, totalSlots);
-    const deck = createAnimalDeck();
-
     const pairsNeeded = totalSlots / 2;
-    const selectedPairs: [TileDefinition, TileDefinition][] = [];
-
-    // Embaralhar o deck
-    const shuffledDeck = [...deck].sort(() => Math.random() - 0.5);
-
-    let pairCount = 0;
-    for (let i = 0; pairCount < pairsNeeded; i++) {
-      const src = shuffledDeck[i % shuffledDeck.length];
-      const p1: TileDefinition = {
-        ...src,
-        id: `${src.id}_w${this.currentWaveIndex}_p1_${pairCount}`,
-      };
-      const p2: TileDefinition = {
-        ...src,
-        id: `${src.id}_w${this.currentWaveIndex}_p2_${pairCount}`,
-      };
-      selectedPairs.push([p1, p2]);
-      pairCount++;
-    }
-
-    // Inserir com chance controlada uma sinergia ou camaleão por onda
-    if (pairCount > 4 && Math.random() < 0.7) {
-      const chameleonDef: TileDefinition = {
-        id: `animal-chameleon-wave-${this.currentWaveIndex}`,
-        suit: 'animal',
-        value: 'chameleon',
-        label: '🦎 Camaleão',
-      };
-      selectedPairs[0] = [
-        chameleonDef,
-        { ...chameleonDef, id: `${chameleonDef.id}_pair` },
-      ];
-    }
+    const selectedPairs = LevelDeckCurator.curateWavePairs(
+      this.levelRules.biome || 'forest',
+      pairsNeeded,
+      this.currentWaveIndex,
+      this.levelRules.allowChameleon,
+      this.levelRules.chameleonChance,
+      this.levelRules.worldTier || 10
+    );
+    const pairCount = selectedPairs.length;
 
     const specialMap = new Map<number, TileSpecialType>();
-    // A partir de 8 pares (fases com 16+ peças), sorteia 1 tipo especial para enriquecer o jogo
-    if (pairCount >= 8 && Math.random() < 0.75) {
-      const specials: TileSpecialType[] = ['ice', 'chest', 'mirror', 'cocoon', 'vines'];
-      const chosen = specials[Math.floor(Math.random() * specials.length)];
-      specialMap.set(1, chosen);
+    const allowed = this.levelRules.allowedSpecials;
+    if (allowed.length > 0 && pairCount >= 8) {
+      const count = Math.min(this.levelRules.maxSpecialPairs, Math.max(1, Math.floor(pairCount / 7)));
+      for (let sIdx = 1; sIdx <= count; sIdx++) {
+        const chosen = allowed[Math.floor(Math.random() * allowed.length)];
+        specialMap.set(sIdx, chosen);
+      }
     }
 
     interface TaggedPiece extends TileDefinition {

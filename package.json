@@ -6,7 +6,16 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "npm run test:zen && npm run validate:levels && npm run test:curation && npm run test:evaluation && npm run test:storage",
+    "test:zen": "npx tsx scripts/verify_zen_scenarios.ts",
+    "test:curation": "npx tsx scripts/test_curation_pipeline.ts",
+    "test:evaluation": "npx tsx scripts/test_round2_evaluation.ts",
+    "test:storage": "npx tsx scripts/test_storage_evaluation.ts",
+    "validate:levels": "npx tsx src/core/layouts/pipeline/levelValidator.ts",
+    "graphcode": "npx tsx scripts/graphcode.ts",
+    "graphcode:audit": "npx tsx scripts/graphcode.ts --audit",
+    "render:svg": "npx tsx scripts/render-svg.ts"
   },
   "dependencies": {
     "@capacitor/android": "^6.2.0",
@@ -17,6 +26,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^6.2.0",
+    "@resvg/resvg-js": "^2.6.2",
     "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^22.10.2",
     "typescript": "^5.7.2",

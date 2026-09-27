@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" width="140" height="140">
+  <defs>
+    <radialGradient id="g5-bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#4a3b00" />
+      <stop offset="70%" stop-color="#241c00" />
+      <stop offset="100%" stop-color="#0d0a00" />
+    </radialGradient>
+    <linearGradient id="dragon-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff3b0" />
+      <stop offset="50%" stop-color="#ffd166" />
+      <stop offset="100%" stop-color="#e09f3e" />
+    </linearGradient>
+  </defs>
+
+  <!-- Medalhão Base -->
+  <circle cx="70" cy="70" r="66" fill="url(#g5-bg)" stroke="url(#dragon-gold)" stroke-width="4" />
+  <circle cx="70" cy="70" r="59" fill="none" stroke="url(#dragon-gold)" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.8" />
+
+  <!-- Nuvens Celestes ao Fundo -->
+  <path d="M 30,55 C 34,48 45,48 48,55 C 55,52 60,60 55,68 C 45,70 30,68 30,55 Z" fill="#ffd166" opacity="0.2" />
+  <path d="M 85,85 C 89,78 100,78 103,85 C 110,82 115,90 110,98 C 100,100 85,98 85,85 Z" fill="#ffd166" opacity="0.2" />
+
+  <!-- Animal: Dragão Imperial Celestial -->
+  <g transform="translate(18, 10) scale(0.74)">
+    <!-- Chifres Longos Celestes -->
+    <path d="M 52,42 C 40,24 30,22 18,18 M 38,26 C 30,15 36,8 44,6" 
+          stroke="url(#dragon-gold)" stroke-width="3.5" stroke-linecap="round" fill="none" />
+    <path d="M 88,42 C 100,24 110,22 122,18 M 102,26 C 110,15 104,8 96,6" 
+          stroke="url(#dragon-gold)" stroke-width="3.5" stroke-linecap="round" fill="none" />
+
+    <!-- Juba e Cabelos de Fogo Celestial -->
+    <path d="M 32,58 C 18,65 14,80 20,95 C 28,88 35,82 38,72 Z" fill="url(#dragon-gold)" opacity="0.85" />
+    <path d="M 108,58 C 122,65 126,80 120,95 C 112,88 105,82 102,72 Z" fill="url(#dragon-gold)" opacity="0.85" />
+
+    <!-- Formato da Cabeça do Dragão -->
+    <path d="M 48,46 C 48,36 92,36 92,46 C 92,62 86,92 70,102 C 54,92 48,62 48,46 Z" 
+          fill="url(#dragon-gold)" stroke="#744210" stroke-width="2" />
+
+    <!-- Sobrancelhas Imperiais em Chama -->
+    <path d="M 46,55 Q 58,45 66,54" stroke="#744210" stroke-width="3" stroke-linecap="round" fill="none" />
+    <path d="M 94,55 Q 82,45 74,54" stroke="#744210" stroke-width="3" stroke-linecap="round" fill="none" />
+
+    <!-- Olhos de Jade Esmeralda Radiante -->
+    <ellipse cx="56" cy="62" rx="6" ry="7" fill="#52b788" stroke="#1b4332" stroke-width="1.5" />
+    <circle cx="56" cy="62" r="3.5" fill="#1b1e22" />
+    <circle cx="54.5" cy="60" r="1.5" fill="#fff" />
+
+    <ellipse cx="84" cy="62" rx="6" ry="7" fill="#52b788" stroke="#1b4332" stroke-width="1.5" />
+    <circle cx="84" cy="62" r="3.5" fill="#1b1e22" />
+    <circle cx="82.5" cy="60" r="1.5" fill="#fff" />
+
+    <!-- Bigodes do Dragão Oriental (Longos e Ondulados) -->
+    <path d="M 52,82 C 30,86 16,98 10,116" stroke="url(#dragon-gold)" stroke-width="2.5" stroke-linecap="round" fill="none" />
+    <path d="M 88,82 C 110,86 124,98 130,116" stroke="url(#dragon-gold)" stroke-width="2.5" stroke-linecap="round" fill="none" />
+
+    <!-- Focinho e Narinas -->
+    <ellipse cx="64" cy="84" rx="3.5" ry="2.5" fill="#744210" />
+    <ellipse cx="76" cy="84" rx="3.5" ry="2.5" fill="#744210" />
+
+    <!-- Pérola da Sabedoria na Fronte -->
+    <circle cx="70" cy="48" r="4.5" fill="#ffffff" stroke="#d4af37" stroke-width="1.5" />
+    <circle cx="70" cy="48" r="2" fill="#52b788" />
+  </g>
+
+  <!-- Ornato Floral Base -->
+  <path d="M 50,118 C 62,112 78,112 90,118 C 82,126 58,126 50,118 Z" fill="url(#dragon-gold)" />
+</svg>

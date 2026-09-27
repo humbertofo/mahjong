@@ -1,12 +1,19 @@
 import { BoardEngine } from '../core/BoardEngine';
 import { BoardRenderer } from '../render/BoardRenderer';
-import { ALL_LAYOUTS, WORLDS } from '../core/layouts';
+import { ALL_LAYOUTS } from '../core/layouts';
 import { StorageManager } from '../storage/StorageManager';
 import { soundManager } from '../audio/SoundManager';
 import { hapticManager } from '../audio/HapticManager';
 import { PlacedTile, SynergyResult, ClimateEffectResult } from '../core/types';
 import { LiveUpdateManager } from '../core/LiveUpdateManager';
-import confetti from 'canvas-confetti';
+import { LevelsModal } from './modals/LevelsModal';
+import { SettingsModal } from './modals/SettingsModal';
+import { GameEndModals } from './modals/GameEndModals';
+import { HUDController } from './HUDController';
+import { TrayAnimator } from './TrayAnimator';
+import { NatureFeedbackController } from './NatureFeedbackController';
+import { getLevelRules } from '../core/levelRules';
+import { LevelDeckCurator } from '../core/nature/LevelDeckCurator';
 
 export class UIManager {
   private engine: BoardEngine;
@@ -15,50 +22,31 @@ export class UIManager {
   private currentLevelIndex: number = 0;
   private isHammerActive: boolean = false;
 
-  // Limite de Cargas por Fase
-  public static readonly MAX_HAMMER = 3;
-  public static readonly MAX_SHUFFLE = 3;
-  public static readonly MAX_HINT = 3;
-  public static readonly MAX_UNDO = 5;
+  // Submódulos especialistas
+  private hud: HUDController = new HUDController();
+  private trayAnimator: TrayAnimator = new TrayAnimator();
+  private natureFeedback: NatureFeedbackController;
 
-  private hammerCount: number = UIManager.MAX_HAMMER;
-  private shuffleCount: number = UIManager.MAX_SHUFFLE;
-  private hintCount: number = UIManager.MAX_HINT;
-  private undoCount: number = UIManager.MAX_UNDO;
+  // Limite de Cargas por Fase (Retrocompatibilidade)
+  public static readonly MAX_HAMMER = HUDController.MAX_HAMMER;
+  public static readonly MAX_SHUFFLE = HUDController.MAX_SHUFFLE;
+  public static readonly MAX_HINT = HUDController.MAX_HINT;
+  public static readonly MAX_UNDO = HUDController.MAX_UNDO;
 
-  // DOM — Badges de Cargas
-  private badgeHammer!: HTMLElement;
-  private badgeShuffle!: HTMLElement;
-  private badgeHint!: HTMLElement;
-  private badgeUndo!: HTMLElement;
-
-  // Timer de jogo
-  private gameStartTime: number = 0;
-  private timerInterval: ReturnType<typeof setInterval> | null = null;
-  private elapsedSeconds: number = 0;
-
-  // Contador de pares combinados e sinergias na partida atual
+  // Contador de jogadas
   private pairsMatchedThisGame: number = 0;
   private synergiesTriggeredThisGame: number = 0;
   private isRestarting: boolean = false;
+  private zenRescueTimer: ReturnType<typeof setTimeout> | null = null;
 
-  // DOM — Screens
+  // DOM — Screens & Containers
   private screenMenu!: HTMLElement;
   private screenGame!: HTMLElement;
-
-  // DOM — Menu
-  private menuLevelsDone!: HTMLElement;
-  private menuLevelsTotal!: HTMLElement;
-  private menuProgressFill!: HTMLElement;
-  private menuStarsTotal!: HTMLElement;
-
-  // DOM — Tray
   private traySlotsContainer!: HTMLElement;
   private traySlotEls: HTMLElement[] = [];
   private traySlotCanvases: HTMLCanvasElement[] = [];
-  private flyerPool: { el: HTMLElement; canvas: HTMLCanvasElement; inUse: boolean }[] = [];
 
-  // DOM — HUD Buttons
+  // DOM — Buttons
   private undoBtn!: HTMLButtonElement;
   private hintBtn!: HTMLButtonElement;
   private shuffleBtn!: HTMLButtonElement;
@@ -67,17 +55,81 @@ export class UIManager {
   private levelsBtn!: HTMLButtonElement;
   private settingsBtn!: HTMLButtonElement;
   private menuBackBtn!: HTMLButtonElement;
-  private timerEl!: HTMLElement;
 
   // DOM — Modals
   private levelsModal!: HTMLElement;
   private settingsModal!: HTMLElement;
   private victoryModal!: HTMLElement;
   private statsModal!: HTMLElement;
+  private restartConfirmModal!: HTMLElement;
+  private btnRestartCancel!: HTMLButtonElement;
+  private btnRestartConfirm!: HTMLButtonElement;
+
+  // DOM & Timers — Cortina de Folhagens & Fauna Zen
+  private foliageCurtain: HTMLElement | null = null;
+  private foliageTransitionTimer: ReturnType<typeof setTimeout> | null = null;
+  private mascotSpeechTimer: ReturnType<typeof setTimeout> | null = null;
+
+  public static readonly BIOME_GUARDIANS = [
+    {
+      world: 1,
+      name: 'Mundo 1 · Jardim das Lótus',
+      badge: '🌿 Jardim',
+      emoji: '🌿',
+      avatar: './assets/nature/guardian-1-panda.svg',
+      quote: '"A serenidade revela os pares ocultos."',
+    },
+    {
+      world: 2,
+      name: 'Mundo 2 · Vale do Bambu',
+      badge: '🎋 Vale',
+      emoji: '🎋',
+      avatar: './assets/nature/guardian-2-cricket.svg',
+      quote: '"A paciência dobra o bambu sem quebrar."',
+    },
+    {
+      world: 3,
+      name: 'Mundo 3 · Montanha Crepuscular',
+      badge: '⛰️ Montanha',
+      emoji: '⛰️',
+      avatar: './assets/nature/guardian-3-fox.svg',
+      quote: '"A astúcia enxerga além do nevoeiro da montanha."',
+    },
+    {
+      world: 4,
+      name: 'Mundo 4 · Floresta Ancestral',
+      badge: '🌲 Floresta',
+      emoji: '🌲',
+      avatar: './assets/nature/guardian-4-deer.svg',
+      quote: '"As raízes antigas sustentam cada movimento."',
+    },
+    {
+      world: 5,
+      name: 'Mundo 5 · Cume Celestial',
+      badge: '✨ Celestial',
+      emoji: '✨',
+      avatar: './assets/nature/guardian-5-dragon.svg',
+      quote: '"No ápice dos céus, o mestre encontra a harmonia total."',
+    },
+  ];
+
+  private static readonly PANDA_QUOTES = [
+    'Que a serenidade guie seus pares hoje! 🌿',
+    'Respira fundo... As pedras livres se revelarão! 🎋',
+    'O bambu ensina que a flexibilidade vence a rigidez. 🐼',
+    'Em cada combinação há harmonia e paz! ✨',
+    'Não tenha pressa, o tempo aqui é seu amigo. 🍵',
+    'Os animais da floresta torcem por você! 🌸',
+  ];
 
   constructor(engine: BoardEngine, renderer: BoardRenderer) {
     this.engine = engine;
     this.renderer = renderer;
+
+    this.natureFeedback = new NatureFeedbackController({
+      triggerHudPulse: () => this.triggerHudPulse(),
+      updateHUD: () => this.updateHUD(),
+    });
 
     this.applyPreferences();
     this.bindDomElements();
@@ -103,15 +155,9 @@ export class UIManager {
     this.screenMenu = document.getElementById('screen-menu')!;
     this.screenGame = document.getElementById('screen-game')!;
 
-    this.menuLevelsDone  = document.getElementById('menu-levels-done')!;
-    this.menuLevelsTotal = document.getElementById('menu-levels-total')!;
-    this.menuProgressFill = document.getElementById('menu-progress-fill')!;
-    this.menuStarsTotal  = document.getElementById('menu-stars-total')!;
-
     this.traySlotsContainer = document.getElementById('tray-slots')!;
     this.traySlotEls = Array.from(document.querySelectorAll('.tray-slot'));
 
-    // Pre-alocar canvas reutilizáveis nos 4 slots para reciclagem perfeita sem GC
     this.traySlotCanvases = this.traySlotEls.map((slotEl) => {
       slotEl.innerHTML = '';
       const canvas = document.createElement('canvas');
@@ -131,51 +177,91 @@ export class UIManager {
     this.levelsBtn  = document.getElementById('btn-levels')  as HTMLButtonElement;
     this.settingsBtn = document.getElementById('btn-settings') as HTMLButtonElement;
     this.menuBackBtn = document.getElementById('btn-menu-back') as HTMLButtonElement;
-    this.timerEl    = document.getElementById('hud-timer')!;
 
     this.levelsModal  = document.getElementById('modal-levels')!;
     this.settingsModal = document.getElementById('modal-settings')!;
     this.victoryModal = document.getElementById('modal-victory')!;
     this.statsModal   = document.getElementById('modal-stats')!;
-
-    this.badgeHammer  = document.getElementById('badge-hammer')!;
-    this.badgeShuffle = document.getElementById('badge-shuffle')!;
-    this.badgeHint    = document.getElementById('badge-hint')!;
-    this.badgeUndo    = document.getElementById('badge-undo')!;
+    this.restartConfirmModal = document.getElementById('modal-restart-confirm')!;
+    this.btnRestartCancel    = document.getElementById('btn-restart-cancel') as HTMLButtonElement;
+    this.btnRestartConfirm   = document.getElementById('btn-restart-confirm') as HTMLButtonElement;
+    this.foliageCurtain      = document.getElementById('foliage-curtain');
   }
 
   // ─── Events ───────────────────────────────────────────────────────────────
 
   private attachEvents(): void {
-    // Menu principal
+    // Menu principal com transição cinematográfica de folhagens
     document.getElementById('btn-menu-play')?.addEventListener('click', () => {
-      this.startGame(this.currentLevelIndex);
+      this.playFoliageTransition(() => {
+        this.startGame(this.currentLevelIndex);
+      }, this.currentLevelIndex);
     });
-    document.getElementById('btn-menu-levels')?.addEventListener('click', () => {
-      this.renderLevelsList();
+    const btnMenuLevels = document.getElementById('btn-menu-levels');
+    const openLevelsMap = () => {
+      soundManager.playTileClick();
+      hapticManager.impactLight();
+      LevelsModal.renderLevelsList(
+        this.currentLevelIndex,
+        (idx: number) => {
+          this.playFoliageTransition(() => {
+            this.startGame(idx);
+          }, idx);
+        },
+        (msg: string) => this.showToast(msg)
+      );
       this.levelsModal.classList.remove('hidden');
+    };
+    btnMenuLevels?.addEventListener('click', openLevelsMap);
+    btnMenuLevels?.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openLevelsMap();
+      }
     });
     document.getElementById('btn-menu-stats')?.addEventListener('click', () => {
-      this.renderStats();
+      GameEndModals.renderStats();
       this.statsModal.classList.remove('hidden');
     });
 
     // Voltar ao menu
     this.menuBackBtn.addEventListener('click', () => {
-      this.stopTimer();
+      soundManager.playTileClick();
+      hapticManager.impactLight();
+      this.hud.stopTimer();
       this.showMenu();
     });
 
     // Reiniciar
     this.restartBtn.addEventListener('click', () => {
-      if (confirm('Reiniciar esta fase do início?')) {
+      soundManager.playTileClick();
+      hapticManager.impactLight();
+      this.cancelHammerMode();
+
+      if (this.engine.getHistoryLength() === 0 && this.engine.getTray().length === 0) {
         this.startGame(this.currentLevelIndex);
+        return;
       }
+      this.restartConfirmModal.classList.remove('hidden');
     });
 
-    // Desfazer (5 cargas por fase - suporta peças na bandeja e pares combinados na mesa)
+    this.btnRestartCancel?.addEventListener('click', () => {
+      soundManager.playTileClick();
+      hapticManager.impactLight();
+      this.restartConfirmModal.classList.add('hidden');
+    });
+
+    this.btnRestartConfirm?.addEventListener('click', () => {
+      soundManager.playTileClick();
+      hapticManager.impactMedium();
+      this.restartConfirmModal.classList.add('hidden');
+      this.startGame(this.currentLevelIndex);
+    });
+
+    // Desfazer
     this.undoBtn.addEventListener('click', () => {
-      if (this.undoCount <= 0) {
+      this.cancelHammerMode();
+      if (this.hud.undoCount <= 0) {
         this.showToast('Sem desfazeres restantes nesta fase!');
         soundManager.playBlockedSound();
         return;
@@ -186,26 +272,29 @@ export class UIManager {
       }
       const undoResult = this.engine.undo();
       if (undoResult.success) {
-        this.undoCount--;
-        this.updatePowerUpBadges();
+        this.hud.undoCount--;
+        this.hud.updatePowerUpBadges(this.engine.getHistoryLength() > 0);
         soundManager.playTileClick();
         hapticManager.impactLight();
 
         if (undoResult.tile) {
           const tile = undoResult.tile;
           tile.inFlight = true;
+          this.renderer.isInputLocked = true;
           const coords = this.renderer.getTileViewportCoords(tile);
           const lastSlotIdx = Math.min(this.engine.getTray().length, this.traySlotEls.length - 1);
           const slotEl = this.traySlotEls[lastSlotIdx] || this.traySlotsContainer;
-          this.animateTileFromTrayToBoard(
+          this.trayAnimator.animateTileFromTrayToBoard(
             tile,
             slotEl,
             coords.left,
             coords.top,
             coords.width,
             coords.height,
+            this.renderer.getTileRenderer(),
             () => {
               tile.inFlight = false;
+              this.renderer.isInputLocked = false;
               this.renderer.requestRender();
               this.updateHUD();
             }
@@ -216,20 +305,21 @@ export class UIManager {
 
         if (undoResult.type === 'pair_restored') {
           if (undoResult.secondaryTiles && undoResult.secondaryTiles.length > 0) {
-            this.showToast(`↩️ Par e peças de sinergia restaurados! (${this.undoCount} restante${this.undoCount === 1 ? '' : 's'})`);
+            this.showToast(`↩️ Par e peças de sinergia restaurados! (${this.hud.undoCount} restante${this.hud.undoCount === 1 ? '' : 's'})`);
           } else {
-            this.showToast(`↩️ Par restaurado à mesa! (${this.undoCount} restante${this.undoCount === 1 ? '' : 's'})`);
+            this.showToast(`↩️ Par restaurado à mesa! (${this.hud.undoCount} restante${this.hud.undoCount === 1 ? '' : 's'})`);
           }
         } else {
-          this.showToast(`Peça devolvida! (${this.undoCount} restante${this.undoCount === 1 ? '' : 's'})`);
+          this.showToast(`Peça devolvida! (${this.hud.undoCount} restante${this.hud.undoCount === 1 ? '' : 's'})`);
         }
         this.updateHUD();
       }
     });
 
-    // Dica (3 cargas por fase)
+    // Dica
     this.hintBtn.addEventListener('click', () => {
-      if (this.hintCount <= 0) {
+      this.cancelHammerMode();
+      if (this.hud.hintCount <= 0) {
         this.showToast('Sem dicas restantes nesta fase!');
         soundManager.playBlockedSound();
         return;
@@ -237,8 +327,8 @@ export class UIManager {
       this.engine.getTiles().forEach((t) => (t.isHinted = false));
       const hintPair = this.engine.getHintPair();
       if (hintPair) {
-        this.hintCount--;
-        this.updatePowerUpBadges();
+        this.hud.hintCount--;
+        this.hud.updatePowerUpBadges(this.engine.getHistoryLength() > 0);
         const t1 = this.engine.getTiles().find((t) => t.id === hintPair.tile1Id);
         const t2 = this.engine.getTiles().find((t) => t.id === hintPair.tile2Id);
         if (t1) t1.isHinted = true;
@@ -247,7 +337,7 @@ export class UIManager {
         hapticManager.impactLight();
         this.renderer.triggerAnimation(4000);
         this.renderer.requestRender();
-        this.showToast(`Dica revelada! (${this.hintCount} restante${this.hintCount === 1 ? '' : 's'})`);
+        this.showToast(`Dica revelada! (${this.hud.hintCount} restante${this.hud.hintCount === 1 ? '' : 's'})`);
         setTimeout(() => {
           if (t1) t1.isHinted = false;
           if (t2) t2.isHinted = false;
@@ -260,9 +350,10 @@ export class UIManager {
       this.updateHUD();
     });
 
-    // Misturar (3 cargas por fase)
+    // Misturar
     this.shuffleBtn.addEventListener('click', () => {
-      if (this.shuffleCount <= 0) {
+      this.cancelHammerMode();
+      if (this.hud.shuffleCount <= 0) {
         this.showToast('Sem misturas restantes nesta fase!');
         soundManager.playBlockedSound();
         return;
@@ -273,19 +364,19 @@ export class UIManager {
         return;
       }
       if (this.engine.shuffleRemaining()) {
-        this.shuffleCount--;
-        this.updatePowerUpBadges();
+        this.hud.shuffleCount--;
+        this.hud.updatePowerUpBadges(this.engine.getHistoryLength() > 0);
         soundManager.playShuffleSound();
         hapticManager.impactMedium();
         this.renderer.triggerShuffleAnimation(500);
-        this.showToast(`Peças misturadas! (${this.shuffleCount} restante${this.shuffleCount === 1 ? '' : 's'})`);
+        this.showToast(`Peças misturadas! (${this.hud.shuffleCount} restante${this.hud.shuffleCount === 1 ? '' : 's'})`);
         this.updateHUD();
       }
     });
 
-    // Marreta (3 cargas por fase — exclusiva para destruir peça presa na bandeja)
+    // Marreta
     this.hammerBtn.addEventListener('click', () => {
-      if (this.hammerCount <= 0) {
+      if (this.hud.hammerCount <= 0) {
         this.showToast('Sem marretas restantes nesta fase!');
         soundManager.playBlockedSound();
         return;
@@ -311,29 +402,94 @@ export class UIManager {
       this.updateHUD();
     });
 
-    // Modal Fases (via HUD)
+    // Modal Fases
     this.levelsBtn.addEventListener('click', () => {
-      this.renderLevelsList();
+      soundManager.playTileClick();
+      hapticManager.impactLight();
+      LevelsModal.renderLevelsList(
+        this.currentLevelIndex,
+        (idx: number) => this.startGame(idx),
+        (msg: string) => this.showToast(msg)
+      );
       this.levelsModal.classList.remove('hidden');
     });
 
-    // Modal Configurações
-    this.settingsBtn.addEventListener('click', () => {
-      this.renderSettingsOptions();
+    // Modal Configurações (Acessível pelo HUD do jogo e pelo Menu Inicial)
+    const openSettings = () => {
+      soundManager.playTileClick();
+      hapticManager.impactLight();
+      SettingsModal.renderSettingsOptions(
+        this.prefs,
+        (updated) => {
+          this.prefs = updated;
+          StorageManager.savePreferences(this.prefs);
+          this.applyPreferences();
+          soundManager.playTileClick();
+          hapticManager.impactLight();
+          this.renderer.requestRender();
+        },
+        () => {
+          // Solicitação de reset de dados
+          const resetModal = document.getElementById('modal-reset-confirm');
+          resetModal?.classList.remove('hidden');
+        }
+      );
       this.settingsModal.classList.remove('hidden');
+    };
+
+    this.settingsBtn.addEventListener('click', openSettings);
+    document.getElementById('btn-menu-settings')?.addEventListener('click', openSettings);
+
+    // Diálogo de confirmação de reset de progresso
+    const resetModal = document.getElementById('modal-reset-confirm');
+    document.getElementById('btn-reset-cancel')?.addEventListener('click', () => {
+      soundManager.playTileClick();
+      hapticManager.impactLight();
+      resetModal?.classList.add('hidden');
     });
 
-    // Modal Guia da Natureza (Botão ❓)
+    document.getElementById('btn-reset-confirm-action')?.addEventListener('click', () => {
+      soundManager.playTileClick();
+      hapticManager.impactMedium();
+      StorageManager.resetAllProgress();
+      resetModal?.classList.add('hidden');
+      this.settingsModal.classList.add('hidden');
+
+      this.currentLevelIndex = 0;
+      this.hud.updateMenuProgress();
+      this.showToast('Todo o progresso foi reiniciado com sucesso! 🌿');
+
+      // Se estiver na tela de jogo, volta ao menu
+      const gameScreen = document.getElementById('screen-game');
+      if (gameScreen && !gameScreen.classList.contains('hidden')) {
+        this.hud.stopTimer();
+        this.showMenu();
+      }
+    });
+
+    // Modal Guia da Natureza
     const helpBtn = document.getElementById('btn-help');
     const natureGuideModal = document.getElementById('modal-nature-guide');
     if (helpBtn && natureGuideModal) {
       helpBtn.addEventListener('click', () => {
         natureGuideModal.classList.remove('hidden');
         soundManager.playTileClick();
+        hapticManager.impactLight();
+      });
+    }
+    const natureEventBox = document.getElementById('nature-event-box');
+    if (natureEventBox && natureGuideModal) {
+      natureEventBox.addEventListener('click', () => {
+        natureGuideModal.classList.remove('hidden');
+        soundManager.playTileClick();
+        hapticManager.impactLight();
       });
     }
 
-    // Abas do Guia da Natureza
+    document.getElementById('tutorial-tip-banner')?.addEventListener('click', () => {
+      document.getElementById('tutorial-tip-banner')?.classList.add('hidden');
+    });
+
     document.querySelectorAll('.guide-tab-btn').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         const target = e.currentTarget as HTMLElement;
@@ -346,64 +502,297 @@ export class UIManager {
         document.querySelectorAll('.guide-tab-pane').forEach((pane) => pane.classList.add('hidden'));
         document.getElementById(`guide-tab-${tab}`)?.classList.remove('hidden');
         soundManager.playTileClick();
+        hapticManager.impactLight();
       });
     });
 
-    // Fechar todos os modais
     document.querySelectorAll('.modal-close').forEach((btn) => {
       btn.addEventListener('click', (e) => {
+        soundManager.playTileClick();
+        hapticManager.impactLight();
         (e.target as HTMLElement).closest('.modal-container')?.classList.add('hidden');
       });
     });
     document.getElementById('btn-levels-back')?.addEventListener('click', () => {
+      soundManager.playTileClick();
+      hapticManager.impactLight();
       this.levelsModal.classList.add('hidden');
     });
     document.querySelectorAll('.modal-container').forEach((modal) => {
       modal.addEventListener('click', (e) => {
-        if (e.target === modal) modal.classList.add('hidden');
+        if (e.target === modal) {
+          soundManager.playTileClick();
+          modal.classList.add('hidden');
+        }
       });
     });
 
-    // Fechar toast da natureza ao tocar
     document.getElementById('nature-toast')?.addEventListener('click', () => {
       document.getElementById('nature-toast')?.classList.add('hidden');
     });
 
-    // Vitória — botões
     document.getElementById('btn-next-level')?.addEventListener('click', () => {
+      soundManager.playTileClick();
+      hapticManager.impactLight();
       this.victoryModal.classList.add('hidden');
-      this.startGame(Math.min(this.currentLevelIndex + 1, ALL_LAYOUTS.length - 1));
+      const nextIdx = Math.min(this.currentLevelIndex + 1, ALL_LAYOUTS.length - 1);
+      this.playFoliageTransition(() => {
+        this.startGame(nextIdx);
+      }, nextIdx);
     });
     document.getElementById('btn-replay')?.addEventListener('click', () => {
+      soundManager.playTileClick();
+      hapticManager.impactLight();
       this.victoryModal.classList.add('hidden');
       this.startGame(this.currentLevelIndex);
     });
+
+    // Interação Tátil com o Mascote Panda Zen (Fauna do Menu)
+    const mascotContainer = document.getElementById('menu-mascot-container');
+    const speechBubble = document.getElementById('mascot-speech-bubble');
+    const speechText = document.getElementById('mascot-speech-text');
+
+    if (mascotContainer) {
+      mascotContainer.addEventListener('click', () => {
+        soundManager.playTileClick();
+        hapticManager.impactLight();
+
+        mascotContainer.classList.remove('mascot-reacting');
+        void mascotContainer.offsetWidth; // Força reinício da animação CSS
+        mascotContainer.classList.add('mascot-reacting');
+
+        if (speechBubble && speechText) {
+          const quotes = UIManager.PANDA_QUOTES;
+          const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+          speechText.textContent = randomQuote;
+          speechBubble.classList.remove('hidden');
+
+          if (this.mascotSpeechTimer) clearTimeout(this.mascotSpeechTimer);
+          this.mascotSpeechTimer = setTimeout(() => {
+            speechBubble.classList.add('hidden');
+            this.mascotSpeechTimer = null;
+          }, 3400);
+        }
+      });
+    }
+
+    // Botão de continuar do briefing da fase na cortina de folhagens
+    document.getElementById('btn-foliage-continue')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      (e.currentTarget as HTMLElement | null)?.blur();
+      this.dismissFoliageCurtain();
+    });
+
+    // Toque na cortina também permite prosseguir
+    if (this.foliageCurtain) {
+      this.foliageCurtain.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement | null;
+        if (target?.closest('#btn-foliage-continue')) return;
+        if (this.foliageCurtain?.classList.contains('active')) {
+          this.dismissFoliageCurtain();
+        }
+      });
+    }
   }
 
   // ─── Screen Navigation ────────────────────────────────────────────────────
 
   private showMenu(): void {
-    this.stopTimer();
-    this.updateMenuProgress();
+    this.hud.stopTimer();
+    this.cancelHammerMode();
+    this.natureFeedback.clearTimers();
+    if (this.zenRescueTimer) {
+      clearTimeout(this.zenRescueTimer);
+      this.zenRescueTimer = null;
+    }
+    this.isRestarting = false;
+    document.querySelectorAll('.modal-container').forEach((m) => m.classList.add('hidden'));
+    this.currentLevelIndex = this.hud.updateMenuProgress();
     this.updateMenuVersion();
     this.screenMenu.classList.remove('hidden');
     this.screenGame.classList.add('hidden');
+    this.renderer.pause();
   }
 
   private async updateMenuVersion(): Promise<void> {
     const el = document.getElementById('menu-version-text');
     if (!el) return;
     const activeBundle = await LiveUpdateManager.getActiveBundleId();
-    if (activeBundle) {
-      el.textContent = `v1.0.1 (${activeBundle}) · 100% Offline`;
-    } else {
-      el.textContent = `v1.0.1 · 100% Offline`;
-    }
+    el.textContent = activeBundle
+      ? `v1.0.1 (${activeBundle}) · 100% Offline`
+      : `v1.0.1 · 100% Offline`;
   }
 
   private showGame(): void {
     this.screenMenu.classList.add('hidden');
     this.screenGame.classList.remove('hidden');
+    this.renderer.resume();
+  }
+
+  /**
+   * Finaliza a exibição do briefing da fase e abre as cortinas de folhagem suavemente.
+   */
+  public dismissFoliageCurtain(): void {
+    if (!this.foliageCurtain || !this.foliageCurtain.classList.contains('active')) return;
+
+    soundManager.playTileClick('leaf');
+    hapticManager.impactLight();
+
+    // 1. Desfoca o botão para evitar que descendente com foco bloqueie aria-hidden na árvore WAI-ARIA
+    const continueBtn = document.getElementById('btn-foliage-continue') as HTMLElement | null;
+    continueBtn?.blur();
+
+    // 2. Aplica 'inert' imediatamente para suprimir interação e foco durante a transição
+    this.foliageCurtain.setAttribute('inert', '');
+    this.foliageCurtain.removeAttribute('aria-hidden');
+
+    this.foliageCurtain.classList.remove('active');
+    this.foliageCurtain.classList.add('opening');
+
+    // Inicia o timer do HUD agora que o jogador vai começar a jogar
+    this.hud.startTimer();
+
+    if (this.foliageTransitionTimer) {
+      clearTimeout(this.foliageTransitionTimer);
+    }
+
+    this.foliageTransitionTimer = setTimeout(() => {
+      this.foliageCurtain?.classList.remove('opening');
+      this.foliageCurtain?.classList.add('hidden');
+      this.foliageCurtain?.setAttribute('aria-hidden', 'true');
+      this.foliageTransitionTimer = null;
+    }, 420);
+  }
+
+  /**
+   * Executa a transição orgânica de Cortina de Folhagens fechando da esquerda/direita,
+   * apresentando o briefing completo da fase (peças, ondas, sinergias e mecânicas)
+   * e aguardando o jogador clicar em "Continuar" para abrir as cortinas e jogar.
+   */
+  public playFoliageTransition(onSwitch: () => void, targetLevelIndex?: number): void {
+    const curtain = this.foliageCurtain;
+    if (!curtain) {
+      onSwitch();
+      return;
+    }
+
+    const lvlIdx = targetLevelIndex ?? this.currentLevelIndex;
+    const worldIdx = Math.max(0, Math.min(4, Math.floor(lvlIdx / 10)));
+    const guardian = UIManager.BIOME_GUARDIANS[worldIdx];
+    const layout = ALL_LAYOUTS[lvlIdx];
+    const rules = getLevelRules(lvlIdx, layout?.slots.length);
+
+    const avatarEl = document.getElementById('foliage-guardian-avatar') as HTMLImageElement | null;
+    const tagEl = document.getElementById('foliage-biome-tag');
+    const titleEl = document.getElementById('foliage-level-title');
+    const statTilesEl = document.getElementById('foliage-stat-tiles');
+    const statWavesEl = document.getElementById('foliage-stat-waves');
+    const statDiffEl = document.getElementById('foliage-stat-diff');
+    const mechanicBox = document.getElementById('foliage-mechanic-box');
+    const mechanicIcon = document.getElementById('foliage-mechanic-icon');
+    const mechanicLabel = document.getElementById('foliage-mechanic-label');
+    const mechanicText = document.getElementById('foliage-mechanic-text');
+    const synListEl = document.getElementById('foliage-synergies-list');
+
+    // 1. Avatar e Título
+    if (avatarEl) avatarEl.src = guardian.avatar;
+    if (tagEl) tagEl.textContent = guardian.name.toUpperCase();
+    if (titleEl) titleEl.textContent = `Fase ${lvlIdx + 1}: ${layout ? layout.name : 'Jornada Zen'}`;
+
+    // 2. Estatísticas da Fase: Peças, Ondas e Dificuldade
+    if (layout) {
+      const totalTiles = layout.slots.length;
+      const waveCount = layout.waves && layout.waves.length > 1 ? layout.waves.length : 1;
+      if (statTilesEl) statTilesEl.textContent = `🧩 ${totalTiles} Peças`;
+      if (statWavesEl) statWavesEl.textContent = waveCount > 1 ? `🌊 ${waveCount} Ondas` : `🌊 Onda Única`;
+      if (statDiffEl) statDiffEl.textContent = `⭐ ${layout.difficulty}`;
+    }
+
+    // 3. Mecânica Didática / Regra Especial / Sabedoria do Guardião
+    if (mechanicBox && mechanicText) {
+      if (rules.mechanicIntro) {
+        if (mechanicIcon) mechanicIcon.textContent = '✨';
+        if (mechanicLabel) mechanicLabel.textContent = 'NOVA MECÂNICA';
+        mechanicText.textContent = rules.mechanicIntro;
+        mechanicBox.classList.remove('hidden');
+      } else if (rules.allowedSpecials && rules.allowedSpecials.length > 0) {
+        if (mechanicIcon) mechanicIcon.textContent = '🌿';
+        if (mechanicLabel) mechanicLabel.textContent = 'REGRAS DESTE BIOMA';
+        const specialNames: string[] = rules.allowedSpecials.map((s) => {
+          switch (s) {
+            case 'mirror': return '🪞 Espelho Místico';
+            case 'ice': return '❄️ Peça Congelada';
+            case 'vines': return '🌿 Cipós';
+            case 'rock': return '🪨 Rocha Ancestral';
+            case 'cocoon': return '🥚 Casulo';
+            case 'chest': return '🎁 Baú da Fortuna';
+            default: return s;
+          }
+        });
+        if (rules.allowChameleon) specialNames.push('🦎 Camaleão Coringa');
+        mechanicText.textContent = `Peças especiais presentes: ${specialNames.join(', ')}.`;
+        mechanicBox.classList.remove('hidden');
+      } else {
+        if (mechanicIcon) mechanicIcon.textContent = '🎋';
+        if (mechanicLabel) mechanicLabel.textContent = 'SABEDORIA ZEN';
+        mechanicText.textContent = guardian.quote;
+        mechanicBox.classList.remove('hidden');
+      }
+    }
+
+    // 4. Sinergias Disponíveis na Fauna deste Bioma
+    if (synListEl) {
+      const synergies = LevelDeckCurator.getLevelSynergies(rules.biome);
+      if (synergies.length > 0) {
+        synListEl.innerHTML = synergies
+          .slice(0, 3)
+          .map(
+            (s) => `
+            <div class="foliage-syn-pill" title="${s.description}">
+              <span class="syn-pill-icon">${s.icon}</span>
+              <span class="syn-pill-text">${s.title}</span>
+            </div>
+          `
+          )
+          .join('');
+      } else {
+        synListEl.innerHTML = `
+          <div class="foliage-syn-pill">
+            <span class="syn-pill-icon">🐾</span>
+            <span class="syn-pill-text">Pares Livres de Animais</span>
+          </div>
+        `;
+      }
+    }
+
+    soundManager.playTileClick('leaf');
+    hapticManager.impactLight();
+
+    if (this.foliageTransitionTimer) {
+      clearTimeout(this.foliageTransitionTimer);
+    }
+
+    curtain.removeAttribute('inert');
+    curtain.setAttribute('aria-hidden', 'false');
+    curtain.classList.remove('hidden', 'opening');
+    curtain.classList.add('closing');
+
+    // Fechamento das cortinas e troca de tela/carregamento por trás
+    this.foliageTransitionTimer = setTimeout(() => {
+      // 1. Atualiza o estado da cortina imediatamente para transição suave a 60 FPS
+      this.hud.stopTimer();
+      curtain.classList.remove('closing');
+      curtain.classList.add('active');
+      curtain.removeAttribute('inert');
+      curtain.setAttribute('aria-hidden', 'false');
+      this.foliageTransitionTimer = null;
+
+      // 2. Monta o tabuleiro e troca de tela sem prender o frame de renderização (evita violation de frame longo)
+      setTimeout(() => {
+        onSwitch();
+        this.hud.stopTimer();
+      }, 0);
+    }, 380);
   }
 
   // ─── Iniciar Partida ──────────────────────────────────────────────────────
@@ -412,7 +801,10 @@ export class UIManager {
     this.currentLevelIndex = Math.max(0, Math.min(levelIndex, ALL_LAYOUTS.length - 1));
     const layout = ALL_LAYOUTS[this.currentLevelIndex];
 
-    this.engine = new BoardEngine(layout);
+    this.showGame();
+
+    this.engine = new BoardEngine(layout, this.currentLevelIndex);
+    this.renderer.setLevelIndex(this.currentLevelIndex);
     this.renderer.setEngine(this.engine);
     this.isHammerActive = false;
     this.hammerBtn.classList.remove('active-hammer');
@@ -420,25 +812,27 @@ export class UIManager {
     this.synergiesTriggeredThisGame = 0;
     this.engine.resetHarmonyScore();
     this.isRestarting = false;
+    if (this.zenRescueTimer) {
+      clearTimeout(this.zenRescueTimer);
+      this.zenRescueTimer = null;
+    }
     this.renderer.isInputLocked = false;
     if (this.traySlotsContainer) {
-      this.traySlotsContainer.classList.remove('warning-full');
+      this.traySlotsContainer.classList.remove('warning-full', 'zen-rescue-swirl');
     }
 
-    // Reiniciar cargas por fase (3 Marretas, 3 Misturar, 3 Dicas, 5 Desfazer)
-    this.hammerCount = UIManager.MAX_HAMMER;
-    this.shuffleCount = UIManager.MAX_SHUFFLE;
-    this.hintCount = UIManager.MAX_HINT;
-    this.undoCount = UIManager.MAX_UNDO;
-
+    this.hud.resetCharges();
     StorageManager.incrementGamesPlayed();
 
-    this.showGame();
-    this.startTimer();
+    this.hud.startTimer();
     this.renderer.triggerDealAnimation(420);
     this.updateHUD();
 
-    // Fechar modais que possam estar abertos
+    // 🎵 Inicia uma nova música aleatória para esta fase (Shuffle randômico a cada início de fase)
+    soundManager.playRandomTrack();
+
+    // Dica de mecânica e regras foram incorporadas no briefing da cortina de transição
+
     const waveModal = document.getElementById('modal-wave-cleared');
     if (waveModal) waveModal.classList.add('hidden');
     [this.levelsModal, this.settingsModal, this.victoryModal].forEach((m) =>
@@ -451,37 +845,21 @@ export class UIManager {
     this.startGame(idx >= 0 ? idx : 0);
   }
 
-  // ─── Timer ────────────────────────────────────────────────────────────────
-
-  private startTimer(): void {
-    this.stopTimer();
-    this.gameStartTime = Date.now();
-    this.elapsedSeconds = 0;
-    this.timerEl.textContent = '00:00';
-
-    this.timerInterval = setInterval(() => {
-      this.elapsedSeconds = Math.floor((Date.now() - this.gameStartTime) / 1000);
-      const m = Math.floor(this.elapsedSeconds / 60).toString().padStart(2, '0');
-      const s = (this.elapsedSeconds % 60).toString().padStart(2, '0');
-      this.timerEl.textContent = `${m}:${s}`;
-    }, 1000);
-  }
-
-  private stopTimer(): void {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-      this.timerInterval = null;
-    }
-  }
-
   // ─── HUD Update ───────────────────────────────────────────────────────────
 
   public updateHUD(): void {
-    // Número do nível
     const levelEl = document.getElementById('wisdom-level');
     if (levelEl) levelEl.textContent = `${this.currentLevelIndex + 1}`;
 
-    // Badge de Onda Atual (Multi-Wave)
+    const biomeBadgeEl = document.getElementById('hud-biome-badge');
+    if (biomeBadgeEl) {
+      const worldIdx = Math.max(0, Math.min(4, Math.floor(this.currentLevelIndex / 10)));
+      const guardian = UIManager.BIOME_GUARDIANS[worldIdx];
+      biomeBadgeEl.textContent = guardian.emoji;
+      biomeBadgeEl.setAttribute('title', guardian.name);
+      biomeBadgeEl.setAttribute('aria-label', guardian.name);
+    }
+
     const waveBadgeEl = document.getElementById('hud-wave-badge');
     if (waveBadgeEl) {
       if (this.engine.getTotalWaves() > 1) {
@@ -492,7 +870,6 @@ export class UIManager {
       }
     }
 
-    // Verificação de segurança: se a onda foi concluída e restam mais ondas, garantir que o modal de transição seja exibido
     if (this.engine.isWaveCleared() && this.engine.hasMoreWaves()) {
       const waveModal = document.getElementById('modal-wave-cleared');
       if (waveModal && waveModal.classList.contains('hidden')) {
@@ -500,7 +877,6 @@ export class UIManager {
       }
     }
 
-    // Bandeja de 4 slots com nós reciclados
     const tray = this.engine.getTray();
     const maxSlots = this.engine.getMaxTraySlots();
 
@@ -512,7 +888,7 @@ export class UIManager {
         const tile = tray[idx];
         if (canvas) {
           canvas.style.display = 'block';
-          this.renderTileToCanvas(canvas, tile);
+          this.trayAnimator.renderTileToCanvas(canvas, tile, this.renderer.getTileRenderer());
         }
 
         if (this.isHammerActive) {
@@ -521,7 +897,6 @@ export class UIManager {
           slotEl.classList.remove('can-hammer');
         }
 
-        // Bounce suave apenas ao receber nova peça
         if (!wasFilled) {
           slotEl.classList.add('just-filled');
           setTimeout(() => slotEl.classList.remove('just-filled'), 380);
@@ -553,12 +928,10 @@ export class UIManager {
       this.hammerBtn.classList.remove('active-hammer');
     }
 
-    // Tratamento Zen da Bandeja Cheia (4 slots)
     if (tray.length >= maxSlots) {
       this.traySlotsContainer.classList.add('warning-full');
 
-      // Se o jogador não tem marreta nem desfazer para se salvar, a floresta concede o Salvamento Zen!
-      if (this.hammerCount <= 0 && this.undoCount <= 0) {
+      if (this.hud.hammerCount <= 0 && this.hud.undoCount <= 0) {
         if (!this.isRestarting) {
           this.isRestarting = true;
           soundManager.playShuffleSound();
@@ -570,43 +943,46 @@ export class UIManager {
             'A floresta abriu espaço na sua bandeja com segurança zen!'
           );
 
-          setTimeout(() => {
+          this.zenRescueTimer = setTimeout(() => {
             this.engine.zenRescue();
             this.isRestarting = false;
+            this.zenRescueTimer = null;
             this.traySlotsContainer.classList.remove('warning-full', 'zen-rescue-swirl');
             this.renderer.requestRender();
             this.updateHUD();
           }, 900);
         }
       } else {
-        // Alerta o jogador para usar seus recursos
         this.showNatureEvent('⚠️', 'Bandeja Cheia (4/4)!', 'Toque na Marreta 🔨 ou Desfazer ↩️!');
       }
     } else {
       this.traySlotsContainer.classList.remove('warning-full');
     }
 
-    this.updatePowerUpBadges();
+    this.hud.updatePowerUpBadges(this.engine.getHistoryLength() > 0);
   }
 
-  /**
-   * Esmaga uma peça presa na bandeja com a Marreta
-   */
-  private useHammerOnSlot(tile: PlacedTile, slotEl: HTMLElement): void {
-    if (this.hammerCount <= 0) return;
+  public cancelHammerMode(): void {
+    if (this.isHammerActive) {
+      this.isHammerActive = false;
+      this.hammerBtn.classList.remove('active-hammer');
+      this.traySlotEls.forEach((slotEl) => slotEl.classList.remove('can-hammer'));
+    }
+  }
 
-    this.hammerCount--;
+  private useHammerOnSlot(tile: PlacedTile, slotEl: HTMLElement): void {
+    if (this.hud.hammerCount <= 0) return;
+
+    this.hud.hammerCount--;
     this.isHammerActive = false;
     this.hammerBtn.classList.remove('active-hammer');
-    this.updatePowerUpBadges();
+    this.hud.updatePowerUpBadges(this.engine.getHistoryLength() > 0);
 
-    // Feedback sonoro e tátil de esmagamento
     soundManager.playHammerSmash();
     hapticManager.impactHeavy();
 
-    // Animação visual de quebra
     slotEl.classList.add('smash-shatter');
-    this.showToast(`💥 Peça esmagada! (${this.hammerCount} restante${this.hammerCount === 1 ? '' : 's'})`);
+    this.showToast(`💥 Peça esmagada! (${this.hud.hammerCount} restante${this.hud.hammerCount === 1 ? '' : 's'})`);
 
     setTimeout(() => {
       slotEl.classList.remove('smash-shatter');
@@ -621,20 +997,11 @@ export class UIManager {
         this.handleVictory();
       } else if (this.engine.isWaveCleared() && this.engine.hasMoreWaves()) {
         soundManager.playMatchSuccess();
-        confetti({
-          particleCount: 40,
-          spread: 55,
-          origin: { y: 0.6 },
-          colors: ['#10B981', '#F59E0B', '#3B82F6', '#EC4899'],
-        });
         this.handleWaveCleared(this.engine.getCurrentWave(), this.engine.getTotalWaves());
       }
     }, 280);
   }
 
-  /**
-   * Devolve uma peça da bandeja de volta para a mesa com toque tátil intuitivo
-   */
   private returnTileFromTray(tile: PlacedTile, slotEl: HTMLElement): void {
     if (this.renderer.isInputLocked) return;
 
@@ -646,17 +1013,20 @@ export class UIManager {
 
       slotEl.classList.add('tray-return-anim');
       const coords = this.renderer.getTileViewportCoords(tile);
+      this.renderer.isInputLocked = true;
 
-      this.animateTileFromTrayToBoard(
+      this.trayAnimator.animateTileFromTrayToBoard(
         tile,
         slotEl,
         coords.left,
         coords.top,
         coords.width,
         coords.height,
+        this.renderer.getTileRenderer(),
         () => {
           tile.inFlight = false;
           slotEl.classList.remove('tray-return-anim');
+          this.renderer.isInputLocked = false;
           this.renderer.requestRender();
           this.updateHUD();
         }
@@ -669,51 +1039,45 @@ export class UIManager {
     }
   }
 
-  /**
-   * Atualiza os números e estados dos botões de poder
-   */
-  private updatePowerUpBadges(): void {
-    if (this.badgeHammer) {
-      this.badgeHammer.textContent = `${this.hammerCount}`;
-      this.badgeHammer.classList.toggle('depleted', this.hammerCount <= 0);
-      this.hammerBtn.disabled = this.hammerCount <= 0;
-    }
-    if (this.badgeShuffle) {
-      this.badgeShuffle.textContent = `${this.shuffleCount}`;
-      this.badgeShuffle.classList.toggle('depleted', this.shuffleCount <= 0);
-      this.shuffleBtn.disabled = this.shuffleCount <= 0;
-    }
-    if (this.badgeHint) {
-      this.badgeHint.textContent = `${this.hintCount}`;
-      this.badgeHint.classList.toggle('depleted', this.hintCount <= 0);
-      this.hintBtn.disabled = this.hintCount <= 0;
-    }
-    if (this.badgeUndo) {
-      this.badgeUndo.textContent = `${this.undoCount}`;
-      this.badgeUndo.classList.toggle('depleted', this.undoCount <= 0);
-      const canUndo = this.engine ? this.engine.getHistoryLength() > 0 : false;
-      this.undoBtn.disabled = this.undoCount <= 0 || !canUndo;
-    }
+  public animateTileToTray(
+    tile: PlacedTile,
+    startX: number,
+    startY: number,
+    width: number,
+    height: number,
+    onArrival: () => void
+  ): void {
+    const tray = this.engine.getTray();
+    const targetIdx = Math.min(tray.length, this.traySlotEls.length - 1);
+    const targetSlot = this.traySlotEls[targetIdx] || this.traySlotsContainer;
+    this.trayAnimator.animateTileToTray(
+      tile,
+      startX,
+      startY,
+      width,
+      height,
+      targetSlot,
+      this.renderer.getTileRenderer(),
+      onArrival
+    );
   }
 
   // ─── Victory ──────────────────────────────────────────────────────────────
 
   public handleVictory(): void {
-    this.stopTimer();
+    this.hud.stopTimer();
 
-    const timeSeconds = this.elapsedSeconds;
+    const timeSeconds = this.hud.elapsedSeconds;
     const layoutId = this.engine.getLayout().id;
 
-    // Ferramentas poupadas
     const toolsRemaining =
-      this.hammerCount +
-      this.shuffleCount +
-      this.hintCount +
-      (this.undoCount > 0 ? 1 : 0);
+      this.hud.hammerCount +
+      this.hud.shuffleCount +
+      this.hud.hintCount +
+      (this.hud.undoCount > 0 ? 1 : 0);
 
     const harmonyScore = this.engine.getHarmonyScore();
 
-    // Salvar estatísticas contemplativas
     const levelStats = StorageManager.recordVictory(
       layoutId,
       timeSeconds,
@@ -721,57 +1085,25 @@ export class UIManager {
       this.synergiesTriggeredThisGame,
       harmonyScore
     );
-    StorageManager.incrementGamesWon(timeSeconds, this.pairsMatchedThisGame, this.currentLevelIndex);
+    StorageManager.incrementGamesWon(
+      timeSeconds,
+      this.pairsMatchedThisGame,
+      this.currentLevelIndex,
+      this.synergiesTriggeredThisGame
+    );
 
-    // Desbloquear próximo nível
     const nextLevelIdx = this.currentLevelIndex + 1;
-    let nextUnlocked = false;
     if (nextLevelIdx < ALL_LAYOUTS.length) {
       StorageManager.unlockLevel(nextLevelIdx);
-      nextUnlocked = true;
     }
 
-    // Atualizar modal de vitória
-    const stars = levelStats.stars;
-    const starsStr = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
-    const m = Math.floor(timeSeconds / 60).toString().padStart(2, '0');
-    const s = (timeSeconds % 60).toString().padStart(2, '0');
-
-    const starsEl = document.getElementById('victory-stars');
-    if (starsEl) starsEl.textContent = starsStr;
-
-    const timeEl = document.getElementById('victory-time');
-    if (timeEl) timeEl.textContent = `⏱ Tempo Zen: ${m}:${s}`;
-
-    const scoreEl = document.getElementById('victory-score');
-    if (scoreEl) scoreEl.textContent = `🌸 Harmonia Zen: ${harmonyScore.toLocaleString('pt-BR')} pts`;
-
-    const detailEl = document.getElementById('victory-stars-detail');
-    if (detailEl) {
-      detailEl.innerHTML = `
-        <div class="zen-star-row ${stars >= 1 ? 'earned' : ''}">⭐ 1★ Conclusão do Tabuleiro</div>
-        <div class="zen-star-row ${stars >= 2 ? 'earned' : ''}">⭐ 2★ ${toolsRemaining > 0 ? `Ferramentas Poupadas (${toolsRemaining})` : 'Sinergia da Natureza'}</div>
-        <div class="zen-star-row ${stars >= 3 ? 'earned' : ''}">⭐ 3★ Harmonia Zen Completa</div>
-      `;
-    }
-
-    const unlockEl = document.getElementById('victory-next-unlock');
-    const unlockName = document.getElementById('victory-unlock-name');
-    if (unlockEl && unlockName) {
-      if (nextUnlocked && nextLevelIdx < ALL_LAYOUTS.length) {
-        unlockName.textContent = `"${ALL_LAYOUTS[nextLevelIdx].name}" desbloqueada!`;
-        unlockEl.classList.remove('hidden');
-      } else {
-        unlockEl.classList.add('hidden');
-      }
-    }
-
-    // Botão "Próxima Fase" só aparece se houver próximo nível
-    const nextBtn = document.getElementById('btn-next-level') as HTMLButtonElement | null;
-    if (nextBtn) nextBtn.style.display = nextLevelIdx < ALL_LAYOUTS.length ? '' : 'none';
-
-    this.victoryModal.classList.remove('hidden');
-    this.launchVictoryConfetti();
+    GameEndModals.showVictoryModal(
+      timeSeconds,
+      toolsRemaining,
+      harmonyScore,
+      levelStats,
+      this.currentLevelIndex
+    );
     soundManager.playVictoryFanfare?.();
     hapticManager.impactVictory?.();
   }
@@ -780,73 +1112,30 @@ export class UIManager {
     this.pairsMatchedThisGame++;
     if (pair && pair.some((t) => t.value === 'chameleon' || t.value === 'honeycomb')) {
       const specialTile = pair.find((t) => t.value === 'chameleon' || t.value === 'honeycomb');
+      const badges = [
+        document.getElementById('badge-undo'),
+        document.getElementById('badge-hint'),
+      ].filter((el): el is HTMLElement => Boolean(el));
+
       if (specialTile) {
         const coords = this.renderer.getTileViewportCoords(specialTile);
-        this.spawnLotusManaSparks(coords.left + coords.width / 2, coords.top + coords.height / 2);
+        this.trayAnimator.spawnLotusManaSparks(badges, coords.left + coords.width / 2, coords.top + coords.height / 2);
       } else {
-        this.spawnLotusManaSparks();
+        this.trayAnimator.spawnLotusManaSparks(badges);
       }
     }
   }
 
-  private launchVictoryConfetti(): void {
-    const end = Date.now() + 2800;
-    const frame = () => {
-      confetti({
-        particleCount: 7,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0, y: 0.6 },
-        colors: ['#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF', '#FF8FD8'],
-      });
-      confetti({
-        particleCount: 7,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1, y: 0.6 },
-        colors: ['#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF', '#FF8FD8'],
-      });
-      if (Date.now() < end) requestAnimationFrame(frame);
-    };
-    frame();
-  }
-
-  // ─── Transições de Onda (Multi-Wave) ──────────────────────────────────────
-
   public handleWaveCleared(currentWave: number, totalWaves: number): void {
-    const waveModal = document.getElementById('modal-wave-cleared');
-    const titleEl = document.getElementById('wave-cleared-title');
-    const subtitleEl = document.getElementById('wave-cleared-subtitle');
-    const nextWaveBtn = document.getElementById('btn-next-wave');
-
-    if (titleEl) titleEl.textContent = `Onda ${currentWave} Concluída! 🌸`;
-    if (subtitleEl) subtitleEl.textContent = `Prepare-se para a Onda ${currentWave + 1} de ${totalWaves}!`;
-
-    const advance = () => {
-      if (waveModal) waveModal.classList.add('hidden');
+    GameEndModals.showWaveCleared(currentWave, totalWaves, () => {
       this.engine.advanceToNextWave();
       this.renderer.handleResize();
+      this.renderer.prewarmActiveTiles();
       this.renderer.triggerDealAnimation(420);
       this.renderer.requestRender();
       this.updateHUD();
       this.showNatureToast('🌊', `Onda ${this.engine.getCurrentWave()} Iniciada!`, 'Novas peças na mesa com peças gigantes!');
-    };
-
-    if (nextWaveBtn) {
-      nextWaveBtn.onclick = (e) => {
-        e.stopPropagation();
-        advance();
-      };
-    }
-
-    if (waveModal) {
-      waveModal.onclick = (e) => {
-        if (e.target === waveModal) {
-          advance();
-        }
-      };
-      waveModal.classList.remove('hidden');
-    }
+    });
   }
 
   // ─── Sinergias & Climas da Natureza ───────────────────────────────────────
@@ -855,613 +1144,45 @@ export class UIManager {
     const hudTitle = document.querySelector('.wisdom-title-container');
     if (hudTitle) {
       hudTitle.classList.remove('pulse-glow');
-      void (hudTitle as HTMLElement).offsetWidth; // trigger reflow
+      void (hudTitle as HTMLElement).offsetWidth;
       hudTitle.classList.add('pulse-glow');
     }
   }
 
   public handleSynergy(synergy: SynergyResult): void {
-    soundManager.playMatchSuccess();
-    hapticManager.impactLight();
-    this.triggerHudPulse();
     this.synergiesTriggeredThisGame++;
-
-    let icon = '🐾';
-    if (synergy.type === 'frog_tongue') icon = '🐸';
-    else if (synergy.type === 'cat_paw') icon = '🐱';
-    else if (synergy.type === 'bear_feast') icon = '🐻';
-    else if (synergy.type === 'squirrel_acorn') icon = '🐿️';
-    else if (synergy.type === 'dolphin_sonar') icon = '🐬';
-    else if (synergy.type === 'hedgehog_apple') icon = '🦔';
-    else if (synergy.type === 'bee_honey') icon = '🐝';
-    else if (synergy.type === 'monkey_banana') icon = '🐒';
-    else if (synergy.type === 'wildcard_chameleon') icon = '🦎';
-
-    this.showNatureEvent(icon, synergy.title, synergy.description);
-    this.updateHUD();
+    this.natureFeedback.handleSynergy(synergy);
   }
 
   public handleClimate(climate: ClimateEffectResult): void {
-    soundManager.playMatchSuccess();
-    hapticManager.impactMedium();
-    this.triggerHudPulse();
     this.synergiesTriggeredThisGame++;
+    this.natureFeedback.handleClimate(climate, this.hud, this.engine.getHistoryLength() > 0);
+  }
 
-    if (climate.rechargedTool === 'hammer') {
-      this.hammerCount = Math.min(UIManager.MAX_HAMMER, this.hammerCount + 1);
-    } else if (climate.rechargedTool === 'hint') {
-      this.hintCount = Math.min(UIManager.MAX_HINT, this.hintCount + 1);
-    } else if (climate.rechargedTool === 'shuffle') {
-      this.shuffleCount = Math.min(UIManager.MAX_SHUFFLE, this.shuffleCount + 1);
-    } else if (climate.rechargedTool === 'undo') {
-      this.undoCount = Math.min(UIManager.MAX_UNDO, this.undoCount + 1);
-    }
-    this.updatePowerUpBadges();
-
-    this.showNatureEvent(climate.icon, climate.title, climate.description);
-    this.updateHUD();
+  public handleCosmicRescue(rescuedTiles: PlacedTile[]): void {
+    this.natureFeedback.handleCosmicRescue(rescuedTiles, (msg) => this.showToast(msg));
   }
 
   public showNatureEvent(icon: string, title: string, desc: string): void {
-    const box = document.getElementById('nature-event-box');
-    const boxIcon = document.getElementById('nature-event-icon');
-    const boxTitle = document.getElementById('nature-event-title');
-    const boxDesc = document.getElementById('nature-event-desc');
-
-    if (boxIcon) boxIcon.textContent = icon;
-    if (boxTitle) boxTitle.textContent = title;
-    if (boxDesc) boxDesc.textContent = desc;
-
-    if (box) {
-      box.classList.remove('event-pulse');
-      void box.offsetWidth; // trigger reflow
-      box.classList.add('event-pulse');
-    }
-
-    clearTimeout((this as unknown as { _natureEventTimer?: ReturnType<typeof setTimeout> })._natureEventTimer);
-    (this as unknown as { _natureEventTimer?: ReturnType<typeof setTimeout> })._natureEventTimer = setTimeout(() => {
-      if (boxIcon) boxIcon.textContent = '🌿';
-      if (boxTitle) boxTitle.textContent = 'Bosque Sereno';
-      if (boxDesc) boxDesc.textContent = 'Toque nas peças livres';
-    }, 4500);
+    this.natureFeedback.showNatureEvent(icon, title, desc);
   }
 
   public showNatureToast(icon: string, title: string, desc: string): void {
-    this.showNatureEvent(icon, title, desc);
+    this.natureFeedback.showNatureToast(icon, title, desc);
   }
 
   public handleTileLongPress(tile: PlacedTile): void {
-    const tips: Partial<Record<string, { icon: string; title: string; text: string }>> = {
-      chameleon: { icon: '🦎', title: 'Camaleão Dourado', text: 'Peça Coringa! Combina com qualquer peça livre.' },
-      cat:       { icon: '🐱', title: 'Gato Curioso', text: 'Combina com Peixe 🐟 para a Pata Ágil pescar na lagoa!' },
-      bear:      { icon: '🐻', title: 'Urso Marrom', text: 'Combina com Mel 🍯 ou Peixe 🐟 para devorar o par da mesa!' },
-      honeycomb: { icon: '🍯', title: 'Favo de Mel', text: 'Combina com Abelha 🐝 ou Urso 🐻 para abrir espaço!' },
-      bee:       { icon: '🐝', title: 'Abelhinha', text: 'Combina com Favo de Mel 🍯 para o Enxame Dourado!' },
-      monkey:    { icon: '🐒', title: 'Macaco Esperto', text: 'Combina com Banana 🍌 para o Salto na Copa!' },
-      banana:    { icon: '🍌', title: 'Cacho de Bananas', text: 'Combina com Macaco 🐒 para reorganizar a mesa!' },
-      squirrel:  { icon: '🐿️', title: 'Esquilo Tagarela', text: 'Combina com Noz 🌰 para a Toca Segura!' },
-      acorn:     { icon: '🌰', title: 'Noz Silvestre', text: 'Combina com Esquilo 🐿️ para guardar peças!' },
-      frog:      { icon: '🐸', title: 'Sapo Saltador', text: 'Combina com Joaninha 🐞 ou Abelha 🐝 para a Língua Ágil!' },
-      dolphin:   { icon: '🐬', title: 'Golfinho Encantado', text: 'Combina com Concha 🐚 para o Eco Sonar!' },
-      shell:     { icon: '🐚', title: 'Concha Marinha', text: 'Combina com Golfinho 🐬 para iluminar pares!' },
-      hedgehog:  { icon: '🦔', title: 'Ouriço Manso', text: 'Combina com Maçã 🍎 para o Espinho Coletor!' },
-      apple:     { icon: '🍎', title: 'Maçã Doce', text: 'Combina com Ouriço 🦔 para bônus de harmonia!' },
-    };
-
-    const tip = tips[tile.value] || {
-      icon: '🐾',
-      title: tile.label,
-      text: 'Combine duas peças iguais ou use peças coringa para liberar!',
-    };
-
-    soundManager.playTileClick();
-    this.showNatureEvent(tip.icon, tip.title, tip.text);
-  }
-
-  // ─── Stats Render ─────────────────────────────────────────────────────────
-
-  private renderStats(): void {
-    const container = document.getElementById('stats-content');
-    if (!container) return;
-
-    const g = StorageManager.getGlobalStats();
-    const winRate = g.totalGamesPlayed > 0
-      ? Math.round((g.totalGamesWon / g.totalGamesPlayed) * 100)
-      : 0;
-    const avgTime = g.totalGamesWon > 0
-      ? Math.round(g.totalTimePlayed / g.totalGamesWon)
-      : 0;
-    const avgM = Math.floor(avgTime / 60).toString().padStart(2, '0');
-    const avgS = (avgTime % 60).toString().padStart(2, '0');
-
-    container.innerHTML = `
-      <div class="stats-streak">
-        <span class="stats-streak-icon">🔥</span>
-        <div class="stats-streak-text">
-          <div class="stats-streak-count">${g.currentStreak} dias seguidos</div>
-          <div style="font-size:0.75rem;color:#94a3b8">Sequência de Jogo Diária</div>
-        </div>
-      </div>
-
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-value">${g.totalGamesPlayed}</div>
-          <div class="stat-label">Partidas</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">${g.totalGamesWon}</div>
-          <div class="stat-label">Vitórias</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">${winRate}%</div>
-          <div class="stat-label">Taxa Vitória</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">${avgM}:${avgS}</div>
-          <div class="stat-label">Tempo Médio</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">${g.totalPairsMatched}</div>
-          <div class="stat-label">Pares Feitos</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">${g.highestLevelUnlocked + 1}</div>
-          <div class="stat-label">Nível Máximo</div>
-        </div>
-      </div>
-
-      <div style="font-size:0.78rem;color:#64748b;text-align:center;margin-top:8px">
-        Progresso salvo automaticamente no dispositivo
-      </div>
-    `;
-  }
-
-  private renderLevelsList(): void {
-    const tabsContainer = document.getElementById('levels-world-tabs');
-    const mapViewport = document.getElementById('levels-map-viewport');
-    const mapContent = document.getElementById('levels-map-content');
-    const mapSvg = document.getElementById('levels-map-svg');
-    const previewCard = document.getElementById('atom-level-preview');
-    const previewClose = document.getElementById('atom-preview-close');
-    const btnPlay = document.getElementById('btn-atom-play');
-
-    if (!mapContent || !mapSvg) return;
-
-    // Limpar conteúdo anterior
-    mapContent.querySelectorAll('.atom-node, .atom-world-portal').forEach((el) => el.remove());
-    mapSvg.innerHTML = '';
-    if (previewCard) previewCard.classList.add('hidden');
-
-    if (previewClose && previewCard) {
-      previewClose.onclick = () => previewCard.classList.add('hidden');
-    }
-
-    // Preencher Tabs de Navegação Rápida entre Mundos
-    if (tabsContainer) {
-      tabsContainer.innerHTML = '';
-      WORLDS.forEach((world, wIdx) => {
-        const tab = document.createElement('button');
-        tab.className = 'world-nav-tab';
-        tab.textContent = `Mundo ${wIdx + 1}`;
-        tab.addEventListener('click', () => {
-          const portal = document.getElementById(`world-portal-${world.id}`);
-          portal?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-        tabsContainer.appendChild(tab);
-      });
-    }
-
-    // Atualizar Contador Geral de Estrelas no Topo
-    const totalStars = ALL_LAYOUTS.reduce((acc, l) => acc + StorageManager.getLevelStats(l.id).stars, 0);
-    const starsHeader = document.getElementById('levels-header-stars');
-    if (starsHeader) starsHeader.textContent = `⭐ ${totalStars} / ${ALL_LAYOUTS.length * 3}`;
-
-    // Geometria Responsiva do Mapa (Pixel-Perfect)
-    const viewWidth = mapViewport ? mapViewport.clientWidth : 360;
-    const baseWidth = Math.max(340, Math.min(480, viewWidth || 360));
-    const centerX = baseWidth / 2;
-    const xAmplitude = Math.min(115, Math.max(82, (baseWidth - 110) / 2));
-    const nodeSpacingY = 108;
-    const portalHeight = 88;
-
-    interface RoutePoint {
-      x: number;
-      y: number;
-      isUnlocked: boolean;
-      type: 'portal' | 'node';
-      idx?: number;
-      isCurrent?: boolean;
-      layout?: typeof ALL_LAYOUTS[0];
-    }
-
-    const route: RoutePoint[] = [];
-    let currentY = 46;
-
-    WORLDS.forEach((world, wIdx) => {
-      const [startLvl, endLvl] = world.levelRange;
-      const worldLayouts = ALL_LAYOUTS.slice(startLvl - 1, endLvl);
-
-      // Estatísticas do Mundo
-      let completedInWorld = 0;
-      let starsInWorld = 0;
-      worldLayouts.forEach((l) => {
-        const stats = StorageManager.getLevelStats(l.id);
-        if (stats.completed) {
-          completedInWorld++;
-          starsInWorld += stats.stars;
-        }
-      });
-
-      // Portal / Marco do Mundo
-      const portal = document.createElement('div');
-      portal.id = `world-portal-${world.id}`;
-      portal.className = 'atom-world-portal';
-      const portalCenterY = currentY + portalHeight / 2;
-      portal.style.top = `${portalCenterY}px`;
-      portal.style.left = `${centerX}px`;
-      portal.innerHTML = `
-        <div class="world-portal-info">
-          <div class="world-portal-title">${world.title}</div>
-          <div class="world-portal-desc">${world.description}</div>
-        </div>
-        <div class="world-portal-progress">
-          ${completedInWorld}/${worldLayouts.length} · ⭐ ${starsInWorld}
-        </div>
-      `;
-      mapContent.appendChild(portal);
-
-      const firstUnlockedInWorld = StorageManager.isLevelUnlocked(startLvl - 1);
-      route.push({
-        x: centerX,
-        y: portalCenterY + portalHeight / 2, // Conecta na base do portal
-        isUnlocked: firstUnlockedInWorld,
-        type: 'portal'
-      });
-
-      currentY += portalHeight + 46;
-
-      // Nós Atômicos do Mundo
-      worldLayouts.forEach((layout, offset) => {
-        const idx = startLvl - 1 + offset;
-        const isUnlocked = StorageManager.isLevelUnlocked(idx);
-        const isCurrent = idx === this.currentLevelIndex;
-
-        // Oscilação sinusoidal ampla e elegante da constelação
-        const xOffset = Math.sin(offset * 0.74 + wIdx * 0.55) * xAmplitude;
-        const nodeX = centerX + xOffset;
-        const nodeY = currentY;
-
-        route.push({
-          x: nodeX,
-          y: nodeY,
-          isUnlocked,
-          type: 'node',
-          idx,
-          isCurrent,
-          layout
-        });
-
-        currentY += nodeSpacingY;
-      });
-
-      currentY += 24; // Espaço antes do próximo portal
-    });
-
-    const totalHeight = currentY + 60;
-    mapContent.style.width = `${baseWidth}px`;
-    mapContent.style.height = `${totalHeight}px`;
-    mapSvg.style.width = `${baseWidth}px`;
-    mapSvg.style.height = `${totalHeight}px`;
-    mapSvg.setAttribute('viewBox', `0 0 ${baseWidth} ${totalHeight}`);
-    mapSvg.setAttribute('preserveAspectRatio', 'none');
-
-    // Desenhar Ligações Atômicas / Tubos de Energia (SVG Bezier Curves)
-    for (let i = 0; i < route.length - 1; i++) {
-      const p1 = route[i];
-      const p2 = route[i + 1];
-
-      const dy = p2.y - p1.y;
-      const cp1x = p1.x;
-      const cp1y = p1.y + dy * 0.5;
-      const cp2x = p2.x;
-      const cp2y = p2.y - dy * 0.5;
-
-      const pathData = `M ${p1.x} ${p1.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
-
-      if (p2.isUnlocked) {
-        // 1. Tubo exterior de brilho neon suave
-        const glowEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        glowEl.setAttribute('d', pathData);
-        glowEl.setAttribute('class', 'map-path-glow');
-        mapSvg.appendChild(glowEl);
-
-        // 2. Linha principal condutora de energia
-        const mainEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        mainEl.setAttribute('d', pathData);
-        mainEl.setAttribute('class', 'map-path-unlocked');
-        mapSvg.appendChild(mainEl);
-
-        // 3. Feixe animado de elétrons em fluxo
-        const flowEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        flowEl.setAttribute('d', pathData);
-        flowEl.setAttribute('class', 'map-path-flow');
-        mapSvg.appendChild(flowEl);
-      } else {
-        // Linha pontilhada de circuito bloqueado
-        const lockedEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        lockedEl.setAttribute('d', pathData);
-        lockedEl.setAttribute('class', 'map-path-locked');
-        mapSvg.appendChild(lockedEl);
-      }
-    }
-
-    // Renderizar Elementos HTML dos Átomos
-    route.filter((p) => p.type === 'node' && p.layout).forEach((pt) => {
-      const layout = pt.layout!;
-      const idx = pt.idx!;
-      const stats = StorageManager.getLevelStats(layout.id);
-      const isCompleted = stats.completed;
-
-      // Posição inteligente da etiqueta: esquerda ou direita conforme o lado da tela
-      const labelClass = pt.x < centerX - 24
-        ? 'label-right'
-        : (pt.x > centerX + 24 ? 'label-left' : 'label-center');
-
-      const node = document.createElement('div');
-      node.className = `atom-node ${labelClass}${pt.isCurrent ? ' current' : ''}${isCompleted ? ' completed' : ''}${!pt.isUnlocked ? ' locked' : ''}`;
-      node.style.left = `${pt.x}px`;
-      node.style.top = `${pt.y}px`;
-
-      // Modelo Atômico com 3 Órbitas 3D (Rutherford ⚛️) para a fase atual
-      const orbitalHtml = pt.isCurrent
-        ? `
-          <div class="atom-orbital-wrap">
-            <div class="atom-orbit atom-orbit-1"><div class="atom-electron"></div></div>
-            <div class="atom-orbit atom-orbit-2"><div class="atom-electron"></div></div>
-            <div class="atom-orbit atom-orbit-3"><div class="atom-electron"></div></div>
-          </div>
-        `
-        : '';
-
-      // Estrelas flutuando sob o átomo concluído
-      const starsHtml = isCompleted
-        ? `<div class="atom-stars">${'⭐'.repeat(stats.stars)}</div>`
-        : '';
-
-      node.innerHTML = `
-        ${orbitalHtml}
-        <div class="atom-core">${pt.isUnlocked ? idx + 1 : '🔒'}</div>
-        ${starsHtml}
-        <div class="atom-label-pill">${layout.name}</div>
-      `;
-
-      node.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (!pt.isUnlocked) {
-          soundManager.playBlockedSound();
-          hapticManager.impactLight();
-          this.showToast('Fase bloqueada! Complete a fase anterior primeiro.');
-          return;
-        }
-
-        soundManager.playTileClick();
-        hapticManager.impactLight();
-
-        // Exibir Bottom Sheet de Missão
-        if (previewCard) {
-          const badge = document.getElementById('atom-preview-badge');
-          const name = document.getElementById('atom-preview-name');
-          const meta = document.getElementById('atom-preview-meta');
-          const desc = document.getElementById('atom-preview-desc');
-          const starsEl = document.getElementById('atom-preview-stars');
-          const bestEl = document.getElementById('atom-preview-best');
-
-          if (badge) badge.textContent = `${idx + 1}`;
-          if (name) name.textContent = layout.name;
-          if (meta) meta.textContent = `${layout.difficulty} · ${layout.slots.length} peças`;
-          if (desc) desc.textContent = layout.description;
-
-          if (starsEl) {
-            starsEl.textContent = isCompleted
-              ? '⭐'.repeat(stats.stars) + '☆'.repeat(3 - stats.stars)
-              : 'Ainda não jogada';
-          }
-
-          if (bestEl) {
-            let recordText = stats.bestTimeSeconds
-              ? `Tempo Zen: ${Math.floor(stats.bestTimeSeconds / 60)}m ${stats.bestTimeSeconds % 60}s`
-              : 'Sem recorde';
-            if (stats.bestScore) {
-              recordText += ` · 🌸 ${stats.bestScore.toLocaleString('pt-BR')} pts`;
-            }
-            bestEl.textContent = recordText;
-          }
-
-          if (btnPlay) {
-            btnPlay.onclick = () => {
-              this.startGame(idx);
-              this.levelsModal.classList.add('hidden');
-            };
-          }
-
-          previewCard.classList.remove('hidden');
-        } else {
-          this.startGame(idx);
-          this.levelsModal.classList.add('hidden');
-        }
-      });
-
-      mapContent.appendChild(node);
-    });
-
-    // Auto-scroll suave até o átomo da fase atual
-    setTimeout(() => {
-      const activeNode = mapContent.querySelector('.atom-node.current');
-      activeNode?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 150);
-  }
-
-
-  // ─── Settings ─────────────────────────────────────────────────────────────
-
-  private renderSettingsOptions(): void {
-    const container = document.getElementById('settings-options-container');
-    if (!container) return;
-
-    container.innerHTML = `
-      <div class="setting-row">
-        <div>
-          <div class="setting-title">Destacar Peças Livres</div>
-          <div class="setting-subtitle">Escurece as peças bloqueadas para fácil visualização</div>
-        </div>
-        <input type="checkbox" id="check-dim" class="toggle-checkbox" ${this.prefs.dimBlockedTiles ? 'checked' : ''} />
-      </div>
-      <div class="setting-row">
-        <div>
-          <div class="setting-title">Música Lo-Fi Zen (Chuva & Relaxamento)</div>
-          <div class="setting-subtitle">Trilha sonora calma com batidas suaves e chuva</div>
-        </div>
-        <input type="checkbox" id="check-music" class="toggle-checkbox" ${this.prefs.musicEnabled ? 'checked' : ''} />
-      </div>
-      <div class="setting-row">
-        <div>
-          <div class="setting-title">Efeitos Sonoros</div>
-          <div class="setting-subtitle">Sons ao tocar e combinar peças</div>
-        </div>
-        <input type="checkbox" id="check-sound" class="toggle-checkbox" ${this.prefs.soundEnabled ? 'checked' : ''} />
-      </div>
-      <div class="setting-row">
-        <div>
-          <div class="setting-title">Vibração</div>
-          <div class="setting-subtitle">Feedback tátil ao tocar nas peças</div>
-        </div>
-        <input type="checkbox" id="check-haptic" class="toggle-checkbox" ${this.prefs.hapticEnabled ? 'checked' : ''} />
-      </div>
-    `;
-
-    container.querySelector('#check-dim')?.addEventListener('change', (e) => {
-      this.prefs.dimBlockedTiles = (e.target as HTMLInputElement).checked;
-      this.saveAndApplyPrefs();
-    });
-    container.querySelector('#check-music')?.addEventListener('change', (e) => {
-      this.prefs.musicEnabled = (e.target as HTMLInputElement).checked;
-      this.saveAndApplyPrefs();
-    });
-    container.querySelector('#check-sound')?.addEventListener('change', (e) => {
-      this.prefs.soundEnabled = (e.target as HTMLInputElement).checked;
-      this.saveAndApplyPrefs();
-    });
-    container.querySelector('#check-haptic')?.addEventListener('change', (e) => {
-      this.prefs.hapticEnabled = (e.target as HTMLInputElement).checked;
-      this.saveAndApplyPrefs();
-    });
-  }
-
-  private saveAndApplyPrefs(): void {
-    StorageManager.savePreferences(this.prefs);
-    this.applyPreferences();
-    this.renderer.requestRender();
-  }
-
-  // ─── Tray Tile Canvas ─────────────────────────────────────────────────────
-
-  /**
-   * Renderiza a face de uma peça em um canvas pré-alocado reutilizável
-   */
-  public renderTileToCanvas(canvas: HTMLCanvasElement, tile: PlacedTile): void {
-    const dpr = window.devicePixelRatio || 1;
-    const w = 62;
-    const h = 82;
-    const targetW = Math.round(w * dpr);
-    const targetH = Math.round(h * dpr);
-
-    if (canvas.width !== targetW || canvas.height !== targetH) {
-      canvas.width = targetW;
-      canvas.height = targetH;
-    }
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    ctx.save();
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, targetW, targetH);
-    ctx.scale(dpr, dpr);
-
-    ctx.fillStyle = '#FFFFFF';
-    ctx.beginPath();
-    ctx.roundRect(1, 1, w - 2, h - 2, 7);
-    ctx.fill();
-    ctx.strokeStyle = '#CBD5E1';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    const sprite = this.renderer.getTileRenderer().getOrGenerateTileFace(tile);
-    ctx.drawImage(sprite, 2, 2, w - 4, h - 4);
-    ctx.restore();
-  }
-
-  private getFlyerFromPool(): { el: HTMLElement; canvas: HTMLCanvasElement; inUse: boolean } {
-    let item = this.flyerPool.find((f) => !f.inUse);
-    if (!item) {
-      const el = document.createElement('div');
-      el.className = 'flying-tile-card';
-      el.style.cssText = `
-        position: fixed;
-        z-index: 1000;
-        pointer-events: none;
-        display: none;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        border-radius: 8px;
-        overflow: hidden;
-      `;
-      const canvas = document.createElement('canvas');
-      canvas.style.width = '100%';
-      canvas.style.height = '100%';
-      el.appendChild(canvas);
-      document.body.appendChild(el);
-      item = { el, canvas, inUse: false };
-      this.flyerPool.push(item);
-    }
-    item.inUse = true;
-    return item;
-  }
-
-  // ─── Menu Progress ────────────────────────────────────────────────────────
-
-  private updateMenuProgress(): void {
-    const total = ALL_LAYOUTS.length;
-    let done = 0;
-    let totalStars = 0;
-
-    ALL_LAYOUTS.forEach((layout) => {
-      const stats = StorageManager.getLevelStats(layout.id);
-      if (stats.completed) {
-        done++;
-        totalStars += stats.stars;
-      }
-    });
-
-    this.menuLevelsDone.textContent = `${done}`;
-    this.menuLevelsTotal.textContent = `${total}`;
-    this.menuProgressFill.style.width = `${(done / total) * 100}%`;
-    this.menuStarsTotal.textContent = `⭐ ${totalStars} estrelas`;
-
-    // Atualizar índice do nível atual (continuar do progresso salvo)
-    const progress = StorageManager.getProgress();
-    this.currentLevelIndex = Math.min(progress.currentLevelIndex, total - 1);
+    this.natureFeedback.handleTileLongPress(tile);
   }
 
   // ─── Feedback Messages ───────────────────────────────────────────────────
 
   public showBlockedTip(message: string): void {
-    const banner = document.getElementById('tutorial-tip-banner');
-    const tipText = document.getElementById('tutorial-tip-text');
-    if (banner && tipText) {
-      tipText.textContent = message;
-      banner.classList.remove('hidden');
-      setTimeout(() => banner.classList.add('hidden'), 2600);
-    }
+    this.natureFeedback.showBlockedTip(message);
+  }
+
+  public showTutorialTip(message: string): void {
+    this.natureFeedback.showTutorialTip(message);
   }
 
   public showToast(message: string, durationMs: number = 3200, isDanger: boolean = false): void {
@@ -1478,136 +1199,6 @@ export class UIManager {
       toast.classList.remove('show');
       setTimeout(() => toast.remove(), 400);
     }, durationMs);
-  }
-
-  // ─── Animate Tile to Tray ─────────────────────────────────────────────────
-
-  public animateTileToTray(
-    tile: PlacedTile,
-    startX: number,
-    startY: number,
-    width: number,
-    height: number,
-    onArrival: () => void
-  ): void {
-    const tray = this.engine.getTray();
-    const targetIdx = Math.min(tray.length, this.traySlotEls.length - 1);
-    const targetSlot = this.traySlotEls[targetIdx];
-    if (!targetSlot) { onArrival(); return; }
-
-    const targetRect = targetSlot.getBoundingClientRect();
-    const flyerItem = this.getFlyerFromPool();
-    const flyer = flyerItem.el;
-    const canvas = flyerItem.canvas;
-
-    this.renderTileToCanvas(canvas, tile);
-
-    flyer.style.transition = 'none';
-    flyer.style.left = `${startX}px`;
-    flyer.style.top  = `${startY}px`;
-    flyer.style.width = `${width}px`;
-    flyer.style.height = `${height}px`;
-    flyer.style.transform = 'scale(1.05)';
-    flyer.style.display = 'block';
-
-    void flyer.offsetWidth;
-
-    requestAnimationFrame(() => {
-      flyer.style.transition = 'all 0.22s cubic-bezier(0.16, 1, 0.3, 1)';
-      flyer.style.left = `${targetRect.left}px`;
-      flyer.style.top  = `${targetRect.top}px`;
-      flyer.style.width = `${targetRect.width}px`;
-      flyer.style.height = `${targetRect.height}px`;
-      flyer.style.transform = 'scale(1)';
-    });
-
-    setTimeout(() => {
-      flyer.style.display = 'none';
-      flyerItem.inUse = false;
-      onArrival();
-    }, 220);
-  }
-
-  // ─── Animate Tile from Tray to Board (Reverse Flight) ─────────────────────
-
-  public animateTileFromTrayToBoard(
-    tile: PlacedTile,
-    fromSlotEl: HTMLElement,
-    targetLeft: number,
-    targetTop: number,
-    targetWidth: number,
-    targetHeight: number,
-    onArrival: () => void
-  ): void {
-    const slotRect = fromSlotEl.getBoundingClientRect();
-    const flyerItem = this.getFlyerFromPool();
-    const flyer = flyerItem.el;
-    const canvas = flyerItem.canvas;
-
-    this.renderTileToCanvas(canvas, tile);
-
-    flyer.style.transition = 'none';
-    flyer.style.left = `${slotRect.left}px`;
-    flyer.style.top  = `${slotRect.top}px`;
-    flyer.style.width = `${slotRect.width}px`;
-    flyer.style.height = `${slotRect.height}px`;
-    flyer.style.transform = 'scale(1)';
-    flyer.style.display = 'block';
-
-    void flyer.offsetWidth;
-
-    requestAnimationFrame(() => {
-      flyer.style.transition = 'all 0.22s cubic-bezier(0.16, 1, 0.3, 1)';
-      flyer.style.left = `${targetLeft}px`;
-      flyer.style.top  = `${targetTop}px`;
-      flyer.style.width = `${targetWidth}px`;
-      flyer.style.height = `${targetHeight}px`;
-      flyer.style.transform = 'scale(1.04)';
-    });
-
-    setTimeout(() => {
-      flyer.style.display = 'none';
-      flyerItem.inUse = false;
-      onArrival();
-    }, 220);
-  }
-
-  // ─── Fagulhas Douradas da Flor de Lótus ────────────────────────────────────
-
-  public spawnLotusManaSparks(fromX?: number, fromY?: number): void {
-    const badges = [this.badgeUndo, this.badgeHint].filter(Boolean);
-    const startX = fromX ?? window.innerWidth / 2;
-    const startY = fromY ?? window.innerHeight / 2;
-
-    badges.forEach((badge, bIdx) => {
-      const bRect = badge.getBoundingClientRect();
-      const spark = document.createElement('div');
-      spark.className = 'golden-mana-spark';
-      spark.textContent = '✨';
-      spark.style.cssText = `
-        position: fixed;
-        left: ${startX}px;
-        top: ${startY}px;
-        font-size: 1.5rem;
-        z-index: 1000;
-        pointer-events: none;
-        transition: all 0.55s cubic-bezier(0.16, 1, 0.3, 1) ${bIdx * 0.08}s;
-      `;
-      document.body.appendChild(spark);
-
-      requestAnimationFrame(() => {
-        spark.style.left = `${bRect.left + bRect.width / 2}px`;
-        spark.style.top = `${bRect.top + bRect.height / 2}px`;
-        spark.style.transform = 'scale(1.5)';
-        spark.style.opacity = '0.95';
-      });
-
-      setTimeout(() => {
-        spark.remove();
-        badge.classList.add('sparkle-pulse');
-        setTimeout(() => badge.classList.remove('sparkle-pulse'), 800);
-      }, 650);
-    });
   }
 
   // ─── Live Update UI ────────────────────────────────────────────────────────
@@ -1655,4 +1246,3 @@ export class UIManager {
     }
   }
 }
-

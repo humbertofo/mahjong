@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 800" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- Gradiente de Névoa Superior -->
+    <linearGradient id="topCanopyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#02120c" stop-opacity="0.95" />
+      <stop offset="70%" stop-color="#05261b" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#05261b" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- Gradiente da Mata Inferior -->
+    <linearGradient id="bottomForestGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#052a1d" stop-opacity="0" />
+      <stop offset="30%" stop-color="#05261b" stop-opacity="0.75" />
+      <stop offset="100%" stop-color="#02100a" stop-opacity="0.98" />
+    </linearGradient>
+
+    <!-- Gradientes de Folhagens -->
+    <linearGradient id="leafGradDeep" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10593f" />
+      <stop offset="100%" stop-color="#052419" />
+    </linearGradient>
+
+    <linearGradient id="leafGradVibrant" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="40%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#064e3b" />
+    </linearGradient>
+
+    <linearGradient id="bambooGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#064e3b" />
+      <stop offset="50%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#043829" />
+    </linearGradient>
+
+    <!-- Filtro de Brilho dos Vaga-lumes -->
+    <filter id="fireflyGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- ════════ CAMADA SUPERIOR: RAMOS E COPAS DE BAMBU ════════ -->
+  <rect x="0" y="0" width="400" height="220" fill="url(#topCanopyGrad)" />
+
+  <!-- Ramo Esquerdo de Bambu e Folhas -->
+  <g class="canopy-left" opacity="0.85">
+    <!-- Coluna de Bambu -->
+    <path d="M-10,0 C15,40 25,90 28,150 C29,170 30,200 30,220" fill="none" stroke="url(#bambooGrad)" stroke-width="6" stroke-linecap="round" />
+    <path d="M24,75 L34,73 M26,135 L36,133" stroke="#34d399" stroke-width="2.5" opacity="0.7" />
+    <!-- Folhas de Bambu Pendentes -->
+    <path d="M25,60 C45,55 75,70 85,88 C68,85 45,78 25,60 Z" fill="url(#leafGradDeep)" />
+    <path d="M28,80 C55,80 90,105 105,125 C82,118 55,102 28,80 Z" fill="url(#leafGradVibrant)" opacity="0.8" />
+    <path d="M29,120 C58,125 92,150 102,175 C80,165 52,145 29,120 Z" fill="url(#leafGradDeep)" />
+    <path d="M30,150 C55,160 80,195 85,220 C70,200 48,180 30,150 Z" fill="url(#leafGradVibrant)" opacity="0.75" />
+    <!-- Folha Delicada Ginkgo / Broto -->
+    <path d="M5,20 C35,15 70,30 80,45 C60,42 35,35 5,20 Z" fill="url(#leafGradDeep)" opacity="0.6" />
+  </g>
+
+  <!-- Ramo Direito de Bambu e Folhas -->
+  <g class="canopy-right" opacity="0.85">
+    <path d="M410,0 C385,45 375,95 372,160 C370,185 370,210 370,230" fill="none" stroke="url(#bambooGrad)" stroke-width="6" stroke-linecap="round" />
+    <path d="M366,80 L376,78 M368,145 L378,143" stroke="#34d399" stroke-width="2.5" opacity="0.7" />
+    <path d="M375,65 C355,60 325,75 315,92 C332,90 355,82 375,65 Z" fill="url(#leafGradDeep)" />
+    <path d="M372,90 C345,90 310,118 295,138 C318,130 345,112 372,90 Z" fill="url(#leafGradVibrant)" opacity="0.8" />
+    <path d="M371,130 C342,135 308,162 298,188 C320,178 348,155 371,130 Z" fill="url(#leafGradDeep)" />
+  </g>
+
+  <!-- ════════ CAMADA INFERIOR: MATA ZEN E FOLHAGENS ════════ -->
+  <rect x="0" y="520" width="400" height="280" fill="url(#bottomForestGrad)" />
+
+  <!-- Silhueta Distante de Montanhas e Bambuzal (Profundidade 1) -->
+  <g opacity="0.35">
+    <path d="M0,640 Q60,600 130,625 T280,610 Q350,620 400,590 L400,800 L0,800 Z" fill="#03160e" />
+    <!-- Hastes distantes -->
+    <line x1="45" y1="580" x2="45" y2="700" stroke="#063222" stroke-width="3" />
+    <line x1="85" y1="560" x2="85" y2="720" stroke="#063222" stroke-width="2.5" />
+    <line x1="330" y1="550" x2="330" y2="710" stroke="#063222" stroke-width="3" />
+    <line x1="365" y1="570" x2="365" y2="730" stroke="#063222" stroke-width="2.5" />
+  </g>
+
+  <!-- Camada Média de Samambaias e Bambus (Profundidade 2) -->
+  <g opacity="0.7">
+    <!-- Samambaia Esquerda -->
+    <path d="M0,720 C20,680 50,650 90,640 C65,665 40,700 25,745 Z" fill="url(#leafGradDeep)" />
+    <path d="M10,750 C40,700 80,670 125,665 C95,690 60,725 35,770 Z" fill="url(#leafGradVibrant)" opacity="0.85" />
+    <!-- Samambaia Direita -->
+    <path d="M400,710 C380,670 350,645 310,635 C335,660 360,695 375,740 Z" fill="url(#leafGradDeep)" />
+    <path d="M390,740 C360,695 320,665 275,660 C305,685 340,720 365,765 Z" fill="url(#leafGradVibrant)" opacity="0.85" />
+  </g>
+
+  <!-- Camada Frontal: Folhas Largas de Monstera e Lótus (Profundidade 3) -->
+  <g class="foreground-leaves">
+    <!-- Folha Monstera Esquerda -->
+    <g transform="translate(-25, 680) rotate(-15)">
+      <path d="M50,140 C40,70 90,15 150,0 C170,50 160,110 110,150 Z" fill="url(#leafGradDeep)" />
+      <!-- Recortes orgânicos de monstera -->
+      <path d="M60,130 C75,80 120,40 145,20 C140,50 115,80 85,115" stroke="#34d399" stroke-width="1.8" fill="none" opacity="0.6" />
+      <path d="M90,75 C105,65 125,60 140,65 C130,80 110,90 95,95 Z" fill="#031a12" opacity="0.8" />
+      <path d="M78,105 C95,95 115,92 128,100 C115,110 98,118 85,122 Z" fill="#031a12" opacity="0.8" />
+    </g>
+
+    <!-- Folha Monstera Direita -->
+    <g transform="translate(310, 685) rotate(18)">
+      <path d="M60,140 C70,70 20,15 -40,0 C-60,50 -50,110 0,150 Z" fill="url(#leafGradVibrant)" opacity="0.9" />
+      <path d="M50,130 C35,80 -10,40 -35,20 C-30,50 -5,80 25,115" stroke="#a7f3d0" stroke-width="1.8" fill="none" opacity="0.6" />
+      <path d="M20,75 C5,65 -15,60 -30,65 C-20,80 0,90 15,95 Z" fill="#031a12" opacity="0.8" />
+    </g>
+
+    <!-- Gramíneas e Brotos de Bambu no Centro Inferior -->
+    <path d="M160,800 C165,765 175,735 190,715 C185,745 178,775 175,800 Z" fill="url(#leafGradVibrant)" opacity="0.75" />
+    <path d="M230,800 C225,760 215,730 198,710 C205,740 215,770 220,800 Z" fill="url(#leafGradDeep)" />
+    <path d="M195,800 C198,750 202,720 205,700 C208,730 207,765 205,800 Z" fill="#34d399" opacity="0.8" />
+  </g>
+
+  <!-- ════════ VAGA-LUMES LUMINOSOS (PIRILAMPOS) ════════ -->
+  <g class="zen-fireflies" filter="url(#fireflyGlow)">
+    <circle cx="95" cy="180" r="3.5" fill="#fef08a" />
+    <circle cx="95" cy="180" r="7" fill="#fbbf24" opacity="0.4" />
+
+    <circle cx="310" cy="150" r="2.8" fill="#fef08a" />
+    <circle cx="310" cy="150" r="6" fill="#fbbf24" opacity="0.45" />
+
+    <circle cx="45" cy="420" r="3" fill="#fef08a" opacity="0.75" />
+    <circle cx="45" cy="420" r="8" fill="#10b981" opacity="0.3" />
+
+    <circle cx="355" cy="460" r="3.2" fill="#fef08a" opacity="0.8" />
+    <circle cx="355" cy="460" r="8" fill="#34d399" opacity="0.35" />
+
+    <circle cx="140" cy="670" r="3.5" fill="#fef08a" />
+    <circle cx="140" cy="670" r="9" fill="#fbbf24" opacity="0.5" />
+
+    <circle cx="265" cy="650" r="4" fill="#ffffff" />
+    <circle cx="265" cy="650" r="10" fill="#f59e0b" opacity="0.55" />
+  </g>
+</svg>

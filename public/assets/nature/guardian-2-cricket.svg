@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" width="140" height="140">
+  <defs>
+    <radialGradient id="g2-bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1b4332" />
+      <stop offset="70%" stop-color="#081c15" />
+      <stop offset="100%" stop-color="#040e0a" />
+    </radialGradient>
+    <linearGradient id="g-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffeaa7" />
+      <stop offset="50%" stop-color="#d4af37" />
+      <stop offset="100%" stop-color="#9a7b1c" />
+    </linearGradient>
+    <linearGradient id="cricket-jade" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#95d5b2" />
+      <stop offset="50%" stop-color="#52b788" />
+      <stop offset="100%" stop-color="#2d6a4f" />
+    </linearGradient>
+  </defs>
+
+  <!-- Medalhão Base -->
+  <circle cx="70" cy="70" r="66" fill="url(#g2-bg)" stroke="url(#g-gold)" stroke-width="4" />
+  <circle cx="70" cy="70" r="59" fill="none" stroke="url(#g-gold)" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.7" />
+
+  <!-- Animal: Grilo Nobre / Louva-a-Deus do Bambu -->
+  <g transform="translate(16, 12) scale(0.76)">
+    <!-- Hastes de bambu ao fundo -->
+    <path d="M 40,110 L 40,25" stroke="#40916c" stroke-width="5" stroke-linecap="round" opacity="0.4" />
+    <path d="M 100,110 L 100,30" stroke="#40916c" stroke-width="4" stroke-linecap="round" opacity="0.4" />
+
+    <!-- Corpo do Grilo/Louva-a-Deus -->
+    <!-- Asas esmeralda -->
+    <path d="M 70,55 C 85,65 95,95 72,105 C 55,95 62,65 70,55 Z" fill="url(#cricket-jade)" stroke="#1b4332" stroke-width="1.5" />
+    <path d="M 70,58 Q 72,85 72,105" stroke="#d8f3dc" stroke-width="1.2" fill="none" />
+
+    <!-- Tórax -->
+    <ellipse cx="70" cy="50" rx="9" ry="11" fill="url(#cricket-jade)" stroke="#1b4332" stroke-width="1.5" />
+
+    <!-- Cabeça triangular nobre -->
+    <polygon points="70,28 62,42 78,42" fill="#74c69d" stroke="#1b4332" stroke-width="1.5" />
+
+    <!-- Grandes Olhos compostos de Jade -->
+    <ellipse cx="61" cy="35" rx="5" ry="6" fill="#d4af37" stroke="#1b4332" stroke-width="1.2" />
+    <circle cx="60" cy="34" r="2" fill="#fff" />
+    <ellipse cx="79" cy="35" rx="5" ry="6" fill="#d4af37" stroke="#1b4332" stroke-width="1.2" />
+    <circle cx="80" cy="34" r="2" fill="#fff" />
+
+    <!-- Longas Antenas Nobres curvadas -->
+    <path d="M 66,28 C 55,15 40,16 30,12" stroke="#d4af37" stroke-width="2" stroke-linecap="round" fill="none" />
+    <path d="M 74,28 C 85,15 100,16 110,12" stroke="#d4af37" stroke-width="2" stroke-linecap="round" fill="none" />
+
+    <!-- Patas dobradas em pose de oração zen -->
+    <path d="M 64,48 C 50,42 45,55 52,65" stroke="#74c69d" stroke-width="2.5" stroke-linecap="round" fill="none" />
+    <path d="M 76,48 C 90,42 95,55 88,65" stroke="#74c69d" stroke-width="2.5" stroke-linecap="round" fill="none" />
+  </g>
+
+  <!-- Ornato Floral Base -->
+  <path d="M 50,118 C 62,112 78,112 90,118 C 82,126 58,126 50,118 Z" fill="url(#g-gold)" />
+</svg>

@@ -1,0 +1,2938 @@
+{
+  "timestamp": "2026-09-27T21:37:52.352Z",
+  "totalFiles": 99,
+  "totalLines": 49610,
+  "monoliths": [
+    {
+      "file": "src/index.css",
+      "lines": 3930,
+      "sizeKb": "88.1 KB"
+    },
+    {
+      "file": "src/core/nature/tiles/tileCatalog.ts",
+      "lines": 2230,
+      "sizeKb": "64.4 KB"
+    },
+    {
+      "file": "src/core/layouts/levels/level42_four_bridges.ts",
+      "lines": 1893,
+      "sizeKb": "24.0 KB"
+    },
+    {
+      "file": "src/render/BoardRenderer.ts",
+      "lines": 1560,
+      "sizeKb": "53.7 KB"
+    },
+    {
+      "file": "src/core/layouts/levels/level44_four_hills.ts",
+      "lines": 1473,
+      "sizeKb": "18.7 KB"
+    },
+    {
+      "file": "src/core/layouts/levels/level25_saturn_rings.ts",
+      "lines": 1408,
+      "sizeKb": "17.9 KB"
+    },
+    {
+      "file": "src/core/layouts/levels/level37_olympic_stadium.ts",
+      "lines": 1408,
+      "sizeKb": "17.9 KB"
+    },
+    {
+      "file": "src/core/layouts/levels/level41_spiral_galaxy.ts",
+      "lines": 1408,
+      "sizeKb": "17.9 KB"
+    },
+    {
+      "file": "src/core/layouts/levels/level46_celestial_cloud.ts",
+      "lines": 1408,
+      "sizeKb": "17.9 KB"
+    },
+    {
+      "file": "src/audio/SoundManager.ts",
+      "lines": 1349,
+      "sizeKb": "38.6 KB"
+    },
+    {
+      "file": "src/core/layouts/levels/level40_lost_atlantis.ts",
+      "lines": 1273,
+      "sizeKb": "16.1 KB"
+    },
+    {
+      "file": "src/core/layouts/levels/level49_sacred_altar.ts",
+      "lines": 1273,
+      "sizeKb": "16.1 KB"
+    },
+    {
+      "file": "src/ui/UIManager.ts",
+      "lines": 1229,
+      "sizeKb": "45.4 KB"
+    },
+    {
+      "file": "src/core/layouts/levels/level21_stone_arena.ts",
+      "lines": 1153,
+      "sizeKb": "14.6 KB"
+    },
+    {
+      "file": "src/core/layouts/levels/level30_earth_pillars.ts",
+      "lines": 1153,
+      "sizeKb": "14.6 KB"
+    },
+    {
+      "file": "src/core/layouts/levels/level31_three_crowns.ts",
+      "lines": 1153,
+      "sizeKb": "14.6 KB"
+    }
+  ],
+  "orphans": [],
+  "cycles": [],
+  "nodes": {
+    "src/audio/HapticManager.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\audio\\HapticManager.ts",
+      "relativePath": "src/audio/HapticManager.ts",
+      "lines": 73,
+      "sizeBytes": 1765,
+      "dependencies": [],
+      "dependents": [
+        "src/render/BoardRenderer.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/modals/SettingsModal.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/render/BoardRenderer.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/modals/SettingsModal.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/ui/UIManager.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 6,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/audio/SoundManager.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\audio\\SoundManager.ts",
+      "relativePath": "src/audio/SoundManager.ts",
+      "lines": 1349,
+      "sizeBytes": 39558,
+      "dependencies": [
+        "src/core/nature/tiles/TileTypes.ts"
+      ],
+      "dependents": [
+        "src/render/BoardRenderer.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/modals/SettingsModal.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/render/BoardRenderer.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/modals/SettingsModal.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/ui/UIManager.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 6,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": true
+    },
+    "src/core/BoardEngine.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\BoardEngine.ts",
+      "relativePath": "src/core/BoardEngine.ts",
+      "lines": 651,
+      "sizeBytes": 20700,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/deck.ts",
+        "src/core/levelRules.ts",
+        "src/core/engine/TileRuleEngine.ts",
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/engine/TrayController.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/core/nature/LevelDeckCurator.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/render/BoardRenderer.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/render/BoardRenderer.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 4,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/deck.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\deck.ts",
+      "relativePath": "src/core/deck.ts",
+      "lines": 75,
+      "sizeBytes": 2438,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/nature/synergies/SynergyRegistry.ts",
+        "src/core/nature/tiles/index.ts"
+      ],
+      "dependents": [
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/OceanSurge.ts",
+        "src/render/BoardRenderer.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/OceanSurge.ts",
+        "src/render/BoardRenderer.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts",
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/core/engine/SynergyDirector.ts"
+      ],
+      "blastRadiusScore": 10,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/engine/SynergyDirector.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\engine\\SynergyDirector.ts",
+      "relativePath": "src/core/engine/SynergyDirector.ts",
+      "lines": 73,
+      "sizeBytes": 2611,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/nature/biomes.ts",
+        "src/core/nature/specialTiles/SpecialTileRules.ts",
+        "src/core/nature/synergies/SynergyRegistry.ts",
+        "src/core/nature/climates/ClimateEvaluator.ts"
+      ],
+      "dependents": [
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/render/BoardRenderer.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/render/BoardRenderer.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 6,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/engine/TileRuleEngine.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\engine\\TileRuleEngine.ts",
+      "relativePath": "src/core/engine/TileRuleEngine.ts",
+      "lines": 84,
+      "sizeBytes": 3008,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/BoardEngine.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/BoardEngine.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/render/BoardRenderer.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 5,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/engine/TrayController.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\engine\\TrayController.ts",
+      "relativePath": "src/core/engine/TrayController.ts",
+      "lines": 211,
+      "sizeBytes": 6390,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/render/BoardRenderer.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 6,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/engine/ZenPowerManager.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\engine\\ZenPowerManager.ts",
+      "relativePath": "src/core/engine/ZenPowerManager.ts",
+      "lines": 153,
+      "sizeBytes": 5047,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/deck.ts",
+        "src/core/engine/TrayController.ts",
+        "src/core/engine/SynergyDirector.ts"
+      ],
+      "dependents": [
+        "src/core/BoardEngine.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/BoardEngine.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/render/BoardRenderer.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 5,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/garden36.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\garden36.ts",
+      "relativePath": "src/core/layouts/garden36.ts",
+      "lines": 51,
+      "sizeBytes": 1584,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/main.ts"
+      ],
+      "transitiveDependents": [
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 1,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/index.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\index.ts",
+      "relativePath": "src/core/layouts/index.ts",
+      "lines": 131,
+      "sizeBytes": 5237,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/layouts/worlds.ts",
+        "src/core/layouts/levels/level01_garden_tutorial.ts",
+        "src/core/layouts/levels/level02_beginner_step.ts",
+        "src/core/layouts/levels/level03_mini_zen.ts",
+        "src/core/layouts/levels/level04_heart_wisdom.ts",
+        "src/core/layouts/levels/level05_mini_traditional.ts",
+        "src/core/layouts/levels/level06_jade_butterfly.ts",
+        "src/core/layouts/levels/level07_royal_diamond.ts",
+        "src/core/layouts/levels/level08_forest_reindeer.ts",
+        "src/core/layouts/levels/level09_morning_star.ts",
+        "src/core/layouts/levels/level10_peace_wall.ts",
+        "src/core/layouts/levels/level11_radiant_smile.ts",
+        "src/core/layouts/levels/level12_lucky_clover.ts",
+        "src/core/layouts/levels/level13_short_4_winds.ts",
+        "src/core/layouts/levels/level14_fiesta_viva.ts",
+        "src/core/layouts/levels/level15_animal_cross.ts",
+        "src/core/layouts/levels/level16_stellar_orbit.ts",
+        "src/core/layouts/levels/level17_twin_waves.ts",
+        "src/core/layouts/levels/level18_panda_wisdom.ts",
+        "src/core/layouts/levels/level19_retro_joystick.ts",
+        "src/core/layouts/levels/level20_bamboo_valley.ts",
+        "src/core/layouts/levels/level21_stone_arena.ts",
+        "src/core/layouts/levels/level22_rising_sun.ts",
+        "src/core/layouts/levels/level23_ruby_heart.ts",
+        "src/core/layouts/levels/level24_wisdom_52.ts",
+        "src/core/layouts/levels/level25_saturn_rings.ts",
+        "src/core/layouts/levels/level26_celestial_pong.ts",
+        "src/core/layouts/levels/level27_mystic_labyrinth.ts",
+        "src/core/layouts/levels/level28_guardian_totem.ts",
+        "src/core/layouts/levels/level29_river_bridge.ts",
+        "src/core/layouts/levels/level30_earth_pillars.ts",
+        "src/core/layouts/levels/level31_three_crowns.ts",
+        "src/core/layouts/levels/level32_iron_chains.ts",
+        "src/core/layouts/levels/level33_mystic_swirl.ts",
+        "src/core/layouts/levels/level34_polar_star.ts",
+        "src/core/layouts/levels/level35_golden_dome.ts",
+        "src/core/layouts/levels/level36_four_winds.ts",
+        "src/core/layouts/levels/level37_olympic_stadium.ts",
+        "src/core/layouts/levels/level38_master_key.ts",
+        "src/core/layouts/levels/level39_pentagram_sanctuary.ts",
+        "src/core/layouts/levels/level40_lost_atlantis.ts",
+        "src/core/layouts/levels/level41_spiral_galaxy.ts",
+        "src/core/layouts/levels/level42_four_bridges.ts",
+        "src/core/layouts/levels/level43_ziggurat_temple.ts",
+        "src/core/layouts/levels/level44_four_hills.ts",
+        "src/core/layouts/levels/level45_red_dragon.ts",
+        "src/core/layouts/levels/level46_celestial_cloud.ts",
+        "src/core/layouts/levels/level47_imperial_cat.ts",
+        "src/core/layouts/levels/level48_soaring_eagle.ts",
+        "src/core/layouts/levels/level49_sacred_altar.ts",
+        "src/core/layouts/levels/level50_classic_shanghai.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 7,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level01_garden_tutorial.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level01_garden_tutorial.ts",
+      "relativePath": "src/core/layouts/levels/level01_garden_tutorial.ts",
+      "lines": 136,
+      "sizeBytes": 1675,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level02_beginner_step.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level02_beginner_step.ts",
+      "relativePath": "src/core/layouts/levels/level02_beginner_step.ts",
+      "lines": 176,
+      "sizeBytes": 2100,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level03_mini_zen.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level03_mini_zen.ts",
+      "relativePath": "src/core/layouts/levels/level03_mini_zen.ts",
+      "lines": 196,
+      "sizeBytes": 2295,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level04_heart_wisdom.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level04_heart_wisdom.ts",
+      "relativePath": "src/core/layouts/levels/level04_heart_wisdom.ts",
+      "lines": 256,
+      "sizeBytes": 2976,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level05_mini_traditional.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level05_mini_traditional.ts",
+      "relativePath": "src/core/layouts/levels/level05_mini_traditional.ts",
+      "lines": 256,
+      "sizeBytes": 2963,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level06_jade_butterfly.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level06_jade_butterfly.ts",
+      "relativePath": "src/core/layouts/levels/level06_jade_butterfly.ts",
+      "lines": 266,
+      "sizeBytes": 3086,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level07_royal_diamond.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level07_royal_diamond.ts",
+      "relativePath": "src/core/layouts/levels/level07_royal_diamond.ts",
+      "lines": 186,
+      "sizeBytes": 2221,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level08_forest_reindeer.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level08_forest_reindeer.ts",
+      "relativePath": "src/core/layouts/levels/level08_forest_reindeer.ts",
+      "lines": 256,
+      "sizeBytes": 2978,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level09_morning_star.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level09_morning_star.ts",
+      "relativePath": "src/core/layouts/levels/level09_morning_star.ts",
+      "lines": 236,
+      "sizeBytes": 2757,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level10_peace_wall.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level10_peace_wall.ts",
+      "relativePath": "src/core/layouts/levels/level10_peace_wall.ts",
+      "lines": 256,
+      "sizeBytes": 2967,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level11_radiant_smile.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level11_radiant_smile.ts",
+      "relativePath": "src/core/layouts/levels/level11_radiant_smile.ts",
+      "lines": 196,
+      "sizeBytes": 2312,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level12_lucky_clover.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level12_lucky_clover.ts",
+      "relativePath": "src/core/layouts/levels/level12_lucky_clover.ts",
+      "lines": 236,
+      "sizeBytes": 2745,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level13_short_4_winds.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level13_short_4_winds.ts",
+      "relativePath": "src/core/layouts/levels/level13_short_4_winds.ts",
+      "lines": 226,
+      "sizeBytes": 2654,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level14_fiesta_viva.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level14_fiesta_viva.ts",
+      "relativePath": "src/core/layouts/levels/level14_fiesta_viva.ts",
+      "lines": 256,
+      "sizeBytes": 2972,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level15_animal_cross.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level15_animal_cross.ts",
+      "relativePath": "src/core/layouts/levels/level15_animal_cross.ts",
+      "lines": 828,
+      "sizeBytes": 10798,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level16_stellar_orbit.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level16_stellar_orbit.ts",
+      "relativePath": "src/core/layouts/levels/level16_stellar_orbit.ts",
+      "lines": 236,
+      "sizeBytes": 2759,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level17_twin_waves.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level17_twin_waves.ts",
+      "relativePath": "src/core/layouts/levels/level17_twin_waves.ts",
+      "lines": 236,
+      "sizeBytes": 2747,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level18_panda_wisdom.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level18_panda_wisdom.ts",
+      "relativePath": "src/core/layouts/levels/level18_panda_wisdom.ts",
+      "lines": 306,
+      "sizeBytes": 3516,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level19_retro_joystick.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level19_retro_joystick.ts",
+      "relativePath": "src/core/layouts/levels/level19_retro_joystick.ts",
+      "lines": 276,
+      "sizeBytes": 3197,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level20_bamboo_valley.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level20_bamboo_valley.ts",
+      "relativePath": "src/core/layouts/levels/level20_bamboo_valley.ts",
+      "lines": 256,
+      "sizeBytes": 2964,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level21_stone_arena.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level21_stone_arena.ts",
+      "relativePath": "src/core/layouts/levels/level21_stone_arena.ts",
+      "lines": 1153,
+      "sizeBytes": 14955,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": true
+    },
+    "src/core/layouts/levels/level22_rising_sun.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level22_rising_sun.ts",
+      "relativePath": "src/core/layouts/levels/level22_rising_sun.ts",
+      "lines": 256,
+      "sizeBytes": 2966,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level23_ruby_heart.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level23_ruby_heart.ts",
+      "relativePath": "src/core/layouts/levels/level23_ruby_heart.ts",
+      "lines": 988,
+      "sizeBytes": 12853,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level24_wisdom_52.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level24_wisdom_52.ts",
+      "relativePath": "src/core/layouts/levels/level24_wisdom_52.ts",
+      "lines": 988,
+      "sizeBytes": 12830,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level25_saturn_rings.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level25_saturn_rings.ts",
+      "relativePath": "src/core/layouts/levels/level25_saturn_rings.ts",
+      "lines": 1408,
+      "sizeBytes": 18335,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": true
+    },
+    "src/core/layouts/levels/level26_celestial_pong.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level26_celestial_pong.ts",
+      "relativePath": "src/core/layouts/levels/level26_celestial_pong.ts",
+      "lines": 908,
+      "sizeBytes": 11842,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level27_mystic_labyrinth.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level27_mystic_labyrinth.ts",
+      "relativePath": "src/core/layouts/levels/level27_mystic_labyrinth.ts",
+      "lines": 236,
+      "sizeBytes": 2781,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level28_guardian_totem.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level28_guardian_totem.ts",
+      "relativePath": "src/core/layouts/levels/level28_guardian_totem.ts",
+      "lines": 16,
+      "sizeBytes": 451,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/layouts/pipeline/waveTemplates.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level29_river_bridge.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level29_river_bridge.ts",
+      "relativePath": "src/core/layouts/levels/level29_river_bridge.ts",
+      "lines": 908,
+      "sizeBytes": 11848,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level30_earth_pillars.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level30_earth_pillars.ts",
+      "relativePath": "src/core/layouts/levels/level30_earth_pillars.ts",
+      "lines": 1153,
+      "sizeBytes": 14957,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": true
+    },
+    "src/core/layouts/levels/level31_three_crowns.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level31_three_crowns.ts",
+      "relativePath": "src/core/layouts/levels/level31_three_crowns.ts",
+      "lines": 1153,
+      "sizeBytes": 14942,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": true
+    },
+    "src/core/layouts/levels/level32_iron_chains.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level32_iron_chains.ts",
+      "relativePath": "src/core/layouts/levels/level32_iron_chains.ts",
+      "lines": 236,
+      "sizeBytes": 2761,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level33_mystic_swirl.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level33_mystic_swirl.ts",
+      "relativePath": "src/core/layouts/levels/level33_mystic_swirl.ts",
+      "lines": 948,
+      "sizeBytes": 12357,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level34_polar_star.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level34_polar_star.ts",
+      "relativePath": "src/core/layouts/levels/level34_polar_star.ts",
+      "lines": 236,
+      "sizeBytes": 2760,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level35_golden_dome.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level35_golden_dome.ts",
+      "relativePath": "src/core/layouts/levels/level35_golden_dome.ts",
+      "lines": 256,
+      "sizeBytes": 2975,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level36_four_winds.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level36_four_winds.ts",
+      "relativePath": "src/core/layouts/levels/level36_four_winds.ts",
+      "lines": 748,
+      "sizeBytes": 9754,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level37_olympic_stadium.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level37_olympic_stadium.ts",
+      "relativePath": "src/core/layouts/levels/level37_olympic_stadium.ts",
+      "lines": 1408,
+      "sizeBytes": 18344,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": true
+    },
+    "src/core/layouts/levels/level38_master_key.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level38_master_key.ts",
+      "relativePath": "src/core/layouts/levels/level38_master_key.ts",
+      "lines": 16,
+      "sizeBytes": 429,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/layouts/pipeline/waveTemplates.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level39_pentagram_sanctuary.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level39_pentagram_sanctuary.ts",
+      "relativePath": "src/core/layouts/levels/level39_pentagram_sanctuary.ts",
+      "lines": 748,
+      "sizeBytes": 9779,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level40_lost_atlantis.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level40_lost_atlantis.ts",
+      "relativePath": "src/core/layouts/levels/level40_lost_atlantis.ts",
+      "lines": 1273,
+      "sizeBytes": 16537,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": true
+    },
+    "src/core/layouts/levels/level41_spiral_galaxy.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level41_spiral_galaxy.ts",
+      "relativePath": "src/core/layouts/levels/level41_spiral_galaxy.ts",
+      "lines": 1408,
+      "sizeBytes": 18343,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": true
+    },
+    "src/core/layouts/levels/level42_four_bridges.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level42_four_bridges.ts",
+      "relativePath": "src/core/layouts/levels/level42_four_bridges.ts",
+      "lines": 1893,
+      "sizeBytes": 24560,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": true
+    },
+    "src/core/layouts/levels/level43_ziggurat_temple.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level43_ziggurat_temple.ts",
+      "relativePath": "src/core/layouts/levels/level43_ziggurat_temple.ts",
+      "lines": 868,
+      "sizeBytes": 11337,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level44_four_hills.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level44_four_hills.ts",
+      "relativePath": "src/core/layouts/levels/level44_four_hills.ts",
+      "lines": 1473,
+      "sizeBytes": 19100,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": true
+    },
+    "src/core/layouts/levels/level45_red_dragon.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level45_red_dragon.ts",
+      "relativePath": "src/core/layouts/levels/level45_red_dragon.ts",
+      "lines": 908,
+      "sizeBytes": 11850,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level46_celestial_cloud.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level46_celestial_cloud.ts",
+      "relativePath": "src/core/layouts/levels/level46_celestial_cloud.ts",
+      "lines": 1408,
+      "sizeBytes": 18345,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": true
+    },
+    "src/core/layouts/levels/level47_imperial_cat.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level47_imperial_cat.ts",
+      "relativePath": "src/core/layouts/levels/level47_imperial_cat.ts",
+      "lines": 236,
+      "sizeBytes": 2764,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level48_soaring_eagle.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level48_soaring_eagle.ts",
+      "relativePath": "src/core/layouts/levels/level48_soaring_eagle.ts",
+      "lines": 748,
+      "sizeBytes": 9763,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/levels/level49_sacred_altar.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level49_sacred_altar.ts",
+      "relativePath": "src/core/layouts/levels/level49_sacred_altar.ts",
+      "lines": 1273,
+      "sizeBytes": 16529,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": true
+    },
+    "src/core/layouts/levels/level50_classic_shanghai.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level50_classic_shanghai.ts",
+      "relativePath": "src/core/layouts/levels/level50_classic_shanghai.ts",
+      "lines": 748,
+      "sizeBytes": 9781,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/pipeline/levelValidator.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\pipeline\\levelValidator.ts",
+      "relativePath": "src/core/layouts/pipeline/levelValidator.ts",
+      "lines": 82,
+      "sizeBytes": 2669,
+      "dependencies": [
+        "src/core/layouts/index.ts",
+        "src/core/BoardEngine.ts"
+      ],
+      "dependents": [],
+      "transitiveDependents": [],
+      "blastRadiusScore": 0,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/pipeline/waveTemplates.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\pipeline\\waveTemplates.ts",
+      "relativePath": "src/core/layouts/pipeline/waveTemplates.ts",
+      "lines": 34,
+      "sizeBytes": 1144,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/layouts/levels/level28_guardian_totem.ts",
+        "src/core/layouts/levels/level38_master_key.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/levels/level28_guardian_totem.ts",
+        "src/core/layouts/levels/level38_master_key.ts",
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 10,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/layouts/worlds.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\worlds.ts",
+      "relativePath": "src/core/layouts/worlds.ts",
+      "lines": 16,
+      "sizeBytes": 1157,
+      "dependencies": [],
+      "dependents": [
+        "src/core/layouts/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/layouts/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/levelRules.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\levelRules.ts",
+      "relativePath": "src/core/levelRules.ts",
+      "lines": 146,
+      "sizeBytes": 10708,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/BoardEngine.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/BoardEngine.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/render/BoardRenderer.ts"
+      ],
+      "blastRadiusScore": 6,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/LiveUpdateManager.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\LiveUpdateManager.ts",
+      "relativePath": "src/core/LiveUpdateManager.ts",
+      "lines": 172,
+      "sizeBytes": 5803,
+      "dependencies": [],
+      "dependents": [
+        "src/main.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/main.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 2,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/biomes.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\biomes.ts",
+      "relativePath": "src/core/nature/biomes.ts",
+      "lines": 25,
+      "sizeBytes": 1141,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/nature/tiles/index.ts"
+      ],
+      "dependents": [
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/nature/climates/ClimateEvaluator.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/render/BoardRenderer.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/climates/ClimateEvaluator.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\climates\\ClimateEvaluator.ts",
+      "relativePath": "src/core/nature/climates/ClimateEvaluator.ts",
+      "lines": 52,
+      "sizeBytes": 1971,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/nature/biomes.ts",
+        "src/core/nature/climates/effects/OceanSurge.ts",
+        "src/core/nature/climates/effects/HeatWave.ts",
+        "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/AtmosphericGales.ts"
+      ],
+      "dependents": [
+        "src/core/engine/SynergyDirector.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/render/BoardRenderer.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 7,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/climates/effects/ArcticBlizzard.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\climates\\effects\\ArcticBlizzard.ts",
+      "relativePath": "src/core/nature/climates/effects/ArcticBlizzard.ts",
+      "lines": 40,
+      "sizeBytes": 1471,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/deck.ts"
+      ],
+      "dependents": [
+        "src/core/nature/climates/ClimateEvaluator.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/render/BoardRenderer.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/climates/effects/AtmosphericGales.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\climates\\effects\\AtmosphericGales.ts",
+      "relativePath": "src/core/nature/climates/effects/AtmosphericGales.ts",
+      "lines": 86,
+      "sizeBytes": 2862,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/nature/specialTiles/SpecialTileRules.ts"
+      ],
+      "dependents": [
+        "src/core/nature/climates/ClimateEvaluator.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/render/BoardRenderer.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/climates/effects/HeatWave.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\climates\\effects\\HeatWave.ts",
+      "relativePath": "src/core/nature/climates/effects/HeatWave.ts",
+      "lines": 46,
+      "sizeBytes": 1621,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/nature/specialTiles/SpecialTileRules.ts"
+      ],
+      "dependents": [
+        "src/core/nature/climates/ClimateEvaluator.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/render/BoardRenderer.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/climates/effects/OceanSurge.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\climates\\effects\\OceanSurge.ts",
+      "relativePath": "src/core/nature/climates/effects/OceanSurge.ts",
+      "lines": 64,
+      "sizeBytes": 2134,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/deck.ts"
+      ],
+      "dependents": [
+        "src/core/nature/climates/ClimateEvaluator.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/render/BoardRenderer.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 8,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/LevelDeckCurator.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\LevelDeckCurator.ts",
+      "relativePath": "src/core/nature/LevelDeckCurator.ts",
+      "lines": 343,
+      "sizeBytes": 12919,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/nature/tiles/TileRegistry.ts"
+      ],
+      "dependents": [
+        "src/core/BoardEngine.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/BoardEngine.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/render/BoardRenderer.ts"
+      ],
+      "blastRadiusScore": 6,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/specialTiles/SpecialTileRules.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\specialTiles\\SpecialTileRules.ts",
+      "relativePath": "src/core/nature/specialTiles/SpecialTileRules.ts",
+      "lines": 104,
+      "sizeBytes": 3157,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/nature/climates/effects/AtmosphericGales.ts",
+        "src/core/nature/climates/effects/HeatWave.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/nature/climates/effects/AtmosphericGales.ts",
+        "src/core/nature/climates/effects/HeatWave.ts",
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/render/BoardRenderer.ts",
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 10,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/synergies/handlers/CascadeResolver.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\synergies\\handlers\\CascadeResolver.ts",
+      "relativePath": "src/core/nature/synergies/handlers/CascadeResolver.ts",
+      "lines": 103,
+      "sizeBytes": 3790,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/nature/synergies/handlers/ForagingSynergies.ts",
+        "src/core/nature/synergies/handlers/TheatricalSynergies.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/nature/synergies/handlers/ForagingSynergies.ts",
+        "src/core/nature/synergies/handlers/TheatricalSynergies.ts",
+        "src/core/nature/synergies/SynergyRegistry.ts",
+        "src/core/deck.ts",
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/OceanSurge.ts",
+        "src/render/BoardRenderer.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts",
+        "src/core/nature/climates/ClimateEvaluator.ts"
+      ],
+      "blastRadiusScore": 14,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/synergies/handlers/ForagingSynergies.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\synergies\\handlers\\ForagingSynergies.ts",
+      "relativePath": "src/core/nature/synergies/handlers/ForagingSynergies.ts",
+      "lines": 398,
+      "sizeBytes": 12966,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/nature/synergies/handlers/CascadeResolver.ts"
+      ],
+      "dependents": [
+        "src/core/nature/synergies/SynergyRegistry.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/nature/synergies/SynergyRegistry.ts",
+        "src/core/deck.ts",
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/OceanSurge.ts",
+        "src/render/BoardRenderer.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts",
+        "src/core/nature/climates/ClimateEvaluator.ts"
+      ],
+      "blastRadiusScore": 12,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/synergies/handlers/TheatricalSynergies.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\synergies\\handlers\\TheatricalSynergies.ts",
+      "relativePath": "src/core/nature/synergies/handlers/TheatricalSynergies.ts",
+      "lines": 215,
+      "sizeBytes": 7212,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/nature/synergies/handlers/CascadeResolver.ts"
+      ],
+      "dependents": [
+        "src/core/nature/synergies/SynergyRegistry.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/nature/synergies/SynergyRegistry.ts",
+        "src/core/deck.ts",
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/OceanSurge.ts",
+        "src/render/BoardRenderer.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts",
+        "src/core/nature/climates/ClimateEvaluator.ts"
+      ],
+      "blastRadiusScore": 12,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/synergies/SynergyFamilies.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\synergies\\SynergyFamilies.ts",
+      "relativePath": "src/core/nature/synergies/SynergyFamilies.ts",
+      "lines": 242,
+      "sizeBytes": 14815,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/nature/tiles/index.ts"
+      ],
+      "dependents": [
+        "src/render/TileRenderer.ts"
+      ],
+      "transitiveDependents": [
+        "src/render/TileRenderer.ts",
+        "src/render/BoardRenderer.ts",
+        "src/render/ViewportCamera.ts",
+        "src/ui/TrayAnimator.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 6,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/synergies/SynergyRegistry.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\synergies\\SynergyRegistry.ts",
+      "relativePath": "src/core/nature/synergies/SynergyRegistry.ts",
+      "lines": 137,
+      "sizeBytes": 5042,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/nature/tiles/TileRegistry.ts",
+        "src/core/nature/synergies/handlers/TheatricalSynergies.ts",
+        "src/core/nature/synergies/handlers/ForagingSynergies.ts"
+      ],
+      "dependents": [
+        "src/core/deck.ts",
+        "src/core/engine/SynergyDirector.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/deck.ts",
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/OceanSurge.ts",
+        "src/render/BoardRenderer.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts",
+        "src/core/nature/climates/ClimateEvaluator.ts"
+      ],
+      "blastRadiusScore": 11,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/tiles/index.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\tiles\\index.ts",
+      "relativePath": "src/core/nature/tiles/index.ts",
+      "lines": 4,
+      "sizeBytes": 92,
+      "dependencies": [
+        "src/core/nature/tiles/TileTypes.ts",
+        "src/core/nature/tiles/tileCatalog.ts",
+        "src/core/nature/tiles/TileRegistry.ts"
+      ],
+      "dependents": [
+        "src/core/deck.ts",
+        "src/core/nature/biomes.ts",
+        "src/core/nature/synergies/SynergyFamilies.ts",
+        "src/render/BoardRenderer.ts",
+        "src/render/TileRenderer.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/deck.ts",
+        "src/core/nature/biomes.ts",
+        "src/core/nature/synergies/SynergyFamilies.ts",
+        "src/render/BoardRenderer.ts",
+        "src/render/TileRenderer.ts",
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/OceanSurge.ts",
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts",
+        "src/render/ViewportCamera.ts",
+        "src/ui/TrayAnimator.ts",
+        "src/core/layouts/pipeline/levelValidator.ts"
+      ],
+      "blastRadiusScore": 16,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/tiles/tileCatalog.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\tiles\\tileCatalog.ts",
+      "relativePath": "src/core/nature/tiles/tileCatalog.ts",
+      "lines": 2230,
+      "sizeBytes": 65961,
+      "dependencies": [
+        "src/core/nature/tiles/TileTypes.ts"
+      ],
+      "dependents": [
+        "src/core/nature/tiles/index.ts",
+        "src/core/nature/tiles/TileRegistry.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/nature/tiles/index.ts",
+        "src/core/nature/tiles/TileRegistry.ts",
+        "src/core/deck.ts",
+        "src/core/nature/biomes.ts",
+        "src/core/nature/synergies/SynergyFamilies.ts",
+        "src/render/BoardRenderer.ts",
+        "src/render/TileRenderer.ts",
+        "src/core/nature/LevelDeckCurator.ts",
+        "src/core/nature/synergies/SynergyRegistry.ts",
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/OceanSurge.ts",
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts",
+        "src/render/ViewportCamera.ts",
+        "src/ui/TrayAnimator.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/core/layouts/pipeline/levelValidator.ts"
+      ],
+      "blastRadiusScore": 21,
+      "riskLevel": "ALTO",
+      "isOrphan": false,
+      "isMonolith": true
+    },
+    "src/core/nature/tiles/TileRegistry.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\tiles\\TileRegistry.ts",
+      "relativePath": "src/core/nature/tiles/TileRegistry.ts",
+      "lines": 85,
+      "sizeBytes": 2418,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/nature/tiles/TileTypes.ts",
+        "src/core/nature/tiles/tileCatalog.ts"
+      ],
+      "dependents": [
+        "src/core/nature/LevelDeckCurator.ts",
+        "src/core/nature/synergies/SynergyRegistry.ts",
+        "src/core/nature/tiles/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/nature/LevelDeckCurator.ts",
+        "src/core/nature/synergies/SynergyRegistry.ts",
+        "src/core/nature/tiles/index.ts",
+        "src/core/BoardEngine.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/core/deck.ts",
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/nature/biomes.ts",
+        "src/core/nature/synergies/SynergyFamilies.ts",
+        "src/render/BoardRenderer.ts",
+        "src/render/TileRenderer.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/OceanSurge.ts",
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/render/ViewportCamera.ts",
+        "src/ui/TrayAnimator.ts"
+      ],
+      "blastRadiusScore": 20,
+      "riskLevel": "ALTO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/tiles/TileTypes.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\tiles\\TileTypes.ts",
+      "relativePath": "src/core/nature/tiles/TileTypes.ts",
+      "lines": 43,
+      "sizeBytes": 1193,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/audio/SoundManager.ts",
+        "src/core/nature/tiles/index.ts",
+        "src/core/nature/tiles/tileCatalog.ts",
+        "src/core/nature/tiles/TileRegistry.ts"
+      ],
+      "transitiveDependents": [
+        "src/audio/SoundManager.ts",
+        "src/core/nature/tiles/index.ts",
+        "src/core/nature/tiles/tileCatalog.ts",
+        "src/core/nature/tiles/TileRegistry.ts",
+        "src/render/BoardRenderer.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/modals/SettingsModal.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/ui/UIManager.ts",
+        "src/core/deck.ts",
+        "src/core/nature/biomes.ts",
+        "src/core/nature/synergies/SynergyFamilies.ts",
+        "src/render/TileRenderer.ts",
+        "src/core/nature/LevelDeckCurator.ts",
+        "src/core/nature/synergies/SynergyRegistry.ts",
+        "src/main.ts",
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/OceanSurge.ts",
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/render/ViewportCamera.ts",
+        "src/ui/TrayAnimator.ts",
+        "src/core/layouts/pipeline/levelValidator.ts"
+      ],
+      "blastRadiusScore": 25,
+      "riskLevel": "ALTO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/types.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\types.ts",
+      "relativePath": "src/core/types.ts",
+      "lines": 336,
+      "sizeBytes": 6884,
+      "dependencies": [],
+      "dependents": [
+        "src/core/BoardEngine.ts",
+        "src/core/deck.ts",
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/engine/TileRuleEngine.ts",
+        "src/core/engine/TrayController.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/core/layouts/garden36.ts",
+        "src/core/layouts/index.ts",
+        "src/core/layouts/levels/level01_garden_tutorial.ts",
+        "src/core/layouts/levels/level02_beginner_step.ts",
+        "src/core/layouts/levels/level03_mini_zen.ts",
+        "src/core/layouts/levels/level04_heart_wisdom.ts",
+        "src/core/layouts/levels/level05_mini_traditional.ts",
+        "src/core/layouts/levels/level06_jade_butterfly.ts",
+        "src/core/layouts/levels/level07_royal_diamond.ts",
+        "src/core/layouts/levels/level08_forest_reindeer.ts",
+        "src/core/layouts/levels/level09_morning_star.ts",
+        "src/core/layouts/levels/level10_peace_wall.ts",
+        "src/core/layouts/levels/level11_radiant_smile.ts",
+        "src/core/layouts/levels/level12_lucky_clover.ts",
+        "src/core/layouts/levels/level13_short_4_winds.ts",
+        "src/core/layouts/levels/level14_fiesta_viva.ts",
+        "src/core/layouts/levels/level15_animal_cross.ts",
+        "src/core/layouts/levels/level16_stellar_orbit.ts",
+        "src/core/layouts/levels/level17_twin_waves.ts",
+        "src/core/layouts/levels/level18_panda_wisdom.ts",
+        "src/core/layouts/levels/level19_retro_joystick.ts",
+        "src/core/layouts/levels/level20_bamboo_valley.ts",
+        "src/core/layouts/levels/level21_stone_arena.ts",
+        "src/core/layouts/levels/level22_rising_sun.ts",
+        "src/core/layouts/levels/level23_ruby_heart.ts",
+        "src/core/layouts/levels/level24_wisdom_52.ts",
+        "src/core/layouts/levels/level25_saturn_rings.ts",
+        "src/core/layouts/levels/level26_celestial_pong.ts",
+        "src/core/layouts/levels/level27_mystic_labyrinth.ts",
+        "src/core/layouts/levels/level28_guardian_totem.ts",
+        "src/core/layouts/levels/level29_river_bridge.ts",
+        "src/core/layouts/levels/level30_earth_pillars.ts",
+        "src/core/layouts/levels/level31_three_crowns.ts",
+        "src/core/layouts/levels/level32_iron_chains.ts",
+        "src/core/layouts/levels/level33_mystic_swirl.ts",
+        "src/core/layouts/levels/level34_polar_star.ts",
+        "src/core/layouts/levels/level35_golden_dome.ts",
+        "src/core/layouts/levels/level36_four_winds.ts",
+        "src/core/layouts/levels/level37_olympic_stadium.ts",
+        "src/core/layouts/levels/level38_master_key.ts",
+        "src/core/layouts/levels/level39_pentagram_sanctuary.ts",
+        "src/core/layouts/levels/level40_lost_atlantis.ts",
+        "src/core/layouts/levels/level41_spiral_galaxy.ts",
+        "src/core/layouts/levels/level42_four_bridges.ts",
+        "src/core/layouts/levels/level43_ziggurat_temple.ts",
+        "src/core/layouts/levels/level44_four_hills.ts",
+        "src/core/layouts/levels/level45_red_dragon.ts",
+        "src/core/layouts/levels/level46_celestial_cloud.ts",
+        "src/core/layouts/levels/level47_imperial_cat.ts",
+        "src/core/layouts/levels/level48_soaring_eagle.ts",
+        "src/core/layouts/levels/level49_sacred_altar.ts",
+        "src/core/layouts/levels/level50_classic_shanghai.ts",
+        "src/core/layouts/pipeline/waveTemplates.ts",
+        "src/core/levelRules.ts",
+        "src/core/nature/biomes.ts",
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/AtmosphericGales.ts",
+        "src/core/nature/climates/effects/HeatWave.ts",
+        "src/core/nature/climates/effects/OceanSurge.ts",
+        "src/core/nature/LevelDeckCurator.ts",
+        "src/core/nature/specialTiles/SpecialTileRules.ts",
+        "src/core/nature/synergies/handlers/CascadeResolver.ts",
+        "src/core/nature/synergies/handlers/ForagingSynergies.ts",
+        "src/core/nature/synergies/handlers/TheatricalSynergies.ts",
+        "src/core/nature/synergies/SynergyFamilies.ts",
+        "src/core/nature/synergies/SynergyRegistry.ts",
+        "src/core/nature/tiles/TileRegistry.ts",
+        "src/core/nature/tiles/TileTypes.ts",
+        "src/render/BoardRenderer.ts",
+        "src/render/FXParticleSystem.ts",
+        "src/render/SynergyAnimator.ts",
+        "src/render/TileRenderer.ts",
+        "src/render/ViewportCamera.ts",
+        "src/storage/StorageManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/ui/TrayAnimator.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/BoardEngine.ts",
+        "src/core/deck.ts",
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/engine/TileRuleEngine.ts",
+        "src/core/engine/TrayController.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/core/layouts/garden36.ts",
+        "src/core/layouts/index.ts",
+        "src/core/layouts/levels/level01_garden_tutorial.ts",
+        "src/core/layouts/levels/level02_beginner_step.ts",
+        "src/core/layouts/levels/level03_mini_zen.ts",
+        "src/core/layouts/levels/level04_heart_wisdom.ts",
+        "src/core/layouts/levels/level05_mini_traditional.ts",
+        "src/core/layouts/levels/level06_jade_butterfly.ts",
+        "src/core/layouts/levels/level07_royal_diamond.ts",
+        "src/core/layouts/levels/level08_forest_reindeer.ts",
+        "src/core/layouts/levels/level09_morning_star.ts",
+        "src/core/layouts/levels/level10_peace_wall.ts",
+        "src/core/layouts/levels/level11_radiant_smile.ts",
+        "src/core/layouts/levels/level12_lucky_clover.ts",
+        "src/core/layouts/levels/level13_short_4_winds.ts",
+        "src/core/layouts/levels/level14_fiesta_viva.ts",
+        "src/core/layouts/levels/level15_animal_cross.ts",
+        "src/core/layouts/levels/level16_stellar_orbit.ts",
+        "src/core/layouts/levels/level17_twin_waves.ts",
+        "src/core/layouts/levels/level18_panda_wisdom.ts",
+        "src/core/layouts/levels/level19_retro_joystick.ts",
+        "src/core/layouts/levels/level20_bamboo_valley.ts",
+        "src/core/layouts/levels/level21_stone_arena.ts",
+        "src/core/layouts/levels/level22_rising_sun.ts",
+        "src/core/layouts/levels/level23_ruby_heart.ts",
+        "src/core/layouts/levels/level24_wisdom_52.ts",
+        "src/core/layouts/levels/level25_saturn_rings.ts",
+        "src/core/layouts/levels/level26_celestial_pong.ts",
+        "src/core/layouts/levels/level27_mystic_labyrinth.ts",
+        "src/core/layouts/levels/level28_guardian_totem.ts",
+        "src/core/layouts/levels/level29_river_bridge.ts",
+        "src/core/layouts/levels/level30_earth_pillars.ts",
+        "src/core/layouts/levels/level31_three_crowns.ts",
+        "src/core/layouts/levels/level32_iron_chains.ts",
+        "src/core/layouts/levels/level33_mystic_swirl.ts",
+        "src/core/layouts/levels/level34_polar_star.ts",
+        "src/core/layouts/levels/level35_golden_dome.ts",
+        "src/core/layouts/levels/level36_four_winds.ts",
+        "src/core/layouts/levels/level37_olympic_stadium.ts",
+        "src/core/layouts/levels/level38_master_key.ts",
+        "src/core/layouts/levels/level39_pentagram_sanctuary.ts",
+        "src/core/layouts/levels/level40_lost_atlantis.ts",
+        "src/core/layouts/levels/level41_spiral_galaxy.ts",
+        "src/core/layouts/levels/level42_four_bridges.ts",
+        "src/core/layouts/levels/level43_ziggurat_temple.ts",
+        "src/core/layouts/levels/level44_four_hills.ts",
+        "src/core/layouts/levels/level45_red_dragon.ts",
+        "src/core/layouts/levels/level46_celestial_cloud.ts",
+        "src/core/layouts/levels/level47_imperial_cat.ts",
+        "src/core/layouts/levels/level48_soaring_eagle.ts",
+        "src/core/layouts/levels/level49_sacred_altar.ts",
+        "src/core/layouts/levels/level50_classic_shanghai.ts",
+        "src/core/layouts/pipeline/waveTemplates.ts",
+        "src/core/levelRules.ts",
+        "src/core/nature/biomes.ts",
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/AtmosphericGales.ts",
+        "src/core/nature/climates/effects/HeatWave.ts",
+        "src/core/nature/climates/effects/OceanSurge.ts",
+        "src/core/nature/LevelDeckCurator.ts",
+        "src/core/nature/specialTiles/SpecialTileRules.ts",
+        "src/core/nature/synergies/handlers/CascadeResolver.ts",
+        "src/core/nature/synergies/handlers/ForagingSynergies.ts",
+        "src/core/nature/synergies/handlers/TheatricalSynergies.ts",
+        "src/core/nature/synergies/SynergyFamilies.ts",
+        "src/core/nature/synergies/SynergyRegistry.ts",
+        "src/core/nature/tiles/TileRegistry.ts",
+        "src/core/nature/tiles/TileTypes.ts",
+        "src/render/BoardRenderer.ts",
+        "src/render/FXParticleSystem.ts",
+        "src/render/SynergyAnimator.ts",
+        "src/render/TileRenderer.ts",
+        "src/render/ViewportCamera.ts",
+        "src/storage/StorageManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/ui/TrayAnimator.ts",
+        "src/ui/UIManager.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/core/nature/tiles/index.ts",
+        "src/audio/SoundManager.ts",
+        "src/core/nature/tiles/tileCatalog.ts",
+        "src/ui/modals/SettingsModal.ts"
+      ],
+      "blastRadiusScore": 94,
+      "riskLevel": "CRÍTICO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/index.css": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\index.css",
+      "relativePath": "src/index.css",
+      "lines": 3930,
+      "sizeBytes": 90244,
+      "dependencies": [],
+      "dependents": [],
+      "transitiveDependents": [],
+      "blastRadiusScore": 0,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": true
+    },
+    "src/main.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\main.ts",
+      "relativePath": "src/main.ts",
+      "lines": 84,
+      "sizeBytes": 2878,
+      "dependencies": [
+        "src/core/BoardEngine.ts",
+        "src/render/BoardRenderer.ts",
+        "src/ui/UIManager.ts",
+        "src/core/layouts/garden36.ts",
+        "src/core/LiveUpdateManager.ts"
+      ],
+      "dependents": [],
+      "transitiveDependents": [],
+      "blastRadiusScore": 0,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/render/BoardAnimator.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\render\\BoardAnimator.ts",
+      "relativePath": "src/render/BoardAnimator.ts",
+      "lines": 54,
+      "sizeBytes": 1635,
+      "dependencies": [],
+      "dependents": [
+        "src/render/BoardRenderer.ts"
+      ],
+      "transitiveDependents": [
+        "src/render/BoardRenderer.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 3,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/render/BoardRenderer.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\render\\BoardRenderer.ts",
+      "relativePath": "src/render/BoardRenderer.ts",
+      "lines": 1560,
+      "sizeBytes": 54974,
+      "dependencies": [
+        "src/core/BoardEngine.ts",
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/types.ts",
+        "src/core/deck.ts",
+        "src/core/nature/tiles/index.ts",
+        "src/render/TileRenderer.ts",
+        "src/render/SynergyAnimator.ts",
+        "src/render/ViewportCamera.ts",
+        "src/render/BoardAnimator.ts",
+        "src/render/FXParticleSystem.ts",
+        "src/audio/SoundManager.ts",
+        "src/audio/HapticManager.ts"
+      ],
+      "dependents": [
+        "src/main.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/main.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 2,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": true
+    },
+    "src/render/FXParticleSystem.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\render\\FXParticleSystem.ts",
+      "relativePath": "src/render/FXParticleSystem.ts",
+      "lines": 425,
+      "sizeBytes": 13079,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/render/BoardRenderer.ts"
+      ],
+      "transitiveDependents": [
+        "src/render/BoardRenderer.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 3,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/render/SynergyAnimator.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\render\\SynergyAnimator.ts",
+      "relativePath": "src/render/SynergyAnimator.ts",
+      "lines": 932,
+      "sizeBytes": 26096,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/render/BoardRenderer.ts"
+      ],
+      "transitiveDependents": [
+        "src/render/BoardRenderer.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 3,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/render/TileRenderer.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\render\\TileRenderer.ts",
+      "relativePath": "src/render/TileRenderer.ts",
+      "lines": 679,
+      "sizeBytes": 22819,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/nature/synergies/SynergyFamilies.ts",
+        "src/core/nature/tiles/index.ts"
+      ],
+      "dependents": [
+        "src/render/BoardRenderer.ts",
+        "src/render/ViewportCamera.ts",
+        "src/ui/TrayAnimator.ts"
+      ],
+      "transitiveDependents": [
+        "src/render/BoardRenderer.ts",
+        "src/render/ViewportCamera.ts",
+        "src/ui/TrayAnimator.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 5,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/render/ViewportCamera.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\render\\ViewportCamera.ts",
+      "relativePath": "src/render/ViewportCamera.ts",
+      "lines": 131,
+      "sizeBytes": 4773,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/render/TileRenderer.ts"
+      ],
+      "dependents": [
+        "src/render/BoardRenderer.ts"
+      ],
+      "transitiveDependents": [
+        "src/render/BoardRenderer.ts",
+        "src/main.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "blastRadiusScore": 3,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/storage/StorageManager.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\storage\\StorageManager.ts",
+      "relativePath": "src/storage/StorageManager.ts",
+      "lines": 226,
+      "sizeBytes": 7743,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/modals/SettingsModal.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/ui/HUDController.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/modals/SettingsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 7,
+      "riskLevel": "MÉDIO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/ui/HUDController.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\HUDController.ts",
+      "relativePath": "src/ui/HUDController.ts",
+      "lines": 145,
+      "sizeBytes": 5517,
+      "dependencies": [
+        "src/core/layouts/index.ts",
+        "src/storage/StorageManager.ts"
+      ],
+      "dependents": [
+        "src/ui/NatureFeedbackController.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/ui/NatureFeedbackController.ts",
+        "src/ui/UIManager.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 3,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/ui/modals/GameEndModals.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\modals\\GameEndModals.ts",
+      "relativePath": "src/ui/modals/GameEndModals.ts",
+      "lines": 223,
+      "sizeBytes": 8154,
+      "dependencies": [
+        "src/core/layouts/index.ts",
+        "src/storage/StorageManager.ts"
+      ],
+      "dependents": [
+        "src/ui/UIManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/ui/UIManager.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 2,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/ui/modals/LevelsModal.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\modals\\LevelsModal.ts",
+      "relativePath": "src/ui/modals/LevelsModal.ts",
+      "lines": 369,
+      "sizeBytes": 13735,
+      "dependencies": [
+        "src/core/layouts/index.ts",
+        "src/storage/StorageManager.ts",
+        "src/audio/SoundManager.ts",
+        "src/audio/HapticManager.ts",
+        "src/core/levelRules.ts",
+        "src/core/nature/LevelDeckCurator.ts"
+      ],
+      "dependents": [
+        "src/ui/UIManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/ui/UIManager.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 2,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/ui/modals/SettingsModal.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\modals\\SettingsModal.ts",
+      "relativePath": "src/ui/modals/SettingsModal.ts",
+      "lines": 97,
+      "sizeBytes": 4102,
+      "dependencies": [
+        "src/storage/StorageManager.ts",
+        "src/audio/SoundManager.ts",
+        "src/audio/HapticManager.ts"
+      ],
+      "dependents": [
+        "src/ui/UIManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/ui/UIManager.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 2,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/ui/NatureFeedbackController.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\NatureFeedbackController.ts",
+      "relativePath": "src/ui/NatureFeedbackController.ts",
+      "lines": 209,
+      "sizeBytes": 9764,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/audio/SoundManager.ts",
+        "src/audio/HapticManager.ts",
+        "src/ui/HUDController.ts"
+      ],
+      "dependents": [
+        "src/ui/UIManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/ui/UIManager.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 2,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/ui/TrayAnimator.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\TrayAnimator.ts",
+      "relativePath": "src/ui/TrayAnimator.ts",
+      "lines": 192,
+      "sizeBytes": 5734,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/render/TileRenderer.ts"
+      ],
+      "dependents": [
+        "src/ui/UIManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/ui/UIManager.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 2,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/ui/UIManager.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\UIManager.ts",
+      "relativePath": "src/ui/UIManager.ts",
+      "lines": 1229,
+      "sizeBytes": 46490,
+      "dependencies": [
+        "src/core/BoardEngine.ts",
+        "src/render/BoardRenderer.ts",
+        "src/core/layouts/index.ts",
+        "src/storage/StorageManager.ts",
+        "src/audio/SoundManager.ts",
+        "src/audio/HapticManager.ts",
+        "src/core/types.ts",
+        "src/core/LiveUpdateManager.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/modals/SettingsModal.ts",
+        "src/ui/modals/GameEndModals.ts",
+        "src/ui/HUDController.ts",
+        "src/ui/TrayAnimator.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/core/levelRules.ts",
+        "src/core/nature/LevelDeckCurator.ts"
+      ],
+      "dependents": [
+        "src/main.ts"
+      ],
+      "transitiveDependents": [
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 1,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": true
+    }
+  }
+}

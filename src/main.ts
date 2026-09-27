@@ -22,11 +22,11 @@ window.addEventListener('DOMContentLoaded', () => {
   let uiManager: UIManager;
 
   const renderer = new BoardRenderer(canvas, engine, {
-    onBlockedTileClick: (_tile, isBlockedFromAbove) => {
+    onBlockedTileClick: (tile, isBlockedFromAbove) => {
       if (isBlockedFromAbove) {
-        uiManager?.showBlockedTip('Remova a peça superior para liberar esta!');
+        uiManager?.showBlockedTip(`Peça coberta! Remova a peça superior para liberar ${tile.label}.`);
       } else {
-        uiManager?.showBlockedTip('Remova uma peça lateral para liberar esta!');
+        uiManager?.showBlockedTip(`Presa nas laterais! Libere o lado esquerdo ou direito para mover ${tile.label}.`);
       }
     },
     onMatchSuccess: (pair) => {
@@ -48,6 +48,9 @@ window.addEventListener('DOMContentLoaded', () => {
     onTileLongPress: (tile) => {
       uiManager?.handleTileLongPress(tile);
     },
+    onCosmicRescue: (rescuedTiles) => {
+      uiManager?.handleCosmicRescue(rescuedTiles);
+    },
     onStateChanged: () => {
       uiManager?.updateHUD();
     },
@@ -64,19 +67,19 @@ window.addEventListener('DOMContentLoaded', () => {
   uiManager = new UIManager(engine, renderer);
 
   // 4. Screen Wake Lock para manter tela acesa durante o jogo (Android)
-  if ('wakeLock' in navigator) {
-    (navigator as unknown as { wakeLock: { request: (t: string) => Promise<unknown> } })
-      .wakeLock.request('screen')
-      .catch(() => {});
+  if ('wakeLock' in navigator && navigator.wakeLock) {
+    navigator.wakeLock.request('screen').catch(() => {});
   }
 
-  // 5. Verificação de Live Update com tela de download e solicitação de reinício
-  LiveUpdateManager.checkForUpdates({
-    onDownloading: (message) => {
-      uiManager?.showUpdateDownloading(message);
-    },
-    onReady: (message) => {
-      uiManager?.showUpdateReady(message);
-    },
-  });
+  // 5. Verificação de Live Update com tela de download e solicitação de reinício (deferida para fluidez imediata)
+  setTimeout(() => {
+    LiveUpdateManager.checkForUpdates({
+      onDownloading: (message) => {
+        uiManager?.showUpdateDownloading(message);
+      },
+      onReady: (message) => {
+        uiManager?.showUpdateReady(message);
+      },
+    });
+  }, 100);
 });

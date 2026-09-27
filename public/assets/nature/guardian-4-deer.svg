@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" width="140" height="140">
+  <defs>
+    <radialGradient id="g4-bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#2c1a4d" />
+      <stop offset="70%" stop-color="#140b26" />
+      <stop offset="100%" stop-color="#080410" />
+    </radialGradient>
+    <linearGradient id="g-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffeaa7" />
+      <stop offset="50%" stop-color="#d4af37" />
+      <stop offset="100%" stop-color="#9a7b1c" />
+    </linearGradient>
+    <linearGradient id="deer-fur" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#b5838d" />
+      <stop offset="100%" stop-color="#6d597a" />
+    </linearGradient>
+  </defs>
+
+  <!-- Medalhão Base -->
+  <circle cx="70" cy="70" r="66" fill="url(#g4-bg)" stroke="url(#g-gold)" stroke-width="4" />
+  <circle cx="70" cy="70" r="59" fill="none" stroke="url(#g-gold)" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.7" />
+
+  <!-- Animal: Cervo Sagrado da Floresta -->
+  <g transform="translate(18, 8) scale(0.74)">
+    <!-- Galhadas Luminosas Douradas -->
+    <!-- Galhada Esquerda -->
+    <path d="M 58,45 C 50,30 35,25 22,20 M 42,27 C 38,15 45,8 50,6 M 34,23 C 28,12 20,10 14,14" 
+          stroke="url(#g-gold)" stroke-width="3" stroke-linecap="round" fill="none" />
+    <!-- Galhada Direita -->
+    <path d="M 82,45 C 90,30 105,25 118,20 M 98,27 C 102,15 95,8 90,6 M 106,23 C 112,12 120,10 126,14" 
+          stroke="url(#g-gold)" stroke-width="3" stroke-linecap="round" fill="none" />
+
+    <!-- Orelhas do Cervo -->
+    <ellipse cx="44" cy="52" rx="14" ry="7" fill="url(#deer-fur)" transform="rotate(-30 44 52)" />
+    <ellipse cx="44" cy="52" rx="9" ry="4" fill="#ffd166" opacity="0.5" transform="rotate(-30 44 52)" />
+
+    <ellipse cx="96" cy="52" rx="14" ry="7" fill="url(#deer-fur)" transform="rotate(30 96 52)" />
+    <ellipse cx="96" cy="52" rx="9" ry="4" fill="#ffd166" opacity="0.5" transform="rotate(30 96 52)" />
+
+    <!-- Cabeça Graciosa -->
+    <path d="M 52,48 C 52,40 88,40 88,48 C 88,72 80,106 70,110 C 60,106 52,72 52,48 Z" 
+          fill="url(#deer-fur)" stroke="#140b26" stroke-width="2" />
+
+    <!-- Mancha do Focinho e Queixo -->
+    <ellipse cx="70" cy="98" rx="12" ry="8" fill="#fdfbf7" />
+    <circle cx="70" cy="95" r="3.5" fill="#140b26" />
+    <path d="M 70,95 L 70,102" stroke="#140b26" stroke-width="1.8" />
+
+    <!-- Olhos Calmos do Cervo -->
+    <ellipse cx="58" cy="65" rx="5" ry="4" fill="#140b26" />
+    <circle cx="57" cy="63.5" r="1.5" fill="#fff" />
+    <ellipse cx="82" cy="65" rx="5" ry="4" fill="#140b26" />
+    <circle cx="81" cy="63.5" r="1.5" fill="#fff" />
+
+    <!-- Pontinhos místicos na fronte -->
+    <circle cx="70" cy="52" r="2.2" fill="#ffd166" />
+    <circle cx="65" cy="59" r="1.5" fill="#ffd166" opacity="0.8" />
+    <circle cx="75" cy="59" r="1.5" fill="#ffd166" opacity="0.8" />
+  </g>
+
+  <!-- Ornato Floral Base -->
+  <path d="M 50,118 C 62,112 78,112 90,118 C 82,126 58,126 50,118 Z" fill="url(#g-gold)" />
+</svg>

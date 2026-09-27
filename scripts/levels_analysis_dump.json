@@ -1,0 +1,1909 @@
+[
+  {
+    "id": 1,
+    "name": "Jardim Tutorial",
+    "worldId": 1,
+    "worldName": "Mundo 1",
+    "difficulty": "Fácil",
+    "totalSlots": 24,
+    "waveCount": 1,
+    "waveDistribution": [
+      24
+    ],
+    "zMax": 1,
+    "zDistribution": {
+      "0": 20,
+      "1": 4
+    },
+    "gridBounds": {
+      "minX": 2,
+      "maxX": 8,
+      "minY": 2,
+      "maxY": 10,
+      "width": 8,
+      "height": 10
+    },
+    "initialFreeSlots": 14,
+    "initialBlockedSlots": 10,
+    "freeRatio": 58,
+    "biome": "garden",
+    "allowedSpecials": [],
+    "maxSpecialPairs": 0,
+    "allowChameleon": false,
+    "chameleonChance": 0
+  },
+  {
+    "id": 2,
+    "name": "Primeiros Passos",
+    "worldId": 1,
+    "worldName": "Mundo 1",
+    "difficulty": "Fácil",
+    "totalSlots": 32,
+    "waveCount": 1,
+    "waveDistribution": [
+      32
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 26,
+      "1": 5,
+      "2": 1
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 12,
+      "width": 12,
+      "height": 14
+    },
+    "initialFreeSlots": 14,
+    "initialBlockedSlots": 18,
+    "freeRatio": 44,
+    "biome": "garden",
+    "allowedSpecials": [],
+    "maxSpecialPairs": 0,
+    "allowChameleon": false,
+    "chameleonChance": 0
+  },
+  {
+    "id": 3,
+    "name": "Jardim Zen",
+    "worldId": 1,
+    "worldName": "Mundo 1",
+    "difficulty": "Fácil",
+    "totalSlots": 36,
+    "waveCount": 1,
+    "waveDistribution": [
+      36
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 24,
+      "1": 10,
+      "2": 2
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 8,
+      "minY": 0,
+      "maxY": 14,
+      "width": 10,
+      "height": 16
+    },
+    "initialFreeSlots": 21,
+    "initialBlockedSlots": 15,
+    "freeRatio": 58,
+    "biome": "garden",
+    "allowedSpecials": [],
+    "maxSpecialPairs": 0,
+    "allowChameleon": false,
+    "chameleonChance": 0
+  },
+  {
+    "id": 4,
+    "name": "Coração Sagrado",
+    "worldId": 1,
+    "worldName": "Mundo 1",
+    "difficulty": "Fácil",
+    "totalSlots": 48,
+    "waveCount": 1,
+    "waveDistribution": [
+      48
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 32,
+      "1": 12,
+      "2": 4
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 28,
+    "initialBlockedSlots": 20,
+    "freeRatio": 58,
+    "biome": "garden",
+    "allowedSpecials": [],
+    "maxSpecialPairs": 0,
+    "allowChameleon": false,
+    "chameleonChance": 0
+  },
+  {
+    "id": 5,
+    "name": "Mini Clássico",
+    "worldId": 1,
+    "worldName": "Mundo 1",
+    "difficulty": "Fácil",
+    "totalSlots": 48,
+    "waveCount": 1,
+    "waveDistribution": [
+      48
+    ],
+    "zMax": 3,
+    "zDistribution": {
+      "0": 28,
+      "1": 14,
+      "2": 4,
+      "3": 2
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 24,
+    "initialBlockedSlots": 24,
+    "freeRatio": 50,
+    "biome": "garden",
+    "allowedSpecials": [],
+    "maxSpecialPairs": 0,
+    "allowChameleon": false,
+    "chameleonChance": 0
+  },
+  {
+    "id": 6,
+    "name": "Borboleta de Jade",
+    "worldId": 1,
+    "worldName": "Mundo 1",
+    "difficulty": "Fácil",
+    "totalSlots": 50,
+    "waveCount": 1,
+    "waveDistribution": [
+      50
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 34,
+      "1": 12,
+      "2": 4
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 26,
+    "initialBlockedSlots": 24,
+    "freeRatio": 52,
+    "biome": "garden",
+    "allowedSpecials": [],
+    "maxSpecialPairs": 0,
+    "allowChameleon": true,
+    "chameleonChance": 1
+  },
+  {
+    "id": 7,
+    "name": "Diamante Imperial",
+    "worldId": 1,
+    "worldName": "Mundo 1",
+    "difficulty": "Fácil",
+    "totalSlots": 34,
+    "waveCount": 1,
+    "waveDistribution": [
+      34
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 24,
+      "1": 9,
+      "2": 1
+    },
+    "gridBounds": {
+      "minX": 6,
+      "maxX": 16,
+      "minY": 0,
+      "maxY": 10,
+      "width": 12,
+      "height": 12
+    },
+    "initialFreeSlots": 18,
+    "initialBlockedSlots": 16,
+    "freeRatio": 53,
+    "biome": "garden",
+    "allowedSpecials": [],
+    "maxSpecialPairs": 0,
+    "allowChameleon": true,
+    "chameleonChance": 0.5
+  },
+  {
+    "id": 8,
+    "name": "Rena da Floresta",
+    "worldId": 1,
+    "worldName": "Mundo 1",
+    "difficulty": "Fácil",
+    "totalSlots": 48,
+    "waveCount": 1,
+    "waveDistribution": [
+      48
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 32,
+      "1": 12,
+      "2": 4
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 28,
+    "initialBlockedSlots": 20,
+    "freeRatio": 58,
+    "biome": "forest",
+    "allowedSpecials": [
+      "chest"
+    ],
+    "maxSpecialPairs": 1,
+    "allowChameleon": false,
+    "chameleonChance": 0
+  },
+  {
+    "id": 9,
+    "name": "Estrela Guia",
+    "worldId": 1,
+    "worldName": "Mundo 1",
+    "difficulty": "Fácil",
+    "totalSlots": 44,
+    "waveCount": 1,
+    "waveDistribution": [
+      44
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 28,
+      "1": 12,
+      "2": 4
+    },
+    "gridBounds": {
+      "minX": 2,
+      "maxX": 8,
+      "minY": 0,
+      "maxY": 14,
+      "width": 8,
+      "height": 16
+    },
+    "initialFreeSlots": 16,
+    "initialBlockedSlots": 28,
+    "freeRatio": 36,
+    "biome": "forest",
+    "allowedSpecials": [
+      "chest"
+    ],
+    "maxSpecialPairs": 1,
+    "allowChameleon": true,
+    "chameleonChance": 0.5
+  },
+  {
+    "id": 10,
+    "name": "Muralha da Paz",
+    "worldId": 1,
+    "worldName": "Mundo 1",
+    "difficulty": "Fácil",
+    "totalSlots": 48,
+    "waveCount": 1,
+    "waveDistribution": [
+      48
+    ],
+    "zMax": 3,
+    "zDistribution": {
+      "0": 28,
+      "1": 14,
+      "2": 4,
+      "3": 2
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 24,
+    "initialBlockedSlots": 24,
+    "freeRatio": 50,
+    "biome": "forest",
+    "allowedSpecials": [
+      "chest"
+    ],
+    "maxSpecialPairs": 1,
+    "allowChameleon": true,
+    "chameleonChance": 0.6
+  },
+  {
+    "id": 11,
+    "name": "Sorriso Radiante",
+    "worldId": 2,
+    "worldName": "Mundo 2",
+    "difficulty": "Fácil",
+    "totalSlots": 36,
+    "waveCount": 1,
+    "waveDistribution": [
+      36
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 24,
+      "1": 10,
+      "2": 2
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 8,
+      "minY": 0,
+      "maxY": 14,
+      "width": 10,
+      "height": 16
+    },
+    "initialFreeSlots": 21,
+    "initialBlockedSlots": 15,
+    "freeRatio": 58,
+    "biome": "arctic",
+    "allowedSpecials": [
+      "ice"
+    ],
+    "maxSpecialPairs": 1,
+    "allowChameleon": false,
+    "chameleonChance": 0
+  },
+  {
+    "id": 12,
+    "name": "Trevo da Sorte",
+    "worldId": 2,
+    "worldName": "Mundo 2",
+    "difficulty": "Médio",
+    "totalSlots": 44,
+    "waveCount": 1,
+    "waveDistribution": [
+      44
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 28,
+      "1": 12,
+      "2": 4
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 28,
+    "initialBlockedSlots": 16,
+    "freeRatio": 64,
+    "biome": "garden",
+    "allowedSpecials": [
+      "ice",
+      "chest"
+    ],
+    "maxSpecialPairs": 1,
+    "allowChameleon": true,
+    "chameleonChance": 0.4
+  },
+  {
+    "id": 13,
+    "name": "Brisa Oriental",
+    "worldId": 2,
+    "worldName": "Mundo 2",
+    "difficulty": "Médio",
+    "totalSlots": 42,
+    "waveCount": 1,
+    "waveDistribution": [
+      42
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 32,
+      "1": 8,
+      "2": 2
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 21,
+    "initialBlockedSlots": 21,
+    "freeRatio": 50,
+    "biome": "water",
+    "allowedSpecials": [
+      "ice"
+    ],
+    "maxSpecialPairs": 1,
+    "allowChameleon": false,
+    "chameleonChance": 0
+  },
+  {
+    "id": 14,
+    "name": "Celebração Festiva",
+    "worldId": 2,
+    "worldName": "Mundo 2",
+    "difficulty": "Médio",
+    "totalSlots": 48,
+    "waveCount": 1,
+    "waveDistribution": [
+      48
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 34,
+      "1": 12,
+      "2": 2
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 16,
+      "width": 12,
+      "height": 18
+    },
+    "initialFreeSlots": 26,
+    "initialBlockedSlots": 22,
+    "freeRatio": 54,
+    "biome": "forest",
+    "allowedSpecials": [
+      "vines"
+    ],
+    "maxSpecialPairs": 1,
+    "allowChameleon": false,
+    "chameleonChance": 0
+  },
+  {
+    "id": 15,
+    "name": "Cruz Sagrada",
+    "worldId": 2,
+    "worldName": "Mundo 2",
+    "difficulty": "Médio",
+    "totalSlots": 80,
+    "waveCount": 2,
+    "waveDistribution": [
+      44,
+      36
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 52,
+      "1": 22,
+      "2": 6
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 8,
+      "minY": 0,
+      "maxY": 14,
+      "width": 10,
+      "height": 16
+    },
+    "initialFreeSlots": 16,
+    "initialBlockedSlots": 28,
+    "freeRatio": 36,
+    "biome": "forest",
+    "allowedSpecials": [
+      "vines",
+      "chest"
+    ],
+    "maxSpecialPairs": 1,
+    "allowChameleon": true,
+    "chameleonChance": 0.4
+  },
+  {
+    "id": 16,
+    "name": "Órbita Celeste",
+    "worldId": 2,
+    "worldName": "Mundo 2",
+    "difficulty": "Médio",
+    "totalSlots": 68,
+    "waveCount": 2,
+    "waveDistribution": [
+      40,
+      36
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 48,
+      "1": 16,
+      "2": 4
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 24,
+    "initialBlockedSlots": 16,
+    "freeRatio": 60,
+    "biome": "savanna",
+    "allowedSpecials": [
+      "ice",
+      "vines"
+    ],
+    "maxSpecialPairs": 2,
+    "allowChameleon": false,
+    "chameleonChance": 0
+  },
+  {
+    "id": 17,
+    "name": "Ondas Gêmeas",
+    "worldId": 2,
+    "worldName": "Mundo 2",
+    "difficulty": "Médio",
+    "totalSlots": 64,
+    "waveCount": 1,
+    "waveDistribution": [
+      64
+    ],
+    "zMax": 3,
+    "zDistribution": {
+      "0": 36,
+      "1": 16,
+      "2": 8,
+      "3": 4
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 2,
+      "maxY": 12,
+      "width": 12,
+      "height": 12
+    },
+    "initialFreeSlots": 24,
+    "initialBlockedSlots": 40,
+    "freeRatio": 38,
+    "biome": "water",
+    "allowedSpecials": [
+      "vines",
+      "chest"
+    ],
+    "maxSpecialPairs": 1,
+    "allowChameleon": true,
+    "chameleonChance": 0.5
+  },
+  {
+    "id": 18,
+    "name": "Refúgio do Panda",
+    "worldId": 2,
+    "worldName": "Mundo 2",
+    "difficulty": "Médio",
+    "totalSlots": 58,
+    "waveCount": 1,
+    "waveDistribution": [
+      58
+    ],
+    "zMax": 3,
+    "zDistribution": {
+      "0": 36,
+      "1": 14,
+      "2": 6,
+      "3": 2
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 26,
+    "initialBlockedSlots": 32,
+    "freeRatio": 45,
+    "biome": "forest",
+    "allowedSpecials": [
+      "ice",
+      "vines"
+    ],
+    "maxSpecialPairs": 2,
+    "allowChameleon": false,
+    "chameleonChance": 0
+  },
+  {
+    "id": 19,
+    "name": "Controle Retrô",
+    "worldId": 2,
+    "worldName": "Mundo 2",
+    "difficulty": "Médio",
+    "totalSlots": 52,
+    "waveCount": 1,
+    "waveDistribution": [
+      52
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 36,
+      "1": 12,
+      "2": 4
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 22,
+    "initialBlockedSlots": 30,
+    "freeRatio": 42,
+    "biome": "savanna",
+    "allowedSpecials": [
+      "ice",
+      "vines",
+      "chest"
+    ],
+    "maxSpecialPairs": 2,
+    "allowChameleon": true,
+    "chameleonChance": 0.5
+  },
+  {
+    "id": 20,
+    "name": "Vale do Bambu",
+    "worldId": 2,
+    "worldName": "Mundo 2",
+    "difficulty": "Médio",
+    "totalSlots": 48,
+    "waveCount": 1,
+    "waveDistribution": [
+      48
+    ],
+    "zMax": 3,
+    "zDistribution": {
+      "0": 28,
+      "1": 14,
+      "2": 4,
+      "3": 2
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 24,
+    "initialBlockedSlots": 24,
+    "freeRatio": 50,
+    "biome": "forest",
+    "allowedSpecials": [
+      "ice",
+      "vines",
+      "chest"
+    ],
+    "maxSpecialPairs": 2,
+    "allowChameleon": true,
+    "chameleonChance": 0.7
+  },
+  {
+    "id": 21,
+    "name": "Arena de Pedra",
+    "worldId": 3,
+    "worldName": "Mundo 3",
+    "difficulty": "Médio",
+    "totalSlots": 112,
+    "waveCount": 3,
+    "waveDistribution": [
+      36,
+      40,
+      36
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 74,
+      "1": 30,
+      "2": 8
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 8,
+      "minY": 0,
+      "maxY": 14,
+      "width": 10,
+      "height": 16
+    },
+    "initialFreeSlots": 21,
+    "initialBlockedSlots": 15,
+    "freeRatio": 58,
+    "biome": "savanna",
+    "allowedSpecials": [
+      "rock"
+    ],
+    "maxSpecialPairs": 1,
+    "allowChameleon": false,
+    "chameleonChance": 0
+  },
+  {
+    "id": 22,
+    "name": "Ilhas do Sol Poente",
+    "worldId": 3,
+    "worldName": "Mundo 3",
+    "difficulty": "Médio",
+    "totalSlots": 62,
+    "waveCount": 2,
+    "waveDistribution": [
+      40,
+      40
+    ],
+    "zMax": 3,
+    "zDistribution": {
+      "0": 40,
+      "1": 16,
+      "2": 4,
+      "3": 2
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 16,
+    "initialBlockedSlots": 24,
+    "freeRatio": 40,
+    "biome": "water",
+    "allowedSpecials": [
+      "rock",
+      "chest"
+    ],
+    "maxSpecialPairs": 1,
+    "allowChameleon": true,
+    "chameleonChance": 0.5
+  },
+  {
+    "id": 23,
+    "name": "Coração de Rubi",
+    "worldId": 3,
+    "worldName": "Mundo 3",
+    "difficulty": "Médio",
+    "totalSlots": 96,
+    "waveCount": 2,
+    "waveDistribution": [
+      48,
+      48
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 64,
+      "1": 24,
+      "2": 8
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 28,
+    "initialBlockedSlots": 20,
+    "freeRatio": 58,
+    "biome": "garden",
+    "allowedSpecials": [
+      "rock",
+      "ice"
+    ],
+    "maxSpecialPairs": 2,
+    "allowChameleon": false,
+    "chameleonChance": 0
+  },
+  {
+    "id": 24,
+    "name": "Sabedoria Ancestral",
+    "worldId": 3,
+    "worldName": "Mundo 3",
+    "difficulty": "Médio",
+    "totalSlots": 96,
+    "waveCount": 2,
+    "waveDistribution": [
+      48,
+      48
+    ],
+    "zMax": 3,
+    "zDistribution": {
+      "0": 56,
+      "1": 28,
+      "2": 8,
+      "3": 4
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 24,
+    "initialBlockedSlots": 24,
+    "freeRatio": 50,
+    "biome": "forest",
+    "allowedSpecials": [
+      "cocoon"
+    ],
+    "maxSpecialPairs": 1,
+    "allowChameleon": false,
+    "chameleonChance": 0
+  },
+  {
+    "id": 25,
+    "name": "Anéis de Saturno",
+    "worldId": 3,
+    "worldName": "Mundo 3",
+    "difficulty": "Médio",
+    "totalSlots": 138,
+    "waveCount": 2,
+    "waveDistribution": [
+      48,
+      90
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 106,
+      "1": 24,
+      "2": 8
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 22,
+    "initialBlockedSlots": 26,
+    "freeRatio": 46,
+    "biome": "arctic",
+    "allowedSpecials": [
+      "cocoon",
+      "rock"
+    ],
+    "maxSpecialPairs": 2,
+    "allowChameleon": true,
+    "chameleonChance": 0.5
+  },
+  {
+    "id": 26,
+    "name": "Duelo Celestial",
+    "worldId": 3,
+    "worldName": "Mundo 3",
+    "difficulty": "Médio",
+    "totalSlots": 88,
+    "waveCount": 2,
+    "waveDistribution": [
+      44,
+      44
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 56,
+      "1": 24,
+      "2": 8
+    },
+    "gridBounds": {
+      "minX": 2,
+      "maxX": 8,
+      "minY": 0,
+      "maxY": 14,
+      "width": 8,
+      "height": 16
+    },
+    "initialFreeSlots": 16,
+    "initialBlockedSlots": 28,
+    "freeRatio": 36,
+    "biome": "water",
+    "allowedSpecials": [
+      "cocoon",
+      "vines"
+    ],
+    "maxSpecialPairs": 2,
+    "allowChameleon": false,
+    "chameleonChance": 0
+  },
+  {
+    "id": 27,
+    "name": "Labirinto Místico",
+    "worldId": 3,
+    "worldName": "Mundo 3",
+    "difficulty": "Médio",
+    "totalSlots": 51,
+    "waveCount": 2,
+    "waveDistribution": [
+      37,
+      36
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 39,
+      "1": 8,
+      "2": 4
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 21,
+    "initialBlockedSlots": 16,
+    "freeRatio": 57,
+    "biome": "forest",
+    "allowedSpecials": [
+      "rock",
+      "ice",
+      "vines"
+    ],
+    "maxSpecialPairs": 2,
+    "allowChameleon": true,
+    "chameleonChance": 0.5
+  },
+  {
+    "id": 28,
+    "name": "Totem dos Guardiões",
+    "worldId": 3,
+    "worldName": "Mundo 3",
+    "difficulty": "Médio",
+    "totalSlots": 36,
+    "waveCount": 2,
+    "waveDistribution": [
+      36,
+      36
+    ],
+    "zMax": 0,
+    "zDistribution": {
+      "0": 36
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 20,
+    "initialBlockedSlots": 16,
+    "freeRatio": 56,
+    "biome": "savanna",
+    "allowedSpecials": [
+      "cocoon",
+      "rock",
+      "chest"
+    ],
+    "maxSpecialPairs": 2,
+    "allowChameleon": true,
+    "chameleonChance": 0.5
+  },
+  {
+    "id": 29,
+    "name": "Ponte das Lótus",
+    "worldId": 3,
+    "worldName": "Mundo 3",
+    "difficulty": "Médio",
+    "totalSlots": 88,
+    "waveCount": 2,
+    "waveDistribution": [
+      44,
+      44
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 56,
+      "1": 24,
+      "2": 8
+    },
+    "gridBounds": {
+      "minX": 2,
+      "maxX": 8,
+      "minY": 0,
+      "maxY": 14,
+      "width": 8,
+      "height": 16
+    },
+    "initialFreeSlots": 16,
+    "initialBlockedSlots": 28,
+    "freeRatio": 36,
+    "biome": "water",
+    "allowedSpecials": [
+      "cocoon",
+      "vines",
+      "ice"
+    ],
+    "maxSpecialPairs": 2,
+    "allowChameleon": true,
+    "chameleonChance": 0.6
+  },
+  {
+    "id": 30,
+    "name": "Pilares da Terra",
+    "worldId": 3,
+    "worldName": "Mundo 3",
+    "difficulty": "Médio",
+    "totalSlots": 112,
+    "waveCount": 3,
+    "waveDistribution": [
+      36,
+      40,
+      36
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 74,
+      "1": 30,
+      "2": 8
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 8,
+      "minY": 0,
+      "maxY": 14,
+      "width": 10,
+      "height": 16
+    },
+    "initialFreeSlots": 21,
+    "initialBlockedSlots": 15,
+    "freeRatio": 58,
+    "biome": "forest",
+    "allowedSpecials": [
+      "rock",
+      "cocoon",
+      "ice",
+      "vines",
+      "chest"
+    ],
+    "maxSpecialPairs": 3,
+    "allowChameleon": true,
+    "chameleonChance": 0.7
+  },
+  {
+    "id": 31,
+    "name": "Três Coroas",
+    "worldId": 4,
+    "worldName": "Mundo 4",
+    "difficulty": "Médio",
+    "totalSlots": 112,
+    "waveCount": 3,
+    "waveDistribution": [
+      36,
+      40,
+      36
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 74,
+      "1": 30,
+      "2": 8
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 8,
+      "minY": 0,
+      "maxY": 14,
+      "width": 10,
+      "height": 16
+    },
+    "initialFreeSlots": 21,
+    "initialBlockedSlots": 15,
+    "freeRatio": 58,
+    "biome": "water",
+    "allowedSpecials": [
+      "mirror"
+    ],
+    "maxSpecialPairs": 1,
+    "allowChameleon": false,
+    "chameleonChance": 0
+  },
+  {
+    "id": 32,
+    "name": "Correntes de Bronze",
+    "worldId": 4,
+    "worldName": "Mundo 4",
+    "difficulty": "Difícil",
+    "totalSlots": 62,
+    "waveCount": 2,
+    "waveDistribution": [
+      40,
+      40
+    ],
+    "zMax": 3,
+    "zDistribution": {
+      "0": 36,
+      "1": 16,
+      "2": 8,
+      "3": 2
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 22,
+    "initialBlockedSlots": 18,
+    "freeRatio": 55,
+    "biome": "savanna",
+    "allowedSpecials": [
+      "mirror",
+      "rock"
+    ],
+    "maxSpecialPairs": 2,
+    "allowChameleon": true,
+    "chameleonChance": 0.5
+  },
+  {
+    "id": 33,
+    "name": "Vórtice Dourado",
+    "worldId": 4,
+    "worldName": "Mundo 4",
+    "difficulty": "Difícil",
+    "totalSlots": 92,
+    "waveCount": 2,
+    "waveDistribution": [
+      44,
+      48
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 60,
+      "1": 24,
+      "2": 8
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 16,
+    "initialBlockedSlots": 28,
+    "freeRatio": 36,
+    "biome": "garden",
+    "allowedSpecials": [
+      "mirror",
+      "chest"
+    ],
+    "maxSpecialPairs": 2,
+    "allowChameleon": true,
+    "chameleonChance": 0.5
+  },
+  {
+    "id": 34,
+    "name": "Estrela Polar",
+    "worldId": 4,
+    "worldName": "Mundo 4",
+    "difficulty": "Difícil",
+    "totalSlots": 46,
+    "waveCount": 2,
+    "waveDistribution": [
+      40,
+      40
+    ],
+    "zMax": 3,
+    "zDistribution": {
+      "0": 28,
+      "1": 12,
+      "2": 4,
+      "3": 2
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 20,
+    "initialBlockedSlots": 20,
+    "freeRatio": 50,
+    "biome": "arctic",
+    "allowedSpecials": [
+      "mirror",
+      "ice"
+    ],
+    "maxSpecialPairs": 2,
+    "allowChameleon": false,
+    "chameleonChance": 0
+  },
+  {
+    "id": 35,
+    "name": "Cúpula Imperial",
+    "worldId": 4,
+    "worldName": "Mundo 4",
+    "difficulty": "Difícil",
+    "totalSlots": 48,
+    "waveCount": 1,
+    "waveDistribution": [
+      48
+    ],
+    "zMax": 3,
+    "zDistribution": {
+      "0": 28,
+      "1": 14,
+      "2": 4,
+      "3": 2
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 24,
+    "initialBlockedSlots": 24,
+    "freeRatio": 50,
+    "biome": "forest",
+    "allowedSpecials": [
+      "mirror",
+      "vines"
+    ],
+    "maxSpecialPairs": 2,
+    "allowChameleon": true,
+    "chameleonChance": 0.6
+  },
+  {
+    "id": 36,
+    "name": "Os Quatro Ventos",
+    "worldId": 4,
+    "worldName": "Mundo 4",
+    "difficulty": "Difícil",
+    "totalSlots": 72,
+    "waveCount": 2,
+    "waveDistribution": [
+      36,
+      36
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 48,
+      "1": 20,
+      "2": 4
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 8,
+      "minY": 0,
+      "maxY": 14,
+      "width": 10,
+      "height": 16
+    },
+    "initialFreeSlots": 21,
+    "initialBlockedSlots": 15,
+    "freeRatio": 58,
+    "biome": "water",
+    "allowedSpecials": [
+      "mirror",
+      "cocoon"
+    ],
+    "maxSpecialPairs": 2,
+    "allowChameleon": true,
+    "chameleonChance": 0.6
+  },
+  {
+    "id": 37,
+    "name": "Coliseu das Feras",
+    "worldId": 4,
+    "worldName": "Mundo 4",
+    "difficulty": "Difícil",
+    "totalSlots": 138,
+    "waveCount": 2,
+    "waveDistribution": [
+      48,
+      90
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 106,
+      "1": 24,
+      "2": 8
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 22,
+    "initialBlockedSlots": 26,
+    "freeRatio": 46,
+    "biome": "savanna",
+    "allowedSpecials": [
+      "mirror",
+      "rock",
+      "chest"
+    ],
+    "maxSpecialPairs": 2,
+    "allowChameleon": true,
+    "chameleonChance": 0.6
+  },
+  {
+    "id": 38,
+    "name": "Chave Mestra",
+    "worldId": 4,
+    "worldName": "Mundo 4",
+    "difficulty": "Difícil",
+    "totalSlots": 43,
+    "waveCount": 2,
+    "waveDistribution": [
+      51,
+      53
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 28,
+      "1": 13,
+      "2": 2
+    },
+    "gridBounds": {
+      "minX": 2,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 10,
+      "height": 16
+    },
+    "initialFreeSlots": 26,
+    "initialBlockedSlots": 25,
+    "freeRatio": 51,
+    "biome": "arctic",
+    "allowedSpecials": [
+      "mirror",
+      "ice",
+      "vines"
+    ],
+    "maxSpecialPairs": 3,
+    "allowChameleon": true,
+    "chameleonChance": 0.6
+  },
+  {
+    "id": 39,
+    "name": "Santuário Pentagrama",
+    "worldId": 4,
+    "worldName": "Mundo 4",
+    "difficulty": "Difícil",
+    "totalSlots": 72,
+    "waveCount": 2,
+    "waveDistribution": [
+      36,
+      36
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 48,
+      "1": 20,
+      "2": 4
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 8,
+      "minY": 0,
+      "maxY": 14,
+      "width": 10,
+      "height": 16
+    },
+    "initialFreeSlots": 21,
+    "initialBlockedSlots": 15,
+    "freeRatio": 58,
+    "biome": "forest",
+    "allowedSpecials": [
+      "mirror",
+      "cocoon",
+      "rock"
+    ],
+    "maxSpecialPairs": 3,
+    "allowChameleon": true,
+    "chameleonChance": 0.7
+  },
+  {
+    "id": 40,
+    "name": "Atlântida Lendária",
+    "worldId": 4,
+    "worldName": "Mundo 4",
+    "difficulty": "Difícil",
+    "totalSlots": 124,
+    "waveCount": 3,
+    "waveDistribution": [
+      40,
+      44,
+      40
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 80,
+      "1": 32,
+      "2": 12
+    },
+    "gridBounds": {
+      "minX": 2,
+      "maxX": 8,
+      "minY": 0,
+      "maxY": 14,
+      "width": 8,
+      "height": 16
+    },
+    "initialFreeSlots": 22,
+    "initialBlockedSlots": 18,
+    "freeRatio": 55,
+    "biome": "water",
+    "allowedSpecials": [
+      "mirror",
+      "ice",
+      "vines",
+      "rock",
+      "chest"
+    ],
+    "maxSpecialPairs": 3,
+    "allowChameleon": true,
+    "chameleonChance": 0.8
+  },
+  {
+    "id": 41,
+    "name": "Galáxia Espiral",
+    "worldId": 5,
+    "worldName": "Mundo 5",
+    "difficulty": "Difícil",
+    "totalSlots": 138,
+    "waveCount": 2,
+    "waveDistribution": [
+      48,
+      90
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 106,
+      "1": 24,
+      "2": 8
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 22,
+    "initialBlockedSlots": 26,
+    "freeRatio": 46,
+    "biome": "arctic",
+    "allowedSpecials": [
+      "mirror",
+      "ice",
+      "rock"
+    ],
+    "maxSpecialPairs": 3,
+    "allowChameleon": true,
+    "chameleonChance": 0.8
+  },
+  {
+    "id": 42,
+    "name": "As Quatro Pontes",
+    "worldId": 5,
+    "worldName": "Mundo 5",
+    "difficulty": "Difícil",
+    "totalSlots": 186,
+    "waveCount": 3,
+    "waveDistribution": [
+      48,
+      48,
+      90
+    ],
+    "zMax": 3,
+    "zDistribution": {
+      "0": 134,
+      "1": 38,
+      "2": 12,
+      "3": 2
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 22,
+    "initialBlockedSlots": 26,
+    "freeRatio": 46,
+    "biome": "water",
+    "allowedSpecials": [
+      "mirror",
+      "vines",
+      "cocoon"
+    ],
+    "maxSpecialPairs": 3,
+    "allowChameleon": true,
+    "chameleonChance": 0.8
+  },
+  {
+    "id": 43,
+    "name": "O Ziggurat Sagrado",
+    "worldId": 5,
+    "worldName": "Mundo 5",
+    "difficulty": "Difícil",
+    "totalSlots": 84,
+    "waveCount": 2,
+    "waveDistribution": [
+      40,
+      44
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 54,
+      "1": 22,
+      "2": 8
+    },
+    "gridBounds": {
+      "minX": 2,
+      "maxX": 8,
+      "minY": 0,
+      "maxY": 14,
+      "width": 8,
+      "height": 16
+    },
+    "initialFreeSlots": 22,
+    "initialBlockedSlots": 18,
+    "freeRatio": 55,
+    "biome": "savanna",
+    "allowedSpecials": [
+      "mirror",
+      "rock",
+      "chest",
+      "ice"
+    ],
+    "maxSpecialPairs": 3,
+    "allowChameleon": true,
+    "chameleonChance": 0.8
+  },
+  {
+    "id": 44,
+    "name": "Quatro Colinas",
+    "worldId": 5,
+    "worldName": "Mundo 5",
+    "difficulty": "Difícil",
+    "totalSlots": 144,
+    "waveCount": 3,
+    "waveDistribution": [
+      48,
+      48,
+      48
+    ],
+    "zMax": 3,
+    "zDistribution": {
+      "0": 92,
+      "1": 38,
+      "2": 12,
+      "3": 2
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 24,
+    "initialBlockedSlots": 24,
+    "freeRatio": 50,
+    "biome": "forest",
+    "allowedSpecials": [
+      "mirror",
+      "vines",
+      "cocoon",
+      "chest"
+    ],
+    "maxSpecialPairs": 3,
+    "allowChameleon": true,
+    "chameleonChance": 0.8
+  },
+  {
+    "id": 45,
+    "name": "Dragão Vermelho",
+    "worldId": 5,
+    "worldName": "Mundo 5",
+    "difficulty": "Difícil",
+    "totalSlots": 88,
+    "waveCount": 2,
+    "waveDistribution": [
+      44,
+      44
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 56,
+      "1": 24,
+      "2": 8
+    },
+    "gridBounds": {
+      "minX": 2,
+      "maxX": 8,
+      "minY": 0,
+      "maxY": 14,
+      "width": 8,
+      "height": 16
+    },
+    "initialFreeSlots": 16,
+    "initialBlockedSlots": 28,
+    "freeRatio": 36,
+    "biome": "savanna",
+    "allowedSpecials": [
+      "mirror",
+      "rock",
+      "vines",
+      "ice"
+    ],
+    "maxSpecialPairs": 3,
+    "allowChameleon": true,
+    "chameleonChance": 0.85
+  },
+  {
+    "id": 46,
+    "name": "Nuvem dos Imortais",
+    "worldId": 5,
+    "worldName": "Mundo 5",
+    "difficulty": "Difícil",
+    "totalSlots": 138,
+    "waveCount": 2,
+    "waveDistribution": [
+      48,
+      90
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 106,
+      "1": 24,
+      "2": 8
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 22,
+    "initialBlockedSlots": 26,
+    "freeRatio": 46,
+    "biome": "garden",
+    "allowedSpecials": [
+      "mirror",
+      "cocoon",
+      "chest",
+      "ice"
+    ],
+    "maxSpecialPairs": 3,
+    "allowChameleon": true,
+    "chameleonChance": 0.85
+  },
+  {
+    "id": 47,
+    "name": "Gato Imperial",
+    "worldId": 5,
+    "worldName": "Mundo 5",
+    "difficulty": "Difícil",
+    "totalSlots": 52,
+    "waveCount": 2,
+    "waveDistribution": [
+      40,
+      40
+    ],
+    "zMax": 3,
+    "zDistribution": {
+      "0": 28,
+      "1": 18,
+      "2": 4,
+      "3": 2
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 26,
+    "initialBlockedSlots": 14,
+    "freeRatio": 65,
+    "biome": "forest",
+    "allowedSpecials": [
+      "mirror",
+      "rock",
+      "vines",
+      "cocoon"
+    ],
+    "maxSpecialPairs": 3,
+    "allowChameleon": true,
+    "chameleonChance": 0.9
+  },
+  {
+    "id": 48,
+    "name": "Águia Imperial",
+    "worldId": 5,
+    "worldName": "Mundo 5",
+    "difficulty": "Difícil",
+    "totalSlots": 72,
+    "waveCount": 2,
+    "waveDistribution": [
+      36,
+      36
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 48,
+      "1": 20,
+      "2": 4
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 8,
+      "minY": 0,
+      "maxY": 14,
+      "width": 10,
+      "height": 16
+    },
+    "initialFreeSlots": 21,
+    "initialBlockedSlots": 15,
+    "freeRatio": 58,
+    "biome": "arctic",
+    "allowedSpecials": [
+      "mirror",
+      "ice",
+      "rock",
+      "chest",
+      "vines"
+    ],
+    "maxSpecialPairs": 4,
+    "allowChameleon": true,
+    "chameleonChance": 0.9
+  },
+  {
+    "id": 49,
+    "name": "Altar Proibido",
+    "worldId": 5,
+    "worldName": "Mundo 5",
+    "difficulty": "Difícil",
+    "totalSlots": 124,
+    "waveCount": 3,
+    "waveDistribution": [
+      40,
+      44,
+      40
+    ],
+    "zMax": 2,
+    "zDistribution": {
+      "0": 80,
+      "1": 32,
+      "2": 12
+    },
+    "gridBounds": {
+      "minX": 2,
+      "maxX": 8,
+      "minY": 0,
+      "maxY": 14,
+      "width": 8,
+      "height": 16
+    },
+    "initialFreeSlots": 22,
+    "initialBlockedSlots": 18,
+    "freeRatio": 55,
+    "biome": "water",
+    "allowedSpecials": [
+      "mirror",
+      "cocoon",
+      "ice",
+      "vines",
+      "rock"
+    ],
+    "maxSpecialPairs": 4,
+    "allowChameleon": true,
+    "chameleonChance": 0.95
+  },
+  {
+    "id": 50,
+    "name": "Taipei Clássico (Shanghai)",
+    "worldId": 5,
+    "worldName": "Mundo 5",
+    "difficulty": "Difícil",
+    "totalSlots": 78,
+    "waveCount": 3,
+    "waveDistribution": [
+      48,
+      52,
+      44
+    ],
+    "zMax": 4,
+    "zDistribution": {
+      "0": 40,
+      "1": 20,
+      "2": 12,
+      "3": 4,
+      "4": 2
+    },
+    "gridBounds": {
+      "minX": 0,
+      "maxX": 10,
+      "minY": 0,
+      "maxY": 14,
+      "width": 12,
+      "height": 16
+    },
+    "initialFreeSlots": 24,
+    "initialBlockedSlots": 24,
+    "freeRatio": 50,
+    "biome": "forest",
+    "allowedSpecials": [
+      "mirror",
+      "cocoon",
+      "ice",
+      "vines",
+      "rock",
+      "chest"
+    ],
+    "maxSpecialPairs": 4,
+    "allowChameleon": true,
+    "chameleonChance": 1
+  }
+]
