@@ -29,8 +29,8 @@ window.addEventListener('DOMContentLoaded', () => {
         uiManager?.showBlockedTip('Remova uma peça lateral para liberar esta!');
       }
     },
-    onMatchSuccess: () => {
-      uiManager?.recordMatchedPair();
+    onMatchSuccess: (pair) => {
+      uiManager?.recordMatchedPair(pair);
       uiManager?.updateHUD();
     },
     onBoardCleared: () => {

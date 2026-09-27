@@ -190,9 +190,36 @@ export class UIManager {
         this.updatePowerUpBadges();
         soundManager.playTileClick();
         hapticManager.impactLight();
-        this.renderer.requestRender();
+
+        if (undoResult.tile) {
+          const tile = undoResult.tile;
+          tile.inFlight = true;
+          const coords = this.renderer.getTileViewportCoords(tile);
+          const lastSlotIdx = Math.min(this.engine.getTray().length, this.traySlotEls.length - 1);
+          const slotEl = this.traySlotEls[lastSlotIdx] || this.traySlotsContainer;
+          this.animateTileFromTrayToBoard(
+            tile,
+            slotEl,
+            coords.left,
+            coords.top,
+            coords.width,
+            coords.height,
+            () => {
+              tile.inFlight = false;
+              this.renderer.requestRender();
+              this.updateHUD();
+            }
+          );
+        } else {
+          this.renderer.requestRender();
+        }
+
         if (undoResult.type === 'pair_restored') {
-          this.showToast(`↩️ Par restaurado à mesa! (${this.undoCount} restante${this.undoCount === 1 ? '' : 's'})`);
+          if (undoResult.secondaryTiles && undoResult.secondaryTiles.length > 0) {
+            this.showToast(`↩️ Par e peças de sinergia restaurados! (${this.undoCount} restante${this.undoCount === 1 ? '' : 's'})`);
+          } else {
+            this.showToast(`↩️ Par restaurado à mesa! (${this.undoCount} restante${this.undoCount === 1 ? '' : 's'})`);
+          }
         } else {
           this.showToast(`Peça devolvida! (${this.undoCount} restante${this.undoCount === 1 ? '' : 's'})`);
         }
@@ -250,8 +277,7 @@ export class UIManager {
         this.updatePowerUpBadges();
         soundManager.playShuffleSound();
         hapticManager.impactMedium();
-        this.renderer.triggerAnimation(600);
-        this.renderer.requestRender();
+        this.renderer.triggerShuffleAnimation(500);
         this.showToast(`Peças misturadas! (${this.shuffleCount} restante${this.shuffleCount === 1 ? '' : 's'})`);
         this.updateHUD();
       }
@@ -409,6 +435,7 @@ export class UIManager {
 
     this.showGame();
     this.startTimer();
+    this.renderer.triggerDealAnimation(420);
     this.updateHUD();
 
     // Fechar modais que possam estar abertos
@@ -503,13 +530,20 @@ export class UIManager {
         slotEl.onclick = () => {
           if (this.isHammerActive) {
             this.useHammerOnSlot(tile, slotEl);
+          } else {
+            this.returnTileFromTray(tile, slotEl);
           }
         };
       } else {
+        const wasFilled = slotEl.classList.contains('filled');
         slotEl.classList.remove('filled', 'can-hammer', 'just-filled');
         slotEl.onclick = null;
         if (canvas) {
           canvas.style.display = 'none';
+        }
+        if (wasFilled && !slotEl.classList.contains('smash-shatter') && !slotEl.classList.contains('tray-return-anim')) {
+          slotEl.classList.add('match-clear-anim');
+          setTimeout(() => slotEl.classList.remove('match-clear-anim'), 280);
         }
       }
     });
@@ -529,6 +563,7 @@ export class UIManager {
           this.isRestarting = true;
           soundManager.playShuffleSound();
           hapticManager.impactMedium();
+          this.traySlotsContainer.classList.add('zen-rescue-swirl');
           this.showNatureEvent(
             '🍃',
             'Brisa da Compaixão',
@@ -538,7 +573,7 @@ export class UIManager {
           setTimeout(() => {
             this.engine.zenRescue();
             this.isRestarting = false;
-            this.traySlotsContainer.classList.remove('warning-full');
+            this.traySlotsContainer.classList.remove('warning-full', 'zen-rescue-swirl');
             this.renderer.requestRender();
             this.updateHUD();
           }, 900);
@@ -595,6 +630,43 @@ export class UIManager {
         this.handleWaveCleared(this.engine.getCurrentWave(), this.engine.getTotalWaves());
       }
     }, 280);
+  }
+
+  /**
+   * Devolve uma peça da bandeja de volta para a mesa com toque tátil intuitivo
+   */
+  private returnTileFromTray(tile: PlacedTile, slotEl: HTMLElement): void {
+    if (this.renderer.isInputLocked) return;
+
+    tile.inFlight = true;
+    const undoResult = this.engine.undoSpecificTrayTile(tile.id);
+    if (undoResult.success) {
+      soundManager.playTileClick();
+      hapticManager.impactLight();
+
+      slotEl.classList.add('tray-return-anim');
+      const coords = this.renderer.getTileViewportCoords(tile);
+
+      this.animateTileFromTrayToBoard(
+        tile,
+        slotEl,
+        coords.left,
+        coords.top,
+        coords.width,
+        coords.height,
+        () => {
+          tile.inFlight = false;
+          slotEl.classList.remove('tray-return-anim');
+          this.renderer.requestRender();
+          this.updateHUD();
+        }
+      );
+
+      this.updateHUD();
+      this.showToast('Peça devolvida ao tabuleiro!');
+    } else {
+      tile.inFlight = false;
+    }
   }
 
   /**
@@ -704,8 +776,17 @@ export class UIManager {
     hapticManager.impactVictory?.();
   }
 
-  public recordMatchedPair(): void {
+  public recordMatchedPair(pair?: [PlacedTile, PlacedTile]): void {
     this.pairsMatchedThisGame++;
+    if (pair && pair.some((t) => t.value === 'chameleon' || t.value === 'honeycomb')) {
+      const specialTile = pair.find((t) => t.value === 'chameleon' || t.value === 'honeycomb');
+      if (specialTile) {
+        const coords = this.renderer.getTileViewportCoords(specialTile);
+        this.spawnLotusManaSparks(coords.left + coords.width / 2, coords.top + coords.height / 2);
+      } else {
+        this.spawnLotusManaSparks();
+      }
+    }
   }
 
   private launchVictoryConfetti(): void {
@@ -745,6 +826,7 @@ export class UIManager {
       if (waveModal) waveModal.classList.add('hidden');
       this.engine.advanceToNextWave();
       this.renderer.handleResize();
+      this.renderer.triggerDealAnimation(420);
       this.renderer.requestRender();
       this.updateHUD();
       this.showNatureToast('🌊', `Onda ${this.engine.getCurrentWave()} Iniciada!`, 'Novas peças na mesa com peças gigantes!');
@@ -1444,6 +1526,88 @@ export class UIManager {
       flyerItem.inUse = false;
       onArrival();
     }, 220);
+  }
+
+  // ─── Animate Tile from Tray to Board (Reverse Flight) ─────────────────────
+
+  public animateTileFromTrayToBoard(
+    tile: PlacedTile,
+    fromSlotEl: HTMLElement,
+    targetLeft: number,
+    targetTop: number,
+    targetWidth: number,
+    targetHeight: number,
+    onArrival: () => void
+  ): void {
+    const slotRect = fromSlotEl.getBoundingClientRect();
+    const flyerItem = this.getFlyerFromPool();
+    const flyer = flyerItem.el;
+    const canvas = flyerItem.canvas;
+
+    this.renderTileToCanvas(canvas, tile);
+
+    flyer.style.transition = 'none';
+    flyer.style.left = `${slotRect.left}px`;
+    flyer.style.top  = `${slotRect.top}px`;
+    flyer.style.width = `${slotRect.width}px`;
+    flyer.style.height = `${slotRect.height}px`;
+    flyer.style.transform = 'scale(1)';
+    flyer.style.display = 'block';
+
+    void flyer.offsetWidth;
+
+    requestAnimationFrame(() => {
+      flyer.style.transition = 'all 0.22s cubic-bezier(0.16, 1, 0.3, 1)';
+      flyer.style.left = `${targetLeft}px`;
+      flyer.style.top  = `${targetTop}px`;
+      flyer.style.width = `${targetWidth}px`;
+      flyer.style.height = `${targetHeight}px`;
+      flyer.style.transform = 'scale(1.04)';
+    });
+
+    setTimeout(() => {
+      flyer.style.display = 'none';
+      flyerItem.inUse = false;
+      onArrival();
+    }, 220);
+  }
+
+  // ─── Fagulhas Douradas da Flor de Lótus ────────────────────────────────────
+
+  public spawnLotusManaSparks(fromX?: number, fromY?: number): void {
+    const badges = [this.badgeUndo, this.badgeHint].filter(Boolean);
+    const startX = fromX ?? window.innerWidth / 2;
+    const startY = fromY ?? window.innerHeight / 2;
+
+    badges.forEach((badge, bIdx) => {
+      const bRect = badge.getBoundingClientRect();
+      const spark = document.createElement('div');
+      spark.className = 'golden-mana-spark';
+      spark.textContent = '✨';
+      spark.style.cssText = `
+        position: fixed;
+        left: ${startX}px;
+        top: ${startY}px;
+        font-size: 1.5rem;
+        z-index: 1000;
+        pointer-events: none;
+        transition: all 0.55s cubic-bezier(0.16, 1, 0.3, 1) ${bIdx * 0.08}s;
+      `;
+      document.body.appendChild(spark);
+
+      requestAnimationFrame(() => {
+        spark.style.left = `${bRect.left + bRect.width / 2}px`;
+        spark.style.top = `${bRect.top + bRect.height / 2}px`;
+        spark.style.transform = 'scale(1.5)';
+        spark.style.opacity = '0.95';
+      });
+
+      setTimeout(() => {
+        spark.remove();
+        badge.classList.add('sparkle-pulse');
+        setTimeout(() => badge.classList.remove('sparkle-pulse'), 800);
+      }, 650);
+    });
   }
 
   // ─── Live Update UI ────────────────────────────────────────────────────────

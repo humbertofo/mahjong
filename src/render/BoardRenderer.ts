@@ -53,6 +53,7 @@ export class BoardRenderer {
   private animatingUntil: number = 0;
   public isInputLocked: boolean = false;
   private pendingTilesInFlight: number = 0;
+  private lastClickTime: number = 0;
   private synergyAnimator: SynergyAnimator = new SynergyAnimator();
 
   // Camada Dinâmica de Efeitos (Dual-Layer FX Canvas)
@@ -71,6 +72,21 @@ export class BoardRenderer {
     size: number;
     alpha: number;
     char?: string;
+    color?: string;
+  }> = [];
+
+  // Animações Físicas & Efeitos de Mesa (Shuffle, Deal, Dissolve)
+  private shuffleStartTime: number = 0;
+  private shuffleDuration: number = 500;
+  private dealStartTime: number = 0;
+  private dealDuration: number = 420;
+  private activeDissolves: Array<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    startTime: number;
+    duration: number;
     color?: string;
   }> = [];
 
@@ -264,18 +280,25 @@ export class BoardRenderer {
       if (!this.isRunning) return;
       this.animTime = timestamp;
 
-      // 1. Camada da Mesa Estática: Redesenha apenas quando necessário
+      // 1. Camada da Mesa Estática: Redesenha se estiver dirty ou se houver animação ativa
       const hasHinted = this.engine.getTiles().some((t) => t.isHinted && !t.isRemoved);
-      if (this.isBoardDirty || hasHinted) {
+      const hasSelected = this.engine.getTiles().some((t) => t.isSelected && !t.isRemoved);
+      const hasChameleon = this.engine.getTiles().some((t) => t.value === 'chameleon' && !t.isRemoved);
+      const isShuffling = timestamp - this.shuffleStartTime < this.shuffleDuration;
+      const isDealing = timestamp - this.dealStartTime < this.dealDuration;
+
+      if (this.isBoardDirty || hasHinted || hasSelected || hasChameleon || isShuffling || isDealing) {
         this.isBoardDirty = false;
         this.renderBoard();
       }
 
-      // 2. Camada Dinâmica FX: Partículas climáticas e Sinergias cênicas
+      // 2. Camada Dinâmica FX: Partículas climáticas, Sinergias e Dissolves
       const isFxAnimating =
         timestamp < this.animatingUntil ||
         this.climateTimer > 0 ||
-        this.synergyAnimator.hasActiveAnimations();
+        this.synergyAnimator.hasActiveAnimations() ||
+        this.activeDissolves.length > 0 ||
+        isShuffling;
 
       if (isFxAnimating) {
         this.isFxActive = true;
@@ -323,10 +346,12 @@ export class BoardRenderer {
 
     const freeTileIds = this.engine.getFreeTileIds();
     const len = activeTiles.length;
+    const isShuffling = this.animTime - this.shuffleStartTime < this.shuffleDuration;
+    const isDealing = this.animTime - this.dealStartTime < this.dealDuration;
 
     for (let i = 0; i < len; i++) {
       const tile = activeTiles[i];
-      if (tile.inSynergyPulled) continue;
+      if (tile.inSynergyPulled || tile.inFlight) continue;
       const zShiftX = tile.position.z * Math.round(tileDepth * 0.55);
       const zShiftY = tile.position.z * Math.round(tileDepth * 1.10);
       const screenX = this.offsetX + (tile.position.x / 2) * tileWidth - zShiftX;
@@ -339,13 +364,31 @@ export class BoardRenderer {
         animOffset = Math.sin(this.animTime / 180) * 3;
       }
 
+      let scaleXFactor = 1;
+      if (isShuffling) {
+        const p = (this.animTime - this.shuffleStartTime) / this.shuffleDuration;
+        scaleXFactor = Math.abs(Math.cos(p * Math.PI));
+      }
+
+      let dealAlpha = 1;
+      if (isDealing) {
+        const elapsed = this.animTime - this.dealStartTime;
+        const zDelay = tile.position.z * 55;
+        const p = Math.max(0, Math.min(1, (elapsed - zDelay) / 220));
+        dealAlpha = p;
+        animOffset += (1 - this.easeOutBack(p)) * -24;
+      }
+
       this.tileRenderer.drawTile(
         this.ctx,
         tile,
         screenX,
         screenY,
         isFree,
-        animOffset
+        animOffset,
+        scaleXFactor,
+        dealAlpha,
+        this.animTime
       );
     }
 
@@ -364,6 +407,59 @@ export class BoardRenderer {
 
     if (this.fxCtx) {
       this.fxCtx.clearRect(0, 0, viewW, viewH);
+    }
+
+    // Redemoinho zen de luz durante o Shuffle
+    if (this.animTime - this.shuffleStartTime < this.shuffleDuration) {
+      const p = (this.animTime - this.shuffleStartTime) / this.shuffleDuration;
+      const alpha = Math.sin(p * Math.PI) * 0.75;
+      const cx = viewW / 2;
+      const cy = viewH / 2;
+      targetCtx.save();
+      targetCtx.strokeStyle = `rgba(245, 158, 11, ${alpha})`;
+      targetCtx.lineWidth = 3.5;
+      targetCtx.beginPath();
+      targetCtx.arc(cx, cy, p * Math.max(viewW, viewH) * 0.55, 0, Math.PI * 2);
+      targetCtx.stroke();
+      targetCtx.restore();
+    }
+
+    // Partículas de dissolução local de peças combinadas
+    if (this.activeDissolves.length > 0) {
+      const now = performance.now();
+      for (let i = this.activeDissolves.length - 1; i >= 0; i--) {
+        const d = this.activeDissolves[i];
+        const elapsed = now - d.startTime;
+        const progress = Math.min(1, elapsed / d.duration);
+        if (progress >= 1) {
+          this.activeDissolves.splice(i, 1);
+          continue;
+        }
+
+        const cx = d.x + d.width / 2;
+        const cy = d.y + d.height / 2;
+        const radius = (d.width / 2) * (0.7 + progress * 0.6);
+        const alpha = Math.max(0, 1 - progress);
+
+        targetCtx.save();
+        targetCtx.beginPath();
+        targetCtx.arc(cx, cy, radius, 0, Math.PI * 2);
+        targetCtx.strokeStyle = d.color || `rgba(251, 191, 36, ${alpha * 0.8})`;
+        targetCtx.lineWidth = 3 * (1 - progress);
+        targetCtx.stroke();
+
+        targetCtx.fillStyle = d.color || `rgba(255, 255, 255, ${alpha})`;
+        for (let a = 0; a < 8; a++) {
+          const ang = (a * Math.PI) / 4 + progress * 0.6;
+          const dist = radius * (0.6 + progress * 0.6);
+          const px = cx + Math.cos(ang) * dist;
+          const py = cy + Math.sin(ang) * dist;
+          targetCtx.beginPath();
+          targetCtx.arc(px, py, 2.5 * (1 - progress), 0, Math.PI * 2);
+          targetCtx.fill();
+        }
+        targetCtx.restore();
+      }
     }
 
     this.updateAndDrawClimateParticles(viewW, viewH, targetCtx);
@@ -476,6 +572,53 @@ export class BoardRenderer {
     return { x, y, width: tileWidth, height: tileHeight };
   }
 
+  public getTileViewportCoords(tile: PlacedTile): { left: number; top: number; width: number; height: number } {
+    const coords = this.getTileScreenCoords(tile);
+    const rect = this.canvas.getBoundingClientRect();
+    const scaleX = rect.width / (this.canvas.width / this.dpr);
+    const scaleY = rect.height / (this.canvas.height / this.dpr);
+    return {
+      left: rect.left + coords.x * scaleX,
+      top: rect.top + coords.y * scaleY,
+      width: coords.width * scaleX,
+      height: coords.height * scaleY,
+    };
+  }
+
+  public triggerLocalMatchDissolve(coords: { x: number; y: number; width: number; height: number }, color: string = '#F59E0B'): void {
+    this.activeDissolves.push({
+      x: coords.x,
+      y: coords.y,
+      width: coords.width,
+      height: coords.height,
+      startTime: performance.now(),
+      duration: 250,
+      color,
+    });
+    this.keepAnimating(280);
+    this.requestRender();
+  }
+
+  public triggerShuffleAnimation(durationMs: number = 500): void {
+    this.shuffleStartTime = performance.now();
+    this.shuffleDuration = durationMs;
+    this.animatingUntil = Math.max(this.animatingUntil, this.shuffleStartTime + durationMs + 100);
+    this.requestRender();
+  }
+
+  public triggerDealAnimation(durationMs: number = 420): void {
+    this.dealStartTime = performance.now();
+    this.dealDuration = durationMs;
+    this.animatingUntil = Math.max(this.animatingUntil, this.dealStartTime + durationMs + 100);
+    this.requestRender();
+  }
+
+  private easeOutBack(x: number): number {
+    const c1 = 1.70158;
+    const c3 = c1 + 1;
+    return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+  }
+
   private initEvents(): void {
     let longPressTimer: ReturnType<typeof setTimeout> | null = null;
     let isLongPressTriggered = false;
@@ -541,6 +684,10 @@ export class BoardRenderer {
   private processClickAt(px: number, py: number): void {
     if (this.isInputLocked) return;
 
+    const now = performance.now();
+    if (now - this.lastClickTime < 110) return;
+    this.lastClickTime = now;
+
     const { tileWidth, tileHeight } = {
       tileWidth: Math.round(this.baseTileWidth * this.scale),
       tileHeight: Math.round(this.baseTileHeight * this.scale),
@@ -586,8 +733,9 @@ export class BoardRenderer {
       return;
     }
 
-    // Se a bandeja + peças em voo já atingiram a capacidade, bloquear imediatamente com som
-    if (this.engine.getTray().length + this.pendingTilesInFlight >= this.engine.getMaxTraySlots()) {
+    // Se a bandeja + peças em voo já atingiram a capacidade, só bloquear se a peça NÃO formar match com nenhuma peça já na bandeja
+    const willMatchWithTray = this.engine.getTray().some((t) => canMatch(t, clickedTile));
+    if (!willMatchWithTray && this.engine.getTray().length + this.pendingTilesInFlight >= this.engine.getMaxTraySlots()) {
       soundManager.playBlockedSound();
       return;
     }
@@ -634,6 +782,11 @@ export class BoardRenderer {
       hapticManager.impactMedium();
       // Pop de match no centro da tela
       this.showMatchPop();
+
+      // Dissolve local suave na posição da pedra
+      const tileCoords = this.getTileScreenCoords(clickedTile);
+      const isGreen = clickedTile.value === 'frog' || clickedTile.value === 'ladybug';
+      this.triggerLocalMatchDissolve(tileCoords, isGreen ? 'rgba(16, 185, 129, 0.9)' : '#F59E0B');
 
       if (this.callbacks.onMatchSuccess) {
         this.callbacks.onMatchSuccess(result.matchedPair);
@@ -888,6 +1041,24 @@ export class BoardRenderer {
       }
 
       this.synergyAnimator.triggerDolphinSonar(startX, startY, targetX, targetY, onSceneComplete);
+      this.isBoardDirty = true;
+    } else {
+      // Sinergias secundárias: Macaco+Banana, Esquilo+Noz, Pomar, Mel, Coringa
+      let theme: 'fruit' | 'nut' | 'orchard' | 'zen' = 'zen';
+      if (synergy.type === 'monkey_banana' || synergy.type === 'bee_honey') theme = 'fruit';
+      else if (synergy.type === 'squirrel_acorn') theme = 'nut';
+      else if (synergy.type === 'hedgehog_apple') theme = 'orchard';
+
+      const actorTile = initiatorTile || matchedPair?.[0];
+      const coords = actorTile
+        ? this.getTileScreenCoords(actorTile)
+        : { x: this.canvas.width / (2 * this.dpr), y: this.canvas.height / (2 * this.dpr), width: 60, height: 80 };
+      const targetX = coords.x + coords.width / 2;
+      const targetY = coords.y + coords.height / 2;
+
+      this.isInputLocked = true;
+      this.synergyAnimator.triggerMicroBurst(targetX, targetY, theme, onSceneComplete);
+      this.keepAnimating(450);
       this.isBoardDirty = true;
     }
   }

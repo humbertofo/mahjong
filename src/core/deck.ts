@@ -88,19 +88,30 @@ export function canMatch(tileA: TileDefinition, tileB: TileDefinition): boolean 
     return true;
   }
 
-  // 3. Sinergias Bissetoriais Disjuntas da Natureza (Pares 1-para-1 estritos sem ciclos ímpares)
-  // 🐝🍯 Abelha + Favo de Mel
+  // 3. Sinergias da Natureza (Pares cruzados de predador/alimento e ecossistema)
+  // 🐱🐟 Gato + Peixe (Pata Ágil na Lagoa)
+  if ((vA === 'cat' && vB === 'fish') || (vA === 'fish' && vB === 'cat')) {
+    return true;
+  }
+
+  // 🐝🍯 Abelha + Favo de Mel (Enxame Dourado)
   if ((vA === 'bee' && vB === 'honeycomb') || (vA === 'honeycomb' && vB === 'bee')) {
     return true;
   }
 
-  // 🐻🐟 Urso + Peixe (Banquete do Pescador)
-  if ((vA === 'bear' && vB === 'fish') || (vA === 'fish' && vB === 'bear')) {
+  // 🐻🍯/🐟 Urso + Mel ou Peixe (Banquete do Urso)
+  if (
+    (vA === 'bear' && (vB === 'honeycomb' || vB === 'fish')) ||
+    ((vA === 'honeycomb' || vA === 'fish') && vB === 'bear')
+  ) {
     return true;
   }
 
-  // 🐸🐞 Sapo + Joaninha (Língua Elástica na Lagoa)
-  if ((vA === 'frog' && vB === 'ladybug') || (vA === 'ladybug' && vB === 'frog')) {
+  // 🐸🐞/🐝 Sapo + Joaninha ou Abelha (Língua Elástica na Lagoa)
+  if (
+    (vA === 'frog' && (vB === 'ladybug' || vB === 'bee')) ||
+    ((vA === 'ladybug' || vA === 'bee') && vB === 'frog')
+  ) {
     return true;
   }
 

@@ -10,6 +10,8 @@ import {
   ClimateEffectResult,
   TileBiome,
   AnimalValue,
+  TileMutationRecord,
+  TileSpecialType,
 } from './types';
 import { createAnimalDeck, canMatch } from './deck';
 
@@ -30,6 +32,8 @@ export interface UndoResult {
   type?: 'tile_restored' | 'pair_restored';
   tile?: PlacedTile;
   pair?: [PlacedTile, PlacedTile];
+  secondaryTiles?: PlacedTile[];
+  rechargedTool?: 'hammer' | 'shuffle' | 'hint' | 'undo';
 }
 
 // Mapeamento de cada animal para seu bioma elementar da natureza
@@ -332,6 +336,11 @@ export class BoardEngine {
         }
       }
 
+      // Se for rocha ancestral, só é liberada se ambos os lados estiverem desimpedidos
+      if (tile.specialType === 'rock' && (hasLeftNeighbor || hasRightNeighbor)) {
+        continue;
+      }
+
       if (!hasLeftNeighbor || !hasRightNeighbor) {
         freeSet.add(tile.id);
       }
@@ -380,7 +389,7 @@ export class BoardEngine {
       const match2 = tile;
 
       // 1. Resolver Camaleão Espelho (garante conservação bijeção estrita de pares)
-      this.resolveChameleonMirror(match1, match2);
+      const chamMutation = this.resolveChameleonMirror(match1, match2);
 
       // Ambas as peças saem da bandeja
       this.tray = this.tray.filter((t) => t.id !== match1.id && t.id !== match2.id);
@@ -435,7 +444,22 @@ export class BoardEngine {
       this.invalidateCache();
 
       // 3. Detectar Clima da Natureza (se aplicável)
-      const climateTriggered = this.evaluateClimate(match1, match2);
+      let climateTriggered = this.evaluateClimate(match1, match2);
+
+      // Bônus especial de Baú da Fortuna 🎁
+      if (match1.specialType === 'chest' || match2.specialType === 'chest') {
+        const tools: ('hammer' | 'shuffle' | 'hint')[] = ['hammer', 'shuffle', 'hint'];
+        const awardedTool = tools[Math.floor(Math.random() * tools.length)];
+        if (!climateTriggered) {
+          climateTriggered = {
+            climate: 'zen_storm',
+            icon: '🎁',
+            title: 'Baú da Fortuna Aberto!',
+            description: `Você abriu um Baú Dourado e recebeu +1 ${awardedTool === 'hammer' ? 'Marreta 🔨' : awardedTool === 'hint' ? 'Dica 💡' : 'Misturar 🔀'}!`,
+            rechargedTool: awardedTool,
+          };
+        }
+      }
 
       // 4. Pontos de Harmonia Zen
       let pointsAwarded = 100;
@@ -443,11 +467,50 @@ export class BoardEngine {
       if (climateTriggered) pointsAwarded += 200;
       this.harmonyScore += pointsAwarded;
 
+      // Coletar peças secundárias removidas e mutações para o histórico atômico
+      const secondaryRemovedTiles: PlacedTile[] = [];
+      if (synergy?.affectedBoardTiles) {
+        secondaryRemovedTiles.push(...synergy.affectedBoardTiles);
+      }
+      if (climateTriggered?.affectedBoardTiles) {
+        secondaryRemovedTiles.push(...climateTriggered.affectedBoardTiles);
+      }
+      if (climateTriggered?.eliminatedBoardPairs) {
+        secondaryRemovedTiles.push(...climateTriggered.eliminatedBoardPairs);
+      }
+
+      const mutations: TileMutationRecord[] = [];
+      if (chamMutation) {
+        mutations.push(chamMutation);
+      }
+      if (climateTriggered?.mutations) {
+        mutations.push(...climateTriggered.mutations);
+      }
+
+      // Espelho Místico 🪞: reflete o animal recém-combinado
+      const mirrorTiles = this.getActiveBoardTiles().filter((t) => t.specialType === 'mirror');
+      for (const mir of mirrorTiles) {
+        if (!chamMutation || chamMutation.tile.id !== mir.id) {
+          mutations.push({
+            tile: mir,
+            prevValue: mir.value,
+            prevLabel: mir.label,
+            prevSuit: mir.suit,
+          });
+          mir.value = match1.value;
+          mir.label = match1.label;
+          mir.suit = match1.suit;
+        }
+      }
+
       // Registra o par combinado no histórico para permitir Desfazer completo
       this.history.push({
         actionType: 'matched_pair',
         matchedPair: [match1, match2],
         pointsAwarded,
+        secondaryRemovedTiles: secondaryRemovedTiles.length > 0 ? secondaryRemovedTiles : undefined,
+        mutations: mutations.length > 0 ? mutations : undefined,
+        rechargedTool: climateTriggered?.rechargedTool,
       });
 
       const waveCleared = this.isWaveCleared();
@@ -488,7 +551,7 @@ export class BoardEngine {
     };
   }
 
-  private resolveChameleonMirror(m1: PlacedTile, m2: PlacedTile): void {
+  private resolveChameleonMirror(m1: PlacedTile, m2: PlacedTile): TileMutationRecord | null {
     let chameleon: PlacedTile | null = null;
     let target: PlacedTile | null = null;
 
@@ -500,7 +563,7 @@ export class BoardEngine {
       target = m1;
     }
 
-    if (!chameleon || !target) return;
+    if (!chameleon || !target) return null;
 
     // Encontra o outro camaleão que ainda está no jogo
     const otherChameleon = this.tiles.find(
@@ -508,12 +571,20 @@ export class BoardEngine {
     );
 
     if (otherChameleon) {
+      const record: TileMutationRecord = {
+        tile: otherChameleon,
+        prevValue: otherChameleon.value,
+        prevLabel: otherChameleon.label,
+        prevSuit: otherChameleon.suit,
+      };
       // O camaleão espelho se transmuta para se tornar o par idêntico de target!
       otherChameleon.value = target.value;
       otherChameleon.label = target.label;
       otherChameleon.suit = target.suit;
       this.invalidateCache();
+      return record;
     }
+    return null;
   }
 
   private sortTray(): void {
@@ -615,9 +686,9 @@ export class BoardEngine {
       };
     }
 
-    // Sapo + Joaninha OU Sapo + Sapo: Língua Elástica
-    if ((v1 === 'frog' && v2 === 'ladybug') ||
-        (v1 === 'ladybug' && v2 === 'frog') ||
+    // Sapo + Joaninha OU Sapo + Abelha OU Sapo + Sapo: Língua Elástica
+    if ((v1 === 'frog' && (v2 === 'ladybug' || v2 === 'bee')) ||
+        ((v1 === 'ladybug' || v1 === 'bee') && v2 === 'frog') ||
         (v1 === 'frog' && v2 === 'frog')) {
       let affectedBoardTiles: PlacedTile[] = [];
       const active = this.getActiveBoardTiles();
@@ -767,21 +838,35 @@ export class BoardEngine {
     // 2. ONDA DE CALOR ☀️
     if (biome === 'savanna' && this.recentBiomeMatches.filter((b) => b === 'savanna').length >= 2) {
       const hint = this.getHintPair();
+      let mutations: TileMutationRecord[] | undefined;
       if (hint) {
         const p1 = this.getActiveBoardTiles().find((t) => t.id === hint.tile1Id);
         const p2 = this.getActiveBoardTiles().find((t) => t.id === hint.tile2Id);
         if (p1 && p2) {
+          mutations = [
+            { tile: p1, prevValue: p1.value, prevLabel: p1.label, prevSuit: p1.suit },
+            { tile: p2, prevValue: p2.value, prevLabel: p2.label, prevSuit: p2.suit },
+          ];
           p1.value = 'chameleon';
           p1.label = '🦎 Camaleão';
           p2.value = 'chameleon';
           p2.label = '🦎 Camaleão';
         }
       }
+      // 2.1. Derrete peças de gelo na mesa
+      const iceTiles = this.getActiveBoardTiles().filter((t) => t.specialType === 'ice');
+      for (const ice of iceTiles) {
+        ice.specialType = 'normal';
+      }
+
       return {
         climate: 'heat_wave',
         icon: '☀️',
         title: 'Onda de Calor Solar!',
-        description: 'O calor da savana transformou um par em Camaleões Coringa!',
+        description: iceTiles.length > 0
+          ? 'O calor da savana derreteu o gelo e transformou um par em Camaleões!'
+          : 'O calor da savana transformou um par em Camaleões Coringa!',
+        mutations,
       };
     }
 
@@ -816,11 +901,19 @@ export class BoardEngine {
     // 4. OUTONO DOURADO 🍂
     const forestGardenCount = this.recentBiomeMatches.filter((b) => b === 'forest' || b === 'garden').length;
     if ((biome === 'forest' || t1.value === 'acorn' || t1.value === 'apple' || t1.value === 'hedgehog') && forestGardenCount >= 2) {
+      // Corta vinhas de cipó presas
+      const vineTiles = this.getActiveBoardTiles().filter((t) => t.specialType === 'vines');
+      for (const vine of vineTiles) {
+        vine.specialType = 'normal';
+      }
+
       return {
         climate: 'autumn_gale',
         icon: '🍂',
         title: 'Outono Dourado!',
-        description: 'Folhas douradas rodopiam pelo bosque e restauram +1 Misturar 🔀!',
+        description: vineTiles.length > 0
+          ? 'O vendaval cortou todas as vinhas e restaurou +1 Misturar 🔀!'
+          : 'Folhas douradas rodopiam pelo bosque e restauram +1 Misturar 🔀!',
         rechargedTool: 'shuffle',
       };
     }
@@ -828,11 +921,20 @@ export class BoardEngine {
     // 5. BRISA DA PRIMAVERA 🌸
     const gardenCount = this.recentBiomeMatches.filter((b) => b === 'garden').length;
     if ((biome === 'garden' || t1.value === 'butterfly' || t1.value === 'bee' || t1.value === 'ladybug') && gardenCount >= 2) {
+      // Choca casulos/ovos revelando suas identidades
+      const cocoonTiles = this.getActiveBoardTiles().filter((t) => t.specialType === 'cocoon');
+      for (const coc of cocoonTiles) {
+        coc.specialType = 'normal';
+        this.harmonyScore += 100;
+      }
+
       return {
         climate: 'spring_breeze',
         icon: '🌸',
         title: 'Brisa da Primavera!',
-        description: 'Pétalas florais sopram sobre a mesa e restauram +1 Dica 💡!',
+        description: cocoonTiles.length > 0
+          ? 'Pétalas florais chocaram os casulos da mesa (+1 Dica 💡)!'
+          : 'Pétalas florais sopram sobre a mesa e restauram +1 Dica 💡!',
         rechargedTool: 'hint',
       };
     }
@@ -923,17 +1025,48 @@ export class BoardEngine {
       m1.inTray = false;
       m1.isSelected = false;
       m1.isHinted = false;
+      m1.inSynergyAction = false;
+      m1.inSynergyPulled = false;
 
       m2.isRemoved = false;
       m2.inTray = false;
       m2.isSelected = false;
       m2.isHinted = false;
+      m2.inSynergyAction = false;
+      m2.inSynergyPulled = false;
+
+      // Reverter peças secundárias dissolvidas por sinergias ou climas
+      if (lastItem.secondaryRemovedTiles) {
+        for (const sec of lastItem.secondaryRemovedTiles) {
+          sec.isRemoved = false;
+          sec.inTray = false;
+          sec.isSelected = false;
+          sec.isHinted = false;
+          sec.inSynergyAction = false;
+          sec.inSynergyPulled = false;
+        }
+      }
+
+      // Reverter transmutações (Camaleão Espelho, Onda de Calor)
+      if (lastItem.mutations) {
+        for (const mut of lastItem.mutations) {
+          mut.tile.value = mut.prevValue;
+          mut.tile.label = mut.prevLabel;
+          mut.tile.suit = mut.prevSuit;
+        }
+      }
 
       if (lastItem.pointsAwarded && this.harmonyScore >= lastItem.pointsAwarded) {
         this.harmonyScore -= lastItem.pointsAwarded;
       }
       this.invalidateCache();
-      return { success: true, type: 'pair_restored', pair: [m1, m2] };
+      return {
+        success: true,
+        type: 'pair_restored',
+        pair: [m1, m2],
+        secondaryTiles: lastItem.secondaryRemovedTiles,
+        rechargedTool: lastItem.rechargedTool,
+      };
     } else if (lastItem.actionType === 'tray_add' && lastItem.tile) {
       const trayTile = this.tray.find((t) => t.id === lastItem.tile!.id);
       if (trayTile) {
@@ -941,6 +1074,8 @@ export class BoardEngine {
         trayTile.isRemoved = false;
         trayTile.isSelected = false;
         trayTile.isHinted = false;
+        trayTile.inSynergyAction = false;
+        trayTile.inSynergyPulled = false;
         this.tray = this.tray.filter((t) => t.id !== trayTile.id);
         this.invalidateCache();
         return { success: true, type: 'tile_restored', tile: trayTile };
@@ -948,6 +1083,29 @@ export class BoardEngine {
     }
 
     return { success: false };
+  }
+
+  public undoSpecificTrayTile(tileId: string): UndoResult {
+    const trayTile = this.tray.find((t) => t.id === tileId);
+    if (!trayTile) return { success: false };
+
+    // Remove do histórico a adição desta peça
+    const histIdx = this.history.findIndex(
+      (h) => h.actionType === 'tray_add' && h.tile && h.tile.id === tileId
+    );
+    if (histIdx !== -1) {
+      this.history.splice(histIdx, 1);
+    }
+
+    trayTile.inTray = false;
+    trayTile.isRemoved = false;
+    trayTile.isSelected = false;
+    trayTile.isHinted = false;
+    trayTile.inSynergyAction = false;
+    trayTile.inSynergyPulled = false;
+    this.tray = this.tray.filter((t) => t.id !== tileId);
+    this.invalidateCache();
+    return { success: true, type: 'tile_restored', tile: trayTile };
   }
 
   public hammerRemove(tileId: string): boolean {
@@ -1120,9 +1278,22 @@ export class BoardEngine {
       ];
     }
 
-    const allPieces: TileDefinition[] = [];
-    selectedPairs.forEach(([p1, p2]) => {
-      allPieces.push(p1, p2);
+    const specialMap = new Map<number, TileSpecialType>();
+    // A partir de 8 pares (fases com 16+ peças), sorteia 1 tipo especial para enriquecer o jogo
+    if (pairCount >= 8 && Math.random() < 0.75) {
+      const specials: TileSpecialType[] = ['ice', 'chest', 'mirror', 'cocoon', 'vines'];
+      const chosen = specials[Math.floor(Math.random() * specials.length)];
+      specialMap.set(1, chosen);
+    }
+
+    interface TaggedPiece extends TileDefinition {
+      specialType: TileSpecialType;
+    }
+
+    const allPieces: TaggedPiece[] = [];
+    selectedPairs.forEach(([p1, p2], pIdx) => {
+      const sp = p1.value === 'chameleon' ? 'chameleon' : (specialMap.get(pIdx) || 'normal');
+      allPieces.push({ ...p1, specialType: sp }, { ...p2, specialType: sp });
     });
     allPieces.sort(() => Math.random() - 0.5);
 
@@ -1138,6 +1309,7 @@ export class BoardEngine {
         isSelected: false,
         isHinted: false,
         inTray: false,
+        specialType: def.specialType,
       };
     });
     this.invalidateCache();

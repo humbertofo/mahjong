@@ -63,6 +63,7 @@ export interface PlacedTile {
   isSelected: boolean;
   isHinted: boolean;
   inTray?: boolean;
+  inFlight?: boolean;
   inSynergyAction?: boolean;
   inSynergyPulled?: boolean;
   specialType?: TileSpecialType;
@@ -128,6 +129,7 @@ export interface ClimateEffectResult {
   eliminatedBoardPairs?: [PlacedTile, PlacedTile];
   frozenTimerSeconds?: number;
   rechargedTool?: 'hammer' | 'shuffle' | 'hint' | 'undo';
+  mutations?: TileMutationRecord[];
 }
 
 export interface WaveInfo {
@@ -141,12 +143,22 @@ export interface MatchPair {
   tile2Id: string;
 }
 
+export interface TileMutationRecord {
+  tile: PlacedTile;
+  prevValue: AnimalValue;
+  prevLabel: string;
+  prevSuit: TileSuit;
+}
+
 export interface MoveHistoryItem {
   actionType: 'tray_add' | 'matched_pair';
   tile?: PlacedTile;
   fromBoardToTrayIndex?: number;
   matchedPair?: [PlacedTile, PlacedTile];
   pointsAwarded?: number;
+  secondaryRemovedTiles?: PlacedTile[];
+  mutations?: TileMutationRecord[];
+  rechargedTool?: 'hammer' | 'shuffle' | 'hint' | 'undo';
 }
 
 export type ThemeType = 'mist-emerald' | 'felt-green' | 'wood-dark' | 'zen-dark';

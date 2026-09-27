@@ -78,7 +78,7 @@ export const SYNERGY_FAMILIES: Partial<Record<AnimalValue, SynergyFamily>> = {
   // 🌊 Família Marinha / Oceano & Pescador (Azul Turquesa)
   dolphin:   { borderColor: '#06B6D4', badge: '🐚', name: 'Oceano' },
   shell:     { borderColor: '#06B6D4', badge: '🐚', name: 'Oceano' },
-  fish:      { borderColor: '#06B6D4', badge: '🐚', name: 'Oceano' },
+  fish:      { borderColor: '#06B6D4', badge: '🐟', name: 'Pescador' },
   cat:       { borderColor: '#06B6D4', badge: '🐟', name: 'Pescador' },
 
   // 🌿 Família do Brejo / Lagoa (Verde Esmeralda)
@@ -249,7 +249,10 @@ export class TileRenderer {
     screenX: number,
     screenY: number,
     isFree: boolean,
-    animationOffsetY: number = 0
+    animationOffsetY: number = 0,
+    scaleXFactor: number = 1,
+    alpha: number = 1,
+    animTime: number = 0
   ): void {
     const { tileWidth, tileHeight, tileDepth } = this.dims;
     const yOffset = tile.isSelected ? -8 + animationOffsetY : animationOffsetY;
@@ -263,6 +266,15 @@ export class TileRenderer {
     const z = tile.position.z;
 
     ctx.save();
+
+    if (alpha < 1) {
+      ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+    }
+    if (scaleXFactor !== 1) {
+      ctx.translate(x + faceW / 2, y + faceH / 2);
+      ctx.scale(scaleXFactor, 1);
+      ctx.translate(-(x + faceW / 2), -(y + faceH / 2));
+    }
 
     // 1. SOMBRAS PROJETADAS EM CAMADAS (Z-DEPTH CAST SHADOW)
     // Sombra 1: Contato imediato com a mesa/peça inferior (escura e próxima)
@@ -415,12 +427,21 @@ export class TileRenderer {
     const syn = SYNERGY_FAMILIES[tile.value as AnimalValue];
     if (syn) {
       if (syn.borderColor === 'rainbow') {
-        const grad = ctx.createLinearGradient(x, y, x + faceW, y + faceH);
+        const cycle = animTime > 0 ? (animTime / 1400) % 1 : 0;
+        const angle = cycle * Math.PI * 2;
+        const cosA = Math.cos(angle);
+        const sinA = Math.sin(angle);
+        const grad = ctx.createLinearGradient(
+          x + faceW * (0.5 - cosA * 0.5),
+          y + faceH * (0.5 - sinA * 0.5),
+          x + faceW * (0.5 + cosA * 0.5),
+          y + faceH * (0.5 + sinA * 0.5)
+        );
         grad.addColorStop(0, '#FFD700');
         grad.addColorStop(0.33, '#00E676');
         grad.addColorStop(0.66, '#00B0FF');
         grad.addColorStop(1, '#E040FB');
-        ctx.lineWidth = 2.4;
+        ctx.lineWidth = 2.6;
         ctx.strokeStyle = grad;
       } else {
         ctx.lineWidth = 2.4;
@@ -436,14 +457,15 @@ export class TileRenderer {
       ctx.stroke();
     }
 
-    // 6. SELECIONADA — BORDA DOURADA BRILHANTE
+    // 6. SELECIONADA — BORDA DOURADA BRILHANTE COM PULSO DE RESPIRAÇÃO
     if (tile.isSelected) {
-      ctx.lineWidth = 3.5;
+      const pulse = animTime > 0 ? Math.sin(animTime / 180) * 1.2 : 0;
+      ctx.lineWidth = 3.6 + pulse;
       ctx.strokeStyle = '#F59E0B';
       this.drawRoundedRect(ctx, x - 1, y - 1, faceW + 2, faceH + 2, 9);
       ctx.stroke();
-      ctx.lineWidth = 1.2;
-      ctx.strokeStyle = 'rgba(255, 215, 0, 0.5)';
+      ctx.lineWidth = 1.2 + Math.max(0, pulse * 0.6);
+      ctx.strokeStyle = `rgba(255, 215, 0, ${0.45 + pulse * 0.15})`;
       this.drawRoundedRect(ctx, x - 3, y - 3, faceW + 6, faceH + 6, 11);
       ctx.stroke();
     }
@@ -476,6 +498,9 @@ export class TileRenderer {
         ctx.drawImage(face, x, y, faceW, faceH);
       }
     }
+
+    // 8.1. CAMADAS E OVERLAYS ESPECIAIS (Gelo, Cipó, Rocha, Casulo, Baú, Espelho)
+    this.drawSpecialOverlay(ctx, tile, x, y, faceW, faceH, isFree);
 
     // 9. INDICADOR DE NÍVEL / ANDAR (ACESSIBILIDADE VISUAL PARA Z >= 1)
     if (z >= 1) {
@@ -572,6 +597,120 @@ export class TileRenderer {
 
     g.fillText(emoji, cx, cy);
     g.restore();
+  }
+
+  // =========================================================================
+  // OVERLAYS DE PEÇAS ESPECIAIS (Gelo, Cipó, Rocha, Casulo, Baú, Espelho)
+  // =========================================================================
+
+  private drawSpecialOverlay(
+    ctx: CanvasRenderingContext2D,
+    tile: PlacedTile,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    isFree: boolean
+  ): void {
+    if (!tile.specialType || tile.specialType === 'normal' || tile.specialType === 'chameleon') return;
+
+    ctx.save();
+    const badgeSize = Math.max(12, Math.round(w * 0.28));
+    const font = `${badgeSize}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif`;
+
+    switch (tile.specialType) {
+      case 'ice': {
+        // Overlay de gelo cristalino translúcido com brilho ciano
+        ctx.fillStyle = isFree ? 'rgba(186, 230, 253, 0.40)' : 'rgba(147, 197, 253, 0.55)';
+        this.drawRoundedRect(ctx, x, y, w, h, 8);
+        ctx.fill();
+
+        ctx.strokeStyle = '#38BDF8';
+        ctx.lineWidth = 1.8;
+        this.drawRoundedRect(ctx, x, y, w, h, 8);
+        ctx.stroke();
+
+        ctx.font = font;
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'top';
+        ctx.fillText('❄️', x + w - 3, y + 3);
+        break;
+      }
+      case 'vines': {
+        // Moldura de cipós verde floresta com folhas
+        ctx.strokeStyle = '#15803D';
+        ctx.lineWidth = 2.4;
+        this.drawRoundedRect(ctx, x, y, w, h, 8);
+        ctx.stroke();
+
+        ctx.font = font;
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'top';
+        ctx.fillText('🌿', x + w - 3, y + 3);
+        break;
+      }
+      case 'rock': {
+        // Rocha ancestral sólida
+        ctx.fillStyle = 'rgba(71, 85, 105, 0.35)';
+        this.drawRoundedRect(ctx, x, y, w, h, 8);
+        ctx.fill();
+
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 2.5;
+        this.drawRoundedRect(ctx, x, y, w, h, 8);
+        ctx.stroke();
+
+        ctx.font = font;
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'top';
+        ctx.fillText('🪨', x + w - 3, y + 3);
+        break;
+      }
+      case 'cocoon': {
+        // Casulo dourado místico
+        ctx.strokeStyle = '#F59E0B';
+        ctx.lineWidth = 2.2;
+        this.drawRoundedRect(ctx, x, y, w, h, 8);
+        ctx.stroke();
+
+        ctx.font = font;
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'top';
+        ctx.fillText('🥚', x + w - 3, y + 3);
+        break;
+      }
+      case 'chest': {
+        // Baú da fortuna dourado
+        ctx.strokeStyle = '#EAB308';
+        ctx.lineWidth = 2.4;
+        this.drawRoundedRect(ctx, x, y, w, h, 8);
+        ctx.stroke();
+
+        ctx.font = font;
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'top';
+        ctx.fillText('🎁', x + w - 3, y + 3);
+        break;
+      }
+      case 'mirror': {
+        // Espelho místico com moldura prateada cintilante
+        const grad = ctx.createLinearGradient(x, y, x + w, y + h);
+        grad.addColorStop(0, '#E2E8F0');
+        grad.addColorStop(0.5, '#94A3B8');
+        grad.addColorStop(1, '#CBD5E1');
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 2.6;
+        this.drawRoundedRect(ctx, x, y, w, h, 8);
+        ctx.stroke();
+
+        ctx.font = font;
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'top';
+        ctx.fillText('🪞', x + w - 3, y + 3);
+        break;
+      }
+    }
+    ctx.restore();
   }
 
   // =========================================================================

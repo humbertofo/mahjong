@@ -41,6 +41,16 @@ export type SynergyAnimation =
       startTime: number;
       duration: number;
       onComplete?: () => void;
+    }
+  | {
+      id: string;
+      type: 'micro_burst';
+      targetX: number;
+      targetY: number;
+      startTime: number;
+      duration: number;
+      theme: 'fruit' | 'nut' | 'orchard' | 'zen';
+      onComplete?: () => void;
     };
 
 export class SynergyAnimator {
@@ -146,6 +156,27 @@ export class SynergyAnimator {
   }
 
   /**
+   * Dispara micro-sinergias temáticas no Canvas FX (Fruta, Nozes, Pomar, etc.)
+   */
+  public triggerMicroBurst(
+    targetX: number,
+    targetY: number,
+    theme: 'fruit' | 'nut' | 'orchard' | 'zen',
+    onComplete?: () => void
+  ): void {
+    this.activeAnimations.push({
+      id: `micro_${Date.now()}_${Math.random()}`,
+      type: 'micro_burst',
+      targetX,
+      targetY,
+      startTime: performance.now(),
+      duration: 380,
+      theme,
+      onComplete,
+    });
+  }
+
+  /**
    * Renderiza todas as animações ativas no Canvas 2D
    */
   public render(ctx: CanvasRenderingContext2D, now: number): void {
@@ -175,6 +206,8 @@ export class SynergyAnimator {
         this.renderBearClaw(ctx, anim, progress);
       } else if (anim.type === 'dolphin_sonar') {
         this.renderDolphinSonar(ctx, anim, progress);
+      } else if (anim.type === 'micro_burst') {
+        this.renderMicroBurst(ctx, anim, progress);
       }
     }
   }
@@ -456,6 +489,67 @@ export class SynergyAnimator {
         ctx.stroke();
       }
     }
+
+    ctx.restore();
+  }
+
+  // ─── 🍌🌰🍎 Renderização de Micro-Sinergias ────────────────────────────────
+
+  private renderMicroBurst(
+    ctx: CanvasRenderingContext2D,
+    anim: Extract<SynergyAnimation, { type: 'micro_burst' }>,
+    p: number
+  ): void {
+    const { targetX, targetY, theme } = anim;
+    ctx.save();
+
+    const alpha = Math.max(0, 1 - p);
+    const radius = 20 + p * 35;
+
+    let baseColor = '#FACC15'; // Amarelo fruta
+    let accentChar = '✨';
+
+    if (theme === 'fruit') {
+      baseColor = '#FACC15';
+      accentChar = '🍌';
+    } else if (theme === 'nut') {
+      baseColor = '#B45309';
+      accentChar = '🌰';
+    } else if (theme === 'orchard') {
+      baseColor = '#F43F5E';
+      accentChar = '🍎';
+    } else if (theme === 'zen') {
+      baseColor = '#10B981';
+      accentChar = '🍃';
+    }
+
+    // 1. Halo expansivo de energia
+    ctx.beginPath();
+    ctx.arc(targetX, targetY, radius, 0, Math.PI * 2);
+    ctx.strokeStyle = baseColor;
+    ctx.globalAlpha = alpha * 0.7;
+    ctx.lineWidth = 3.5 * (1 - p);
+    ctx.stroke();
+
+    // 2. 4 Fagulinhas giratórias em órbita
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = baseColor;
+    for (let i = 0; i < 4; i++) {
+      const ang = (i * Math.PI) / 2 + p * 4;
+      const dist = radius * 0.75;
+      const px = targetX + Math.cos(ang) * dist;
+      const py = targetY + Math.sin(ang) * dist;
+      ctx.beginPath();
+      ctx.arc(px, py, 3.5 * (1 - p), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // 3. Mini emoji sutil no centro
+    ctx.globalAlpha = alpha * 0.9;
+    ctx.font = '22px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(accentChar, targetX, targetY - p * 15);
 
     ctx.restore();
   }
