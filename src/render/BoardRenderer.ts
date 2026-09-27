@@ -547,7 +547,14 @@ export class BoardRenderer {
     };
 
     const hit = this.getTileAtScreenPos(px, py);
-    if (!hit) return;
+    if (!hit) {
+      if (this.engine.isWaveCleared() && this.engine.hasMoreWaves()) {
+        if (this.callbacks.onWaveCleared) {
+          this.callbacks.onWaveCleared(this.engine.getCurrentWave(), this.engine.getTotalWaves());
+        }
+      }
+      return;
+    }
 
     const clickedTile = hit.tile;
     const clickTileScreenX = hit.sx;

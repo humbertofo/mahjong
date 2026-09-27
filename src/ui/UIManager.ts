@@ -465,6 +465,14 @@ export class UIManager {
       }
     }
 
+    // Verificação de segurança: se a onda foi concluída e restam mais ondas, garantir que o modal de transição seja exibido
+    if (this.engine.isWaveCleared() && this.engine.hasMoreWaves()) {
+      const waveModal = document.getElementById('modal-wave-cleared');
+      if (waveModal && waveModal.classList.contains('hidden')) {
+        this.handleWaveCleared(this.engine.getCurrentWave(), this.engine.getTotalWaves());
+      }
+    }
+
     // Bandeja de 4 slots com nós reciclados
     const tray = this.engine.getTray();
     const maxSlots = this.engine.getMaxTraySlots();
@@ -733,18 +741,30 @@ export class UIManager {
     if (titleEl) titleEl.textContent = `Onda ${currentWave} Concluída! 🌸`;
     if (subtitleEl) subtitleEl.textContent = `Prepare-se para a Onda ${currentWave + 1} de ${totalWaves}!`;
 
+    const advance = () => {
+      if (waveModal) waveModal.classList.add('hidden');
+      this.engine.advanceToNextWave();
+      this.renderer.handleResize();
+      this.renderer.requestRender();
+      this.updateHUD();
+      this.showNatureToast('🌊', `Onda ${this.engine.getCurrentWave()} Iniciada!`, 'Novas peças na mesa com peças gigantes!');
+    };
+
     if (nextWaveBtn) {
-      nextWaveBtn.onclick = () => {
-        if (waveModal) waveModal.classList.add('hidden');
-        this.engine.advanceToNextWave();
-        this.renderer.handleResize();
-        this.renderer.requestRender();
-        this.updateHUD();
-        this.showNatureToast('🌊', `Onda ${this.engine.getCurrentWave()} Iniciada!`, 'Novas peças na mesa com peças gigantes!');
+      nextWaveBtn.onclick = (e) => {
+        e.stopPropagation();
+        advance();
       };
     }
 
-    if (waveModal) waveModal.classList.remove('hidden');
+    if (waveModal) {
+      waveModal.onclick = (e) => {
+        if (e.target === waveModal) {
+          advance();
+        }
+      };
+      waveModal.classList.remove('hidden');
+    }
   }
 
   // ─── Sinergias & Climas da Natureza ───────────────────────────────────────
