@@ -15,7 +15,8 @@
     "validate:levels": "npx tsx src/core/layouts/pipeline/levelValidator.ts",
     "graphcode": "npx tsx scripts/graphcode.ts",
     "graphcode:audit": "npx tsx scripts/graphcode.ts --audit",
-    "render:svg": "npx tsx scripts/render-svg.ts"
+    "render:svg": "npx tsx scripts/render-svg.ts",
+    "report:levels": "npx tsx scripts/generate_level_report.ts"
   },
   "dependencies": {
     "@capacitor/android": "^6.2.0",
