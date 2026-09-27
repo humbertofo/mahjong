@@ -93,15 +93,38 @@ export const SYNERGY_FAMILIES: Partial<Record<AnimalValue, SynergyFamily>> = {
   chameleon: { borderColor: 'rainbow', badge: '✨', name: 'Coringa' },
 };
 
+const ALL_ANIMALS: AnimalValue[] = [
+  'cat', 'dog', 'rabbit', 'fish', 'bird', 'butterfly', 'turtle', 'frog',
+  'bee', 'elephant', 'lion', 'fox', 'monkey', 'panda', 'penguin', 'duck',
+  'snail', 'ladybug', 'bear', 'squirrel', 'dolphin', 'hedgehog',
+  'banana', 'acorn', 'shell', 'apple', 'honeycomb', 'chameleon',
+];
+
+export interface AtlasUV {
+  sx: number;
+  sy: number;
+  sw: number;
+  sh: number;
+}
+
 export class TileRenderer {
   private cache: Map<string, HTMLCanvasElement> = new Map();
+  private desaturateCache: Map<string, string> = new Map();
   private dpr: number = 1;
   private dims: TileDimensions = { tileWidth: 56, tileHeight: 74, tileDepth: 7 };
   private dimBlockedTiles: boolean = true;
   public useEmojiMode: boolean = true;
 
+  // Master Texture Atlas (Sprite Sheet Unificado em GPU)
+  private masterAtlas: HTMLCanvasElement | null = null;
+  private atlasCoords: Map<AnimalValue, AtlasUV> = new Map();
+
+  private cachedGlyphFontSize: number = 0;
+  private cachedGlyphFont: string = '';
+
   constructor() {
     this.dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 3) : 1;
+    this.buildMasterAtlas();
   }
 
   public setDimensions(dims: TileDimensions): void {
@@ -112,6 +135,7 @@ export class TileRenderer {
     ) {
       this.dims = dims;
       this.clearCache();
+      this.buildMasterAtlas();
     }
   }
 
@@ -127,11 +151,92 @@ export class TileRenderer {
     }
     if (changed) {
       this.clearCache();
+      this.buildMasterAtlas();
     }
   }
 
   public clearCache(): void {
     this.cache.clear();
+    this.desaturateCache.clear();
+    this.atlasCoords.clear();
+    this.masterAtlas = null;
+    this.cachedGlyphFont = '';
+  }
+
+  public buildMasterAtlas(): HTMLCanvasElement {
+    const cw = this.dims.tileWidth - 2;
+    const ch = this.dims.tileHeight - 2;
+    const cellW = Math.round(cw * this.dpr);
+    const cellH = Math.round(ch * this.dpr);
+
+    const cols = 8;
+    const rows = 4;
+    const totalW = cols * cellW;
+    const totalH = rows * cellH;
+
+    if (!this.masterAtlas) {
+      this.masterAtlas = document.createElement('canvas');
+    }
+    this.masterAtlas.width = totalW;
+    this.masterAtlas.height = totalH;
+
+    const g = this.masterAtlas.getContext('2d');
+    if (!g) return this.masterAtlas;
+
+    this.atlasCoords.clear();
+
+    const badgeSize = Math.max(9, Math.round(cw * 0.22));
+    const badgeFont = `${badgeSize}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Android Emoji", sans-serif`;
+
+    for (let i = 0; i < ALL_ANIMALS.length; i++) {
+      const animal = ALL_ANIMALS[i];
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      const sx = col * cellW;
+      const sy = row * cellH;
+
+      this.atlasCoords.set(animal, { sx, sy, sw: cellW, sh: cellH });
+
+      g.save();
+      g.setTransform(1, 0, 0, 1, 0, 0);
+      g.translate(sx, sy);
+      g.scale(this.dpr, this.dpr);
+
+      this.drawAnimalGlyph(g, animal, cw, ch, 0, 0);
+
+      const syn = SYNERGY_FAMILIES[animal];
+      if (syn && syn.badge) {
+        const bx = cw - Math.round(cw * 0.16);
+        const by = Math.round(ch * 0.16);
+
+        g.save();
+        g.font = badgeFont;
+        g.textAlign = 'center';
+        g.textBaseline = 'middle';
+        g.fillText(syn.badge, bx, by);
+        g.restore();
+      }
+
+      g.restore();
+    }
+
+    return this.masterAtlas;
+  }
+
+  public getAtlasUV(animal: AnimalValue): AtlasUV | null {
+    if (!this.masterAtlas || this.atlasCoords.size === 0) {
+      this.buildMasterAtlas();
+    }
+    return this.atlasCoords.get(animal) || null;
+  }
+
+  private getDimmedColor(hex: string): string {
+    let cached = this.desaturateCache.get(hex);
+    if (!cached) {
+      cached = this.desaturate(hex, 0.5);
+      this.desaturateCache.set(hex, cached);
+    }
+    return cached;
   }
 
   // =========================================================================
@@ -187,7 +292,7 @@ export class TileRenderer {
     ctx.fill();
 
     // 4. Face principal
-    const bgColor = isFree ? palette.bg : this.desaturate(palette.bg, 0.5);
+    const bgColor = isFree ? palette.bg : this.getDimmedColor(palette.bg);
     ctx.fillStyle = bgColor;
     this.drawRoundedRect(ctx, x, y, tileWidth - 2, tileHeight - 2, 8);
     ctx.fill();
@@ -239,32 +344,28 @@ export class TileRenderer {
       ctx.stroke();
     }
 
-    // 7. Glifo do animal / elemento desenhado diretamente (alta performance sem recriar canvas)
+    // 7. Glifo do animal e Micro-Badge via Master Texture Atlas (Hardware Blit GPU)
     const cw = tileWidth - 2;
     const ch = tileHeight - 2;
-    if (!isFree && this.dimBlockedTiles) {
-      ctx.globalAlpha = 0.78;
-      this.drawAnimalGlyph(ctx, tile.value as AnimalValue, cw, ch, x, y);
-      ctx.globalAlpha = 1.0;
-    } else {
-      this.drawAnimalGlyph(ctx, tile.value as AnimalValue, cw, ch, x, y);
-    }
+    const uv = this.getAtlasUV(tile.value as AnimalValue);
 
-    // 8. Micro-Badge de Sinergia no canto superior direito para leitura imediata por idosos
-    if (syn && syn.badge) {
-      const badgeSize = Math.max(9, Math.round(cw * 0.22));
-      const bx = x + cw - Math.round(cw * 0.16);
-      const by = y + Math.round(ch * 0.16);
-
-      ctx.save();
-      ctx.font = `${badgeSize}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Android Emoji", sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
+    if (uv && this.masterAtlas) {
       if (!isFree && this.dimBlockedTiles) {
-        ctx.globalAlpha = 0.55;
+        ctx.globalAlpha = 0.78;
+        ctx.drawImage(this.masterAtlas, uv.sx, uv.sy, uv.sw, uv.sh, x, y, cw, ch);
+        ctx.globalAlpha = 1.0;
+      } else {
+        ctx.drawImage(this.masterAtlas, uv.sx, uv.sy, uv.sw, uv.sh, x, y, cw, ch);
       }
-      ctx.fillText(syn.badge, bx, by);
-      ctx.restore();
+    } else {
+      const face = this.getOrGenerateTileFace(tile);
+      if (!isFree && this.dimBlockedTiles) {
+        ctx.globalAlpha = 0.78;
+        ctx.drawImage(face, x, y, cw, ch);
+        ctx.globalAlpha = 1.0;
+      } else {
+        ctx.drawImage(face, x, y, cw, ch);
+      }
     }
 
     ctx.restore();
@@ -285,6 +386,21 @@ export class TileRenderer {
 
     g.scale(this.dpr, this.dpr);
     this.drawAnimalGlyph(g, tile.value as AnimalValue, cw, ch, 0, 0);
+
+    // Micro-badge de sinergia pré-renderizado no cache offscreen
+    const syn = SYNERGY_FAMILIES[tile.value as AnimalValue];
+    if (syn && syn.badge) {
+      const badgeSize = Math.max(9, Math.round(cw * 0.22));
+      const bx = cw - Math.round(cw * 0.16);
+      const by = Math.round(ch * 0.16);
+
+      g.save();
+      g.font = `${badgeSize}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Android Emoji", sans-serif`;
+      g.textAlign = 'center';
+      g.textBaseline = 'middle';
+      g.fillText(syn.badge, bx, by);
+      g.restore();
+    }
 
     this.cache.set(key, off);
     return off;
@@ -307,14 +423,15 @@ export class TileRenderer {
     const cy = offsetY + ch * 0.48;
     const fontSize = Math.round(cw * 0.62);
 
+    if (this.cachedGlyphFontSize !== fontSize) {
+      this.cachedGlyphFontSize = fontSize;
+      this.cachedGlyphFont = `${fontSize}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Android Emoji", sans-serif`;
+    }
+
     g.save();
     g.textAlign = 'center';
     g.textBaseline = 'middle';
-    g.font = `${fontSize}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Android Emoji", sans-serif`;
-
-    g.shadowColor = 'rgba(0, 0, 0, 0.16)';
-    g.shadowBlur = 4;
-    g.shadowOffsetY = 2;
+    g.font = this.cachedGlyphFont;
 
     g.fillText(emoji, cx, cy);
     g.restore();

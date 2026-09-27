@@ -9,6 +9,7 @@ window.addEventListener('DOMContentLoaded', () => {
   LiveUpdateManager.notifyAppReady();
 
   const canvas = document.getElementById('board-canvas') as HTMLCanvasElement;
+  const fxCanvas = document.getElementById('fx-canvas') as HTMLCanvasElement | null;
   if (!canvas) {
     console.error('Canvas element not found');
     return;
@@ -57,7 +58,7 @@ window.addEventListener('DOMContentLoaded', () => {
         onArrival();
       }
     },
-  });
+  }, fxCanvas);
 
   // 3. UIManager orquestra toda a navegação e estado
   uiManager = new UIManager(engine, renderer);

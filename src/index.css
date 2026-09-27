@@ -875,6 +875,46 @@ html, body {
   animation: star-pop 0.5s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+.victory-stars-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  margin: 6px 0 12px 0;
+  text-align: left;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.zen-star-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.3s ease;
+}
+
+.zen-star-row.earned {
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+.victory-time {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.victory-score {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #f472b6;
+  text-shadow: 0 0 12px rgba(244, 114, 182, 0.4);
+  margin-bottom: 12px;
+}
+
 @keyframes star-pop {
   from { transform: scale(0.5); opacity: 0; }
   to   { transform: scale(1);   opacity: 1; }
@@ -915,6 +955,16 @@ html, body {
   width: 100%;
   height: 100%;
   display: block;
+}
+
+#fx-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
 }
 
 /* === HUD SUPERIOR (CABEÇALHO) === */

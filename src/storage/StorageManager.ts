@@ -16,7 +16,8 @@ export interface LevelStats {
   completed: boolean;
   timesPlayed: number;
   bestTimeSeconds?: number;
-  stars: 0 | 1 | 2 | 3; // 0=nunca jogado, 1=completou, 2=<3min, 3=<1min
+  bestScore?: number;
+  stars: 0 | 1 | 2 | 3; // 0=não jogado, 1=completou, 2=ferramenta poupada ou sinergia, 3=ferramenta poupada e sinergia
 }
 
 export interface GlobalStats {
@@ -81,17 +82,37 @@ export class StorageManager {
     return this.getLevelStats(layoutId);
   }
 
-  public static recordVictory(layoutId: string, timeSeconds: number): LevelStats {
+  public static recordVictory(
+    layoutId: string,
+    timeSeconds: number,
+    toolsRemaining: number = 0,
+    synergiesTriggered: number = 0,
+    score: number = 0
+  ): LevelStats {
     const stats = this.getLevelStats(layoutId);
     stats.completed = true;
     stats.timesPlayed += 1;
     if (!stats.bestTimeSeconds || timeSeconds < stats.bestTimeSeconds) {
       stats.bestTimeSeconds = timeSeconds;
     }
-    // Calcular estrelas
-    if (timeSeconds < 60)       stats.stars = 3;
-    else if (timeSeconds < 180) stats.stars = 2;
-    else                        stats.stars = 1;
+    if (!stats.bestScore || score > stats.bestScore) {
+      stats.bestScore = score;
+    }
+
+    // Critério 100% Zen de 3 Estrelas (Sem pressão de tempo, focado em contemplação):
+    // 1★ = Completou o tabuleiro
+    // 2★ = Poupou pelo menos 1 ferramenta OU ativou pelo menos 1 sinergia
+    // 3★ = Poupou pelo menos 1 ferramenta E ativou pelo menos 1 sinergia/clima
+    let earnedStars: 0 | 1 | 2 | 3 = 1;
+    if (toolsRemaining > 0 && synergiesTriggered > 0) {
+      earnedStars = 3;
+    } else if (toolsRemaining > 0 || synergiesTriggered > 0) {
+      earnedStars = 2;
+    }
+
+    if (earnedStars > stats.stars) {
+      stats.stars = earnedStars;
+    }
 
     try { localStorage.setItem(`${STATS_KEY}_${layoutId}`, JSON.stringify(stats)); } catch { /* silent */ }
     return stats;

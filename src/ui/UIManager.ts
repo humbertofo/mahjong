@@ -37,8 +37,9 @@ export class UIManager {
   private timerInterval: ReturnType<typeof setInterval> | null = null;
   private elapsedSeconds: number = 0;
 
-  // Contador de pares combinados na partida atual
+  // Contador de pares combinados e sinergias na partida atual
   private pairsMatchedThisGame: number = 0;
+  private synergiesTriggeredThisGame: number = 0;
   private isRestarting: boolean = false;
 
   // DOM — Screens
@@ -54,6 +55,8 @@ export class UIManager {
   // DOM — Tray
   private traySlotsContainer!: HTMLElement;
   private traySlotEls: HTMLElement[] = [];
+  private traySlotCanvases: HTMLCanvasElement[] = [];
+  private flyerPool: { el: HTMLElement; canvas: HTMLCanvasElement; inUse: boolean }[] = [];
 
   // DOM — HUD Buttons
   private undoBtn!: HTMLButtonElement;
@@ -108,6 +111,18 @@ export class UIManager {
     this.traySlotsContainer = document.getElementById('tray-slots')!;
     this.traySlotEls = Array.from(document.querySelectorAll('.tray-slot'));
 
+    // Pre-alocar canvas reutilizáveis nos 4 slots para reciclagem perfeita sem GC
+    this.traySlotCanvases = this.traySlotEls.map((slotEl) => {
+      slotEl.innerHTML = '';
+      const canvas = document.createElement('canvas');
+      canvas.className = 'tray-tile-canvas';
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+      canvas.style.display = 'none';
+      slotEl.appendChild(canvas);
+      return canvas;
+    });
+
     this.undoBtn    = document.getElementById('btn-undo')    as HTMLButtonElement;
     this.hintBtn    = document.getElementById('btn-hint')    as HTMLButtonElement;
     this.shuffleBtn = document.getElementById('btn-shuffle') as HTMLButtonElement;
@@ -158,24 +173,29 @@ export class UIManager {
       }
     });
 
-    // Desfazer (5 cargas por fase)
+    // Desfazer (5 cargas por fase - suporta peças na bandeja e pares combinados na mesa)
     this.undoBtn.addEventListener('click', () => {
       if (this.undoCount <= 0) {
         this.showToast('Sem desfazeres restantes nesta fase!');
         soundManager.playBlockedSound();
         return;
       }
-      if (this.engine.getTray().length === 0) {
-        this.showToast('Nenhuma peça na bandeja para desfazer.');
+      if (this.engine.getHistoryLength() === 0) {
+        this.showToast('Nenhum movimento para desfazer.');
         return;
       }
-      if (this.engine.undo()) {
+      const undoResult = this.engine.undo();
+      if (undoResult.success) {
         this.undoCount--;
         this.updatePowerUpBadges();
         soundManager.playTileClick();
         hapticManager.impactLight();
         this.renderer.requestRender();
-        this.showToast(`Peça devolvida! (${this.undoCount} restante${this.undoCount === 1 ? '' : 's'})`);
+        if (undoResult.type === 'pair_restored') {
+          this.showToast(`↩️ Par restaurado à mesa! (${this.undoCount} restante${this.undoCount === 1 ? '' : 's'})`);
+        } else {
+          this.showToast(`Peça devolvida! (${this.undoCount} restante${this.undoCount === 1 ? '' : 's'})`);
+        }
         this.updateHUD();
       }
     });
@@ -371,6 +391,8 @@ export class UIManager {
     this.isHammerActive = false;
     this.hammerBtn.classList.remove('active-hammer');
     this.pairsMatchedThisGame = 0;
+    this.synergiesTriggeredThisGame = 0;
+    this.engine.resetHarmonyScore();
     this.isRestarting = false;
     this.renderer.isInputLocked = false;
     if (this.traySlotsContainer) {
@@ -443,17 +465,20 @@ export class UIManager {
       }
     }
 
-    // Bandeja de 4 slots
+    // Bandeja de 4 slots com nós reciclados
     const tray = this.engine.getTray();
     const maxSlots = this.engine.getMaxTraySlots();
 
     this.traySlotEls.forEach((slotEl, idx) => {
-      slotEl.innerHTML = '';
+      const canvas = this.traySlotCanvases[idx];
       if (idx < tray.length) {
+        const wasFilled = slotEl.classList.contains('filled');
         slotEl.classList.add('filled');
         const tile = tray[idx];
-        const canvas = this.createTrayTileCanvas(tile);
-        slotEl.appendChild(canvas);
+        if (canvas) {
+          canvas.style.display = 'block';
+          this.renderTileToCanvas(canvas, tile);
+        }
 
         if (this.isHammerActive) {
           slotEl.classList.add('can-hammer');
@@ -461,9 +486,11 @@ export class UIManager {
           slotEl.classList.remove('can-hammer');
         }
 
-        // Bounce ao receber
-        slotEl.classList.add('just-filled');
-        setTimeout(() => slotEl.classList.remove('just-filled'), 380);
+        // Bounce suave apenas ao receber nova peça
+        if (!wasFilled) {
+          slotEl.classList.add('just-filled');
+          setTimeout(() => slotEl.classList.remove('just-filled'), 380);
+        }
 
         slotEl.onclick = () => {
           if (this.isHammerActive) {
@@ -471,8 +498,11 @@ export class UIManager {
           }
         };
       } else {
-        slotEl.classList.remove('filled', 'can-hammer');
+        slotEl.classList.remove('filled', 'can-hammer', 'just-filled');
         slotEl.onclick = null;
+        if (canvas) {
+          canvas.style.display = 'none';
+        }
       }
     });
 
@@ -481,22 +511,33 @@ export class UIManager {
       this.hammerBtn.classList.remove('active-hammer');
     }
 
-    // Se a bandeja atingir os 4 slots preenchidos sem formar par: reiniciar a fase
+    // Tratamento Zen da Bandeja Cheia (4 slots)
     if (tray.length >= maxSlots) {
       this.traySlotsContainer.classList.add('warning-full');
-      this.undoBtn.disabled = true;
 
-      if (!this.isRestarting) {
-        this.isRestarting = true;
-        this.renderer.isInputLocked = true;
-        soundManager.playBlockedSound();
-        hapticManager.impactMedium();
-        this.showToast('⚠️ Bandeja cheia (4/4)! Reiniciando a fase...', 1500, true);
+      // Se o jogador não tem marreta nem desfazer para se salvar, a floresta concede o Salvamento Zen!
+      if (this.hammerCount <= 0 && this.undoCount <= 0) {
+        if (!this.isRestarting) {
+          this.isRestarting = true;
+          soundManager.playShuffleSound();
+          hapticManager.impactMedium();
+          this.showNatureEvent(
+            '🍃',
+            'Brisa da Compaixão',
+            'A floresta abriu espaço na sua bandeja com segurança zen!'
+          );
 
-        setTimeout(() => {
-          this.traySlotsContainer.classList.remove('warning-full');
-          this.startGame(this.currentLevelIndex);
-        }, 1200);
+          setTimeout(() => {
+            this.engine.zenRescue();
+            this.isRestarting = false;
+            this.traySlotsContainer.classList.remove('warning-full');
+            this.renderer.requestRender();
+            this.updateHUD();
+          }, 900);
+        }
+      } else {
+        // Alerta o jogador para usar seus recursos
+        this.showNatureEvent('⚠️', 'Bandeja Cheia (4/4)!', 'Toque na Marreta 🔨 ou Desfazer ↩️!');
       }
     } else {
       this.traySlotsContainer.classList.remove('warning-full');
@@ -535,6 +576,15 @@ export class UIManager {
         soundManager.playVictoryFanfare();
         hapticManager.impactVictory();
         this.handleVictory();
+      } else if (this.engine.isWaveCleared() && this.engine.hasMoreWaves()) {
+        soundManager.playMatchSuccess();
+        confetti({
+          particleCount: 40,
+          spread: 55,
+          origin: { y: 0.6 },
+          colors: ['#10B981', '#F59E0B', '#3B82F6', '#EC4899'],
+        });
+        this.handleWaveCleared(this.engine.getCurrentWave(), this.engine.getTotalWaves());
       }
     }, 280);
   }
@@ -561,8 +611,8 @@ export class UIManager {
     if (this.badgeUndo) {
       this.badgeUndo.textContent = `${this.undoCount}`;
       this.badgeUndo.classList.toggle('depleted', this.undoCount <= 0);
-      const tray = this.engine ? this.engine.getTray() : [];
-      this.undoBtn.disabled = this.undoCount <= 0 || tray.length === 0;
+      const canUndo = this.engine ? this.engine.getHistoryLength() > 0 : false;
+      this.undoBtn.disabled = this.undoCount <= 0 || !canUndo;
     }
   }
 
@@ -574,8 +624,23 @@ export class UIManager {
     const timeSeconds = this.elapsedSeconds;
     const layoutId = this.engine.getLayout().id;
 
-    // Salvar stats
-    const levelStats = StorageManager.recordVictory(layoutId, timeSeconds);
+    // Ferramentas poupadas
+    const toolsRemaining =
+      this.hammerCount +
+      this.shuffleCount +
+      this.hintCount +
+      (this.undoCount > 0 ? 1 : 0);
+
+    const harmonyScore = this.engine.getHarmonyScore();
+
+    // Salvar estatísticas contemplativas
+    const levelStats = StorageManager.recordVictory(
+      layoutId,
+      timeSeconds,
+      toolsRemaining,
+      this.synergiesTriggeredThisGame,
+      harmonyScore
+    );
     StorageManager.incrementGamesWon(timeSeconds, this.pairsMatchedThisGame, this.currentLevelIndex);
 
     // Desbloquear próximo nível
@@ -596,7 +661,19 @@ export class UIManager {
     if (starsEl) starsEl.textContent = starsStr;
 
     const timeEl = document.getElementById('victory-time');
-    if (timeEl) timeEl.textContent = `⏱ ${m}:${s}`;
+    if (timeEl) timeEl.textContent = `⏱ Tempo Zen: ${m}:${s}`;
+
+    const scoreEl = document.getElementById('victory-score');
+    if (scoreEl) scoreEl.textContent = `🌸 Harmonia Zen: ${harmonyScore.toLocaleString('pt-BR')} pts`;
+
+    const detailEl = document.getElementById('victory-stars-detail');
+    if (detailEl) {
+      detailEl.innerHTML = `
+        <div class="zen-star-row ${stars >= 1 ? 'earned' : ''}">⭐ 1★ Conclusão do Tabuleiro</div>
+        <div class="zen-star-row ${stars >= 2 ? 'earned' : ''}">⭐ 2★ ${toolsRemaining > 0 ? `Ferramentas Poupadas (${toolsRemaining})` : 'Sinergia da Natureza'}</div>
+        <div class="zen-star-row ${stars >= 3 ? 'earned' : ''}">⭐ 3★ Harmonia Zen Completa</div>
+      `;
+    }
 
     const unlockEl = document.getElementById('victory-next-unlock');
     const unlockName = document.getElementById('victory-unlock-name');
@@ -685,6 +762,7 @@ export class UIManager {
     soundManager.playMatchSuccess();
     hapticManager.impactLight();
     this.triggerHudPulse();
+    this.synergiesTriggeredThisGame++;
 
     let icon = '🐾';
     if (synergy.type === 'frog_tongue') icon = '🐸';
@@ -705,11 +783,18 @@ export class UIManager {
     soundManager.playMatchSuccess();
     hapticManager.impactMedium();
     this.triggerHudPulse();
+    this.synergiesTriggeredThisGame++;
 
     if (climate.rechargedTool === 'hammer') {
       this.hammerCount = Math.min(UIManager.MAX_HAMMER, this.hammerCount + 1);
-      this.updatePowerUpBadges();
+    } else if (climate.rechargedTool === 'hint') {
+      this.hintCount = Math.min(UIManager.MAX_HINT, this.hintCount + 1);
+    } else if (climate.rechargedTool === 'shuffle') {
+      this.shuffleCount = Math.min(UIManager.MAX_SHUFFLE, this.shuffleCount + 1);
+    } else if (climate.rechargedTool === 'undo') {
+      this.undoCount = Math.min(UIManager.MAX_UNDO, this.undoCount + 1);
     }
+    this.updatePowerUpBadges();
 
     this.showNatureEvent(climate.icon, climate.title, climate.description);
     this.updateHUD();
@@ -1081,9 +1166,13 @@ export class UIManager {
           }
 
           if (bestEl) {
-            bestEl.textContent = stats.bestTimeSeconds
-              ? `Recorde: ${Math.floor(stats.bestTimeSeconds / 60)}m ${stats.bestTimeSeconds % 60}s`
+            let recordText = stats.bestTimeSeconds
+              ? `Tempo Zen: ${Math.floor(stats.bestTimeSeconds / 60)}m ${stats.bestTimeSeconds % 60}s`
               : 'Sem recorde';
+            if (stats.bestScore) {
+              recordText += ` · 🌸 ${stats.bestScore.toLocaleString('pt-BR')} pts`;
+            }
+            bestEl.textContent = recordText;
           }
 
           if (btnPlay) {
@@ -1174,19 +1263,27 @@ export class UIManager {
 
   // ─── Tray Tile Canvas ─────────────────────────────────────────────────────
 
-  private createTrayTileCanvas(tile: PlacedTile): HTMLCanvasElement {
-    const canvas = document.createElement('canvas');
+  /**
+   * Renderiza a face de uma peça em um canvas pré-alocado reutilizável
+   */
+  public renderTileToCanvas(canvas: HTMLCanvasElement, tile: PlacedTile): void {
     const dpr = window.devicePixelRatio || 1;
     const w = 62;
     const h = 82;
+    const targetW = Math.round(w * dpr);
+    const targetH = Math.round(h * dpr);
 
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    canvas.style.width = '100%';
-    canvas.style.height = '100%';
+    if (canvas.width !== targetW || canvas.height !== targetH) {
+      canvas.width = targetW;
+      canvas.height = targetH;
+    }
 
     const ctx = canvas.getContext('2d');
-    if (!ctx) return canvas;
+    if (!ctx) return;
+
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, targetW, targetH);
     ctx.scale(dpr, dpr);
 
     ctx.fillStyle = '#FFFFFF';
@@ -1199,8 +1296,33 @@ export class UIManager {
 
     const sprite = this.renderer.getTileRenderer().getOrGenerateTileFace(tile);
     ctx.drawImage(sprite, 2, 2, w - 4, h - 4);
+    ctx.restore();
+  }
 
-    return canvas;
+  private getFlyerFromPool(): { el: HTMLElement; canvas: HTMLCanvasElement; inUse: boolean } {
+    let item = this.flyerPool.find((f) => !f.inUse);
+    if (!item) {
+      const el = document.createElement('div');
+      el.className = 'flying-tile-card';
+      el.style.cssText = `
+        position: fixed;
+        z-index: 1000;
+        pointer-events: none;
+        display: none;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        border-radius: 8px;
+        overflow: hidden;
+      `;
+      const canvas = document.createElement('canvas');
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+      el.appendChild(canvas);
+      document.body.appendChild(el);
+      item = { el, canvas, inUse: false };
+      this.flyerPool.push(item);
+    }
+    item.inUse = true;
+    return item;
   }
 
   // ─── Menu Progress ────────────────────────────────────────────────────────
@@ -1272,28 +1394,24 @@ export class UIManager {
     if (!targetSlot) { onArrival(); return; }
 
     const targetRect = targetSlot.getBoundingClientRect();
-    const flyer = document.createElement('div');
-    flyer.className = 'flying-tile-card';
-    flyer.style.cssText = `
-      position: fixed;
-      left: ${startX}px;
-      top: ${startY}px;
-      width: ${width}px;
-      height: ${height}px;
-      z-index: 100;
-      pointer-events: none;
-      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-      border-radius: 8px;
-      overflow: hidden;
-      transform: scale(1.05);
-    `;
+    const flyerItem = this.getFlyerFromPool();
+    const flyer = flyerItem.el;
+    const canvas = flyerItem.canvas;
 
-    const canvas = this.createTrayTileCanvas(tile);
-    flyer.appendChild(canvas);
-    document.body.appendChild(flyer);
+    this.renderTileToCanvas(canvas, tile);
+
+    flyer.style.transition = 'none';
+    flyer.style.left = `${startX}px`;
+    flyer.style.top  = `${startY}px`;
+    flyer.style.width = `${width}px`;
+    flyer.style.height = `${height}px`;
+    flyer.style.transform = 'scale(1.05)';
+    flyer.style.display = 'block';
+
+    void flyer.offsetWidth;
 
     requestAnimationFrame(() => {
+      flyer.style.transition = 'all 0.22s cubic-bezier(0.16, 1, 0.3, 1)';
       flyer.style.left = `${targetRect.left}px`;
       flyer.style.top  = `${targetRect.top}px`;
       flyer.style.width = `${targetRect.width}px`;
@@ -1302,7 +1420,8 @@ export class UIManager {
     });
 
     setTimeout(() => {
-      flyer.remove();
+      flyer.style.display = 'none';
+      flyerItem.inUse = false;
       onArrival();
     }, 220);
   }

@@ -63,6 +63,8 @@ export interface PlacedTile {
   isSelected: boolean;
   isHinted: boolean;
   inTray?: boolean;
+  inSynergyAction?: boolean;
+  inSynergyPulled?: boolean;
   specialType?: TileSpecialType;
   biome?: TileBiome;
 }
@@ -140,8 +142,11 @@ export interface MatchPair {
 }
 
 export interface MoveHistoryItem {
-  tile: PlacedTile;
-  fromBoardToTrayIndex: number;
+  actionType: 'tray_add' | 'matched_pair';
+  tile?: PlacedTile;
+  fromBoardToTrayIndex?: number;
+  matchedPair?: [PlacedTile, PlacedTile];
+  pointsAwarded?: number;
 }
 
 export type ThemeType = 'mist-emerald' | 'felt-green' | 'wood-dark' | 'zen-dark';

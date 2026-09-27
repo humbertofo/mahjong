@@ -83,6 +83,7 @@
         <!-- MESA CANVAS -->
         <div id="board-canvas-container">
           <canvas id="board-canvas"></canvas>
+          <canvas id="fx-canvas"></canvas>
         </div>
 
         <!-- HUD SUPERIOR -->
@@ -288,9 +289,10 @@
         <div class="modal-card victory-card">
           <div class="victory-icon">🎉</div>
           <h2 class="victory-title">Parabéns!</h2>
-          <p class="victory-subtitle">Tabuleiro limpo com maestria!</p>
           <div id="victory-stars" class="victory-stars">⭐⭐⭐</div>
-          <div id="victory-time" class="victory-time">Tempo: --</div>
+          <div id="victory-stars-detail" class="victory-stars-detail"></div>
+          <div id="victory-time" class="victory-time">Tempo Zen: --</div>
+          <div id="victory-score" class="victory-score">🌸 Harmonia Zen: 0 pts</div>
           <div id="victory-next-unlock" class="victory-unlock hidden">
             🔓 <span id="victory-unlock-name">Próxima fase desbloqueada!</span>
           </div>

@@ -408,6 +408,117 @@ export class SoundManager {
     });
   }
 
+  /**
+   * Som da língua elástica do sapo (glide elástico + pop adesivo)
+   */
+  public playFrogTongue(): void {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(220, now);
+    osc.frequency.exponentialRampToValueAtTime(620, now + 0.18);
+    osc.frequency.exponentialRampToValueAtTime(180, now + 0.38);
+
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(this.volume * 0.45, now + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.43);
+
+    setTimeout(() => {
+      this.playTransientClick(this.ctx?.currentTime || now, 0.03);
+    }, 380);
+  }
+
+  /**
+   * Som de patada felina na água (patadinha fofa + splash límpido)
+   */
+  public playCatPaw(): void {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(320, now);
+    osc.frequency.linearRampToValueAtTime(480, now + 0.15);
+    osc.frequency.exponentialRampToValueAtTime(220, now + 0.3);
+
+    gain.gain.setValueAtTime(this.volume * 0.35, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.33);
+  }
+
+  /**
+   * Som do eco sonar do golfinho (duplo chirp agudo cristalino)
+   */
+  public playDolphinSonar(): void {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    [0, 0.14].forEach((delay) => {
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1200, now + delay);
+      osc.frequency.exponentialRampToValueAtTime(2400, now + delay + 0.09);
+
+      gain.gain.setValueAtTime(0, now + delay);
+      gain.gain.linearRampToValueAtTime(this.volume * 0.28, now + delay + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.12);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now + delay);
+      osc.stop(now + delay + 0.13);
+    });
+  }
+
+  /**
+   * Som da garra/banquete do urso (impacto oco firme e saboroso)
+   */
+  public playBearClaw(): void {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(180, now);
+    osc.frequency.exponentialRampToValueAtTime(60, now + 0.25);
+
+    gain.gain.setValueAtTime(this.volume * 0.5, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.28);
+  }
+
   private playTransientClick(time: number, duration: number): void {
     if (!this.ctx) return;
     const bufferSize = this.ctx.sampleRate * duration;

@@ -25,6 +25,13 @@ export interface TileSelectionResult {
   waveInfo?: WaveInfo;
 }
 
+export interface UndoResult {
+  success: boolean;
+  type?: 'tile_restored' | 'pair_restored';
+  tile?: PlacedTile;
+  pair?: [PlacedTile, PlacedTile];
+}
+
 // Mapeamento de cada animal para seu bioma elementar da natureza
 const ANIMAL_BIOMES: Record<AnimalValue, TileBiome> = {
   // Água
@@ -75,18 +82,28 @@ export class BoardEngine {
   private layout: BoardLayout;
   private readonly maxTraySlots: number = 4;
 
+  // Cache de alta performance para 60 FPS
+  private cachedFreeTileIds: Set<string> | null = null;
+  private cachedActiveTiles: PlacedTile[] | null = null;
+
   // Estado Multi-Wave (Fases em Ondas para manter peças gigantescas no celular)
   private waves: LayoutSlot[][] = [];
   private currentWaveIndex: number = 0;
 
-  // Estado Climático & Sinergias
+  // Estado Climático, Sinergias & Pontuação de Harmonia
   private recentBiomeMatches: TileBiome[] = [];
   private consecutiveMatchesStreak: number = 0;
+  private harmonyScore: number = 0;
 
   constructor(layout: BoardLayout) {
     this.layout = layout;
     this.initWaves();
     this.generateCurrentWave();
+  }
+
+  public invalidateCache(): void {
+    this.cachedFreeTileIds = null;
+    this.cachedActiveTiles = null;
   }
 
   public getLayout(): BoardLayout {
@@ -106,7 +123,11 @@ export class BoardEngine {
   }
 
   public getActiveBoardTiles(): PlacedTile[] {
-    return this.tiles.filter((t) => !t.isRemoved && !t.inTray);
+    if (this.cachedActiveTiles) {
+      return this.cachedActiveTiles;
+    }
+    this.cachedActiveTiles = this.tiles.filter((t) => !t.isRemoved && !t.inTray);
+    return this.cachedActiveTiles;
   }
 
   public getRemainingCount(): number {
@@ -115,6 +136,14 @@ export class BoardEngine {
 
   public getHistoryLength(): number {
     return this.history.length;
+  }
+
+  public getHarmonyScore(): number {
+    return this.harmonyScore;
+  }
+
+  public resetHarmonyScore(): void {
+    this.harmonyScore = 0;
   }
 
   // ─── Lógica de Ondas (Multi-Wave) ──────────────────────────────────────────
@@ -132,7 +161,41 @@ export class BoardEngine {
   }
 
   public isWaveCleared(): boolean {
-    return this.getActiveBoardTiles().length === 0;
+    return this.getActiveBoardTiles().length === 0 && this.tray.length === 0;
+  }
+
+  /**
+   * Resgate Cósmico Zen: se o tabuleiro esvaziou mas restou qualquer peça na bandeja,
+   * a floresta purifica a bandeja com Harmonia (+200 pts) e conclui a onda com segurança total!
+   */
+  public checkAndResolveCosmicRescue(): PlacedTile[] | null {
+    if (this.getActiveBoardTiles().length === 0 && this.tray.length > 0) {
+      const rescued = [...this.tray];
+      for (const t of rescued) {
+        t.isRemoved = true;
+        t.inTray = false;
+        t.inSynergyAction = false;
+      }
+      this.tray = [];
+      this.harmonyScore += rescued.length * 200;
+      this.invalidateCache();
+      return rescued;
+    }
+    return null;
+  }
+
+  /**
+   * Conclui a remoção definitiva das peças que estavam participando de animações cênicas teatrais
+   */
+  public finalizeSynergyMatch(tiles: PlacedTile[]): void {
+    for (const t of tiles) {
+      t.isRemoved = true;
+      t.inSynergyAction = false;
+      t.inSynergyPulled = false;
+      t.inTray = false;
+      t.isSelected = false;
+    }
+    this.invalidateCache();
   }
 
   public getWaveInfo(): WaveInfo {
@@ -209,48 +272,83 @@ export class BoardEngine {
     }
   }
 
-  // ─── Verificação de Liberdade de Peça ──────────────────────────────────────
+  // ─── Verificação de Liberdade de Peça com Cache ──────────────────────────
+
+  /**
+   * Retorna o conjunto de IDs de todas as peças atualmente livres para clique/seleção.
+   * Executa em O(N) com early-exit e guarda o resultado em cache para 60 FPS contínuos.
+   */
+  public getFreeTileIds(): Set<string> {
+    if (this.cachedFreeTileIds) {
+      return this.cachedFreeTileIds;
+    }
+
+    const activeTiles = this.getActiveBoardTiles();
+    const freeSet = new Set<string>();
+    const n = activeTiles.length;
+
+    for (let i = 0; i < n; i++) {
+      const tile = activeTiles[i];
+      let hasTileAbove = false;
+
+      // 1. Checar se existe peça acima cobrindo
+      for (let j = 0; j < n; j++) {
+        if (i === j) continue;
+        const other = activeTiles[j];
+        if (other.position.z > tile.position.z) {
+          if (
+            Math.abs(other.position.x - tile.position.x) < 2 &&
+            Math.abs(other.position.y - tile.position.y) < 2
+          ) {
+            hasTileAbove = true;
+            break; // Já coberta por cima, não está livre!
+          }
+        }
+      }
+
+      if (hasTileAbove) {
+        continue;
+      }
+
+      // 2. Checar bloqueio lateral no mesmo nível Z
+      let hasLeftNeighbor = false;
+      let hasRightNeighbor = false;
+
+      for (let j = 0; j < n; j++) {
+        if (i === j) continue;
+        const other = activeTiles[j];
+        if (other.position.z !== tile.position.z) continue;
+
+        if (Math.abs(other.position.y - tile.position.y) < 2) {
+          if (other.position.x < tile.position.x && (tile.position.x - other.position.x) <= 2) {
+            hasLeftNeighbor = true;
+          } else if (other.position.x > tile.position.x && (other.position.x - tile.position.x) <= 2) {
+            hasRightNeighbor = true;
+          }
+
+          if (hasLeftNeighbor && hasRightNeighbor) {
+            break; // Bloqueada em ambos os lados!
+          }
+        }
+      }
+
+      if (!hasLeftNeighbor || !hasRightNeighbor) {
+        freeSet.add(tile.id);
+      }
+    }
+
+    this.cachedFreeTileIds = freeSet;
+    return freeSet;
+  }
 
   public isTileFree(tile: PlacedTile): boolean {
     if (tile.isRemoved || tile.inTray) return false;
-
-    const activeTiles = this.getActiveBoardTiles();
-
-    // 1. Checar se existe peça acima cobrindo
-    const hasTileAbove = activeTiles.some((other) => {
-      if (other.id === tile.id) return false;
-      if (other.position.z <= tile.position.z) return false;
-      const xOverlap = Math.abs(other.position.x - tile.position.x) < 2;
-      const yOverlap = Math.abs(other.position.y - tile.position.y) < 2;
-      return xOverlap && yOverlap;
-    });
-
-    if (hasTileAbove) {
-      return false;
-    }
-
-    // 2. Checar bloqueio lateral no mesmo nível Z
-    const hasLeftNeighbor = activeTiles.some((other) => {
-      if (other.id === tile.id) return false;
-      if (other.position.z !== tile.position.z) return false;
-      const isLeft = other.position.x === tile.position.x - 2;
-      const yOverlap = Math.abs(other.position.y - tile.position.y) < 2;
-      return isLeft && yOverlap;
-    });
-
-    const hasRightNeighbor = activeTiles.some((other) => {
-      if (other.id === tile.id) return false;
-      if (other.position.z !== tile.position.z) return false;
-      const isRight = other.position.x === tile.position.x + 2;
-      const yOverlap = Math.abs(other.position.y - tile.position.y) < 2;
-      return isRight && yOverlap;
-    });
-
-    return !hasLeftNeighbor || !hasRightNeighbor;
+    return this.getFreeTileIds().has(tile.id);
   }
 
   public getFreeTiles(): PlacedTile[] {
-    return this.getActiveBoardTiles().filter((t) => this.isTileFree(t));
+    const freeIds = this.getFreeTileIds();
+    return this.getActiveBoardTiles().filter((t) => freeIds.has(t.id));
   }
 
   // ─── Toque e Seleção de Peças ─────────────────────────────────────────────
@@ -270,11 +368,7 @@ export class BoardEngine {
     tile.isSelected = false;
     tile.isHinted = false;
     this.tray.push(tile);
-
-    this.history.push({
-      tile: { ...tile },
-      fromBoardToTrayIndex: this.tray.length - 1,
-    });
+    this.invalidateCache();
 
     // Checar se formou combinação com alguma peça já na bandeja
     const matchingIdx = this.tray.findIndex(
@@ -285,12 +379,10 @@ export class BoardEngine {
       const match1 = this.tray[matchingIdx];
       const match2 = tile;
 
-      // Ambas as peças saem da bandeja e são eliminadas definitivamente
-      match1.isRemoved = true;
-      match1.inTray = false;
-      match2.isRemoved = true;
-      match2.inTray = false;
+      // 1. Resolver Camaleão Espelho (garante conservação bijeção estrita de pares)
+      this.resolveChameleonMirror(match1, match2);
 
+      // Ambas as peças saem da bandeja
       this.tray = this.tray.filter((t) => t.id !== match1.id && t.id !== match2.id);
 
       this.consecutiveMatchesStreak++;
@@ -300,11 +392,63 @@ export class BoardEngine {
         this.recentBiomeMatches.shift();
       }
 
-      // 1. Detectar Sinergia Cruzada
+      // 2. Detectar Sinergia da Natureza
       const synergy = this.evaluateSynergy(match1, match2);
 
-      // 2. Detectar Clima da Natureza (se aplicável)
+      const isTheatrical = synergy && (
+        synergy.type === 'frog_tongue' ||
+        synergy.type === 'cat_paw' ||
+        synergy.type === 'bear_feast' ||
+        synergy.type === 'dolphin_sonar'
+      );
+
+      if (isTheatrical) {
+        // match2 é a peça recém-clicada no tabuleiro que atua no efeito teatral!
+        match2.inSynergyAction = true;
+        match2.isRemoved = false;
+        match2.inTray = false;
+
+        // match1 veio da bandeja, portanto já não está mais fisicamente na mesa
+        match1.isRemoved = true;
+        match1.inTray = false;
+        match1.inSynergyAction = false;
+
+        if (synergy.affectedBoardTiles) {
+          synergy.affectedBoardTiles.forEach((t) => {
+            t.inSynergyAction = true;
+            t.isRemoved = false;
+            t.inTray = false;
+          });
+        }
+      } else {
+        match1.isRemoved = true;
+        match1.inTray = false;
+        match2.isRemoved = true;
+        match2.inTray = false;
+        if (synergy?.affectedBoardTiles) {
+          synergy.affectedBoardTiles.forEach((t) => {
+            t.isRemoved = true;
+            t.inTray = false;
+          });
+        }
+      }
+      this.invalidateCache();
+
+      // 3. Detectar Clima da Natureza (se aplicável)
       const climateTriggered = this.evaluateClimate(match1, match2);
+
+      // 4. Pontos de Harmonia Zen
+      let pointsAwarded = 100;
+      if (synergy?.bonusScore) pointsAwarded += synergy.bonusScore;
+      if (climateTriggered) pointsAwarded += 200;
+      this.harmonyScore += pointsAwarded;
+
+      // Registra o par combinado no histórico para permitir Desfazer completo
+      this.history.push({
+        actionType: 'matched_pair',
+        matchedPair: [match1, match2],
+        pointsAwarded,
+      });
 
       const waveCleared = this.isWaveCleared();
 
@@ -319,17 +463,57 @@ export class BoardEngine {
       };
     }
 
-    // Não formou par: agrupa na bandeja
+    // Não formou par: registra adição à bandeja e agrupa
+    this.history.push({
+      actionType: 'tray_add',
+      tile: { ...tile },
+      fromBoardToTrayIndex: this.tray.length - 1,
+    });
+
     this.sortTray();
 
+    // Se a mesa esvaziou, acionar resgate cósmico para prevenir qualquer softlock
+    this.checkAndResolveCosmicRescue();
+
     const isFull = this.tray.length >= this.maxTraySlots;
+    const waveCleared = this.isWaveCleared();
+
     return {
       action: 'added',
       tile,
       tray: [...this.tray],
       isTrayFullWarning: isFull,
+      waveCleared,
       waveInfo: this.getWaveInfo(),
     };
+  }
+
+  private resolveChameleonMirror(m1: PlacedTile, m2: PlacedTile): void {
+    let chameleon: PlacedTile | null = null;
+    let target: PlacedTile | null = null;
+
+    if (m1.value === 'chameleon' && m2.value !== 'chameleon') {
+      chameleon = m1;
+      target = m2;
+    } else if (m2.value === 'chameleon' && m1.value !== 'chameleon') {
+      chameleon = m2;
+      target = m1;
+    }
+
+    if (!chameleon || !target) return;
+
+    // Encontra o outro camaleão que ainda está no jogo
+    const otherChameleon = this.tiles.find(
+      (t) => !t.isRemoved && t.id !== chameleon!.id && t.value === 'chameleon'
+    );
+
+    if (otherChameleon) {
+      // O camaleão espelho se transmuta para se tornar o par idêntico de target!
+      otherChameleon.value = target.value;
+      otherChameleon.label = target.label;
+      otherChameleon.suit = target.suit;
+      this.invalidateCache();
+    }
   }
 
   private sortTray(): void {
@@ -353,66 +537,38 @@ export class BoardEngine {
     }
 
     // Abelha + Mel
-    if ((v1 === 'bee' && v2 === 'honeycomb') || (v1 === 'honeycomb' && v2 === 'bee')) {
-      // Enxame Dourado: para a peça da bandeja, encontra sua parceira na mesa e elimina o PAR COMPLETO!
-      let clearedTrayTiles: PlacedTile[] = [];
+    if ((v1 === 'bee' && v2 === 'honeycomb') || (v1 === 'honeycomb' && v2 === 'bee') || (v1 === 'bee' && v2 === 'bee')) {
       let affectedBoardTiles: PlacedTile[] = [];
-      if (this.tray.length > 0) {
-        const candidate = this.tray[this.tray.length - 1];
-        const partner = this.getActiveBoardTiles().find((t) => canMatch(t, candidate));
-        if (partner) {
-          this.tray.pop();
-          candidate.isRemoved = true;
-          candidate.inTray = false;
-          partner.isRemoved = true;
-          clearedTrayTiles.push(candidate);
-          affectedBoardTiles.push(partner);
-        } else {
-          // Devolve suavemente a peça para a mesa (sem destruir solitária)
-          this.tray.pop();
-          candidate.inTray = false;
-          candidate.isRemoved = false;
+      const active = this.getActiveBoardTiles();
+      const h1 = active.find((t) => t.value === 'honeycomb');
+      if (h1) {
+        const h2 = active.find((t) => t !== h1 && t.value === 'honeycomb');
+        if (h2) {
+          affectedBoardTiles.push(h1, h2);
         }
       }
       return {
         type: 'bee_honey',
         title: '🐝🍯 Enxame Dourado!',
         description: affectedBoardTiles.length > 0
-          ? 'O enxame de abelhas encontrou o par completo e abriu espaço na bandeja!'
-          : 'O enxame de abelhas reorganizou a bandeja com doçura!',
+          ? 'O enxame de abelhas colheu o par de mel com segurança!'
+          : 'O enxame de abelhas reorganizou o jardim com doçura!',
         bonusScore: 250,
-        clearedTrayTiles,
         affectedBoardTiles,
       };
     }
 
     // Urso + Mel ou Urso + Peixe
     if ((v1 === 'bear' && (v2 === 'honeycomb' || v2 === 'fish')) ||
-        ((v1 === 'honeycomb' || v1 === 'fish') && v2 === 'bear')) {
-      // Banquete do Urso: remove o PAR COMPLETO (2 peças correspondentes) na mesa!
+        ((v1 === 'honeycomb' || v1 === 'fish') && v2 === 'bear') ||
+        (v1 === 'bear' && v2 === 'bear')) {
       let affectedBoardTiles: PlacedTile[] = [];
-      const hint = this.getHintPair();
-      if (hint) {
-        const p1 = this.getActiveBoardTiles().find((t) => t.id === hint.tile1Id);
-        const p2 = this.getActiveBoardTiles().find((t) => t.id === hint.tile2Id);
-        if (p1 && p2 && p1 !== p2 && canMatch(p1, p2)) {
-          p1.isRemoved = true;
-          p2.isRemoved = true;
-          affectedBoardTiles = [p1, p2];
-        }
-      }
-      if (affectedBoardTiles.length === 0) {
-        const active = this.getActiveBoardTiles();
-        for (let i = 0; i < active.length; i++) {
-          for (let j = i + 1; j < active.length; j++) {
-            if (canMatch(active[i], active[j])) {
-              active[i].isRemoved = true;
-              active[j].isRemoved = true;
-              affectedBoardTiles = [active[i], active[j]];
-              break;
-            }
-          }
-          if (affectedBoardTiles.length > 0) break;
+      const active = this.getActiveBoardTiles();
+      const p1 = active.find((t) => t.value === 'fish' || t.value === 'honeycomb');
+      if (p1) {
+        const p2 = active.find((t) => t !== p1 && t.value === p1.value);
+        if (p2) {
+          affectedBoardTiles.push(p1, p2);
         }
       }
       return {
@@ -427,7 +583,7 @@ export class BoardEngine {
     }
 
     // Macaco + Banana
-    if ((v1 === 'monkey' && v2 === 'banana') || (v1 === 'banana' && v2 === 'monkey')) {
+    if ((v1 === 'monkey' && v2 === 'banana') || (v1 === 'banana' && v2 === 'monkey') || (v1 === 'monkey' && v2 === 'monkey')) {
       this.shuffleRemaining();
       return {
         type: 'monkey_banana',
@@ -438,83 +594,48 @@ export class BoardEngine {
     }
 
     // Esquilo + Noz
-    if ((v1 === 'squirrel' && v2 === 'acorn') || (v1 === 'acorn' && v2 === 'squirrel')) {
-      let clearedTrayTiles: PlacedTile[] = [];
+    if ((v1 === 'squirrel' && v2 === 'acorn') || (v1 === 'acorn' && v2 === 'squirrel') || (v1 === 'squirrel' && v2 === 'squirrel')) {
       let affectedBoardTiles: PlacedTile[] = [];
-      if (this.tray.length > 0) {
-        const candidate = this.tray[0];
-        const partner = this.getActiveBoardTiles().find((t) => canMatch(t, candidate));
-        if (partner) {
-          this.tray.shift();
-          candidate.isRemoved = true;
-          candidate.inTray = false;
-          partner.isRemoved = true;
-          clearedTrayTiles.push(candidate);
-          affectedBoardTiles.push(partner);
-        } else {
-          this.tray.shift();
-          candidate.inTray = false;
-          candidate.isRemoved = false;
+      const active = this.getActiveBoardTiles();
+      const a1 = active.find((t) => t.value === 'acorn');
+      if (a1) {
+        const a2 = active.find((t) => t !== a1 && t.value === 'acorn');
+        if (a2) {
+          affectedBoardTiles.push(a1, a2);
         }
       }
       return {
         type: 'squirrel_acorn',
         title: '🐿️🌰 Reserva Secreta!',
         description: affectedBoardTiles.length > 0
-          ? 'O esquilo recolheu o par completo e guardou na toca segura!'
+          ? 'O esquilo recolheu o par de nozes completo para sua toca!'
           : 'O esquilo abriu espaço na sua bandeja com agilidade!',
         bonusScore: 200,
-        clearedTrayTiles,
         affectedBoardTiles,
       };
     }
 
-    // Sapo + Insetos OU Sapo + Sapo: Língua Elástica
-    if ((v1 === 'frog' && (v2 === 'ladybug' || v2 === 'bee')) ||
-        ((v1 === 'ladybug' || v1 === 'bee') && v2 === 'frog') ||
+    // Sapo + Joaninha OU Sapo + Sapo: Língua Elástica
+    if ((v1 === 'frog' && v2 === 'ladybug') ||
+        (v1 === 'ladybug' && v2 === 'frog') ||
         (v1 === 'frog' && v2 === 'frog')) {
-      let clearedTrayTiles: PlacedTile[] = [];
       let affectedBoardTiles: PlacedTile[] = [];
-
-      // 1. Verifica se há inseto preso na bandeja para aliviar a bandeja
-      const trayInsectIndex = this.tray.findIndex((t) => t.value === 'ladybug' || t.value === 'bee');
-      if (trayInsectIndex !== -1) {
-        const trayInsect = this.tray[trayInsectIndex];
-        const boardPartner = this.getActiveBoardTiles().find((t) => canMatch(t, trayInsect));
-        if (boardPartner) {
-          this.tray.splice(trayInsectIndex, 1);
-          trayInsect.isRemoved = true;
-          trayInsect.inTray = false;
-          boardPartner.isRemoved = true;
-          clearedTrayTiles.push(trayInsect);
-          affectedBoardTiles.push(boardPartner);
-        }
-      }
-
-      // 2. Se a bandeja não tinha inseto, puxa um par completo de insetos da mesa
-      if (affectedBoardTiles.length === 0) {
-        const active = this.getActiveBoardTiles();
-        const insectA = active.find((t) => t.value === 'ladybug' || t.value === 'bee');
-        if (insectA) {
-          const insectB = active.find((t) => t !== insectA && canMatch(t, insectA));
-          if (insectB) {
-            insectA.isRemoved = true;
-            insectB.isRemoved = true;
-            affectedBoardTiles.push(insectA, insectB);
-          }
+      const active = this.getActiveBoardTiles();
+      const insectA = active.find((t) => t.value === 'ladybug' || t.value === 'bee');
+      if (insectA) {
+        const insectB = active.find((t) => t !== insectA && t.value === insectA.value);
+        if (insectB) {
+          affectedBoardTiles.push(insectA, insectB);
         }
       }
 
       return {
         type: 'frog_tongue',
         title: '🐸 Língua Ágil!',
-        description: clearedTrayTiles.length > 0
-          ? 'O sapo esticou a língua, limpou a bandeja e puxou o inseto da mesa!'
-          : affectedBoardTiles.length > 0
-            ? 'O sapo esticou a língua elástica e capturou um par de insetos!'
-            : 'O sapinho saltou com agilidade zen pela lagoa!',
+        description: affectedBoardTiles.length > 0
+          ? 'O sapo esticou a língua elástica e capturou o inseto no tabuleiro!'
+          : 'O sapinho saltou com agilidade zen pela lagoa!',
         bonusScore: 240,
-        clearedTrayTiles,
         affectedBoardTiles,
       };
     }
@@ -525,10 +646,8 @@ export class BoardEngine {
       const active = this.getActiveBoardTiles();
       const fishA = active.find((t) => t.value === 'fish');
       if (fishA) {
-        const fishB = active.find((t) => t !== fishA && canMatch(t, fishA));
+        const fishB = active.find((t) => t !== fishA && t.value === 'fish');
         if (fishB) {
-          fishA.isRemoved = true;
-          fishB.isRemoved = true;
           affectedBoardTiles.push(fishA, fishB);
         }
       }
@@ -549,10 +668,8 @@ export class BoardEngine {
       const active = this.getActiveBoardTiles();
       const shellA = active.find((t) => t.value === 'shell');
       if (shellA) {
-        const shellB = active.find((t) => t !== shellA && canMatch(t, shellA));
+        const shellB = active.find((t) => t !== shellA && t.value === 'shell');
         if (shellB) {
-          shellA.isRemoved = true;
-          shellB.isRemoved = true;
           affectedBoardTiles.push(shellA, shellB);
         }
       }
@@ -573,10 +690,8 @@ export class BoardEngine {
       const active = this.getActiveBoardTiles();
       const appleA = active.find((t) => t.value === 'apple');
       if (appleA) {
-        const appleB = active.find((t) => t !== appleA && canMatch(t, appleA));
+        const appleB = active.find((t) => t !== appleA && t.value === 'apple');
         if (appleB) {
-          appleA.isRemoved = true;
-          appleB.isRemoved = true;
           affectedBoardTiles.push(appleA, appleB);
         }
       }
@@ -602,17 +717,14 @@ export class BoardEngine {
     // 1. MARÉ ALTA PURIFICADORA 🌊 (Prioridade máxima de alívio ergonômico)
     // Se o jogador combinou água OU se a bandeja estava perigosamente cheia (3 peças)
     if (biome === 'water' || this.tray.length >= 2) {
-      // Chance de ativar quando ocorrem 2 matches de água ou bandeja sob pressão
       const waterMatches = this.recentBiomeMatches.filter((b) => b === 'water').length;
       if (waterMatches >= 2 || (this.tray.length >= 2 && Math.random() < 0.6)) {
-        // Lava e esvazia a bandeja com segurança matemática de paridade:
         const clearedTray: PlacedTile[] = [];
         const affectedBoardTiles: PlacedTile[] = [];
         const tilesToProcess = [...this.tray];
         this.tray = [];
 
         for (const t of tilesToProcess) {
-          // Procura parceira correspondente na mesa
           const partner = this.getActiveBoardTiles().find(
             (b) => !b.isRemoved && !b.inTray && canMatch(b, t)
           );
@@ -623,13 +735,11 @@ export class BoardEngine {
             clearedTray.push(t);
             affectedBoardTiles.push(partner);
           } else {
-            // Se não encontrou parceira livre imediata, devolve com segurança para a mesa
             t.inTray = false;
             t.isRemoved = false;
           }
         }
 
-        // Chance de 50% de eliminar mais 1 par livre da mesa!
         let eliminatedBoardPairs: [PlacedTile, PlacedTile] | undefined;
         const hint = this.getHintPair();
         if (hint && Math.random() < 0.5) {
@@ -656,7 +766,6 @@ export class BoardEngine {
 
     // 2. ONDA DE CALOR ☀️
     if (biome === 'savanna' && this.recentBiomeMatches.filter((b) => b === 'savanna').length >= 2) {
-      // Transforma um PAR completo em Camaleões Coringa, mantendo a paridade estrita!
       const hint = this.getHintPair();
       if (hint) {
         const p1 = this.getActiveBoardTiles().find((t) => t.id === hint.tile1Id);
@@ -676,14 +785,79 @@ export class BoardEngine {
       };
     }
 
-    // 3. TEMPESTADE ZEN 🌧️
-    if (this.consecutiveMatchesStreak >= 4) {
-      this.consecutiveMatchesStreak = 0;
+    // 3. NEVASCA ÁRTICA ❄️
+    if (biome === 'arctic') {
+      const arcticMatches = this.recentBiomeMatches.filter((b) => b === 'arctic').length;
+      if (arcticMatches >= 2) {
+        let affectedBoardTiles: PlacedTile[] = [];
+        const hint = this.getHintPair();
+        if (hint) {
+          const p1 = this.getActiveBoardTiles().find((t) => t.id === hint.tile1Id);
+          const p2 = this.getActiveBoardTiles().find((t) => t.id === hint.tile2Id);
+          if (p1 && p2 && p1 !== p2 && canMatch(p1, p2)) {
+            p1.isRemoved = true;
+            p2.isRemoved = true;
+            affectedBoardTiles = [p1, p2];
+          }
+        }
+        return {
+          climate: 'arctic_blizzard',
+          icon: '❄️',
+          title: 'Nevasca Ártica!',
+          description: affectedBoardTiles.length > 0
+            ? 'O sopro congelante serena o tabuleiro e colheu um par completo com pureza!'
+            : 'O ar puro dos picos nevados refrescou sua mente zen (+1 Dica)!',
+          affectedBoardTiles: affectedBoardTiles.length > 0 ? affectedBoardTiles : undefined,
+          rechargedTool: 'hint',
+        };
+      }
+    }
+
+    // 4. OUTONO DOURADO 🍂
+    const forestGardenCount = this.recentBiomeMatches.filter((b) => b === 'forest' || b === 'garden').length;
+    if ((biome === 'forest' || t1.value === 'acorn' || t1.value === 'apple' || t1.value === 'hedgehog') && forestGardenCount >= 2) {
+      return {
+        climate: 'autumn_gale',
+        icon: '🍂',
+        title: 'Outono Dourado!',
+        description: 'Folhas douradas rodopiam pelo bosque e restauram +1 Misturar 🔀!',
+        rechargedTool: 'shuffle',
+      };
+    }
+
+    // 5. BRISA DA PRIMAVERA 🌸
+    const gardenCount = this.recentBiomeMatches.filter((b) => b === 'garden').length;
+    if ((biome === 'garden' || t1.value === 'butterfly' || t1.value === 'bee' || t1.value === 'ladybug') && gardenCount >= 2) {
+      return {
+        climate: 'spring_breeze',
+        icon: '🌸',
+        title: 'Brisa da Primavera!',
+        description: 'Pétalas florais sopram sobre a mesa e restauram +1 Dica 💡!',
+        rechargedTool: 'hint',
+      };
+    }
+
+    // 6. NOITE DE LUA CHEIA 🌕
+    if (this.consecutiveMatchesStreak >= 4 && (this.consecutiveMatchesStreak % 2 === 0)) {
+      const freeTiles = this.getFreeTiles();
+      for (const t of freeTiles) {
+        t.isHinted = true;
+      }
+      return {
+        climate: 'full_moon',
+        icon: '🌕',
+        title: 'Noite de Lua Cheia!',
+        description: 'Vaga-lumes iluminam a floresta e revelam todos os pares livres!',
+      };
+    }
+
+    // 7. TEMPESTADE ZEN 🌧️
+    if (this.consecutiveMatchesStreak >= 3 && Math.random() < 0.6) {
       return {
         climate: 'zen_storm',
         icon: '🌧️',
         title: 'Tempestade Zen!',
-        description: 'Um raio místico restaurou +1 carga de Marreta!',
+        description: 'Um raio místico iluminou o horizonte e restaurou +1 Marreta 🔨!',
         rechargedTool: 'hammer',
       };
     }
@@ -716,23 +890,64 @@ export class BoardEngine {
     return null;
   }
 
-  public undo(): boolean {
-    if (this.tray.length === 0) return false;
+  public undo(): UndoResult {
+    if (this.history.length === 0) return { success: false };
 
-    const lastMove = this.history.pop();
-    if (!lastMove) return false;
-
-    const trayTile = this.tray.find((t) => t.id === lastMove.tile.id);
-    if (trayTile) {
-      trayTile.inTray = false;
-      trayTile.isRemoved = false;
-      trayTile.isSelected = false;
-      trayTile.isHinted = false;
-      this.tray = this.tray.filter((t) => t.id !== trayTile.id);
-      return true;
+    // Se houver peças na bandeja, desfaz a última adição à bandeja
+    if (this.tray.length > 0) {
+      for (let i = this.history.length - 1; i >= 0; i--) {
+        const item = this.history[i];
+        if (item.actionType === 'tray_add' && item.tile) {
+          const trayTile = this.tray.find((t) => t.id === item.tile!.id);
+          if (trayTile) {
+            this.history.splice(i, 1);
+            trayTile.inTray = false;
+            trayTile.isRemoved = false;
+            trayTile.isSelected = false;
+            trayTile.isHinted = false;
+            this.tray = this.tray.filter((t) => t.id !== trayTile.id);
+            this.invalidateCache();
+            return { success: true, type: 'tile_restored', tile: trayTile };
+          }
+        }
+      }
     }
 
-    return false;
+    // Se a bandeja está vazia, desfaz o último par combinado
+    const lastItem = this.history.pop();
+    if (!lastItem) return { success: false };
+
+    if (lastItem.actionType === 'matched_pair' && lastItem.matchedPair) {
+      const [m1, m2] = lastItem.matchedPair;
+      m1.isRemoved = false;
+      m1.inTray = false;
+      m1.isSelected = false;
+      m1.isHinted = false;
+
+      m2.isRemoved = false;
+      m2.inTray = false;
+      m2.isSelected = false;
+      m2.isHinted = false;
+
+      if (lastItem.pointsAwarded && this.harmonyScore >= lastItem.pointsAwarded) {
+        this.harmonyScore -= lastItem.pointsAwarded;
+      }
+      this.invalidateCache();
+      return { success: true, type: 'pair_restored', pair: [m1, m2] };
+    } else if (lastItem.actionType === 'tray_add' && lastItem.tile) {
+      const trayTile = this.tray.find((t) => t.id === lastItem.tile!.id);
+      if (trayTile) {
+        trayTile.inTray = false;
+        trayTile.isRemoved = false;
+        trayTile.isSelected = false;
+        trayTile.isHinted = false;
+        this.tray = this.tray.filter((t) => t.id !== trayTile.id);
+        this.invalidateCache();
+        return { success: true, type: 'tile_restored', tile: trayTile };
+      }
+    }
+
+    return { success: false };
   }
 
   public hammerRemove(tileId: string): boolean {
@@ -742,28 +957,52 @@ export class BoardEngine {
       fromTray.inTray = false;
       this.tray = this.tray.filter((t) => t.id !== tileId);
 
-      const partner = this.getActiveBoardTiles().find((t) => canMatch(t, fromTray));
+      let partner = this.getActiveBoardTiles().find((t) => canMatch(t, fromTray));
+      if (!partner) {
+        partner = this.tray.find((t) => canMatch(t, fromTray));
+        if (partner) {
+          this.tray = this.tray.filter((t) => t.id !== partner!.id);
+        }
+      }
       if (partner) {
         partner.isRemoved = true;
+        partner.inTray = false;
+        this.resolveChameleonMirror(fromTray, partner);
       }
 
-      this.history = this.history.filter(
-        (h) => h.tile.id !== fromTray.id && (!partner || h.tile.id !== partner.id)
-      );
+      this.history = this.history.filter((h) => {
+        if (h.tile && (h.tile.id === fromTray.id || (partner && h.tile.id === partner.id))) return false;
+        if (h.matchedPair && (h.matchedPair[0].id === fromTray.id || h.matchedPair[1].id === fromTray.id || (partner && (h.matchedPair[0].id === partner.id || h.matchedPair[1].id === partner.id)))) return false;
+        return true;
+      });
 
+      this.checkAndResolveCosmicRescue();
+      this.invalidateCache();
       return true;
     }
 
     const fromBoard = this.getActiveBoardTiles().find((t) => t.id === tileId && this.isTileFree(t));
     if (fromBoard) {
       fromBoard.isRemoved = true;
-      const partner = this.getActiveBoardTiles().find((t) => canMatch(t, fromBoard));
+      let partner = this.getActiveBoardTiles().find((t) => canMatch(t, fromBoard));
+      if (!partner) {
+        partner = this.tray.find((t) => canMatch(t, fromBoard));
+        if (partner) {
+          this.tray = this.tray.filter((t) => t.id !== partner!.id);
+        }
+      }
       if (partner) {
         partner.isRemoved = true;
+        partner.inTray = false;
+        this.resolveChameleonMirror(fromBoard, partner);
       }
-      this.history = this.history.filter(
-        (h) => h.tile.id !== fromBoard.id && (!partner || h.tile.id !== partner.id)
-      );
+      this.history = this.history.filter((h) => {
+        if (h.tile && (h.tile.id === fromBoard.id || (partner && h.tile.id === partner.id))) return false;
+        if (h.matchedPair && (h.matchedPair[0].id === fromBoard.id || h.matchedPair[1].id === fromBoard.id || (partner && (h.matchedPair[0].id === partner.id || h.matchedPair[1].id === partner.id)))) return false;
+        return true;
+      });
+      this.checkAndResolveCosmicRescue();
+      this.invalidateCache();
       return true;
     }
 
@@ -792,11 +1031,49 @@ export class BoardEngine {
       active[i].label = tileDefs[i].label;
     }
 
+    this.invalidateCache();
     return true;
   }
 
   public isVictory(): boolean {
     return this.isWaveCleared() && !this.hasMoreWaves() && this.tray.length === 0;
+  }
+
+  /**
+   * Checa se o tabuleiro entrou em impasse total (bandeja cheia de 4 slots
+   * sem nenhum par entre si e nenhuma peça livre na mesa que case com a bandeja).
+   */
+  public isDeadlocked(): boolean {
+    if (this.tray.length < this.maxTraySlots) return false;
+
+    // 1. Checa se existe par dentro da própria bandeja
+    for (let i = 0; i < this.tray.length; i++) {
+      for (let j = i + 1; j < this.tray.length; j++) {
+        if (canMatch(this.tray[i], this.tray[j])) return false;
+      }
+    }
+
+    // 2. Checa se alguma peça livre da mesa combina com qualquer peça da bandeja
+    const free = this.getFreeTiles();
+    for (const trayTile of this.tray) {
+      if (free.some((b) => canMatch(b, trayTile))) return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Resgate Zen: alivia a bandeja devolvendo a peça mais antiga suavemente ao tabuleiro
+   */
+  public zenRescue(): PlacedTile | null {
+    if (this.tray.length === 0) return null;
+    const rescued = this.tray.shift()!;
+    rescued.inTray = false;
+    rescued.isRemoved = false;
+    rescued.isSelected = false;
+    rescued.isHinted = false;
+    this.invalidateCache();
+    return rescued;
   }
 
   // ─── Geração de Tabuleiro / Onda ──────────────────────────────────────────
@@ -863,5 +1140,6 @@ export class BoardEngine {
         inTray: false,
       };
     });
+    this.invalidateCache();
   }
 }

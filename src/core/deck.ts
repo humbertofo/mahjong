@@ -83,51 +83,44 @@ export function canMatch(tileA: TileDefinition, tileB: TileDefinition): boolean 
     return true;
   }
 
-  // 2. Mesma espécie / valor
+  // 2. Mesma espécie / valor (Regra Mestra do Mahjong)
   if (vA === vB) {
     return true;
   }
 
-  // 3. Sinergias Cruzadas da Natureza
-  // Abelha + Favo de Mel
+  // 3. Sinergias Bissetoriais Disjuntas da Natureza (Pares 1-para-1 estritos sem ciclos ímpares)
+  // 🐝🍯 Abelha + Favo de Mel
   if ((vA === 'bee' && vB === 'honeycomb') || (vA === 'honeycomb' && vB === 'bee')) {
     return true;
   }
 
-  // Urso + Mel OU Urso + Peixe
-  if ((vA === 'bear' && (vB === 'honeycomb' || vB === 'fish')) ||
-      ((vA === 'honeycomb' || vA === 'fish') && vB === 'bear')) {
+  // 🐻🐟 Urso + Peixe (Banquete do Pescador)
+  if ((vA === 'bear' && vB === 'fish') || (vA === 'fish' && vB === 'bear')) {
     return true;
   }
 
-  // Macaco + Banana
+  // 🐸🐞 Sapo + Joaninha (Língua Elástica na Lagoa)
+  if ((vA === 'frog' && vB === 'ladybug') || (vA === 'ladybug' && vB === 'frog')) {
+    return true;
+  }
+
+  // 🐒🍌 Macaco + Banana (Salto na Copa)
   if ((vA === 'monkey' && vB === 'banana') || (vA === 'banana' && vB === 'monkey')) {
     return true;
   }
 
-  // Esquilo + Noz (Acorn)
+  // 🐿️🌰 Esquilo + Noz (Toca Secreta)
   if ((vA === 'squirrel' && vB === 'acorn') || (vA === 'acorn' && vB === 'squirrel')) {
     return true;
   }
 
-  // Sapo + Insetos (Joaninha ou Abelha)
-  if ((vA === 'frog' && (vB === 'ladybug' || vB === 'bee')) ||
-      ((vA === 'ladybug' || vA === 'bee') && vB === 'frog')) {
-    return true;
-  }
-
-  // Golfinho + Concha
+  // 🐬🐚 Golfinho + Concha (Eco Sonar das Profundezas)
   if ((vA === 'dolphin' && vB === 'shell') || (vA === 'shell' && vB === 'dolphin')) {
     return true;
   }
 
-  // Ouriço + Maçã
+  // 🦔🍎 Ouriço + Maçã (Pomar das Frutas)
   if ((vA === 'hedgehog' && vB === 'apple') || (vA === 'apple' && vB === 'hedgehog')) {
-    return true;
-  }
-
-  // Gato + Peixe
-  if ((vA === 'cat' && vB === 'fish') || (vA === 'fish' && vB === 'cat')) {
     return true;
   }
 

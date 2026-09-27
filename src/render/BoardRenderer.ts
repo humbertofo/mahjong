@@ -1,6 +1,8 @@
 import { BoardEngine } from '../core/BoardEngine';
 import { PlacedTile, ThemeType, SynergyResult, ClimateEffectResult, ClimateType } from '../core/types';
+import { canMatch } from '../core/deck';
 import { TileRenderer, TileDimensions } from './TileRenderer';
+import { SynergyAnimator } from './SynergyAnimator';
 import { soundManager } from '../audio/SoundManager';
 import { hapticManager } from '../audio/HapticManager';
 import confetti from 'canvas-confetti';
@@ -46,13 +48,21 @@ export class BoardRenderer {
   // Controle de animação e economia de bateria (MediaTek Helio P35)
   private isRunning: boolean = true;
   private animTime: number = 0;
-  private isDirty: boolean = true;
+  private isBoardDirty: boolean = true;
+  private isFxActive: boolean = false;
   private animatingUntil: number = 0;
   public isInputLocked: boolean = false;
+  private pendingTilesInFlight: number = 0;
+  private synergyAnimator: SynergyAnimator = new SynergyAnimator();
+
+  // Camada Dinâmica de Efeitos (Dual-Layer FX Canvas)
+  private fxCanvas: HTMLCanvasElement | null = null;
+  private fxCtx: CanvasRenderingContext2D | null = null;
 
   // Efeitos Climáticos da Natureza (Partículas Zen)
   private activeClimate: ClimateType | null = null;
   private climateTimer: number = 0;
+  private climateSpriteCache: HTMLCanvasElement | null = null;
   private climateParticles: Array<{
     x: number;
     y: number;
@@ -66,16 +76,26 @@ export class BoardRenderer {
 
   // Fundo em Cache de Alta Performance (Hardware Blit)
   private bgCanvas: HTMLCanvasElement | null = null;
+  private sortedTilesCache: PlacedTile[] | null = null;
 
   constructor(
     canvas: HTMLCanvasElement,
     engine: BoardEngine,
-    callbacks: BoardRendererCallbacks = {}
+    callbacks: BoardRendererCallbacks = {},
+    fxCanvas?: HTMLCanvasElement | null
   ) {
     this.canvas = canvas;
     const context = canvas.getContext('2d', { alpha: false });
     if (!context) throw new Error('Não foi possível obter o contexto 2D do Canvas');
     this.ctx = context;
+
+    // Detectar fx-canvas sobreposto para arquitetura Dual-Layer
+    const fx = fxCanvas || (typeof document !== 'undefined' ? (document.getElementById('fx-canvas') as HTMLCanvasElement | null) : null);
+    if (fx) {
+      this.fxCanvas = fx;
+      this.fxCtx = fx.getContext('2d', { alpha: true });
+    }
+
     this.engine = engine;
     this.callbacks = callbacks;
     this.tileRenderer = new TileRenderer();
@@ -91,16 +111,26 @@ export class BoardRenderer {
     return this.tileRenderer;
   }
 
+  public getSynergyAnimator(): SynergyAnimator {
+    return this.synergyAnimator;
+  }
+
   public requestRender(): void {
-    this.isDirty = true;
+    this.isBoardDirty = true;
+    this.sortedTilesCache = null;
   }
 
   public triggerAnimation(durationMs: number = 4000): void {
     this.animatingUntil = Math.max(this.animatingUntil, performance.now() + durationMs);
   }
 
+  public keepAnimating(durationMs: number): void {
+    this.triggerAnimation(durationMs);
+  }
+
   public setEngine(engine: BoardEngine): void {
     this.engine = engine;
+    this.sortedTilesCache = null;
     this.handleResize();
     this.requestRender();
     if (this.callbacks.onStateChanged) {
@@ -141,6 +171,16 @@ export class BoardRenderer {
 
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.ctx.scale(this.dpr, this.dpr);
+
+    if (this.fxCanvas) {
+      this.fxCanvas.width = width * this.dpr;
+      this.fxCanvas.height = height * this.dpr;
+      this.fxCanvas.style.width = `${width}px`;
+      this.fxCanvas.style.height = `${height}px`;
+
+      this.fxCtx?.setTransform(1, 0, 0, 1, 0, 0);
+      this.fxCtx?.scale(this.dpr, this.dpr);
+    }
 
     this.renderBackgroundCache(width, height);
     this.calculateAutoFit(width, height);
@@ -224,10 +264,25 @@ export class BoardRenderer {
       if (!this.isRunning) return;
       this.animTime = timestamp;
 
-      const isAnimating = timestamp < this.animatingUntil || this.climateTimer > 0;
-      if (this.isDirty || isAnimating) {
-        this.render();
-        this.isDirty = false;
+      // 1. Camada da Mesa Estática: Redesenha apenas quando necessário
+      const hasHinted = this.engine.getTiles().some((t) => t.isHinted && !t.isRemoved);
+      if (this.isBoardDirty || hasHinted) {
+        this.isBoardDirty = false;
+        this.renderBoard();
+      }
+
+      // 2. Camada Dinâmica FX: Partículas climáticas e Sinergias cênicas
+      const isFxAnimating =
+        timestamp < this.animatingUntil ||
+        this.climateTimer > 0 ||
+        this.synergyAnimator.hasActiveAnimations();
+
+      if (isFxAnimating) {
+        this.isFxActive = true;
+        this.renderFX();
+      } else if (this.isFxActive) {
+        this.clearFX();
+        this.isFxActive = false;
       }
 
       requestAnimationFrame(loop);
@@ -235,7 +290,7 @@ export class BoardRenderer {
     requestAnimationFrame(loop);
   }
 
-  private render(): void {
+  private renderBoard(): void {
     const viewW = this.canvas.width / this.dpr;
     const viewH = this.canvas.height / this.dpr;
 
@@ -246,29 +301,36 @@ export class BoardRenderer {
       this.drawBackgroundTo(this.ctx, viewW, viewH);
     }
 
-    // 2. Ordenar as peças ativas do tabuleiro
-    const activeTiles = this.engine.getActiveBoardTiles();
-    activeTiles.sort((a, b) => {
-      if (a.position.z !== b.position.z) {
-        return a.position.z - b.position.z;
-      }
-      if (a.position.y !== b.position.y) {
-        return a.position.y - b.position.y;
-      }
-      return a.position.x - b.position.x;
-    });
+    // 2. Obter peças ativas do tabuleiro ordenadas (com cache de ordenação)
+    if (!this.sortedTilesCache) {
+      const active = this.engine.getActiveBoardTiles();
+      active.sort((a, b) => {
+        if (a.position.z !== b.position.z) {
+          return a.position.z - b.position.z;
+        }
+        if (a.position.y !== b.position.y) {
+          return a.position.y - b.position.y;
+        }
+        return a.position.x - b.position.x;
+      });
+      this.sortedTilesCache = active;
+    }
+    const activeTiles = this.sortedTilesCache;
 
-    const { tileWidth, tileHeight, tileDepth } = {
-      tileWidth: Math.round(this.baseTileWidth * this.scale),
-      tileHeight: Math.round(this.baseTileHeight * this.scale),
-      tileDepth: Math.max(4, Math.round(this.baseTileDepth * this.scale)),
-    };
+    const tileWidth = Math.round(this.baseTileWidth * this.scale);
+    const tileHeight = Math.round(this.baseTileHeight * this.scale);
+    const tileDepth = Math.max(4, Math.round(this.baseTileDepth * this.scale));
 
-    activeTiles.forEach((tile) => {
+    const freeTileIds = this.engine.getFreeTileIds();
+    const len = activeTiles.length;
+
+    for (let i = 0; i < len; i++) {
+      const tile = activeTiles[i];
+      if (tile.inSynergyPulled) continue;
       const screenX = this.offsetX + (tile.position.x / 2) * tileWidth - tile.position.z * (tileDepth * 0.4);
       const screenY = this.offsetY + (tile.position.y / 2) * tileHeight - tile.position.z * (tileDepth * 0.8);
 
-      const isFree = this.engine.isTileFree(tile);
+      const isFree = freeTileIds.has(tile.id);
 
       let animOffset = 0;
       if (tile.isHinted) {
@@ -283,10 +345,35 @@ export class BoardRenderer {
         isFree,
         animOffset
       );
-    });
+    }
 
-    // 3. Renderizar partículas climáticas da natureza sobre a mesa
-    this.updateAndDrawClimateParticles(viewW, viewH);
+    // Fallback caso fxCanvas não esteja disponível no DOM
+    if (!this.fxCtx) {
+      this.updateAndDrawClimateParticles(viewW, viewH, this.ctx);
+      this.synergyAnimator.render(this.ctx, performance.now());
+    }
+  }
+
+  private renderFX(): void {
+    const targetCanvas = this.fxCanvas || this.canvas;
+    const targetCtx = this.fxCtx || this.ctx;
+    const viewW = targetCanvas.width / this.dpr;
+    const viewH = targetCanvas.height / this.dpr;
+
+    if (this.fxCtx) {
+      this.fxCtx.clearRect(0, 0, viewW, viewH);
+    }
+
+    this.updateAndDrawClimateParticles(viewW, viewH, targetCtx);
+    this.synergyAnimator.render(targetCtx, performance.now());
+  }
+
+  private clearFX(): void {
+    if (this.fxCtx && this.fxCanvas) {
+      const viewW = this.fxCanvas.width / this.dpr;
+      const viewH = this.fxCanvas.height / this.dpr;
+      this.fxCtx.clearRect(0, 0, viewW, viewH);
+    }
   }
 
   private drawBackgroundTo(g: CanvasRenderingContext2D, w: number, h: number): void {
@@ -369,6 +456,18 @@ export class BoardRenderer {
       }
     }
     return null;
+  }
+
+  public getTileScreenCoords(tile: PlacedTile): { x: number; y: number; width: number; height: number } {
+    const { tileWidth, tileHeight, tileDepth } = {
+      tileWidth: Math.round(this.baseTileWidth * this.scale),
+      tileHeight: Math.round(this.baseTileHeight * this.scale),
+      tileDepth: Math.max(4, Math.round(this.baseTileDepth * this.scale)),
+    };
+
+    const x = this.offsetX + (tile.position.x / 2) * tileWidth - tile.position.z * (tileDepth * 0.4);
+    const y = this.offsetY + (tile.position.y / 2) * tileHeight - tile.position.z * (tileDepth * 0.8) + (tile.isSelected ? -6 : 0);
+    return { x, y, width: tileWidth, height: tileHeight };
   }
 
   private initEvents(): void {
@@ -474,14 +573,27 @@ export class BoardRenderer {
       return;
     }
 
-    // Se a bandeja já estiver cheia, bloquear imediatamente com som
-    if (this.engine.getTray().length >= this.engine.getMaxTraySlots()) {
+    // Se a bandeja + peças em voo já atingiram a capacidade, bloquear imediatamente com som
+    if (this.engine.getTray().length + this.pendingTilesInFlight >= this.engine.getMaxTraySlots()) {
       soundManager.playBlockedSound();
+      return;
+    }
+
+    // Peças de atores teatrais (Sapo, Gato, Urso, Golfinho) permanecem no tabuleiro durante a animação cênica!
+    const matchingTrayTile = this.engine.getTray().find((t) => canMatch(t, clickedTile));
+    const isTheatricalActor = matchingTrayTile && (
+      clickedTile.value === 'frog' || clickedTile.value === 'cat' ||
+      clickedTile.value === 'bear' || clickedTile.value === 'dolphin'
+    );
+
+    if (isTheatricalActor) {
+      this.executeTileSelection(clickedTile);
       return;
     }
 
     if (this.callbacks.onTileFlightToTray) {
       clickedTile.inTray = true;
+      this.pendingTilesInFlight++;
       this.requestRender();
 
       this.callbacks.onTileFlightToTray(
@@ -491,6 +603,7 @@ export class BoardRenderer {
         tileWidth,
         tileHeight,
         () => {
+          this.pendingTilesInFlight = Math.max(0, this.pendingTilesInFlight - 1);
           clickedTile.inTray = false;
           this.executeTileSelection(clickedTile);
         }
@@ -514,8 +627,11 @@ export class BoardRenderer {
       }
 
       // 1. Sinergia da Natureza ativada
-      if (result.synergy && this.callbacks.onSynergyTriggered) {
-        this.callbacks.onSynergyTriggered(result.synergy);
+      if (result.synergy) {
+        this.triggerSynergyAnimation(result.synergy, clickedTile, result.matchedPair);
+        if (this.callbacks.onSynergyTriggered) {
+          this.callbacks.onSynergyTriggered(result.synergy);
+        }
       }
 
       // 2. Clima da Natureza disparado
@@ -527,16 +643,51 @@ export class BoardRenderer {
       }
 
       // 3. Fim de Fase vs Fim de Onda intermediária
+      // 3. Fim de Fase vs Fim de Onda intermediária (após matches imediatos sem cena teatral)
+      const isTheatrical = result.synergy && (
+        result.synergy.type === 'frog_tongue' ||
+        result.synergy.type === 'cat_paw' ||
+        result.synergy.type === 'bear_feast' ||
+        result.synergy.type === 'dolphin_sonar'
+      );
+
+      if (!isTheatrical) {
+        if (this.engine.isVictory()) {
+          soundManager.playVictoryFanfare();
+          hapticManager.impactVictory();
+          this.triggerVictoryCelebration();
+
+          if (this.callbacks.onBoardCleared) {
+            this.callbacks.onBoardCleared();
+          }
+        } else if (result.waveCleared && this.engine.hasMoreWaves()) {
+          // Celebração da onda intermediária!
+          soundManager.playMatchSuccess();
+          confetti({
+            particleCount: 40,
+            spread: 55,
+            origin: { y: 0.6 },
+            colors: ['#10B981', '#F59E0B', '#3B82F6', '#EC4899'],
+          });
+
+          if (this.callbacks.onWaveCleared) {
+            this.callbacks.onWaveCleared(this.engine.getCurrentWave(), this.engine.getTotalWaves());
+          }
+        }
+      }
+    } else if (result.action === 'added') {
+      soundManager.playTileClick();
+      hapticManager.impactLight();
+
+      // Checar se o tabuleiro esvaziou ao adicionar a última peça à bandeja (ou via resgate cósmico)
       if (this.engine.isVictory()) {
         soundManager.playVictoryFanfare();
         hapticManager.impactVictory();
         this.triggerVictoryCelebration();
-
         if (this.callbacks.onBoardCleared) {
           this.callbacks.onBoardCleared();
         }
       } else if (result.waveCleared && this.engine.hasMoreWaves()) {
-        // Celebração da onda intermediária!
         soundManager.playMatchSuccess();
         confetti({
           particleCount: 40,
@@ -544,14 +695,10 @@ export class BoardRenderer {
           origin: { y: 0.6 },
           colors: ['#10B981', '#F59E0B', '#3B82F6', '#EC4899'],
         });
-
         if (this.callbacks.onWaveCleared) {
           this.callbacks.onWaveCleared(this.engine.getCurrentWave(), this.engine.getTotalWaves());
         }
       }
-    } else if (result.action === 'added') {
-      soundManager.playTileClick();
-      hapticManager.impactLight();
     } else if (result.action === 'tray_full') {
       soundManager.playBlockedSound();
     }
@@ -562,40 +709,254 @@ export class BoardRenderer {
     this.requestRender();
   }
 
+  /**
+   * Dispara a animação cênica teatral da sinergia correspondente (Língua do Sapo, Patada, etc.)
+   * Mantém a peça de origem e o alvo visíveis até o final da cena, dissolvendo ambos juntos!
+   */
+  public triggerSynergyAnimation(
+    synergy: SynergyResult,
+    initiatorTile: PlacedTile,
+    matchedPair?: [PlacedTile, PlacedTile]
+  ): void {
+    const onSceneComplete = () => {
+      const tilesToDissolve: PlacedTile[] = [initiatorTile];
+      if (matchedPair) {
+        tilesToDissolve.push(matchedPair[0], matchedPair[1]);
+      }
+      if (synergy.affectedBoardTiles) {
+        tilesToDissolve.push(...synergy.affectedBoardTiles);
+      }
+      if (synergy.clearedTrayTiles) {
+        tilesToDissolve.push(...synergy.clearedTrayTiles);
+      }
+
+      // Remover duplicatas garantindo finalização atômica
+      const seenIds = new Set<string>();
+      const uniqueTiles: PlacedTile[] = [];
+      for (const t of tilesToDissolve) {
+        if (!seenIds.has(t.id)) {
+          seenIds.add(t.id);
+          uniqueTiles.push(t);
+        }
+      }
+      this.engine.finalizeSynergyMatch(uniqueTiles);
+
+      soundManager.playMatchSuccess();
+      this.isInputLocked = false;
+      this.keepAnimating(400);
+      this.requestRender();
+      if (this.callbacks.onStateChanged) {
+        this.callbacks.onStateChanged();
+      }
+
+      if (this.engine.isVictory()) {
+        soundManager.playVictoryFanfare();
+        hapticManager.impactVictory();
+        this.triggerVictoryCelebration();
+        if (this.callbacks.onBoardCleared) {
+          this.callbacks.onBoardCleared();
+        }
+      } else if (this.engine.isWaveCleared() && this.engine.hasMoreWaves()) {
+        soundManager.playMatchSuccess();
+        confetti({
+          particleCount: 40,
+          spread: 55,
+          origin: { y: 0.6 },
+          colors: ['#10B981', '#F59E0B', '#3B82F6', '#EC4899'],
+        });
+        if (this.callbacks.onWaveCleared) {
+          this.callbacks.onWaveCleared(this.engine.getCurrentWave(), this.engine.getTotalWaves());
+        }
+      }
+    };
+
+    if (synergy.type === 'frog_tongue') {
+      soundManager.playFrogTongue();
+      hapticManager.impactMedium();
+      this.isInputLocked = true;
+
+      // Identifica o sapo (origem da língua) e a presa (joaninha / abelha)
+      const frogTile = (initiatorTile.value === 'frog' && !initiatorTile.isRemoved)
+        ? initiatorTile
+        : (matchedPair?.find((t) => t.value === 'frog' && !t.isRemoved) || initiatorTile);
+      const otherPairTile = matchedPair?.find((t) => t.id !== frogTile.id && !t.isRemoved);
+      const targetTile = synergy.affectedBoardTiles?.[0] || otherPairTile || synergy.clearedTrayTiles?.[0];
+
+      const frogCoords = this.getTileScreenCoords(frogTile);
+      const startX = frogCoords.x + frogCoords.width / 2;
+      const startY = frogCoords.y + frogCoords.height / 2;
+
+      let targetX = startX;
+      let targetY = startY - 140;
+
+      if (targetTile) {
+        const targetCoords = this.getTileScreenCoords(targetTile);
+        targetX = targetCoords.x + targetCoords.width / 2;
+        targetY = targetCoords.y + targetCoords.height / 2;
+      }
+
+      this.synergyAnimator.triggerFrogTongue(
+        startX,
+        startY,
+        targetX,
+        targetY,
+        targetTile,
+        onSceneComplete
+      );
+      this.isBoardDirty = true;
+    } else if (synergy.type === 'cat_paw') {
+      soundManager.playCatPaw();
+      hapticManager.impactLight();
+      this.isInputLocked = true;
+
+      const catTile = (initiatorTile.value === 'cat' && !initiatorTile.isRemoved)
+        ? initiatorTile
+        : (matchedPair?.find((t) => t.value === 'cat' && !t.isRemoved) || initiatorTile);
+      const catCoords = this.getTileScreenCoords(catTile);
+      const startX = catCoords.x + catCoords.width / 2;
+      const startY = catCoords.y + catCoords.height / 2;
+
+      const otherPairTile = matchedPair?.find((t) => t.id !== catTile.id && !t.isRemoved);
+      const targetTile = synergy.affectedBoardTiles?.[0] || otherPairTile;
+      let targetX = startX;
+      let targetY = startY;
+      if (targetTile) {
+        const targetCoords = this.getTileScreenCoords(targetTile);
+        targetX = targetCoords.x + targetCoords.width / 2;
+        targetY = targetCoords.y + targetCoords.height / 2;
+      }
+
+      this.synergyAnimator.triggerCatPaw(targetX, targetY, onSceneComplete);
+      this.isBoardDirty = true;
+    } else if (synergy.type === 'bear_feast') {
+      soundManager.playBearClaw();
+      hapticManager.impactMedium();
+      this.isInputLocked = true;
+
+      const bearTile = (initiatorTile.value === 'bear' && !initiatorTile.isRemoved)
+        ? initiatorTile
+        : (matchedPair?.find((t) => t.value === 'bear' && !t.isRemoved) || initiatorTile);
+      const bearCoords = this.getTileScreenCoords(bearTile);
+      const startX = bearCoords.x + bearCoords.width / 2;
+      const startY = bearCoords.y + bearCoords.height / 2;
+
+      const otherPairTile = matchedPair?.find((t) => t.id !== bearTile.id && !t.isRemoved);
+      const targetTile = synergy.affectedBoardTiles?.[0] || otherPairTile;
+      let targetX = startX;
+      let targetY = startY;
+      if (targetTile) {
+        const targetCoords = this.getTileScreenCoords(targetTile);
+        targetX = targetCoords.x + targetCoords.width / 2;
+        targetY = targetCoords.y + targetCoords.height / 2;
+      }
+
+      this.synergyAnimator.triggerBearClaw(targetX, targetY, onSceneComplete);
+      this.isBoardDirty = true;
+    } else if (synergy.type === 'dolphin_sonar') {
+      soundManager.playDolphinSonar();
+      hapticManager.impactLight();
+      this.isInputLocked = true;
+
+      const dolphinTile = (initiatorTile.value === 'dolphin' && !initiatorTile.isRemoved)
+        ? initiatorTile
+        : (matchedPair?.find((t) => t.value === 'dolphin' && !t.isRemoved) || initiatorTile);
+      const dolphinCoords = this.getTileScreenCoords(dolphinTile);
+      const startX = dolphinCoords.x + dolphinCoords.width / 2;
+      const startY = dolphinCoords.y + dolphinCoords.height / 2;
+
+      const otherPairTile = matchedPair?.find((t) => t.id !== dolphinTile.id && !t.isRemoved);
+      const targetTile = synergy.affectedBoardTiles?.[0] || otherPairTile;
+      let targetX = startX + 90;
+      let targetY = startY - 90;
+      if (targetTile) {
+        const targetCoords = this.getTileScreenCoords(targetTile);
+        targetX = targetCoords.x + targetCoords.width / 2;
+        targetY = targetCoords.y + targetCoords.height / 2;
+      }
+
+      this.synergyAnimator.triggerDolphinSonar(startX, startY, targetX, targetY, onSceneComplete);
+      this.isBoardDirty = true;
+    }
+  }
+
   /** Ativa o efeito visual de clima por 4.5 segundos com partículas atmosféricas */
   public triggerClimateEffect(climate: ClimateType): void {
     this.activeClimate = climate;
-    this.climateTimer = 270; // ~4.5s em 60fps
+    this.climateTimer = 150; // ~2.5s dinâmico e responsivo
     const viewW = this.canvas.width / this.dpr;
     const viewH = this.canvas.height / this.dpr;
 
     this.climateParticles = [];
-    const count = 30;
+    const count = 28;
+
+    let char: string | undefined;
+    let baseColor = 'rgba(255, 255, 255, 0.7)';
+
+    if (climate === 'ocean_surge') {
+      baseColor = 'rgba(56, 189, 248, 0.75)';
+      char = '💧';
+    } else if (climate === 'heat_wave') {
+      baseColor = 'rgba(251, 191, 36, 0.6)';
+      char = '✨';
+    } else if (climate === 'spring_breeze') {
+      baseColor = 'rgba(244, 114, 182, 0.7)';
+      char = '🌸';
+    } else if (climate === 'full_moon') {
+      baseColor = 'rgba(250, 204, 21, 0.8)';
+      char = '✨';
+    } else if (climate === 'arctic_blizzard') {
+      baseColor = 'rgba(186, 230, 253, 0.8)';
+      char = '❄️';
+    } else if (climate === 'autumn_gale') {
+      baseColor = 'rgba(245, 158, 11, 0.8)';
+      char = '🍂';
+    } else if (climate === 'zen_storm') {
+      baseColor = 'rgba(129, 140, 248, 0.8)';
+      char = '⚡';
+    }
+
+    // Pré-renderizar sprite único em canvas offscreen (zero parsing de fonte por frame!)
+    if (char) {
+      const spriteCanvas = document.createElement('canvas');
+      const sSize = Math.round(36 * this.dpr);
+      spriteCanvas.width = sSize;
+      spriteCanvas.height = sSize;
+      const sCtx = spriteCanvas.getContext('2d');
+      if (sCtx) {
+        sCtx.scale(this.dpr, this.dpr);
+        sCtx.font = '24px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Android Emoji", sans-serif';
+        sCtx.textAlign = 'center';
+        sCtx.textBaseline = 'middle';
+        sCtx.fillText(char, 18, 18);
+      }
+      this.climateSpriteCache = spriteCanvas;
+    } else {
+      this.climateSpriteCache = null;
+    }
 
     for (let i = 0; i < count; i++) {
-      let speedX = (Math.random() - 0.5) * 1.5;
-      let speedY = Math.random() * 2 + 1;
-      let char: string | undefined;
-      let color: string | undefined = 'rgba(255, 255, 255, 0.7)';
+      let speedX = (Math.random() - 0.5) * 2;
+      let speedY = Math.random() * 3 + 2;
 
       if (climate === 'ocean_surge') {
-        color = 'rgba(56, 189, 248, 0.75)';
-        speedY = Math.random() * 3 + 2;
-        char = '💧';
+        speedY = Math.random() * 4 + 3.5;
       } else if (climate === 'heat_wave') {
-        color = 'rgba(251, 191, 36, 0.6)';
-        speedY = -(Math.random() * 1.5 + 0.5);
-        char = '✨';
+        speedY = -(Math.random() * 3.5 + 2);
       } else if (climate === 'spring_breeze') {
-        color = 'rgba(244, 114, 182, 0.7)';
-        speedX = Math.random() * 2 + 1;
-        speedY = Math.random() * 1.5 + 0.5;
-        char = '🌸';
+        speedX = Math.random() * 3.5 + 2.5;
+        speedY = Math.random() * 2 + 1;
       } else if (climate === 'full_moon') {
-        color = 'rgba(250, 204, 21, 0.8)';
-        speedX = (Math.random() - 0.5) * 0.8;
-        speedY = (Math.random() - 0.5) * 0.8;
-        char = '✨';
+        speedX = (Math.random() - 0.5) * 2;
+        speedY = (Math.random() - 0.5) * 2;
+      } else if (climate === 'arctic_blizzard') {
+        speedX = (Math.random() - 0.5) * 3;
+        speedY = Math.random() * 4.5 + 3;
+      } else if (climate === 'autumn_gale') {
+        speedX = Math.random() * 4 + 2.5;
+        speedY = Math.random() * 2.5 + 1.2;
+      } else if (climate === 'zen_storm') {
+        speedX = (Math.random() - 0.5) * 1;
+        speedY = Math.random() * 6 + 4;
       }
 
       this.climateParticles.push({
@@ -603,51 +964,61 @@ export class BoardRenderer {
         y: Math.random() * viewH,
         speedX,
         speedY,
-        size: Math.random() * 14 + 10,
-        alpha: Math.random() * 0.7 + 0.3,
+        size: Math.random() * 10 + 16,
+        alpha: Math.random() * 0.5 + 0.5,
         char,
-        color,
+        color: baseColor,
       });
     }
 
-    this.isDirty = true;
+    if (climate === 'full_moon') {
+      setTimeout(() => {
+        this.engine.getTiles().forEach((t) => (t.isHinted = false));
+        this.requestRender();
+      }, 5000);
+    }
+
+    this.isBoardDirty = true;
   }
 
-  private updateAndDrawClimateParticles(w: number, h: number): void {
+  private updateAndDrawClimateParticles(
+    w: number,
+    h: number,
+    g: CanvasRenderingContext2D = this.fxCtx || this.ctx
+  ): void {
     if (this.climateTimer <= 0 || !this.activeClimate) return;
 
     this.climateTimer--;
-    const g = this.ctx;
+    const fade = Math.min(1, this.climateTimer / 45);
+    const sprite = this.climateSpriteCache;
 
-    this.climateParticles.forEach((p) => {
+    for (let i = 0; i < this.climateParticles.length; i++) {
+      const p = this.climateParticles[i];
       p.x += p.speedX;
       p.y += p.speedY;
 
-      if (p.x < -20) p.x = w + 10;
-      if (p.x > w + 20) p.x = -10;
-      if (p.y > h + 20) p.y = -10;
-      if (p.y < -20) p.y = h + 10;
+      if (p.x < -30) p.x = w + 15;
+      if (p.x > w + 30) p.x = -15;
+      if (p.y > h + 30) p.y = -15;
+      if (p.y < -30) p.y = h + 15;
 
-      g.save();
-      g.globalAlpha = p.alpha * Math.min(1, this.climateTimer / 60);
-
-      if (p.char) {
-        g.font = `${Math.round(p.size)}px sans-serif`;
-        g.textAlign = 'center';
-        g.textBaseline = 'middle';
-        g.fillText(p.char, p.x, p.y);
+      g.globalAlpha = p.alpha * fade;
+      if (sprite) {
+        const sz = p.size;
+        g.drawImage(sprite, p.x - sz / 2, p.y - sz / 2, sz, sz);
       } else {
         g.fillStyle = p.color || 'white';
         g.beginPath();
         g.arc(p.x, p.y, p.size / 4, 0, Math.PI * 2);
         g.fill();
       }
+    }
+    g.globalAlpha = 1.0;
 
-      g.restore();
-    });
-
-    if (this.climateTimer > 0) {
-      this.isDirty = true;
+    if (this.climateTimer <= 0) {
+      this.activeClimate = null;
+      this.climateParticles = [];
+      this.climateSpriteCache = null;
     }
   }
 
@@ -678,7 +1049,8 @@ export class BoardRenderer {
       (o) =>
         o.id !== tile.id &&
         o.position.z === tile.position.z &&
-        o.position.x === tile.position.x - 2 &&
+        o.position.x < tile.position.x &&
+        tile.position.x - o.position.x <= 2 &&
         Math.abs(o.position.y - tile.position.y) < 2
     );
 
@@ -687,7 +1059,8 @@ export class BoardRenderer {
       (o) =>
         o.id !== tile.id &&
         o.position.z === tile.position.z &&
-        o.position.x === tile.position.x + 2 &&
+        o.position.x > tile.position.x &&
+        o.position.x - tile.position.x <= 2 &&
         Math.abs(o.position.y - tile.position.y) < 2
     );
 
