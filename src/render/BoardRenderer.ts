@@ -43,7 +43,7 @@ export class BoardRenderer {
   // Dimensões base da grade — ampliadas para toque confortável (Samsung A12)
   private baseTileWidth: number = 66;
   private baseTileHeight: number = 88;
-  private baseTileDepth: number = 7;
+  private baseTileDepth: number = 9;
 
   // Controle de animação e economia de bateria (MediaTek Helio P35)
   private isRunning: boolean = true;
@@ -327,8 +327,10 @@ export class BoardRenderer {
     for (let i = 0; i < len; i++) {
       const tile = activeTiles[i];
       if (tile.inSynergyPulled) continue;
-      const screenX = this.offsetX + (tile.position.x / 2) * tileWidth - tile.position.z * (tileDepth * 0.4);
-      const screenY = this.offsetY + (tile.position.y / 2) * tileHeight - tile.position.z * (tileDepth * 0.8);
+      const zShiftX = tile.position.z * Math.round(tileDepth * 0.55);
+      const zShiftY = tile.position.z * Math.round(tileDepth * 1.10);
+      const screenX = this.offsetX + (tile.position.x / 2) * tileWidth - zShiftX;
+      const screenY = this.offsetY + (tile.position.y / 2) * tileHeight - zShiftY;
 
       const isFree = freeTileIds.has(tile.id);
 
@@ -443,8 +445,10 @@ export class BoardRenderer {
     const sorted = [...activeTiles].sort((a, b) => b.position.z - a.position.z);
 
     for (const tile of sorted) {
-      const sx = this.offsetX + (tile.position.x / 2) * tileWidth - tile.position.z * (tileDepth * 0.4);
-      const sy = this.offsetY + (tile.position.y / 2) * tileHeight - tile.position.z * (tileDepth * 0.8) + (tile.isSelected ? -6 : 0);
+      const zShiftX = tile.position.z * Math.round(tileDepth * 0.55);
+      const zShiftY = tile.position.z * Math.round(tileDepth * 1.10);
+      const sx = this.offsetX + (tile.position.x / 2) * tileWidth - zShiftX;
+      const sy = this.offsetY + (tile.position.y / 2) * tileHeight - zShiftY + (tile.isSelected ? -8 : 0);
 
       if (
         px >= sx &&
@@ -465,8 +469,10 @@ export class BoardRenderer {
       tileDepth: Math.max(4, Math.round(this.baseTileDepth * this.scale)),
     };
 
-    const x = this.offsetX + (tile.position.x / 2) * tileWidth - tile.position.z * (tileDepth * 0.4);
-    const y = this.offsetY + (tile.position.y / 2) * tileHeight - tile.position.z * (tileDepth * 0.8) + (tile.isSelected ? -6 : 0);
+    const zShiftX = tile.position.z * Math.round(tileDepth * 0.55);
+    const zShiftY = tile.position.z * Math.round(tileDepth * 1.10);
+    const x = this.offsetX + (tile.position.x / 2) * tileWidth - zShiftX;
+    const y = this.offsetY + (tile.position.y / 2) * tileHeight - zShiftY + (tile.isSelected ? -8 : 0);
     return { x, y, width: tileWidth, height: tileHeight };
   }
 
