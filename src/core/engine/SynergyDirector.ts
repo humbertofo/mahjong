@@ -39,9 +39,10 @@ export class SynergyDirector {
     t2: PlacedTile,
     getActiveBoardTiles: () => PlacedTile[],
     onShuffleRemaining: () => void,
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
-    return SynergyRegistry.evaluate(t1, t2, getActiveBoardTiles, onShuffleRemaining, tray);
+    return SynergyRegistry.evaluate(t1, t2, getActiveBoardTiles, onShuffleRemaining, tray, isTacticalMode);
   }
 
   public static isTheatrical(synergy: SynergyResult | null | undefined): boolean {

@@ -16,14 +16,14 @@ export const MECHANIC_INTRODUCTIONS: Record<number, string> = {
   8:  '🎁 Baú da Fortuna: combine-o para ganhar super bônus de harmonia e ferramentas!',
   11: '❄️ Mundo 3: Vale Glacial! Dê um toque nas peças congeladas para descongelá-las!',
   15: '🌊 Sistema Multi-Onda: limpe o primeiro tabuleiro e uma nova onda descerá em seguida!',
-  16: '🎋 Mundo 4: Floresta de Bambu! Corte os cipós combinando uma peça livre ao lado!',
-  21: '🪨 Mundo 5: Santuário de Pedra! Quebre rochas ancestrais com a Marreta ou Sinergias!',
-  24: '🥚 Casulo Místico: combine peças adjacentes para chocá-lo em uma surpresa rara!',
-  26: '🌊 Mundo 6: Rios Ancestrais! Explore pontes e corredores com novas criaturas aquáticas!',
+  16: '🎋 Mundo 4: Floresta de Bambu! Corte os cipós combinando herbívoros ou insetos vizinhos!',
+  21: '🪨 Mundo 5: Santuário de Pedra! O Ciclo Dia & Noite ☀️🌙 começa: a cada 4 pares a luz muda com bônus solares e lunares! Bandeja agora com 3 espaços.',
+  24: '🥚 Ninho dos Casulos: cause 2 impactos vizinhos para rachar e chocar uma criatura mística rara!',
+  26: '🌊 Mundo 6: Rios Ancestrais! Explore pontes e corredores com novas criaturas aquáticas e trincas sagradas!',
   31: '🪞 Mundo 7: Reino dos Espelhos! O Espelho assume a forma do último animal combinado!',
-  36: '🦁 Mundo 8: Savana dos Segredos! Desbrave a grande savana e decifre a Chave Mestra!',
-  41: '🦅 Mundo 9: Cumes Celestiais! As grandes aves sagradas e o Dragão Vermelho aguardam você!',
-  46: '⛩️ Mundo 10: Templo dos Mestres! A apoteose final: conquiste o Classic Shanghai com 144 peças!',
+  36: '🦁 Mundo 8: Savana dos Segredos! Cadeia Alimentar ativa: predadores caçam na bandeja! Névoa dos Picos 🌫️ esconde vales profundos.',
+  41: '🦅 Mundo 9: Cumes Celestiais! Cúpulas de Selos Elementais 🔒 protegem peças sagradas! Combine o Par-Chave 🗝️ para rompê-las!',
+  46: '⛩️ Mundo 10: Templo dos Mestres! A apoteose final com todas as mecânicas cósmicas: domine o Classic Shanghai com 144 peças!',
 };
 
 export const LEVEL_RULES_BY_NUMBER: Record<number, Partial<LevelRuleDefinition>> = {
@@ -201,5 +201,6 @@ export function getLevelRules(levelInput: number | string, totalSlots: number = 
     chameleonChance: overrides.chameleonChance ?? 0.5,
     mechanicIntro,
     starThresholds,
+    maxTraySlots: overrides.maxTraySlots ?? (levelNumber >= 21 ? 3 : 4),
   };
 }

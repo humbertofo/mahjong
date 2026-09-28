@@ -755,13 +755,79 @@ export class TileRenderer {
     h: number,
     isFree: boolean
   ): void {
-    if (!tile.specialType || tile.specialType === 'normal' || tile.specialType === 'chameleon') return;
+    const hasSpecialType = tile.specialType && tile.specialType !== 'normal' && tile.specialType !== 'chameleon';
+    const hasElementalSeal = !!tile.elementalSeal;
+    const hasElementalKey = !!tile.elementalKey;
+    const hasMist = !!tile.isMisty;
+
+    if (!hasSpecialType && !hasElementalSeal && !hasElementalKey && !hasMist) return;
 
     ctx.save();
     const badgeSize = Math.max(12, Math.round(w * 0.28));
     const font = `${badgeSize}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif`;
 
-    switch (tile.specialType) {
+    // 🌫️ Mecânica C: Névoa dos Picos (Mist & Canopy Shadow)
+    if (tile.isMisty) {
+      ctx.fillStyle = 'rgba(241, 245, 249, 0.90)';
+      this.drawRoundedRect(ctx, x, y, w, h, 8);
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(203, 213, 225, 0.85)';
+      ctx.lineWidth = 1.6;
+      this.drawRoundedRect(ctx, x, y, w, h, 8);
+      ctx.stroke();
+
+      ctx.font = `${Math.max(14, Math.round(w * 0.42))}px "Segoe UI Emoji", "Apple Color Emoji", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('🌫️', x + w / 2, y + h / 2);
+    }
+
+    // 🔮 Mecânica F: Cúpula Rúnica de Selo Elemental
+    if (tile.elementalSeal) {
+      const sealColors: Record<string, { stroke: string; fill: string; rune: string }> = {
+        fire:  { stroke: '#EF4444', fill: 'rgba(239, 68, 68, 0.28)', rune: '🔥' },
+        water: { stroke: '#0EA5E9', fill: 'rgba(14, 165, 233, 0.28)', rune: '💧' },
+        earth: { stroke: '#10B981', fill: 'rgba(16, 185, 129, 0.28)', rune: '🌿' },
+        air:   { stroke: '#A855F7', fill: 'rgba(168, 85, 247, 0.28)', rune: '💨' },
+      };
+      const seal = sealColors[tile.elementalSeal] || sealColors.fire;
+
+      ctx.fillStyle = seal.fill;
+      this.drawRoundedRect(ctx, x, y, w, h, 8);
+      ctx.fill();
+
+      ctx.strokeStyle = seal.stroke;
+      ctx.lineWidth = 2.2;
+      this.drawRoundedRect(ctx, x, y, w, h, 8);
+      ctx.stroke();
+
+      ctx.font = font;
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'top';
+      ctx.fillText(seal.rune, x + w - 3, y + 3);
+
+      ctx.font = `${Math.max(10, Math.round(badgeSize * 0.65))}px "Segoe UI Emoji", "Apple Color Emoji", sans-serif`;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillText('🔒', x + 3, y + 3);
+    }
+
+    // 🗝️ Chave Mística Elemental
+    if (tile.elementalKey) {
+      ctx.strokeStyle = '#F59E0B';
+      ctx.lineWidth = 2.2;
+      this.drawRoundedRect(ctx, x, y, w, h, 8);
+      ctx.stroke();
+
+      ctx.font = font;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('🗝️', x + 3, y + h - 3);
+    }
+
+    if (tile.specialType && tile.specialType !== 'normal' && tile.specialType !== 'chameleon') {
+      switch (tile.specialType) {
       case 'ice': {
         // Overlay de gelo cristalino translúcido com brilho ciano
         ctx.fillStyle = isFree ? 'rgba(186, 230, 253, 0.40)' : 'rgba(147, 197, 253, 0.55)';
@@ -810,9 +876,9 @@ export class TileRenderer {
         break;
       }
       case 'cocoon': {
-        // Casulo dourado místico
+        // Casulo dourado místico com indicador de impactos restantes
         ctx.strokeStyle = '#F59E0B';
-        ctx.lineWidth = 2.2;
+        ctx.lineWidth = 2.4;
         this.drawRoundedRect(ctx, x, y, w, h, 8);
         ctx.stroke();
 
@@ -820,6 +886,31 @@ export class TileRenderer {
         ctx.textAlign = 'right';
         ctx.textBaseline = 'top';
         ctx.fillText('🥚', x + w - 3, y + 3);
+
+        const hits = tile.cocoonHits ?? 2;
+        if (hits === 1) {
+          // Casulo trincado/rachado: desenha linhas de trinca douradas no corpo da pedra
+          ctx.strokeStyle = 'rgba(245, 158, 11, 0.9)';
+          ctx.lineWidth = 1.8;
+          ctx.beginPath();
+          ctx.moveTo(x + w * 0.45, y + h * 0.35);
+          ctx.lineTo(x + w * 0.55, y + h * 0.5);
+          ctx.lineTo(x + w * 0.48, y + h * 0.65);
+          ctx.stroke();
+
+          // Badge de rachadura (1/2)
+          ctx.font = `bold ${Math.max(9, Math.round(badgeSize * 0.65))}px sans-serif`;
+          ctx.fillStyle = '#D97706';
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'bottom';
+          ctx.fillText('1/2', x + w - 4, y + h - 4);
+        } else if (hits >= 2) {
+          ctx.font = `bold ${Math.max(9, Math.round(badgeSize * 0.65))}px sans-serif`;
+          ctx.fillStyle = '#B45309';
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'bottom';
+          ctx.fillText('2/2', x + w - 4, y + h - 4);
+        }
         break;
       }
       case 'chest': {
@@ -847,6 +938,7 @@ export class TileRenderer {
         ctx.textBaseline = 'top';
         ctx.fillText('🪞', x + w - 3, y + 3);
         break;
+      }
       }
     }
     ctx.restore();

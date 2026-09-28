@@ -4725,3 +4725,128 @@ html, body {
   }
 }
 
+/* === MODAL DE FIM DE JOGO / CAMINHO OBSTRUÍDO (DEADLOCK) === */
+.modal-card.game-over-card {
+  background: linear-gradient(180deg, #1e1b18 0%, #12100e 100%);
+  border: 1.5px solid rgba(239, 68, 68, 0.35);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(239, 68, 68, 0.15);
+  padding: 24px;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.game-over-emblem-wrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.game-over-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1.5px solid rgba(239, 68, 68, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-over-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.game-over-level-chip {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.15);
+  padding: 3px 10px;
+  border-radius: var(--radius-full, 9999px);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.game-over-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #fef2f2;
+  margin: 0;
+}
+
+.game-over-desc {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  margin: 0;
+  max-width: 320px;
+  line-height: 1.45;
+}
+
+.game-over-zen-tip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md, 12px);
+  padding: 10px 14px;
+  text-align: left;
+}
+
+.zen-tip-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.zen-tip-text {
+  font-size: 0.8rem;
+  color: #cbd5e1;
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.game-over-actions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.game-over-btn-secondary {
+  flex: 1;
+}
+
+.game-over-btn-primary {
+  flex: 1.6;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+}
+
+/* Pulsar botão quando a bandeja estiver travada e houver ferramentas */
+.tool-btn.pulse-attention {
+  animation: pulse-attention-glow 1.2s ease-in-out infinite alternate !important;
+}
+
+@keyframes pulse-attention-glow {
+  0% {
+    box-shadow: 0 0 0 1px #f59e0b, 0 0 10px rgba(245, 158, 11, 0.3);
+    transform: scale(1);
+  }
+  100% {
+    box-shadow: 0 0 0 3px #fbbf24, 0 0 22px rgba(251, 191, 36, 0.7);
+    transform: scale(1.08);
+  }
+}
+
+

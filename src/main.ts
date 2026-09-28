@@ -64,6 +64,30 @@ window.addEventListener('DOMContentLoaded', () => {
         onArrival();
       }
     },
+    onDeadlocked: () => {
+      uiManager?.handleDeadlock();
+    },
+    onVinesEntangled: (tile) => {
+      uiManager?.handleVinesEntangled(tile);
+    },
+    onPredation: (predation) => {
+      uiManager?.handlePredation(predation);
+    },
+    onTimeOfDayChanged: (newTime) => {
+      uiManager?.handleTimeOfDayChanged(newTime);
+    },
+    onCocoonCracked: (tile) => {
+      uiManager?.handleCocoonCracked(tile);
+    },
+    onCocoonHatched: (tile) => {
+      uiManager?.handleCocoonHatched(tile);
+    },
+    onElementalSealed: (tile) => {
+      uiManager?.handleElementalSealed(tile);
+    },
+    onElementalUnsealed: (unsealedTiles) => {
+      uiManager?.handleElementalUnsealed(unsealedTiles);
+    },
   }, fxCanvas);
 
   // 3. UIManager orquestra toda a navegação e estado

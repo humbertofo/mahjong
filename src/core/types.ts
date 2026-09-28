@@ -189,6 +189,7 @@ export interface GridPosition {
 
 export type TileSpecialType = 'normal' | 'chameleon' | 'ice' | 'cocoon' | 'rock' | 'chest' | 'mirror' | 'vines';
 export type TileBiome = 'savanna' | 'arctic' | 'forest' | 'water' | 'garden';
+export type TimeOfDay = 'day' | 'twilight' | 'night';
 
 export interface PlacedTile {
   id: string;
@@ -205,6 +206,11 @@ export interface PlacedTile {
   inSynergyPulled?: boolean;
   specialType?: TileSpecialType;
   biome?: TileBiome;
+  cocoonHits?: number;
+  initialCocoonHits?: number;
+  isMisty?: boolean;
+  elementalSeal?: 'fire' | 'water' | 'earth' | 'air';
+  elementalKey?: 'fire' | 'water' | 'earth' | 'air';
 }
 
 export interface LayoutSlot {
@@ -230,6 +236,7 @@ export interface LevelRuleDefinition {
   worldTier?: number;
   mechanicIntro?: string;
   starThresholds: [number, number, number];
+  maxTraySlots?: number;
 }
 
 export interface BoardLayout {
@@ -322,15 +329,21 @@ export interface TileMutationRecord {
 }
 
 export interface MoveHistoryItem {
-  actionType: 'tray_add' | 'matched_pair' | 'trio_match';
+  actionType: 'tray_add' | 'matched_pair' | 'trio_match' | 'predation';
   tile?: PlacedTile;
   trioTile?: PlacedTile;
+  predatorTile?: PlacedTile;
+  preyTile?: PlacedTile;
+  wasNewTilePredator?: boolean;
   fromBoardToTrayIndex?: number;
   matchedPair?: [PlacedTile, PlacedTile];
   pointsAwarded?: number;
   secondaryRemovedTiles?: PlacedTile[];
   mutations?: TileMutationRecord[];
   rechargedTool?: 'hammer' | 'shuffle' | 'hint' | 'undo';
+  unsealedTiles?: PlacedTile[];
+  unsealedElement?: 'fire' | 'water' | 'earth' | 'air';
+  clearedMistTiles?: PlacedTile[];
 }
 
 export type ThemeType = 'mist-emerald' | 'felt-green' | 'wood-dark' | 'zen-dark' | 'parchment';

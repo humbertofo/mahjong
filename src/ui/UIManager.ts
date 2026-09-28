@@ -4,7 +4,7 @@ import { ALL_LAYOUTS } from '../core/layouts';
 import { StorageManager } from '../storage/StorageManager';
 import { soundManager } from '../audio/SoundManager';
 import { hapticManager } from '../audio/HapticManager';
-import { PlacedTile, SynergyResult, ClimateEffectResult } from '../core/types';
+import { PlacedTile, SynergyResult, ClimateEffectResult, TimeOfDay } from '../core/types';
 import { LiveUpdateManager } from '../core/LiveUpdateManager';
 import { LevelsModal } from './modals/LevelsModal';
 import { SettingsModal } from './modals/SettingsModal';
@@ -280,6 +280,7 @@ export class UIManager {
     // Desfazer
     this.undoBtn.addEventListener('click', () => {
       this.cancelHammerMode();
+      this.undoBtn.classList.remove('pulse-attention');
       if (this.hud.undoCount <= 0) {
         this.showToast('Sem desfazeres restantes nesta fase!');
         soundManager.playBlockedSound();
@@ -395,6 +396,7 @@ export class UIManager {
 
     // Marreta
     this.hammerBtn.addEventListener('click', () => {
+      this.hammerBtn.classList.remove('pulse-attention');
       if (this.hud.hammerCount <= 0) {
         this.showToast('Sem marretas restantes nesta fase!');
         soundManager.playBlockedSound();
@@ -965,6 +967,12 @@ export class UIManager {
     const maxSlots = this.engine.getMaxTraySlots();
 
     this.traySlotEls.forEach((slotEl, idx) => {
+      if (idx >= maxSlots) {
+        slotEl.style.display = 'none';
+        return;
+      }
+      slotEl.style.display = '';
+
       const canvas = this.traySlotCanvases[idx];
       if (idx < tray.length) {
         const wasFilled = slotEl.classList.contains('filled');
@@ -1024,30 +1032,14 @@ export class UIManager {
     if (tray.length >= maxSlots) {
       this.traySlotsContainer.classList.add('warning-full');
 
-      if (this.hud.hammerCount <= 0 && this.hud.undoCount <= 0) {
-        if (!this.isRestarting) {
-          this.isRestarting = true;
-          soundManager.playShuffleSound();
-          hapticManager.impactMedium();
-          this.traySlotsContainer.classList.add('zen-rescue-swirl');
-          this.showNatureEvent(
-            '🍃',
-            'Brisa da Compaixão',
-            'A floresta abriu espaço na sua bandeja com segurança zen!'
-          );
-
-          this.zenRescueTimer = setTimeout(() => {
-            this.engine.zenRescue();
-            this.isRestarting = false;
-            this.zenRescueTimer = null;
-            this.traySlotsContainer.classList.remove('warning-full', 'zen-rescue-swirl');
-            this.renderer.requestRender();
-            this.updateHUD();
-          }, 900);
-        }
+      const isDeadlock = this.engine.isDeadlocked();
+      if (isDeadlock) {
+        this.handleDeadlock();
       }
     } else {
       this.traySlotsContainer.classList.remove('warning-full');
+      if (this.undoBtn) this.undoBtn.classList.remove('pulse-attention');
+      if (this.hammerBtn) this.hammerBtn.classList.remove('pulse-attention');
     }
 
     // Radar Tático da Bandeja: avalia slots e sugere a melhor jogada na caixa de eventos da natureza
@@ -1206,6 +1198,57 @@ export class UIManager {
 
   // ─── Sinergias & Climas da Natureza ───────────────────────────────────────
 
+  public handleDeadlock(): void {
+    const hasTools = this.hud.hammerCount > 0 || this.hud.undoCount > 0;
+
+    if (!hasTools) {
+      // Nos mundos 1 a 4 (Modo Tutorial / Aprendiz), mantém a Brisa da Compaixão como rede de segurança:
+      if (this.currentLevelIndex < 20) {
+        if (!this.isRestarting) {
+          this.isRestarting = true;
+          soundManager.playShuffleSound();
+          hapticManager.impactMedium();
+          this.traySlotsContainer.classList.add('zen-rescue-swirl');
+          this.showNatureEvent(
+            '🍃',
+            'Brisa da Compaixão',
+            'A floresta abriu espaço na sua bandeja com segurança zen!'
+          );
+
+          this.zenRescueTimer = setTimeout(() => {
+            this.engine.zenRescue();
+            this.isRestarting = false;
+            this.zenRescueTimer = null;
+            this.traySlotsContainer.classList.remove('warning-full', 'zen-rescue-swirl');
+            this.renderer.requestRender();
+            this.updateHUD();
+          }, 900);
+        }
+      } else {
+        // Mundos 5 a 10: Derrota Tática Real por Deadlock!
+        this.hud.stopTimer();
+        soundManager.playBlockedSound();
+        hapticManager.impactHeavy();
+        GameEndModals.showGameOverModal(
+          this.currentLevelIndex,
+          () => this.startGame(this.currentLevelIndex),
+          () => this.showMenu()
+        );
+      }
+    } else {
+      // Tem ferramentas disponíveis: destaca botões pulsando para o jogador se salvar
+      if (this.hud.undoCount > 0 && this.undoBtn) {
+        this.undoBtn.classList.remove('pulse-attention');
+        requestAnimationFrame(() => this.undoBtn.classList.add('pulse-attention'));
+      }
+      if (this.hud.hammerCount > 0 && this.hammerBtn) {
+        this.hammerBtn.classList.remove('pulse-attention');
+        requestAnimationFrame(() => this.hammerBtn.classList.add('pulse-attention'));
+      }
+      this.showToast('⚠️ Bandeja travada! Use Desfazer ↩️ ou Marreta 🔨 para abrir espaço.', 3600, true);
+    }
+  }
+
   public triggerHudPulse(): void {
     const hudTitle = document.querySelector('.wisdom-title-container');
     if (hudTitle) {
@@ -1258,6 +1301,63 @@ export class UIManager {
 
   public handleCosmicRescue(rescuedTiles: PlacedTile[]): void {
     this.natureFeedback.handleCosmicRescue(rescuedTiles, (msg) => this.showToast(msg));
+  }
+
+  public handleVinesEntangled(tile: PlacedTile): void {
+    this.showToast(
+      `🌿 ${tile.label} está presa por Vinhas da Selva! Combine herbívoros ou insetos vizinhos para pastar e podar.`,
+      3600
+    );
+  }
+
+  public handlePredation(predation: { predator: PlacedTile; prey: PlacedTile; bonusHarmony: number }): void {
+    this.showToast(
+      `🥩 Predação Ecológica! ${predation.predator.label} caçou ${predation.prey.label}! Slot da bandeja liberado (+${predation.bonusHarmony} pts)`,
+      3600
+    );
+    this.updateHUD();
+  }
+
+  public handleTimeOfDayChanged(newTime: TimeOfDay): void {
+    if (newTime === 'day') {
+      this.showToast('☀️ O Sol atinge o zênite! Espécies diurnas concedem bônus solar (+150 pts).', 3500);
+    } else if (newTime === 'twilight') {
+      this.showToast('🌅 O Crepúsculo cai suavemente sobre a floresta...', 3500);
+    } else if (newTime === 'night') {
+      this.showToast('🌙 A Noite enluarada desperta as criaturas noturnas! (+150 pts)', 3500);
+    }
+  }
+
+  public handleCocoonCracked(tile: PlacedTile): void {
+    const hitsLeft = tile.cocoonHits ?? 1;
+    this.showToast(`🥚 O casulo trincou! (${hitsLeft} impacto restante para chocar)`, 3000);
+  }
+
+  public handleCocoonHatched(_tile: PlacedTile): void {
+    this.showToast(`✨ O Ninho Chocou! Uma criatura mística emergiu (+250 Harmonia)!`, 3600);
+    this.updateHUD();
+  }
+
+  public handleElementalSealed(tile: PlacedTile): void {
+    const sealNames: Record<string, string> = {
+      fire: 'Fogo 🔥',
+      water: 'Água 💧',
+      earth: 'Terra 🌿',
+      air: 'Ar 💨',
+    };
+    const sealName = tile.elementalSeal ? sealNames[tile.elementalSeal] : 'Místico';
+    this.showToast(
+      `🔒 ${tile.label} está protegida pelo Selo de ${sealName}! Combine o par da Chave correspondente para quebrar a cúpula.`,
+      3600
+    );
+  }
+
+  public handleElementalUnsealed(unsealedTiles: PlacedTile[]): void {
+    this.showToast(
+      `✨ Cúpula Rúnica Rompida! ${unsealedTiles.length} ${unsealedTiles.length === 1 ? 'peça libertada' : 'peças libertadas'} do selo com +Harmonia Zen!`,
+      3600
+    );
+    this.updateHUD();
   }
 
   public showNatureEvent(icon: string, title: string, desc: string): void {

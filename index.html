@@ -520,6 +520,44 @@
         </div>
       </div><!-- /modal-victory -->
 
+      <!-- MODAL: FIM DE JOGO / CAMINHO OBSTRUÍDO (DEADLOCK) -->
+      <div id="modal-game-over" class="modal-container hidden">
+        <div class="modal-card game-over-card">
+          <div class="game-over-emblem-wrap">
+            <div class="game-over-icon">
+              <svg width="56" height="56" viewBox="0 0 100 100" fill="none" class="zen-stone-svg">
+                <circle cx="50" cy="50" r="44" fill="#EF4444" opacity="0.15" />
+                <path d="M30 65 L40 35 L60 30 L75 50 L65 72 L35 70 Z" fill="#64748B" stroke="#94A3B8" stroke-width="2.5" />
+                <path d="M40 35 L52 50 L65 72" stroke="#475569" stroke-width="2" />
+                <circle cx="50" cy="50" r="14" fill="#F59E0B" opacity="0.9" />
+                <path d="M46 44 L54 56 M54 44 L46 56" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" />
+              </svg>
+            </div>
+          </div>
+
+          <div class="game-over-header">
+            <span class="game-over-level-chip" id="game-over-level-subtitle">BANDEJA BLOQUEADA</span>
+            <h2 id="game-over-title" class="game-over-title">Caminho Obstruído</h2>
+            <p id="game-over-desc" class="game-over-desc">A bandeja preencheu todos os espaços sem pares livres disponíveis no tabuleiro.</p>
+          </div>
+
+          <div class="game-over-zen-tip">
+            <span class="zen-tip-icon">🎋</span>
+            <span class="zen-tip-text">"Cada movimento é uma semente de serenidade. Planeje suas peças livres antes de preencher os slots da bandeja."</span>
+          </div>
+
+          <div class="game-over-actions">
+            <button id="btn-gameover-menu" class="btn-secondary game-over-btn-secondary" title="Voltar aos Mundos">
+              <span>Mundos</span>
+            </button>
+            <button id="btn-gameover-replay" class="btn-primary game-over-btn-primary" title="Tentar Novamente">
+              <span class="btn-icon">🔄</span>
+              <span>Tentar Novamente</span>
+            </button>
+          </div>
+        </div>
+      </div><!-- /modal-game-over -->
+
       <!-- MODAL: GUIA DA NATUREZA (ENCICLOPÉDIA COMPLETA DE REGRAS, SINERGIAS E CLIMAS) -->
       <div id="modal-nature-guide" class="modal-container guide-fullscreen-container hidden">
         <div class="modal-card nature-guide-card">

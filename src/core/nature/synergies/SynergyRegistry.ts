@@ -13,7 +13,8 @@ export class SynergyRegistry {
     t2: PlacedTile,
     getActiveBoardTiles: () => PlacedTile[],
     onShuffleRemaining: () => void,
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     const v1 = t1.value;
     const v2 = t2.value;
@@ -25,65 +26,65 @@ export class SynergyRegistry {
     const activeTiles = getActiveBoardTiles();
 
     // 2. Sinergias Teatrais Cênicas
-    const frog = TheatricalSynergies.checkFrogTongue(v1, v2, activeTiles, tray);
+    const frog = TheatricalSynergies.checkFrogTongue(v1, v2, activeTiles, tray, isTacticalMode);
     if (frog) return frog;
 
-    const cat = TheatricalSynergies.checkCatPaw(v1, v2, activeTiles, tray);
+    const cat = TheatricalSynergies.checkCatPaw(v1, v2, activeTiles, tray, isTacticalMode);
     if (cat) return cat;
 
-    const bear = TheatricalSynergies.checkBearFeast(v1, v2, activeTiles, tray);
+    const bear = TheatricalSynergies.checkBearFeast(v1, v2, activeTiles, tray, isTacticalMode);
     if (bear) return bear;
 
-    const dolphin = TheatricalSynergies.checkDolphinSonar(v1, v2, activeTiles, tray);
+    const dolphin = TheatricalSynergies.checkDolphinSonar(v1, v2, activeTiles, tray, isTacticalMode);
     if (dolphin) return dolphin;
 
-    const penguin = TheatricalSynergies.checkPenguinSlide(v1, v2, activeTiles, tray);
+    const penguin = TheatricalSynergies.checkPenguinSlide(v1, v2, activeTiles, tray, isTacticalMode);
     if (penguin) return penguin;
 
-    const panda = TheatricalSynergies.checkPandaZen(v1, v2, activeTiles, tray);
+    const panda = TheatricalSynergies.checkPandaZen(v1, v2, activeTiles, tray, isTacticalMode);
     if (panda) return panda;
 
-    const elephant = TheatricalSynergies.checkElephantCrush(v1, v2, activeTiles, tray);
+    const elephant = TheatricalSynergies.checkElephantCrush(v1, v2, activeTiles, tray, isTacticalMode);
     if (elephant) return elephant;
 
     // 3. Sinergias de Forrageamento e Colheita
-    const bee = ForagingSynergies.checkBeeHoney(v1, v2, activeTiles, tray);
+    const bee = ForagingSynergies.checkBeeHoney(v1, v2, activeTiles, tray, isTacticalMode);
     if (bee) return bee;
 
     const monkey = ForagingSynergies.checkMonkeyBanana(v1, v2, onShuffleRemaining);
     if (monkey) return monkey;
 
-    const squirrel = ForagingSynergies.checkSquirrelAcorn(v1, v2, activeTiles, tray);
+    const squirrel = ForagingSynergies.checkSquirrelAcorn(v1, v2, activeTiles, tray, isTacticalMode);
     if (squirrel) return squirrel;
 
-    const hedgehog = ForagingSynergies.checkHedgehogApple(v1, v2, activeTiles, tray);
+    const hedgehog = ForagingSynergies.checkHedgehogApple(v1, v2, activeTiles, tray, isTacticalMode);
     if (hedgehog) return hedgehog;
 
-    const turtle = ForagingSynergies.checkTurtleShield(v1, v2, activeTiles, tray);
+    const turtle = ForagingSynergies.checkTurtleShield(v1, v2, activeTiles, tray, isTacticalMode);
     if (turtle) return turtle;
 
-    const rabbit = ForagingSynergies.checkRabbitHop(v1, v2, activeTiles, tray);
+    const rabbit = ForagingSynergies.checkRabbitHop(v1, v2, activeTiles, tray, isTacticalMode);
     if (rabbit) return rabbit;
 
-    const fox = ForagingSynergies.checkFoxTrail(v1, v2, activeTiles, tray);
+    const fox = ForagingSynergies.checkFoxTrail(v1, v2, activeTiles, tray, isTacticalMode);
     if (fox) return fox;
 
-    const dogCat = ForagingSynergies.checkDogCatHarmony(v1, v2, activeTiles, tray);
+    const dogCat = ForagingSynergies.checkDogCatHarmony(v1, v2, activeTiles, tray, isTacticalMode);
     if (dogCat) return dogCat;
 
-    const butterfly = ForagingSynergies.checkButterflyFlap(v1, v2, activeTiles, tray);
+    const butterfly = ForagingSynergies.checkButterflyFlap(v1, v2, activeTiles, tray, isTacticalMode);
     if (butterfly) return butterfly;
 
-    const duck = ForagingSynergies.checkDuckSplash(v1, v2, activeTiles, tray);
+    const duck = ForagingSynergies.checkDuckSplash(v1, v2, activeTiles, tray, isTacticalMode);
     if (duck) return duck;
 
-    const lion = ForagingSynergies.checkLionRoar(v1, v2, activeTiles, tray);
+    const lion = ForagingSynergies.checkLionRoar(v1, v2, activeTiles, tray, isTacticalMode);
     if (lion) return lion;
 
-    const bird = ForagingSynergies.checkBirdSwoop(v1, v2, activeTiles, tray);
+    const bird = ForagingSynergies.checkBirdSwoop(v1, v2, activeTiles, tray, isTacticalMode);
     if (bird) return bird;
 
-    const snail = ForagingSynergies.checkSnailZen(v1, v2, activeTiles, tray);
+    const snail = ForagingSynergies.checkSnailZen(v1, v2, activeTiles, tray, isTacticalMode);
     if (snail) return snail;
 
     // 4. Sinergias Dinâmicas da Flora & Reino Marinho (Laços da Natureza)

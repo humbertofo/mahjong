@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-09-27T21:37:52.352Z",
-  "totalFiles": 99,
-  "totalLines": 49610,
+  "timestamp": "2026-09-28T10:03:56.228Z",
+  "totalFiles": 102,
+  "totalLines": 51774,
   "monoliths": [
     {
       "file": "src/index.css",
-      "lines": 3930,
-      "sizeKb": "88.1 KB"
+      "lines": 4853,
+      "sizeKb": "109.2 KB"
     },
     {
       "file": "src/core/nature/tiles/tileCatalog.ts",
@@ -14,19 +14,29 @@
       "sizeKb": "64.4 KB"
     },
     {
+      "file": "src/render/BoardRenderer.ts",
+      "lines": 2064,
+      "sizeKb": "71.0 KB"
+    },
+    {
       "file": "src/core/layouts/levels/level42_four_bridges.ts",
       "lines": 1893,
       "sizeKb": "24.0 KB"
     },
     {
-      "file": "src/render/BoardRenderer.ts",
-      "lines": 1560,
-      "sizeKb": "53.7 KB"
+      "file": "src/audio/SoundManager.ts",
+      "lines": 1514,
+      "sizeKb": "43.6 KB"
     },
     {
       "file": "src/core/layouts/levels/level44_four_hills.ts",
       "lines": 1473,
       "sizeKb": "18.7 KB"
+    },
+    {
+      "file": "src/ui/UIManager.ts",
+      "lines": 1446,
+      "sizeKb": "54.2 KB"
     },
     {
       "file": "src/core/layouts/levels/level25_saturn_rings.ts",
@@ -49,11 +59,6 @@
       "sizeKb": "17.9 KB"
     },
     {
-      "file": "src/audio/SoundManager.ts",
-      "lines": 1349,
-      "sizeKb": "38.6 KB"
-    },
-    {
       "file": "src/core/layouts/levels/level40_lost_atlantis.ts",
       "lines": 1273,
       "sizeKb": "16.1 KB"
@@ -62,11 +67,6 @@
       "file": "src/core/layouts/levels/level49_sacred_altar.ts",
       "lines": 1273,
       "sizeKb": "16.1 KB"
-    },
-    {
-      "file": "src/ui/UIManager.ts",
-      "lines": 1229,
-      "sizeKb": "45.4 KB"
     },
     {
       "file": "src/core/layouts/levels/level21_stone_arena.ts",
@@ -82,6 +82,11 @@
       "file": "src/core/layouts/levels/level31_three_crowns.ts",
       "lines": 1153,
       "sizeKb": "14.6 KB"
+    },
+    {
+      "file": "src/core/BoardEngine.ts",
+      "lines": 1015,
+      "sizeKb": "32.9 KB"
     }
   ],
   "orphans": [],
@@ -116,8 +121,8 @@
     "src/audio/SoundManager.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\audio\\SoundManager.ts",
       "relativePath": "src/audio/SoundManager.ts",
-      "lines": 1349,
-      "sizeBytes": 39558,
+      "lines": 1514,
+      "sizeBytes": 44676,
       "dependencies": [
         "src/core/nature/tiles/TileTypes.ts"
       ],
@@ -144,8 +149,8 @@
     "src/core/BoardEngine.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\BoardEngine.ts",
       "relativePath": "src/core/BoardEngine.ts",
-      "lines": 651,
-      "sizeBytes": 20700,
+      "lines": 1015,
+      "sizeBytes": 33724,
       "dependencies": [
         "src/core/types.ts",
         "src/core/deck.ts",
@@ -154,7 +159,9 @@
         "src/core/engine/SynergyDirector.ts",
         "src/core/engine/TrayController.ts",
         "src/core/engine/ZenPowerManager.ts",
-        "src/core/nature/LevelDeckCurator.ts"
+        "src/core/nature/LevelDeckCurator.ts",
+        "src/core/nature/specialTiles/SpecialTileRules.ts",
+        "src/core/nature/tiles/TileTraits.ts"
       ],
       "dependents": [
         "src/core/layouts/pipeline/levelValidator.ts",
@@ -171,7 +178,7 @@
       "blastRadiusScore": 4,
       "riskLevel": "BAIXO",
       "isOrphan": false,
-      "isMonolith": false
+      "isMonolith": true
     },
     "src/core/deck.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\deck.ts",
@@ -187,22 +194,27 @@
         "src/core/BoardEngine.ts",
         "src/core/engine/ZenPowerManager.ts",
         "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/AtmosphericGales.ts",
         "src/core/nature/climates/effects/OceanSurge.ts",
+        "src/core/nature/TrayTacticalOracle.ts",
         "src/render/BoardRenderer.ts"
       ],
       "transitiveDependents": [
         "src/core/BoardEngine.ts",
         "src/core/engine/ZenPowerManager.ts",
         "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/AtmosphericGales.ts",
         "src/core/nature/climates/effects/OceanSurge.ts",
+        "src/core/nature/TrayTacticalOracle.ts",
         "src/render/BoardRenderer.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
         "src/ui/UIManager.ts",
         "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/ui/NatureFeedbackController.ts",
         "src/core/engine/SynergyDirector.ts"
       ],
-      "blastRadiusScore": 10,
+      "blastRadiusScore": 13,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -210,8 +222,8 @@
     "src/core/engine/SynergyDirector.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\engine\\SynergyDirector.ts",
       "relativePath": "src/core/engine/SynergyDirector.ts",
-      "lines": 73,
-      "sizeBytes": 2611,
+      "lines": 76,
+      "sizeBytes": 2711,
       "dependencies": [
         "src/core/types.ts",
         "src/core/nature/biomes.ts",
@@ -240,8 +252,8 @@
     "src/core/engine/TileRuleEngine.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\engine\\TileRuleEngine.ts",
       "relativePath": "src/core/engine/TileRuleEngine.ts",
-      "lines": 84,
-      "sizeBytes": 3008,
+      "lines": 94,
+      "sizeBytes": 3330,
       "dependencies": [
         "src/core/types.ts"
       ],
@@ -263,10 +275,11 @@
     "src/core/engine/TrayController.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\engine\\TrayController.ts",
       "relativePath": "src/core/engine/TrayController.ts",
-      "lines": 211,
-      "sizeBytes": 6390,
+      "lines": 332,
+      "sizeBytes": 10422,
       "dependencies": [
-        "src/core/types.ts"
+        "src/core/types.ts",
+        "src/core/nature/tiles/TileTraits.ts"
       ],
       "dependents": [
         "src/core/BoardEngine.ts",
@@ -803,8 +816,8 @@
     "src/core/layouts/levels/level16_stellar_orbit.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level16_stellar_orbit.ts",
       "relativePath": "src/core/layouts/levels/level16_stellar_orbit.ts",
-      "lines": 236,
-      "sizeBytes": 2759,
+      "lines": 77,
+      "sizeBytes": 4694,
       "dependencies": [
         "src/core/types.ts"
       ],
@@ -829,8 +842,8 @@
     "src/core/layouts/levels/level17_twin_waves.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level17_twin_waves.ts",
       "relativePath": "src/core/layouts/levels/level17_twin_waves.ts",
-      "lines": 236,
-      "sizeBytes": 2747,
+      "lines": 47,
+      "sizeBytes": 2680,
       "dependencies": [
         "src/core/types.ts"
       ],
@@ -959,8 +972,8 @@
     "src/core/layouts/levels/level22_rising_sun.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level22_rising_sun.ts",
       "relativePath": "src/core/layouts/levels/level22_rising_sun.ts",
-      "lines": 256,
-      "sizeBytes": 2966,
+      "lines": 104,
+      "sizeBytes": 5125,
       "dependencies": [
         "src/core/types.ts"
       ],
@@ -1089,8 +1102,8 @@
     "src/core/layouts/levels/level27_mystic_labyrinth.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level27_mystic_labyrinth.ts",
       "relativePath": "src/core/layouts/levels/level27_mystic_labyrinth.ts",
-      "lines": 236,
-      "sizeBytes": 2781,
+      "lines": 98,
+      "sizeBytes": 4694,
       "dependencies": [
         "src/core/types.ts"
       ],
@@ -1115,11 +1128,10 @@
     "src/core/layouts/levels/level28_guardian_totem.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level28_guardian_totem.ts",
       "relativePath": "src/core/layouts/levels/level28_guardian_totem.ts",
-      "lines": 16,
-      "sizeBytes": 451,
+      "lines": 107,
+      "sizeBytes": 5390,
       "dependencies": [
-        "src/core/types.ts",
-        "src/core/layouts/pipeline/waveTemplates.ts"
+        "src/core/types.ts"
       ],
       "dependents": [
         "src/core/layouts/index.ts"
@@ -1220,8 +1232,8 @@
     "src/core/layouts/levels/level32_iron_chains.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level32_iron_chains.ts",
       "relativePath": "src/core/layouts/levels/level32_iron_chains.ts",
-      "lines": 236,
-      "sizeBytes": 2761,
+      "lines": 102,
+      "sizeBytes": 5105,
       "dependencies": [
         "src/core/types.ts"
       ],
@@ -1272,8 +1284,8 @@
     "src/core/layouts/levels/level34_polar_star.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level34_polar_star.ts",
       "relativePath": "src/core/layouts/levels/level34_polar_star.ts",
-      "lines": 236,
-      "sizeBytes": 2760,
+      "lines": 113,
+      "sizeBytes": 4798,
       "dependencies": [
         "src/core/types.ts"
       ],
@@ -1376,11 +1388,10 @@
     "src/core/layouts/levels/level38_master_key.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level38_master_key.ts",
       "relativePath": "src/core/layouts/levels/level38_master_key.ts",
-      "lines": 16,
-      "sizeBytes": 429,
+      "lines": 134,
+      "sizeBytes": 6123,
       "dependencies": [
-        "src/core/types.ts",
-        "src/core/layouts/pipeline/waveTemplates.ts"
+        "src/core/types.ts"
       ],
       "dependents": [
         "src/core/layouts/index.ts"
@@ -1611,8 +1622,8 @@
     "src/core/layouts/levels/level47_imperial_cat.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level47_imperial_cat.ts",
       "relativePath": "src/core/layouts/levels/level47_imperial_cat.ts",
-      "lines": 236,
-      "sizeBytes": 2764,
+      "lines": 113,
+      "sizeBytes": 4986,
       "dependencies": [
         "src/core/types.ts"
       ],
@@ -1689,8 +1700,8 @@
     "src/core/layouts/levels/level50_classic_shanghai.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\levels\\level50_classic_shanghai.ts",
       "relativePath": "src/core/layouts/levels/level50_classic_shanghai.ts",
-      "lines": 748,
-      "sizeBytes": 9781,
+      "lines": 155,
+      "sizeBytes": 9975,
       "dependencies": [
         "src/core/types.ts"
       ],
@@ -1736,47 +1747,37 @@
       "dependencies": [
         "src/core/types.ts"
       ],
-      "dependents": [
-        "src/core/layouts/levels/level28_guardian_totem.ts",
-        "src/core/layouts/levels/level38_master_key.ts"
-      ],
-      "transitiveDependents": [
-        "src/core/layouts/levels/level28_guardian_totem.ts",
-        "src/core/layouts/levels/level38_master_key.ts",
-        "src/core/layouts/index.ts",
-        "src/core/layouts/pipeline/levelValidator.ts",
-        "src/ui/HUDController.ts",
-        "src/ui/modals/GameEndModals.ts",
-        "src/ui/modals/LevelsModal.ts",
-        "src/ui/UIManager.ts",
-        "src/ui/NatureFeedbackController.ts",
-        "src/main.ts"
-      ],
-      "blastRadiusScore": 10,
-      "riskLevel": "MÉDIO",
+      "dependents": [],
+      "transitiveDependents": [],
+      "blastRadiusScore": 0,
+      "riskLevel": "BAIXO",
       "isOrphan": false,
       "isMonolith": false
     },
     "src/core/layouts/worlds.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\layouts\\worlds.ts",
       "relativePath": "src/core/layouts/worlds.ts",
-      "lines": 16,
-      "sizeBytes": 1157,
+      "lines": 21,
+      "sizeBytes": 2181,
       "dependencies": [],
       "dependents": [
-        "src/core/layouts/index.ts"
+        "src/core/layouts/index.ts",
+        "src/core/levelRules.ts"
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/levelRules.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/core/BoardEngine.ts",
         "src/ui/NatureFeedbackController.ts",
-        "src/main.ts"
+        "src/main.ts",
+        "src/render/BoardRenderer.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 11,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1784,10 +1785,11 @@
     "src/core/levelRules.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\levelRules.ts",
       "relativePath": "src/core/levelRules.ts",
-      "lines": 146,
-      "sizeBytes": 10708,
+      "lines": 207,
+      "sizeBytes": 13176,
       "dependencies": [
-        "src/core/types.ts"
+        "src/core/types.ts",
+        "src/core/layouts/worlds.ts"
       ],
       "dependents": [
         "src/core/BoardEngine.ts",
@@ -1857,8 +1859,8 @@
     "src/core/nature/climates/ClimateEvaluator.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\climates\\ClimateEvaluator.ts",
       "relativePath": "src/core/nature/climates/ClimateEvaluator.ts",
-      "lines": 52,
-      "sizeBytes": 1971,
+      "lines": 53,
+      "sizeBytes": 1932,
       "dependencies": [
         "src/core/types.ts",
         "src/core/nature/biomes.ts",
@@ -1887,8 +1889,8 @@
     "src/core/nature/climates/effects/ArcticBlizzard.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\climates\\effects\\ArcticBlizzard.ts",
       "relativePath": "src/core/nature/climates/effects/ArcticBlizzard.ts",
-      "lines": 40,
-      "sizeBytes": 1471,
+      "lines": 50,
+      "sizeBytes": 1752,
       "dependencies": [
         "src/core/types.ts",
         "src/core/deck.ts"
@@ -1914,10 +1916,11 @@
     "src/core/nature/climates/effects/AtmosphericGales.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\climates\\effects\\AtmosphericGales.ts",
       "relativePath": "src/core/nature/climates/effects/AtmosphericGales.ts",
-      "lines": 86,
-      "sizeBytes": 2862,
+      "lines": 98,
+      "sizeBytes": 3411,
       "dependencies": [
         "src/core/types.ts",
+        "src/core/deck.ts",
         "src/core/nature/specialTiles/SpecialTileRules.ts"
       ],
       "dependents": [
@@ -1941,8 +1944,8 @@
     "src/core/nature/climates/effects/HeatWave.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\climates\\effects\\HeatWave.ts",
       "relativePath": "src/core/nature/climates/effects/HeatWave.ts",
-      "lines": 46,
-      "sizeBytes": 1621,
+      "lines": 39,
+      "sizeBytes": 1375,
       "dependencies": [
         "src/core/types.ts",
         "src/core/nature/specialTiles/SpecialTileRules.ts"
@@ -1968,8 +1971,8 @@
     "src/core/nature/climates/effects/OceanSurge.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\climates\\effects\\OceanSurge.ts",
       "relativePath": "src/core/nature/climates/effects/OceanSurge.ts",
-      "lines": 64,
-      "sizeBytes": 2134,
+      "lines": 75,
+      "sizeBytes": 2418,
       "dependencies": [
         "src/core/types.ts",
         "src/core/deck.ts"
@@ -1995,8 +1998,8 @@
     "src/core/nature/LevelDeckCurator.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\LevelDeckCurator.ts",
       "relativePath": "src/core/nature/LevelDeckCurator.ts",
-      "lines": 343,
-      "sizeBytes": 12919,
+      "lines": 349,
+      "sizeBytes": 13259,
       "dependencies": [
         "src/core/types.ts",
         "src/core/nature/tiles/TileRegistry.ts"
@@ -2022,27 +2025,28 @@
     "src/core/nature/specialTiles/SpecialTileRules.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\specialTiles\\SpecialTileRules.ts",
       "relativePath": "src/core/nature/specialTiles/SpecialTileRules.ts",
-      "lines": 104,
-      "sizeBytes": 3157,
+      "lines": 157,
+      "sizeBytes": 4633,
       "dependencies": [
         "src/core/types.ts"
       ],
       "dependents": [
+        "src/core/BoardEngine.ts",
         "src/core/engine/SynergyDirector.ts",
         "src/core/nature/climates/effects/AtmosphericGales.ts",
         "src/core/nature/climates/effects/HeatWave.ts"
       ],
       "transitiveDependents": [
+        "src/core/BoardEngine.ts",
         "src/core/engine/SynergyDirector.ts",
         "src/core/nature/climates/effects/AtmosphericGales.ts",
         "src/core/nature/climates/effects/HeatWave.ts",
-        "src/core/BoardEngine.ts",
-        "src/core/engine/ZenPowerManager.ts",
-        "src/render/BoardRenderer.ts",
-        "src/core/nature/climates/ClimateEvaluator.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
-        "src/ui/UIManager.ts"
+        "src/render/BoardRenderer.ts",
+        "src/ui/UIManager.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/core/nature/climates/ClimateEvaluator.ts"
       ],
       "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
@@ -2052,8 +2056,8 @@
     "src/core/nature/synergies/handlers/CascadeResolver.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\synergies\\handlers\\CascadeResolver.ts",
       "relativePath": "src/core/nature/synergies/handlers/CascadeResolver.ts",
-      "lines": 103,
-      "sizeBytes": 3790,
+      "lines": 126,
+      "sizeBytes": 4775,
       "dependencies": [
         "src/core/types.ts"
       ],
@@ -2067,17 +2071,20 @@
         "src/core/nature/synergies/SynergyRegistry.ts",
         "src/core/deck.ts",
         "src/core/engine/SynergyDirector.ts",
+        "src/core/nature/TrayTacticalOracle.ts",
         "src/core/BoardEngine.ts",
         "src/core/engine/ZenPowerManager.ts",
         "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/AtmosphericGales.ts",
         "src/core/nature/climates/effects/OceanSurge.ts",
         "src/render/BoardRenderer.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/ui/UIManager.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
-        "src/ui/UIManager.ts",
         "src/core/nature/climates/ClimateEvaluator.ts"
       ],
-      "blastRadiusScore": 14,
+      "blastRadiusScore": 17,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -2085,8 +2092,8 @@
     "src/core/nature/synergies/handlers/ForagingSynergies.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\synergies\\handlers\\ForagingSynergies.ts",
       "relativePath": "src/core/nature/synergies/handlers/ForagingSynergies.ts",
-      "lines": 398,
-      "sizeBytes": 12966,
+      "lines": 422,
+      "sizeBytes": 13681,
       "dependencies": [
         "src/core/types.ts",
         "src/core/nature/synergies/handlers/CascadeResolver.ts"
@@ -2098,17 +2105,20 @@
         "src/core/nature/synergies/SynergyRegistry.ts",
         "src/core/deck.ts",
         "src/core/engine/SynergyDirector.ts",
+        "src/core/nature/TrayTacticalOracle.ts",
         "src/core/BoardEngine.ts",
         "src/core/engine/ZenPowerManager.ts",
         "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/AtmosphericGales.ts",
         "src/core/nature/climates/effects/OceanSurge.ts",
         "src/render/BoardRenderer.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/ui/UIManager.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
-        "src/ui/UIManager.ts",
         "src/core/nature/climates/ClimateEvaluator.ts"
       ],
-      "blastRadiusScore": 12,
+      "blastRadiusScore": 15,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -2116,8 +2126,8 @@
     "src/core/nature/synergies/handlers/TheatricalSynergies.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\synergies\\handlers\\TheatricalSynergies.ts",
       "relativePath": "src/core/nature/synergies/handlers/TheatricalSynergies.ts",
-      "lines": 215,
-      "sizeBytes": 7212,
+      "lines": 229,
+      "sizeBytes": 7639,
       "dependencies": [
         "src/core/types.ts",
         "src/core/nature/synergies/handlers/CascadeResolver.ts"
@@ -2129,17 +2139,20 @@
         "src/core/nature/synergies/SynergyRegistry.ts",
         "src/core/deck.ts",
         "src/core/engine/SynergyDirector.ts",
+        "src/core/nature/TrayTacticalOracle.ts",
         "src/core/BoardEngine.ts",
         "src/core/engine/ZenPowerManager.ts",
         "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/AtmosphericGales.ts",
         "src/core/nature/climates/effects/OceanSurge.ts",
         "src/render/BoardRenderer.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/ui/UIManager.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
-        "src/ui/UIManager.ts",
         "src/core/nature/climates/ClimateEvaluator.ts"
       ],
-      "blastRadiusScore": 12,
+      "blastRadiusScore": 15,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -2148,7 +2161,7 @@
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\synergies\\SynergyFamilies.ts",
       "relativePath": "src/core/nature/synergies/SynergyFamilies.ts",
       "lines": 242,
-      "sizeBytes": 14815,
+      "sizeBytes": 14811,
       "dependencies": [
         "src/core/types.ts",
         "src/core/nature/tiles/index.ts"
@@ -2172,8 +2185,8 @@
     "src/core/nature/synergies/SynergyRegistry.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\synergies\\SynergyRegistry.ts",
       "relativePath": "src/core/nature/synergies/SynergyRegistry.ts",
-      "lines": 137,
-      "sizeBytes": 5042,
+      "lines": 138,
+      "sizeBytes": 5383,
       "dependencies": [
         "src/core/types.ts",
         "src/core/nature/tiles/TileRegistry.ts",
@@ -2182,22 +2195,26 @@
       ],
       "dependents": [
         "src/core/deck.ts",
-        "src/core/engine/SynergyDirector.ts"
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/nature/TrayTacticalOracle.ts"
       ],
       "transitiveDependents": [
         "src/core/deck.ts",
         "src/core/engine/SynergyDirector.ts",
+        "src/core/nature/TrayTacticalOracle.ts",
         "src/core/BoardEngine.ts",
         "src/core/engine/ZenPowerManager.ts",
         "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/AtmosphericGales.ts",
         "src/core/nature/climates/effects/OceanSurge.ts",
         "src/render/BoardRenderer.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/ui/UIManager.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
-        "src/ui/UIManager.ts",
         "src/core/nature/climates/ClimateEvaluator.ts"
       ],
-      "blastRadiusScore": 11,
+      "blastRadiusScore": 14,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -2205,12 +2222,14 @@
     "src/core/nature/tiles/index.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\tiles\\index.ts",
       "relativePath": "src/core/nature/tiles/index.ts",
-      "lines": 4,
-      "sizeBytes": 92,
+      "lines": 6,
+      "sizeBytes": 151,
       "dependencies": [
         "src/core/nature/tiles/TileTypes.ts",
         "src/core/nature/tiles/tileCatalog.ts",
-        "src/core/nature/tiles/TileRegistry.ts"
+        "src/core/nature/tiles/TileRegistry.ts",
+        "src/core/nature/tiles/tileTiers.ts",
+        "src/core/nature/tiles/TileTraits.ts"
       ],
       "dependents": [
         "src/core/deck.ts",
@@ -2228,16 +2247,19 @@
         "src/core/BoardEngine.ts",
         "src/core/engine/ZenPowerManager.ts",
         "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/AtmosphericGales.ts",
         "src/core/nature/climates/effects/OceanSurge.ts",
+        "src/core/nature/TrayTacticalOracle.ts",
         "src/core/engine/SynergyDirector.ts",
         "src/core/nature/climates/ClimateEvaluator.ts",
         "src/main.ts",
         "src/ui/UIManager.ts",
         "src/render/ViewportCamera.ts",
         "src/ui/TrayAnimator.ts",
-        "src/core/layouts/pipeline/levelValidator.ts"
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/NatureFeedbackController.ts"
       ],
-      "blastRadiusScore": 16,
+      "blastRadiusScore": 19,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -2246,7 +2268,7 @@
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\tiles\\tileCatalog.ts",
       "relativePath": "src/core/nature/tiles/tileCatalog.ts",
       "lines": 2230,
-      "sizeBytes": 65961,
+      "sizeBytes": 65896,
       "dependencies": [
         "src/core/nature/tiles/TileTypes.ts"
       ],
@@ -2264,20 +2286,23 @@
         "src/render/TileRenderer.ts",
         "src/core/nature/LevelDeckCurator.ts",
         "src/core/nature/synergies/SynergyRegistry.ts",
+        "src/core/nature/TrayTacticalOracle.ts",
+        "src/ui/UIManager.ts",
         "src/core/BoardEngine.ts",
         "src/core/engine/ZenPowerManager.ts",
         "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/AtmosphericGales.ts",
         "src/core/nature/climates/effects/OceanSurge.ts",
         "src/core/engine/SynergyDirector.ts",
         "src/core/nature/climates/ClimateEvaluator.ts",
         "src/main.ts",
-        "src/ui/UIManager.ts",
         "src/render/ViewportCamera.ts",
         "src/ui/TrayAnimator.ts",
         "src/ui/modals/LevelsModal.ts",
+        "src/ui/NatureFeedbackController.ts",
         "src/core/layouts/pipeline/levelValidator.ts"
       ],
-      "blastRadiusScore": 21,
+      "blastRadiusScore": 24,
       "riskLevel": "ALTO",
       "isOrphan": false,
       "isMonolith": true
@@ -2285,41 +2310,131 @@
     "src/core/nature/tiles/TileRegistry.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\tiles\\TileRegistry.ts",
       "relativePath": "src/core/nature/tiles/TileRegistry.ts",
-      "lines": 85,
-      "sizeBytes": 2418,
+      "lines": 95,
+      "sizeBytes": 2752,
       "dependencies": [
         "src/core/types.ts",
         "src/core/nature/tiles/TileTypes.ts",
-        "src/core/nature/tiles/tileCatalog.ts"
+        "src/core/nature/tiles/tileCatalog.ts",
+        "src/core/nature/tiles/tileTiers.ts"
       ],
       "dependents": [
         "src/core/nature/LevelDeckCurator.ts",
         "src/core/nature/synergies/SynergyRegistry.ts",
-        "src/core/nature/tiles/index.ts"
+        "src/core/nature/tiles/index.ts",
+        "src/core/nature/TrayTacticalOracle.ts",
+        "src/ui/UIManager.ts"
       ],
       "transitiveDependents": [
         "src/core/nature/LevelDeckCurator.ts",
         "src/core/nature/synergies/SynergyRegistry.ts",
         "src/core/nature/tiles/index.ts",
+        "src/core/nature/TrayTacticalOracle.ts",
+        "src/ui/UIManager.ts",
         "src/core/BoardEngine.ts",
         "src/ui/modals/LevelsModal.ts",
-        "src/ui/UIManager.ts",
         "src/core/deck.ts",
         "src/core/engine/SynergyDirector.ts",
         "src/core/nature/biomes.ts",
         "src/core/nature/synergies/SynergyFamilies.ts",
         "src/render/BoardRenderer.ts",
         "src/render/TileRenderer.ts",
-        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/ui/NatureFeedbackController.ts",
         "src/main.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
         "src/core/engine/ZenPowerManager.ts",
         "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/AtmosphericGales.ts",
         "src/core/nature/climates/effects/OceanSurge.ts",
         "src/core/nature/climates/ClimateEvaluator.ts",
         "src/render/ViewportCamera.ts",
         "src/ui/TrayAnimator.ts"
       ],
-      "blastRadiusScore": 20,
+      "blastRadiusScore": 23,
+      "riskLevel": "ALTO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/tiles/tileTiers.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\tiles\\tileTiers.ts",
+      "relativePath": "src/core/nature/tiles/tileTiers.ts",
+      "lines": 145,
+      "sizeBytes": 3496,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/nature/tiles/index.ts",
+        "src/core/nature/tiles/TileRegistry.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/nature/tiles/index.ts",
+        "src/core/nature/tiles/TileRegistry.ts",
+        "src/core/deck.ts",
+        "src/core/nature/biomes.ts",
+        "src/core/nature/synergies/SynergyFamilies.ts",
+        "src/render/BoardRenderer.ts",
+        "src/render/TileRenderer.ts",
+        "src/core/nature/LevelDeckCurator.ts",
+        "src/core/nature/synergies/SynergyRegistry.ts",
+        "src/core/nature/TrayTacticalOracle.ts",
+        "src/ui/UIManager.ts",
+        "src/core/BoardEngine.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/AtmosphericGales.ts",
+        "src/core/nature/climates/effects/OceanSurge.ts",
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/main.ts",
+        "src/render/ViewportCamera.ts",
+        "src/ui/TrayAnimator.ts",
+        "src/ui/modals/LevelsModal.ts",
+        "src/ui/NatureFeedbackController.ts",
+        "src/core/layouts/pipeline/levelValidator.ts"
+      ],
+      "blastRadiusScore": 24,
+      "riskLevel": "ALTO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/tiles/TileTraits.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\tiles\\TileTraits.ts",
+      "relativePath": "src/core/nature/tiles/TileTraits.ts",
+      "lines": 170,
+      "sizeBytes": 3854,
+      "dependencies": [
+        "src/core/types.ts"
+      ],
+      "dependents": [
+        "src/core/BoardEngine.ts",
+        "src/core/engine/TrayController.ts",
+        "src/core/nature/tiles/index.ts"
+      ],
+      "transitiveDependents": [
+        "src/core/BoardEngine.ts",
+        "src/core/engine/TrayController.ts",
+        "src/core/nature/tiles/index.ts",
+        "src/core/layouts/pipeline/levelValidator.ts",
+        "src/main.ts",
+        "src/render/BoardRenderer.ts",
+        "src/ui/UIManager.ts",
+        "src/core/engine/ZenPowerManager.ts",
+        "src/core/deck.ts",
+        "src/core/nature/biomes.ts",
+        "src/core/nature/synergies/SynergyFamilies.ts",
+        "src/render/TileRenderer.ts",
+        "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/AtmosphericGales.ts",
+        "src/core/nature/climates/effects/OceanSurge.ts",
+        "src/core/nature/TrayTacticalOracle.ts",
+        "src/core/engine/SynergyDirector.ts",
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/render/ViewportCamera.ts",
+        "src/ui/TrayAnimator.ts",
+        "src/ui/NatureFeedbackController.ts"
+      ],
+      "blastRadiusScore": 21,
       "riskLevel": "ALTO",
       "isOrphan": false,
       "isMonolith": false
@@ -2327,8 +2442,8 @@
     "src/core/nature/tiles/TileTypes.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\tiles\\TileTypes.ts",
       "relativePath": "src/core/nature/tiles/TileTypes.ts",
-      "lines": 43,
-      "sizeBytes": 1193,
+      "lines": 44,
+      "sizeBytes": 1210,
       "dependencies": [
         "src/core/types.ts"
       ],
@@ -2354,10 +2469,12 @@
         "src/render/TileRenderer.ts",
         "src/core/nature/LevelDeckCurator.ts",
         "src/core/nature/synergies/SynergyRegistry.ts",
+        "src/core/nature/TrayTacticalOracle.ts",
         "src/main.ts",
         "src/core/BoardEngine.ts",
         "src/core/engine/ZenPowerManager.ts",
         "src/core/nature/climates/effects/ArcticBlizzard.ts",
+        "src/core/nature/climates/effects/AtmosphericGales.ts",
         "src/core/nature/climates/effects/OceanSurge.ts",
         "src/core/engine/SynergyDirector.ts",
         "src/core/nature/climates/ClimateEvaluator.ts",
@@ -2365,16 +2482,41 @@
         "src/ui/TrayAnimator.ts",
         "src/core/layouts/pipeline/levelValidator.ts"
       ],
-      "blastRadiusScore": 25,
+      "blastRadiusScore": 26,
       "riskLevel": "ALTO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
+    "src/core/nature/TrayTacticalOracle.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\nature\\TrayTacticalOracle.ts",
+      "relativePath": "src/core/nature/TrayTacticalOracle.ts",
+      "lines": 190,
+      "sizeBytes": 6602,
+      "dependencies": [
+        "src/core/types.ts",
+        "src/core/deck.ts",
+        "src/core/nature/tiles/TileRegistry.ts",
+        "src/core/nature/synergies/SynergyRegistry.ts"
+      ],
+      "dependents": [
+        "src/ui/NatureFeedbackController.ts",
+        "src/ui/UIManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/ui/NatureFeedbackController.ts",
+        "src/ui/UIManager.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 3,
+      "riskLevel": "BAIXO",
       "isOrphan": false,
       "isMonolith": false
     },
     "src/core/types.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\types.ts",
       "relativePath": "src/core/types.ts",
-      "lines": 336,
-      "sizeBytes": 6884,
+      "lines": 351,
+      "sizeBytes": 7434,
       "dependencies": [],
       "dependents": [
         "src/core/BoardEngine.ts",
@@ -2451,7 +2593,10 @@
         "src/core/nature/synergies/SynergyFamilies.ts",
         "src/core/nature/synergies/SynergyRegistry.ts",
         "src/core/nature/tiles/TileRegistry.ts",
+        "src/core/nature/tiles/tileTiers.ts",
+        "src/core/nature/tiles/TileTraits.ts",
         "src/core/nature/tiles/TileTypes.ts",
+        "src/core/nature/TrayTacticalOracle.ts",
         "src/render/BoardRenderer.ts",
         "src/render/FXParticleSystem.ts",
         "src/render/SynergyAnimator.ts",
@@ -2537,7 +2682,10 @@
         "src/core/nature/synergies/SynergyFamilies.ts",
         "src/core/nature/synergies/SynergyRegistry.ts",
         "src/core/nature/tiles/TileRegistry.ts",
+        "src/core/nature/tiles/tileTiers.ts",
+        "src/core/nature/tiles/TileTraits.ts",
         "src/core/nature/tiles/TileTypes.ts",
+        "src/core/nature/TrayTacticalOracle.ts",
         "src/render/BoardRenderer.ts",
         "src/render/FXParticleSystem.ts",
         "src/render/SynergyAnimator.ts",
@@ -2565,8 +2713,8 @@
     "src/index.css": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\index.css",
       "relativePath": "src/index.css",
-      "lines": 3930,
-      "sizeBytes": 90244,
+      "lines": 4853,
+      "sizeBytes": 111807,
       "dependencies": [],
       "dependents": [],
       "transitiveDependents": [],
@@ -2578,8 +2726,8 @@
     "src/main.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\main.ts",
       "relativePath": "src/main.ts",
-      "lines": 84,
-      "sizeBytes": 2878,
+      "lines": 142,
+      "sizeBytes": 4516,
       "dependencies": [
         "src/core/BoardEngine.ts",
         "src/render/BoardRenderer.ts",
@@ -2616,8 +2764,8 @@
     "src/render/BoardRenderer.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\render\\BoardRenderer.ts",
       "relativePath": "src/render/BoardRenderer.ts",
-      "lines": 1560,
-      "sizeBytes": 54974,
+      "lines": 2064,
+      "sizeBytes": 72701,
       "dependencies": [
         "src/core/BoardEngine.ts",
         "src/core/engine/SynergyDirector.ts",
@@ -2648,8 +2796,8 @@
     "src/render/FXParticleSystem.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\render\\FXParticleSystem.ts",
       "relativePath": "src/render/FXParticleSystem.ts",
-      "lines": 425,
-      "sizeBytes": 13079,
+      "lines": 411,
+      "sizeBytes": 12849,
       "dependencies": [
         "src/core/types.ts"
       ],
@@ -2690,8 +2838,8 @@
     "src/render/TileRenderer.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\render\\TileRenderer.ts",
       "relativePath": "src/render/TileRenderer.ts",
-      "lines": 679,
-      "sizeBytes": 22819,
+      "lines": 991,
+      "sizeBytes": 34335,
       "dependencies": [
         "src/core/types.ts",
         "src/core/nature/synergies/SynergyFamilies.ts",
@@ -2718,7 +2866,7 @@
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\render\\ViewportCamera.ts",
       "relativePath": "src/render/ViewportCamera.ts",
       "lines": 131,
-      "sizeBytes": 4773,
+      "sizeBytes": 4764,
       "dependencies": [
         "src/core/types.ts",
         "src/render/TileRenderer.ts"
@@ -2768,8 +2916,8 @@
     "src/ui/HUDController.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\HUDController.ts",
       "relativePath": "src/ui/HUDController.ts",
-      "lines": 145,
-      "sizeBytes": 5517,
+      "lines": 163,
+      "sizeBytes": 6159,
       "dependencies": [
         "src/core/layouts/index.ts",
         "src/storage/StorageManager.ts"
@@ -2791,8 +2939,8 @@
     "src/ui/modals/GameEndModals.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\modals\\GameEndModals.ts",
       "relativePath": "src/ui/modals/GameEndModals.ts",
-      "lines": 223,
-      "sizeBytes": 8154,
+      "lines": 330,
+      "sizeBytes": 11889,
       "dependencies": [
         "src/core/layouts/index.ts",
         "src/storage/StorageManager.ts"
@@ -2812,8 +2960,8 @@
     "src/ui/modals/LevelsModal.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\modals\\LevelsModal.ts",
       "relativePath": "src/ui/modals/LevelsModal.ts",
-      "lines": 369,
-      "sizeBytes": 13735,
+      "lines": 383,
+      "sizeBytes": 14298,
       "dependencies": [
         "src/core/layouts/index.ts",
         "src/storage/StorageManager.ts",
@@ -2859,10 +3007,11 @@
     "src/ui/NatureFeedbackController.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\NatureFeedbackController.ts",
       "relativePath": "src/ui/NatureFeedbackController.ts",
-      "lines": 209,
-      "sizeBytes": 9764,
+      "lines": 252,
+      "sizeBytes": 11103,
       "dependencies": [
         "src/core/types.ts",
+        "src/core/nature/TrayTacticalOracle.ts",
         "src/audio/SoundManager.ts",
         "src/audio/HapticManager.ts",
         "src/ui/HUDController.ts"
@@ -2882,8 +3031,8 @@
     "src/ui/TrayAnimator.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\TrayAnimator.ts",
       "relativePath": "src/ui/TrayAnimator.ts",
-      "lines": 192,
-      "sizeBytes": 5734,
+      "lines": 166,
+      "sizeBytes": 5383,
       "dependencies": [
         "src/core/types.ts",
         "src/render/TileRenderer.ts"
@@ -2903,8 +3052,8 @@
     "src/ui/UIManager.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\UIManager.ts",
       "relativePath": "src/ui/UIManager.ts",
-      "lines": 1229,
-      "sizeBytes": 46490,
+      "lines": 1446,
+      "sizeBytes": 55490,
       "dependencies": [
         "src/core/BoardEngine.ts",
         "src/render/BoardRenderer.ts",
@@ -2921,7 +3070,9 @@
         "src/ui/TrayAnimator.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/core/levelRules.ts",
-        "src/core/nature/LevelDeckCurator.ts"
+        "src/core/nature/LevelDeckCurator.ts",
+        "src/core/nature/tiles/TileRegistry.ts",
+        "src/core/nature/TrayTacticalOracle.ts"
       ],
       "dependents": [
         "src/main.ts"

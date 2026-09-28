@@ -87,6 +87,38 @@ export class SpecialTileRules {
   }
 
   /**
+   * Poda vinhas de peças vizinhas quando um par de herbívoros ou insetos é combinado
+   */
+  public static pruneAdjacentVines(
+    matchedTiles: [PlacedTile, PlacedTile],
+    activeTiles: PlacedTile[],
+    onInvalidateCache: () => void
+  ): PlacedTile[] {
+    const pruned: PlacedTile[] = [];
+    const vineTiles = activeTiles.filter((t) => !t.isRemoved && t.specialType === 'vines');
+    if (vineTiles.length === 0) return pruned;
+
+    for (const vine of vineTiles) {
+      const isNear = matchedTiles.some(
+        (m) =>
+          Math.abs(vine.position.x - m.position.x) <= 2 &&
+          Math.abs(vine.position.y - m.position.y) <= 2 &&
+          Math.abs(vine.position.z - m.position.z) <= 1
+      );
+
+      if (isNear) {
+        vine.specialType = 'normal';
+        pruned.push(vine);
+      }
+    }
+
+    if (pruned.length > 0) {
+      onInvalidateCache();
+    }
+    return pruned;
+  }
+
+  /**
    * Choca casulos revelando as peças interiores e concedendo harmonia
    */
   public static hatchCocoonTiles(

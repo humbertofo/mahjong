@@ -1270,6 +1270,62 @@ export class SoundManager {
   }
 
   /**
+   * Som de vinhas farfalhando quando o jogador toca numa peça enredada
+   */
+  public playVineRustle(): void {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    const filter = this.ctx.createBiquadFilter();
+
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(600, now);
+    filter.frequency.exponentialRampToValueAtTime(200, now + 0.12);
+
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(220, now);
+    osc.frequency.exponentialRampToValueAtTime(80, now + 0.12);
+
+    gain.gain.setValueAtTime(this.volume * 0.25, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.12);
+  }
+
+  /**
+   * Som de predação na bandeja (mordida selvagem com impacto ágil)
+   */
+  public playPredationStrike(): void {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(350, now);
+    osc.frequency.exponentialRampToValueAtTime(75, now + 0.15);
+
+    gain.gain.setValueAtTime(this.volume * 0.45, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.16);
+  }
+
+  /**
    * Som de casulo eclodindo (eclosão mágica com arpejo luminoso)
    */
   public playCocoonHatch(): void {
@@ -1365,6 +1421,64 @@ export class SoundManager {
         this.playSynergyBonus();
         break;
     }
+  }
+
+
+
+  /**
+   * Som de estilhaçamento de Selo Elemental (cúpula rúnica se rompendo)
+   */
+  public playSealBreak(): void {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const freqs = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6 (Acorde Maior de Cristal)
+    freqs.forEach((f, idx) => {
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(f, now + idx * 0.04);
+      osc.frequency.exponentialRampToValueAtTime(f * 1.5, now + idx * 0.04 + 0.25);
+
+      gain.gain.setValueAtTime(0, now + idx * 0.04);
+      gain.gain.linearRampToValueAtTime(this.volume * 0.35, now + idx * 0.04 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.04 + 0.3);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now + idx * 0.04);
+      osc.stop(now + idx * 0.04 + 0.32);
+    });
+  }
+
+  /**
+   * Som de névoa se dissipando (sopro etéreo zen)
+   */
+  public playMistDissipate(): void {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, now);
+    osc.frequency.exponentialRampToValueAtTime(1760, now + 0.22);
+
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(this.volume * 0.2, now + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.3);
   }
 
   private playTransientClick(time: number, duration: number): void {

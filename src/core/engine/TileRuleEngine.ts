@@ -64,6 +64,16 @@ export class TileRuleEngine {
         continue;
       }
 
+      // Se estiver enredada por vinhas da selva, não está livre para saque direto
+      if (tile.specialType === 'vines') {
+        continue;
+      }
+
+      // Se estiver protegida por Selo Elemental (Mecânica F), fica bloqueada até o par chave ser quebrado
+      if (tile.elementalSeal) {
+        continue;
+      }
+
       if (!hasLeftNeighbor || !hasRightNeighbor) {
         freeSet.add(tile.id);
       }

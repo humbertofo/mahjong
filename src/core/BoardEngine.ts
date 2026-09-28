@@ -13,6 +13,7 @@ import {
   TileSpecialType,
   LevelRuleDefinition,
   AnimalValue,
+  TimeOfDay,
 } from './types';
 import { canMatch } from './deck';
 import { getLevelRules } from './levelRules';
@@ -22,16 +23,27 @@ import { TrayController, UndoResult } from './engine/TrayController';
 import { ZenPowerManager } from './engine/ZenPowerManager';
 import { LevelDeckCurator } from './nature/LevelDeckCurator';
 import { SpecialTileRules } from './nature/specialTiles/SpecialTileRules';
+import { TileTraits } from './nature/tiles/TileTraits';
 
 export type { UndoResult };
 
 export interface TileSelectionResult {
   action: 'added' | 'matched' | 'tray_full' | 'invalid' | 'special_action' | 'trio_matched';
-  specialEffect?: 'ice_cracked' | 'rock_crushed' | 'vines_cut' | 'cocoon_hatched';
+  specialEffect?:
+    | 'ice_cracked'
+    | 'rock_crushed'
+    | 'vines_cut'
+    | 'cocoon_hatched'
+    | 'vines_entangled'
+    | 'predation'
+    | 'elemental_sealed'
+    | 'seal_broken'
+    | 'mist_cleared';
   matchedPair?: [PlacedTile, PlacedTile];
   tile?: PlacedTile;
   tray: PlacedTile[];
   isTrayFullWarning?: boolean;
+  isDeadlocked?: boolean;
   synergy?: SynergyResult;
   climateTriggered?: ClimateEffectResult;
   cosmicRescue?: PlacedTile[];
@@ -39,6 +51,20 @@ export interface TileSelectionResult {
   waveInfo?: WaveInfo;
   mutations?: TileMutationRecord[];
   vinesCutCount?: number;
+  prunedVineTiles?: PlacedTile[];
+  crackedCocoons?: PlacedTile[];
+  hatchedCocoons?: PlacedTile[];
+  unsealedTiles?: PlacedTile[];
+  clearedMistTiles?: PlacedTile[];
+  timeOfDay?: TimeOfDay;
+  timeOfDayChanged?: boolean;
+  nocturnalVisionPair?: MatchPair;
+  predationResult?: {
+    predator: PlacedTile;
+    prey: PlacedTile;
+    bonusHarmony: number;
+    wasNewTilePredator: boolean;
+  };
   trioCandidateSpecies?: AnimalValue | null;
   isTrioMatch?: boolean;
   trioTile?: PlacedTile;
@@ -80,10 +106,23 @@ export class BoardEngine {
     return this.lastMatchedSpecies ? this.lastMatchedSpecies.value : null;
   }
 
+  // Ciclo Dia & Noite (Mecânica E)
+  private totalPairsMatchedCount: number = 0;
+
+  public getTimeOfDay(): TimeOfDay {
+    const cycle = Math.floor(this.totalPairsMatchedCount / 4) % 3;
+    if (cycle === 0) return 'day';
+    if (cycle === 1) return 'twilight';
+    return 'night';
+  }
+
   constructor(layout: BoardLayout, levelIndex?: number) {
     this.layout = layout;
     const lInput = typeof levelIndex === 'number' ? levelIndex : layout.id;
     this.levelRules = layout.rules || getLevelRules(lInput, layout.slots.length);
+    if (this.levelRules.maxTraySlots) {
+      this.trayController.setMaxTraySlots(this.levelRules.maxTraySlots);
+    }
     this.initWaves();
     this.generateCurrentWave();
   }
@@ -275,8 +314,37 @@ export class BoardEngine {
 
   public selectTile(tileId: string): TileSelectionResult {
     const tile = this.tiles.find((t) => t.id === tileId);
-    if (!tile || tile.isRemoved || tile.inTray || !this.isTileFree(tile)) {
+    if (!tile || tile.isRemoved || tile.inTray) {
       return { action: 'invalid', tray: [...this.getTray()] };
+    }
+
+    // ─── Vinhas da Selva (vines): avisa que a peça está presa por cipós ─
+    if (tile.specialType === 'vines') {
+      return {
+        action: 'special_action',
+        specialEffect: 'vines_entangled',
+        tile,
+        tray: [...this.getTray()],
+      };
+    }
+
+    // ─── Selo Elemental (elementalSeal): cúpula rúnica impede o saque direto ─
+    if (tile.elementalSeal) {
+      return {
+        action: 'special_action',
+        specialEffect: 'elemental_sealed',
+        tile,
+        tray: [...this.getTray()],
+      };
+    }
+
+    if (!this.isTileFree(tile)) {
+      return { action: 'invalid', tray: [...this.getTray()] };
+    }
+
+    // Ao ser sacada, se a peça possuía névoa, ela se dissipa ao viajar
+    if (tile.isMisty) {
+      tile.isMisty = false;
     }
 
     // ─── Gelo (ice): 1º toque trinca na mesa sem entrar na bandeja ─────
@@ -386,7 +454,8 @@ export class BoardEngine {
     this.lastMatchedSpecies = null;
 
     if (this.getTray().length >= this.getMaxTraySlots()) {
-      return { action: 'tray_full', tray: [...this.getTray()], isTrayFullWarning: true };
+      const isDeadlocked = this.isDeadlocked();
+      return { action: 'tray_full', tray: [...this.getTray()], isTrayFullWarning: true, isDeadlocked };
     }
 
     this.trayController.addTile(tile);
@@ -417,12 +486,14 @@ export class BoardEngine {
         this.recentBiomeMatches.shift();
       }
 
+      const isTactical = (this.levelRules.levelNumber ?? 1) >= 21;
       const synergy = SynergyDirector.evaluateSynergy(
         match1,
         match2,
         () => this.getActiveBoardTiles(),
         () => this.shuffleRemaining(),
-        this.getTray()
+        this.getTray(),
+        isTactical
       );
 
       const secondaryRemovedTiles: PlacedTile[] = [];
@@ -500,12 +571,29 @@ export class BoardEngine {
       if (synergy?.bonusScore) pointsAwarded += synergy.bonusScore;
       if (climateTriggered) pointsAwarded += 200;
 
+      // 🌗 Mecânica E: Ciclo Dia & Noite (Diurnal / Nocturnal Shifts)
+      const prevTimeOfDay = this.getTimeOfDay();
+      this.totalPairsMatchedCount++;
+      const currentTimeOfDay = this.getTimeOfDay();
+      const timeOfDayChanged = prevTimeOfDay !== currentTimeOfDay;
+
+      let nocturnalVisionPair: MatchPair | undefined;
+      if (currentTimeOfDay === 'day' && TileTraits.isDiurnal(match1.value)) {
+        pointsAwarded += 150;
+      } else if (currentTimeOfDay === 'night' && TileTraits.isNocturnal(match1.value)) {
+        pointsAwarded += 150;
+        if (match1.value === 'owl') {
+          const hint = this.getHintPair();
+          if (hint) nocturnalVisionPair = hint;
+        }
+      }
+
       // ─── Efeitos de Adjacência: Corte de Cipós & Eclosão de Casulos ─────
       const activeBoard = this.getActiveBoardTiles();
       const isAdjacent = (target: PlacedTile, source: PlacedTile) => {
         return (
-          Math.abs(target.position.x - source.position.x) <= 1.5 &&
-          Math.abs(target.position.y - source.position.y) <= 1.5 &&
+          Math.abs(target.position.x - source.position.x) <= 2.2 &&
+          Math.abs(target.position.y - source.position.y) <= 2.2 &&
           Math.abs(target.position.z - source.position.z) <= 1
         );
       };
@@ -514,26 +602,99 @@ export class BoardEngine {
       if (chamMutation) mutations.push(chamMutation);
 
       let vinesCutCount = 0;
+      const prunedVineTiles: PlacedTile[] = [];
+      const crackedCocoons: PlacedTile[] = [];
+      const hatchedCocoons: PlacedTile[] = [];
+      const canPruneVines =
+        TileTraits.isVinePruner(match1.value) ||
+        synergy?.type === 'elephant_crush' ||
+        synergy?.type === 'bear_feast' ||
+        synergy?.type === 'panda_zen' ||
+        climateTriggered?.climate === 'autumn_gale';
+
       for (const t of activeBoard) {
         if (isAdjacent(t, match1) || isAdjacent(t, match2)) {
-          if (t.specialType === 'vines') {
+          if (t.specialType === 'vines' && canPruneVines) {
             t.specialType = 'normal';
-            this.harmonyScore += 50;
-            pointsAwarded += 50;
-            vinesCutCount++;
-          } else if (t.specialType === 'cocoon') {
-            mutations.push({
-              tile: t,
-              prevValue: t.value,
-              prevLabel: t.label,
-              prevSuit: t.suit,
-            });
-            t.specialType = 'normal';
-            t.value = 'chameleon';
-            t.label = 'Camaleão';
-            t.suit = 'animal';
-            this.harmonyScore += 100;
             pointsAwarded += 100;
+            vinesCutCount++;
+            prunedVineTiles.push(t);
+          } else if (t.specialType === 'cocoon') {
+            if (t.cocoonHits === undefined) {
+              t.cocoonHits = 2;
+              t.initialCocoonHits = 2;
+            }
+            t.cocoonHits--;
+            if (t.cocoonHits <= 0) {
+              mutations.push({
+                tile: t,
+                prevValue: t.value,
+                prevLabel: t.label,
+                prevSuit: t.suit,
+              });
+              t.specialType = 'normal';
+              t.value = 'chameleon';
+              t.label = '🦎 Camaleão';
+              t.suit = 'mythic';
+              pointsAwarded += 250;
+              hatchedCocoons.push(t);
+            } else {
+              crackedCocoons.push(t);
+              pointsAwarded += 50;
+            }
+          } else if (
+            t.specialType === 'rock' &&
+            (synergy?.type === 'elephant_crush' || synergy?.type === 'bear_feast')
+          ) {
+            // Sinergias de Impacto Pesado esmigalham rochas adjacentes!
+            t.isRemoved = true;
+            t.inTray = false;
+            secondaryRemovedTiles.push(t);
+            pointsAwarded += 150;
+          } else if (
+            t.specialType === 'ice' &&
+            (match1.value === 'lion' || match2.value === 'lion' || synergy?.type === 'lion_roar')
+          ) {
+            // Calor do Sol do Leão derrete gelo adjacente!
+            t.specialType = 'normal';
+            pointsAwarded += 50;
+          }
+        }
+      }
+
+      // 🔮 Mecânica F: Selos Elementais & Chaves Místicas
+      const unsealedTiles: PlacedTile[] = [];
+      const keyElement = match1.elementalKey || match2.elementalKey;
+      if (keyElement) {
+        for (const t of activeBoard) {
+          if (t.elementalSeal === keyElement) {
+            t.elementalSeal = undefined;
+            unsealedTiles.push(t);
+            pointsAwarded += 200;
+          }
+        }
+      }
+
+      // 🌫️ Mecânica C: Névoa dos Picos (Mist & Canopy Shadow)
+      const clearedMistTiles: PlacedTile[] = [];
+      // 1. O vento do match dissipa a bruma de peças adjacentes
+      for (const t of activeBoard) {
+        if (t.isMisty && (isAdjacent(t, match1) || isAdjacent(t, match2))) {
+          t.isMisty = false;
+          clearedMistTiles.push(t);
+          pointsAwarded += 25;
+        }
+      }
+      // 2. Peças que ficaram desimpedidas com o match dissipam névoa naturalmente
+      const postMatchFree = TileRuleEngine.computeFreeTileIds(
+        this.getActiveBoardTiles().filter((t) => t.id !== match1.id && t.id !== match2.id)
+      );
+      for (const t of activeBoard) {
+        if (t.isMisty && postMatchFree.has(t.id)) {
+          t.isMisty = false;
+          if (!clearedMistTiles.some((c) => c.id === t.id)) {
+            clearedMistTiles.push(t);
+            pointsAwarded += 25;
           }
         }
       }
@@ -568,6 +729,9 @@ export class BoardEngine {
         secondaryRemovedTiles: secondaryRemovedTiles.length > 0 ? secondaryRemovedTiles : undefined,
         mutations: mutations.length > 0 ? mutations : undefined,
         rechargedTool: climateTriggered?.rechargedTool,
+        unsealedTiles: unsealedTiles.length > 0 ? unsealedTiles : undefined,
+        unsealedElement: unsealedTiles.length > 0 ? keyElement : undefined,
+        clearedMistTiles: clearedMistTiles.length > 0 ? clearedMistTiles : undefined,
       });
 
       let cosmicRescue: PlacedTile[] | undefined;
@@ -590,7 +754,59 @@ export class BoardEngine {
         waveInfo: this.getWaveInfo(),
         mutations: mutations.length > 0 ? mutations : undefined,
         vinesCutCount: vinesCutCount > 0 ? vinesCutCount : undefined,
+        prunedVineTiles: prunedVineTiles.length > 0 ? prunedVineTiles : undefined,
+        crackedCocoons: crackedCocoons.length > 0 ? crackedCocoons : undefined,
+        hatchedCocoons: hatchedCocoons.length > 0 ? hatchedCocoons : undefined,
+        unsealedTiles: unsealedTiles.length > 0 ? unsealedTiles : undefined,
+        clearedMistTiles: clearedMistTiles.length > 0 ? clearedMistTiles : undefined,
+        timeOfDay: currentTimeOfDay,
+        timeOfDayChanged,
+        nocturnalVisionPair,
         trioCandidateSpecies: match1.value,
+      };
+    }
+
+    // 🥩 Mecânica D: Predação na Bandeja (Cadeia Alimentar Ativa)
+    const predation = this.trayController.checkPredation(tile);
+    if (predation) {
+      const bonusHarmony = 300;
+      this.harmonyScore += bonusHarmony;
+      this.history.push({
+        actionType: 'predation',
+        predatorTile: predation.predator,
+        preyTile: predation.prey,
+        wasNewTilePredator: predation.wasNewTilePredator,
+        pointsAwarded: bonusHarmony,
+      });
+
+      this.trayController.sortTray();
+      this.invalidateCache();
+
+      let cosmicRescue: PlacedTile[] | undefined;
+      const rescued = this.checkAndResolveCosmicRescue();
+      if (rescued && rescued.length > 0) cosmicRescue = rescued;
+
+      const isFull = this.getTray().length >= this.getMaxTraySlots();
+      const isDeadlocked = isFull ? this.isDeadlocked() : false;
+      const waveCleared = this.isWaveCleared();
+
+      return {
+        action: 'special_action',
+        specialEffect: 'predation',
+        predationResult: {
+          predator: predation.predator,
+          prey: predation.prey,
+          bonusHarmony,
+          wasNewTilePredator: predation.wasNewTilePredator,
+        },
+        tile: predation.wasNewTilePredator ? predation.predator : predation.prey,
+        tray: [...this.getTray()],
+        isTrayFullWarning: isFull,
+        isDeadlocked,
+        cosmicRescue,
+        waveCleared,
+        waveInfo: this.getWaveInfo(),
+        trioCandidateSpecies: null,
       };
     }
 
@@ -607,6 +823,7 @@ export class BoardEngine {
     if (rescued && rescued.length > 0) cosmicRescue = rescued;
 
     const isFull = this.getTray().length >= this.getMaxTraySlots();
+    const isDeadlocked = isFull ? this.isDeadlocked() : false;
     const waveCleared = this.isWaveCleared();
 
     this.lastMatchedSpecies = null;
@@ -616,6 +833,7 @@ export class BoardEngine {
       tile,
       tray: [...this.getTray()],
       isTrayFullWarning: isFull,
+      isDeadlocked,
       cosmicRescue,
       waveCleared,
       waveInfo: this.getWaveInfo(),
@@ -626,7 +844,14 @@ export class BoardEngine {
   // ─── Dicas, Poderes Zen & Desfazer (Delegação Especialistas) ───────────────
 
   public getHintPair(): MatchPair | null {
-    return ZenPowerManager.getHintPair(this.getFreeTiles(), this.getTray());
+    const hint = ZenPowerManager.getHintPair(this.getFreeTiles(), this.getTray());
+    if (hint) {
+      const t1 = this.tiles.find((t) => t.id === hint.tile1Id);
+      const t2 = this.tiles.find((t) => t.id === hint.tile2Id);
+      if (t1 && t1.isMisty) t1.isMisty = false;
+      if (t2 && t2.isMisty) t2.isMisty = false;
+    }
+    return hint;
   }
 
   public undo(): UndoResult {
@@ -738,8 +963,52 @@ export class BoardEngine {
         isHinted: false,
         inTray: false,
         specialType: def.specialType,
+        cocoonHits: def.specialType === 'cocoon' ? 2 : undefined,
+        initialCocoonHits: def.specialType === 'cocoon' ? 2 : undefined,
       };
     });
+
+    const lvlNum = this.levelRules.levelNumber ?? 1;
+
+    // 🌫️ Névoa dos Picos (Mecânica C): Mundos 8, 9 e 10 (Fases 36+)
+    if (lvlNum >= 36) {
+      let mistCount = 0;
+      const maxMist = Math.min(3, Math.max(1, Math.floor(this.tiles.length / 16)));
+      for (const t of this.tiles) {
+        if (t.position.z === 0 && t.specialType === 'normal' && mistCount < maxMist) {
+          t.isMisty = true;
+          mistCount++;
+        }
+      }
+    }
+
+    // 🔮 Selos Elementais & Chaves Místicas (Mecânica F): Mundos 9 e 10 (Fases 41+)
+    if (lvlNum >= 41 && this.tiles.length >= 24) {
+      const speciesGroups = new Map<string, PlacedTile[]>();
+      for (const t of this.tiles) {
+        if (t.specialType === 'normal' && !t.isMisty) {
+          const list = speciesGroups.get(t.value) || [];
+          list.push(t);
+          speciesGroups.set(t.value, list);
+        }
+      }
+      for (const [, grp] of speciesGroups.entries()) {
+        if (grp.length >= 2) {
+          grp[0].elementalKey = 'fire';
+          grp[1].elementalKey = 'fire';
+          break;
+        }
+      }
+
+      let sealCount = 0;
+      for (const t of this.tiles) {
+        if (t.specialType === 'normal' && !t.elementalKey && !t.isMisty && sealCount < 2) {
+          t.elementalSeal = 'fire';
+          sealCount++;
+        }
+      }
+    }
+
     this.invalidateCache();
   }
 }

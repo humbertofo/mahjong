@@ -6,7 +6,8 @@ export class TheatricalSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'frog' && (v2 === 'ladybug' || v2 === 'bee')) ||
@@ -26,7 +27,8 @@ export class TheatricalSynergies {
           baseScore: 240,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;
@@ -36,7 +38,8 @@ export class TheatricalSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'cat' && v2 === 'fish') ||
@@ -56,7 +59,8 @@ export class TheatricalSynergies {
           baseScore: 220,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;
@@ -66,7 +70,8 @@ export class TheatricalSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'bear' && (v2 === 'honeycomb' || v2 === 'fish')) ||
@@ -86,7 +91,8 @@ export class TheatricalSynergies {
           baseScore: 300,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;
@@ -96,7 +102,8 @@ export class TheatricalSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'dolphin' && v2 === 'shell') ||
@@ -116,7 +123,8 @@ export class TheatricalSynergies {
           baseScore: 220,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;
@@ -126,7 +134,8 @@ export class TheatricalSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'penguin' && v2 === 'fish') ||
@@ -146,7 +155,8 @@ export class TheatricalSynergies {
           baseScore: 230,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;
@@ -156,7 +166,8 @@ export class TheatricalSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'panda' && v2 === 'acorn') ||
@@ -176,7 +187,8 @@ export class TheatricalSynergies {
           baseScore: 250,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;
@@ -186,7 +198,8 @@ export class TheatricalSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'elephant' && v2 === 'acorn') ||
@@ -206,7 +219,8 @@ export class TheatricalSynergies {
           baseScore: 260,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;

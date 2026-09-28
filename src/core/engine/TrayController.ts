@@ -1,4 +1,5 @@
 import { PlacedTile, MoveHistoryItem } from '../types';
+import { TileTraits } from '../nature/tiles/TileTraits';
 
 export interface UndoResult {
   success: boolean;
@@ -11,7 +12,7 @@ export interface UndoResult {
 
 export class TrayController {
   private tray: PlacedTile[] = [];
-  private readonly maxTraySlots: number = 4;
+  private maxTraySlots: number = 4;
 
   public getTray(): PlacedTile[] {
     return this.tray;
@@ -19,6 +20,10 @@ export class TrayController {
 
   public getMaxTraySlots(): number {
     return this.maxTraySlots;
+  }
+
+  public setMaxTraySlots(slots: number): void {
+    this.maxTraySlots = Math.max(3, Math.min(6, slots));
   }
 
   public clearTray(): void {
@@ -42,6 +47,45 @@ export class TrayController {
 
   public sortTray(): void {
     this.tray.sort((a, b) => String(a.value).localeCompare(String(b.value)));
+  }
+
+  /**
+   * Predação na Bandeja (Mecânica D):
+   * Quando uma peça entra na bandeja e há interação predador x presa,
+   * o predador consome a presa, liberando o slot imediatamente!
+   */
+  public checkPredation(newTile: PlacedTile): {
+    predator: PlacedTile;
+    prey: PlacedTile;
+    wasNewTilePredator: boolean;
+  } | null {
+    // 1. O novo tile é um predador que consome uma presa já existente na bandeja?
+    if (TileTraits.isPredator(newTile.value)) {
+      const prey = this.tray.find(
+        (t) => t.id !== newTile.id && TileTraits.canPrey(newTile.value, t.value)
+      );
+      if (prey) {
+        prey.isRemoved = true;
+        prey.inTray = false;
+        this.tray = this.tray.filter((t) => t.id !== prey.id);
+        return { predator: newTile, prey, wasNewTilePredator: true };
+      }
+    }
+
+    // 2. O novo tile é uma presa e já existe um predador na bandeja esperando?
+    if (TileTraits.isPrey(newTile.value)) {
+      const predator = this.tray.find(
+        (t) => t.id !== newTile.id && TileTraits.canPrey(t.value, newTile.value)
+      );
+      if (predator) {
+        newTile.isRemoved = true;
+        newTile.inTray = false;
+        this.tray = this.tray.filter((t) => t.id !== newTile.id);
+        return { predator, prey: newTile, wasNewTilePredator: false };
+      }
+    }
+
+    return null;
   }
 
   /**
@@ -118,27 +162,7 @@ export class TrayController {
   ): UndoResult {
     if (history.length === 0) return { success: false };
 
-    // Se houver peças na bandeja, desfaz a última adição à bandeja
-    if (this.tray.length > 0) {
-      for (let i = history.length - 1; i >= 0; i--) {
-        const item = history[i];
-        if (item.actionType === 'tray_add' && item.tile) {
-          const trayTile = this.tray.find((t) => t.id === item.tile!.id);
-          if (trayTile) {
-            history.splice(i, 1);
-            trayTile.inTray = false;
-            trayTile.isRemoved = false;
-            trayTile.isSelected = false;
-            trayTile.isHinted = false;
-            this.tray = this.tray.filter((t) => t.id !== trayTile.id);
-            onInvalidateCache();
-            return { success: true, type: 'tile_restored', tile: trayTile };
-          }
-        }
-      }
-    }
-
-    // Se a bandeja está vazia, desfaz o último par combinado
+    // Desfaz estritamente a última ação registrada no histórico
     const lastItem = history.pop();
     if (!lastItem) return { success: false };
 
@@ -179,6 +203,20 @@ export class TrayController {
           if (mut.prevValue !== 'chameleon') {
             mut.tile.specialType = 'normal';
           }
+        }
+      }
+
+      // Reverter quebra de selos elementais (Mecânica F)
+      if (lastItem.unsealedTiles && lastItem.unsealedElement) {
+        for (const unsealed of lastItem.unsealedTiles) {
+          unsealed.elementalSeal = lastItem.unsealedElement;
+        }
+      }
+
+      // Reverter dissipação de névoa (Mecânica C)
+      if (lastItem.clearedMistTiles) {
+        for (const misty of lastItem.clearedMistTiles) {
+          misty.isMisty = true;
         }
       }
 
@@ -236,6 +274,42 @@ export class TrayController {
         tile: t,
         secondaryTiles: lastItem.secondaryRemovedTiles,
         rechargedTool: lastItem.rechargedTool,
+      };
+    } else if (lastItem.actionType === 'predation' && lastItem.predatorTile && lastItem.preyTile) {
+      const predator = lastItem.predatorTile;
+      const prey = lastItem.preyTile;
+
+      if (lastItem.wasNewTilePredator) {
+        // O predador era o novo tile: sai da bandeja e volta à mesa
+        predator.inTray = false;
+        predator.isRemoved = false;
+        predator.isSelected = false;
+        predator.isHinted = false;
+        this.tray = this.tray.filter((t) => t.id !== predator.id);
+
+        // A presa volta para a bandeja
+        prey.inTray = true;
+        prey.isRemoved = false;
+        prey.isSelected = false;
+        prey.isHinted = false;
+        this.tray.push(prey);
+      } else {
+        // A presa era o novo tile: volta à mesa
+        prey.inTray = false;
+        prey.isRemoved = false;
+        prey.isSelected = false;
+        prey.isHinted = false;
+        // O predador já estava na bandeja e permanece nela
+      }
+
+      if (lastItem.pointsAwarded && getHarmonyScore() >= lastItem.pointsAwarded) {
+        onSubtractHarmony(lastItem.pointsAwarded);
+      }
+      onInvalidateCache();
+      return {
+        success: true,
+        type: 'tile_restored',
+        tile: lastItem.wasNewTilePredator ? predator : prey,
       };
     } else if (lastItem.actionType === 'tray_add' && lastItem.tile) {
       const trayTile = this.tray.find((t) => t.id === lastItem.tile!.id);

@@ -57,12 +57,12 @@ export class GameEndModals {
         </div>
         <div class="zen-star-row ${stars >= 2 ? 'earned' : ''}">
           <span class="row-star-icon">${stars >= 2 ? '⭐' : '☆'}</span>
-          <span class="row-star-text">2★ ${toolsRemaining > 0 ? `Ferramentas (${toolsRemaining})` : 'Maestria Zen'}</span>
+          <span class="row-star-text">2★ Domínio Tático (${toolsRemaining} ferramentas salvas)</span>
           <span class="row-star-status">${stars >= 2 ? 'Concluído' : 'Pendente'}</span>
         </div>
         <div class="zen-star-row ${stars >= 3 ? 'earned' : ''}">
           <span class="row-star-icon">${stars >= 3 ? '⭐' : '☆'}</span>
-          <span class="row-star-text">3★ Harmonia Plena</span>
+          <span class="row-star-text">3★ Maestria Pura (Poupou Ferramentas)</span>
           <span class="row-star-status">${stars >= 3 ? 'Concluído' : 'Pendente'}</span>
         </div>
       `;
@@ -290,5 +290,40 @@ export class GameEndModals {
         <span>Progresso salvo localmente no aparelho · 100% Offline</span>
       </div>
     `;
+  }
+
+  public static showGameOverModal(
+    currentLevelIndex: number,
+    onRetry: () => void,
+    onMenu: () => void
+  ): void {
+    const modal = document.getElementById('modal-game-over');
+    if (!modal) return;
+
+    const layout = ALL_LAYOUTS[currentLevelIndex];
+    const levelSubEl = document.getElementById('game-over-level-subtitle');
+    if (levelSubEl) {
+      levelSubEl.textContent = `FASE ${currentLevelIndex + 1} · ${layout ? layout.name.toUpperCase() : 'BLOQUEIO'}`;
+    }
+
+    const replayBtn = document.getElementById('btn-gameover-replay');
+    if (replayBtn) {
+      replayBtn.onclick = (e) => {
+        e.stopPropagation();
+        modal.classList.add('hidden');
+        onRetry();
+      };
+    }
+
+    const menuBtn = document.getElementById('btn-gameover-menu');
+    if (menuBtn) {
+      menuBtn.onclick = (e) => {
+        e.stopPropagation();
+        modal.classList.add('hidden');
+        onMenu();
+      };
+    }
+
+    modal.classList.remove('hidden');
   }
 }

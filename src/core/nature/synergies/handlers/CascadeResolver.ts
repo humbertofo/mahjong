@@ -22,7 +22,8 @@ export class CascadeResolver {
   public static resolve(
     config: CascadeSynergyConfig,
     activeBoardTiles: PlacedTile[],
-    tray: PlacedTile[]
+    tray: PlacedTile[],
+    isTacticalMode: boolean = false
   ): SynergyResult {
     const {
       type,
@@ -58,7 +59,25 @@ export class CascadeResolver {
     }
 
     // ─── Camada 2: Captura na Mesa (Board Catch) ────────────────────────────
-    // 2A: Procura um par completo da presa na mesa
+    // No modo tático (Mundos 5–10): Não remove peças passivamente da mesa,
+    // concede bônus de harmonia zen tático e mantém o desafio de resolução para o jogador!
+    if (isTacticalMode) {
+      for (const preyVal of preyValues) {
+        const hasPrey = activeBoardTiles.some(
+          (t) => !t.isRemoved && !t.inTray && t.value === preyVal
+        );
+        if (hasPrey) {
+          return {
+            type,
+            title: `${title} (Foco Tático!)`,
+            description: `${title}: o predador avistou suas presas no tabuleiro! Encontre o par para colher +${baseScore + 80} pts de Harmonia!`,
+            bonusScore: baseScore + 80,
+          };
+        }
+      }
+    }
+
+    // 2A: Procura um par completo da presa na mesa (Modo Clássico / Zen)
     for (const preyVal of preyValues) {
       const matchingTiles = activeBoardTiles.filter(
         (t) => !t.isRemoved && !t.inTray && t.value === preyVal

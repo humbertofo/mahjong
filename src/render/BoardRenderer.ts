@@ -1,6 +1,6 @@
 import { BoardEngine } from '../core/BoardEngine';
 import { SynergyDirector } from '../core/engine/SynergyDirector';
-import { PlacedTile, ThemeType, SynergyResult, ClimateEffectResult, ClimateType, AnimalValue } from '../core/types';
+import { PlacedTile, ThemeType, SynergyResult, ClimateEffectResult, ClimateType, AnimalValue, TimeOfDay } from '../core/types';
 import { canMatch } from '../core/deck';
 import { TileRegistry } from '../core/nature/tiles';
 import { TileRenderer } from './TileRenderer';
@@ -32,6 +32,14 @@ export interface BoardRendererCallbacks {
     height: number,
     onArrival: () => void
   ) => void;
+  onDeadlocked?: (isTrayFull: boolean) => void;
+  onVinesEntangled?: (tile: PlacedTile) => void;
+  onPredation?: (predation: { predator: PlacedTile; prey: PlacedTile; bonusHarmony: number }) => void;
+  onTimeOfDayChanged?: (newTime: TimeOfDay) => void;
+  onCocoonCracked?: (tile: PlacedTile) => void;
+  onCocoonHatched?: (tile: PlacedTile) => void;
+  onElementalSealed?: (tile: PlacedTile) => void;
+  onElementalUnsealed?: (unsealedTiles: PlacedTile[]) => void;
 }
 
 export class BoardRenderer {
@@ -332,6 +340,15 @@ export class BoardRenderer {
       this.ctx.drawImage(this.bgCanvas, 0, 0, viewW, viewH);
     } else {
       this.drawBackgroundTo(this.ctx, viewW, viewH);
+    }
+
+    const timeOfDay = this.engine.getTimeOfDay();
+    if (timeOfDay === 'twilight') {
+      this.ctx.fillStyle = 'rgba(245, 158, 11, 0.05)';
+      this.ctx.fillRect(0, 0, viewW, viewH);
+    } else if (timeOfDay === 'night') {
+      this.ctx.fillStyle = 'rgba(30, 27, 75, 0.12)';
+      this.ctx.fillRect(0, 0, viewW, viewH);
     }
 
     if (!this.sortedTilesCache) {
@@ -1571,7 +1588,13 @@ export class BoardRenderer {
         }
       }
 
-      if (result.vinesCutCount && result.vinesCutCount > 0) {
+      if (result.prunedVineTiles && result.prunedVineTiles.length > 0) {
+        soundManager.playVineCut();
+        for (const vt of result.prunedVineTiles) {
+          const coords = this.getTileScreenCoords(vt);
+          this.triggerLocalMatchDissolve(coords, '#16A34A');
+        }
+      } else if (result.vinesCutCount && result.vinesCutCount > 0) {
         soundManager.playVineCut();
       }
 
@@ -1586,6 +1609,51 @@ export class BoardRenderer {
             this.triggerLocalMatchDissolve(coords, '#38BDF8');
           }
         }
+      }
+
+      if (result.crackedCocoons && result.crackedCocoons.length > 0) {
+        soundManager.playIceCrack();
+        for (const ct of result.crackedCocoons) {
+          const coords = this.getTileScreenCoords(ct);
+          this.triggerLocalMatchDissolve(coords, '#F59E0B');
+          this.callbacks.onCocoonCracked?.(ct);
+        }
+      }
+
+      if (result.hatchedCocoons && result.hatchedCocoons.length > 0) {
+        soundManager.playCocoonHatch();
+        for (const ht of result.hatchedCocoons) {
+          const coords = this.getTileScreenCoords(ht);
+          this.triggerLocalMatchDissolve(coords, '#10B981');
+          this.callbacks.onCocoonHatched?.(ht);
+        }
+      }
+
+      if (result.unsealedTiles && result.unsealedTiles.length > 0) {
+        soundManager.playSealBreak();
+        hapticManager.impactMedium();
+        for (const st of result.unsealedTiles) {
+          const coords = this.getTileScreenCoords(st);
+          this.triggerLocalMatchDissolve(coords, '#A855F7');
+        }
+        this.callbacks.onElementalUnsealed?.(result.unsealedTiles);
+      }
+
+      if (result.clearedMistTiles && result.clearedMistTiles.length > 0) {
+        soundManager.playMistDissipate();
+        for (const mt of result.clearedMistTiles) {
+          const coords = this.getTileScreenCoords(mt);
+          this.triggerLocalMatchDissolve(coords, '#CBD5E1');
+        }
+      }
+
+      if (result.timeOfDayChanged && result.timeOfDay) {
+        this.callbacks.onTimeOfDayChanged?.(result.timeOfDay);
+      }
+
+      if (result.nocturnalVisionPair) {
+        this.triggerAnimation(6000);
+        this.requestRender();
       }
 
       const isTheatrical = SynergyDirector.isTheatrical(result.synergy);
@@ -1643,8 +1711,15 @@ export class BoardRenderer {
           this.callbacks.onWaveCleared(this.engine.getCurrentWave(), this.engine.getTotalWaves());
         }
       }
+
+      if (result.isDeadlocked && this.callbacks.onDeadlocked) {
+        this.callbacks.onDeadlocked(true);
+      }
     } else if (result.action === 'tray_full') {
       soundManager.playBlockedSound();
+      if (result.isDeadlocked && this.callbacks.onDeadlocked) {
+        this.callbacks.onDeadlocked(true);
+      }
     } else if (result.action === 'special_action') {
       if (result.specialEffect === 'ice_cracked') {
         soundManager.playIceCrack();
@@ -1656,6 +1731,26 @@ export class BoardRenderer {
         hapticManager.impactMedium();
         const coords = this.getTileScreenCoords(clickedTile);
         this.triggerLocalMatchDissolve(coords, '#64748B');
+      } else if (result.specialEffect === 'vines_entangled') {
+        soundManager.playVineRustle();
+        hapticManager.impactLight();
+        if (this.callbacks.onVinesEntangled) {
+          this.callbacks.onVinesEntangled(clickedTile);
+        }
+      } else if (result.specialEffect === 'predation' && result.predationResult) {
+        soundManager.playPredationStrike();
+        hapticManager.impactMedium();
+        const coords = this.getTileScreenCoords(clickedTile);
+        this.triggerLocalMatchDissolve(coords, '#DC2626');
+        if (this.callbacks.onPredation) {
+          this.callbacks.onPredation(result.predationResult);
+        }
+      } else if (result.specialEffect === 'elemental_sealed') {
+        soundManager.playBlockedSound();
+        hapticManager.impactLight();
+        if (this.callbacks.onElementalSealed) {
+          this.callbacks.onElementalSealed(clickedTile);
+        }
       }
     } else if (result.action === 'trio_matched' && result.trioTile) {
       soundManager.playSynergyBonus();

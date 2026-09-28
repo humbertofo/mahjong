@@ -39,7 +39,8 @@ export class ForagingSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'bee' && v2 === 'honeycomb') ||
@@ -59,7 +60,8 @@ export class ForagingSynergies {
           baseScore: 250,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;
@@ -69,7 +71,8 @@ export class ForagingSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'squirrel' && v2 === 'acorn') ||
@@ -89,7 +92,8 @@ export class ForagingSynergies {
           baseScore: 200,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;
@@ -99,7 +103,8 @@ export class ForagingSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'hedgehog' && v2 === 'apple') ||
@@ -119,7 +124,8 @@ export class ForagingSynergies {
           baseScore: 240,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;
@@ -129,7 +135,8 @@ export class ForagingSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'turtle' && v2 === 'shell') ||
@@ -149,7 +156,8 @@ export class ForagingSynergies {
           baseScore: 220,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;
@@ -159,7 +167,8 @@ export class ForagingSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'rabbit' && v2 === 'apple') ||
@@ -179,7 +188,8 @@ export class ForagingSynergies {
           baseScore: 210,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;
@@ -189,7 +199,8 @@ export class ForagingSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'fox' && v2 === 'grapes') ||
@@ -209,7 +220,8 @@ export class ForagingSynergies {
           baseScore: 230,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;
@@ -219,7 +231,8 @@ export class ForagingSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'dog' && (v2 === 'cat' || v2 === 'fish')) ||
@@ -239,7 +252,8 @@ export class ForagingSynergies {
           baseScore: 250,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;
@@ -249,7 +263,8 @@ export class ForagingSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'butterfly' && v2 === 'lotus') ||
@@ -269,7 +284,8 @@ export class ForagingSynergies {
           baseScore: 240,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;
@@ -279,7 +295,8 @@ export class ForagingSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'duck' && v2 === 'fish') ||
@@ -299,7 +316,8 @@ export class ForagingSynergies {
           baseScore: 220,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;
@@ -309,7 +327,8 @@ export class ForagingSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'lion' && v2 === 'sun') ||
@@ -329,7 +348,8 @@ export class ForagingSynergies {
           baseScore: 270,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;
@@ -339,7 +359,8 @@ export class ForagingSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'bird' && v2 === 'grapes') ||
@@ -359,7 +380,8 @@ export class ForagingSynergies {
           baseScore: 220,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;
@@ -369,7 +391,8 @@ export class ForagingSynergies {
     v1: string,
     v2: string,
     activeTiles: PlacedTile[],
-    tray: PlacedTile[] = []
+    tray: PlacedTile[] = [],
+    isTacticalMode: boolean = false
   ): SynergyResult | null {
     if (
       (v1 === 'snail' && v2 === 'leaf') ||
@@ -389,7 +412,8 @@ export class ForagingSynergies {
           baseScore: 210,
         },
         activeTiles,
-        tray
+        tray,
+        isTacticalMode
       );
     }
     return null;
