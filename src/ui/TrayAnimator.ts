@@ -55,30 +55,30 @@ export class TrayAnimator {
 
     this.renderTileToCanvas(canvas, tile, tileRenderer);
 
+    const scaleX = targetRect.width / width;
+    const scaleY = targetRect.height / height;
+
     flyer.style.transition = 'none';
-    flyer.style.left = `${startX}px`;
-    flyer.style.top  = `${startY}px`;
+    flyer.style.left = '0px';
+    flyer.style.top = '0px';
     flyer.style.width = `${width}px`;
     flyer.style.height = `${height}px`;
-    flyer.style.transform = 'scale(1.05)';
+    flyer.style.transformOrigin = 'top left';
+    flyer.style.transform = `translate3d(${startX}px, ${startY}px, 0) scale(1.05)`;
+    flyer.style.willChange = 'transform';
     flyer.style.display = 'block';
 
-    void flyer.offsetWidth;
-
     requestAnimationFrame(() => {
-      flyer.style.transition = 'all 0.22s cubic-bezier(0.16, 1, 0.3, 1)';
-      flyer.style.left = `${targetRect.left}px`;
-      flyer.style.top  = `${targetRect.top}px`;
-      flyer.style.width = `${targetRect.width}px`;
-      flyer.style.height = `${targetRect.height}px`;
-      flyer.style.transform = 'scale(1)';
+      flyer.style.transition = 'transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)';
+      flyer.style.transform = `translate3d(${targetRect.left}px, ${targetRect.top}px, 0) scale(${scaleX}, ${scaleY})`;
     });
 
     setTimeout(() => {
       flyer.style.display = 'none';
+      flyer.style.willChange = 'auto';
       flyerItem.inUse = false;
       onArrival();
-    }, 220);
+    }, 230);
   }
 
   public animateTileFromTrayToBoard(
@@ -98,30 +98,30 @@ export class TrayAnimator {
 
     this.renderTileToCanvas(canvas, tile, tileRenderer);
 
+    const startScaleX = slotRect.width / targetWidth;
+    const startScaleY = slotRect.height / targetHeight;
+
     flyer.style.transition = 'none';
-    flyer.style.left = `${slotRect.left}px`;
-    flyer.style.top  = `${slotRect.top}px`;
-    flyer.style.width = `${slotRect.width}px`;
-    flyer.style.height = `${slotRect.height}px`;
-    flyer.style.transform = 'scale(1)';
+    flyer.style.left = '0px';
+    flyer.style.top = '0px';
+    flyer.style.width = `${targetWidth}px`;
+    flyer.style.height = `${targetHeight}px`;
+    flyer.style.transformOrigin = 'top left';
+    flyer.style.transform = `translate3d(${slotRect.left}px, ${slotRect.top}px, 0) scale(${startScaleX}, ${startScaleY})`;
+    flyer.style.willChange = 'transform';
     flyer.style.display = 'block';
 
-    void flyer.offsetWidth;
-
     requestAnimationFrame(() => {
-      flyer.style.transition = 'all 0.22s cubic-bezier(0.16, 1, 0.3, 1)';
-      flyer.style.left = `${targetLeft}px`;
-      flyer.style.top  = `${targetTop}px`;
-      flyer.style.width = `${targetWidth}px`;
-      flyer.style.height = `${targetHeight}px`;
-      flyer.style.transform = 'scale(1.04)';
+      flyer.style.transition = 'transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)';
+      flyer.style.transform = `translate3d(${targetLeft}px, ${targetTop}px, 0) scale(1.04)`;
     });
 
     setTimeout(() => {
       flyer.style.display = 'none';
+      flyer.style.willChange = 'auto';
       flyerItem.inUse = false;
       onArrival();
-    }, 220);
+    }, 230);
   }
 
   public spawnLotusManaSparks(badges: HTMLElement[], fromX?: number, fromY?: number): void {

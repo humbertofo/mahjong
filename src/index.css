@@ -42,13 +42,18 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  transition: opacity 0.35s ease, transform 0.35s ease, visibility 0.35s;
 }
 
 .screen.hidden {
   opacity: 0;
   pointer-events: none;
   transform: scale(0.97);
+  visibility: hidden;
+}
+
+.screen.hidden * {
+  animation-play-state: paused !important;
 }
 
 .hidden:not(.screen):not(.modal-container):not(.tutorial-tip-banner):not(.update-dialog-backdrop) {
@@ -1071,16 +1076,17 @@ html, body {
   -webkit-overflow-scrolling: touch;
   background: linear-gradient(
     180deg,
-    #051c14 0%,    /* Bioma 1: Lagoa de Lótus (Jade Translúcido) */
-    #07261e 18%,
-    #041913 22%,   /* Bioma 2: Bosque de Bambu (Verde Esmeralda e Menta) */
-    #06231b 38%,
-    #180c1b 42%,   /* Bioma 3: Montanha Crepuscular (Púrpura & Índigo Shan Shui) */
-    #261424 58%,
-    #03140e 62%,   /* Bioma 4: Floresta Ancestral (Musgo Profundo & Komorebi) */
-    #0a2c23 78%,
-    #080514 82%,   /* Bioma 5: Cume Celestial (Safira Cósmica & Violeta Astral) */
-    #171132 100%
+    #08211a 0%,    /* Mundo 1: Jardim do Aprendiz */
+    #0a2414 10%,   /* Mundo 2: Bosque da Fortuna */
+    #061928 20%,   /* Mundo 3: Vale Glacial */
+    #0d250f 30%,   /* Mundo 4: Floresta de Bambu */
+    #25160d 40%,   /* Mundo 5: Santuário de Pedra */
+    #081d33 50%,   /* Mundo 6: Rios Ancestrais */
+    #1b0c2b 60%,   /* Mundo 7: Reino dos Espelhos */
+    #261607 70%,   /* Mundo 8: Savana dos Segredos */
+    #0e1233 80%,   /* Mundo 9: Cumes Celestiais */
+    #290812 90%,   /* Mundo 10: Templo dos Mestres */
+    #18040a 100%
   );
 }
 
@@ -1097,10 +1103,11 @@ html, body {
   height: 5px;
   border-radius: 50%;
   background: #fef08a;
-  box-shadow: 0 0 8px #f59e0b, 0 0 16px #34d399;
+  box-shadow: 0 0 6px rgba(254, 240, 138, 0.85);
   pointer-events: none;
   opacity: 0.55;
   animation: firefly-float 6s ease-in-out infinite alternate;
+  will-change: transform, opacity;
   z-index: 3;
 }
 
@@ -1118,6 +1125,7 @@ html, body {
   width: 100%;
   height: 100%;
   pointer-events: none;
+  contain: paint layout;
   z-index: 2;
 }
 
@@ -1146,6 +1154,7 @@ html, body {
   stroke-dasharray: 6 14;
   fill: none;
   animation: path-flow 1.1s linear infinite;
+  will-change: stroke-dashoffset;
   opacity: 0.95;
 }
 
@@ -1213,12 +1222,83 @@ html, body {
   z-index: 3;
 }
 
-/* Átomo Concluído (Esfera de Jade) */
+/* Átomo Concluído Padrão (Esfera de Jade) */
 .atom-node.completed .atom-core {
   background: linear-gradient(145deg, #10b981, #047857);
   border: 2.5px solid #a7f3d0;
   color: #ffffff;
   box-shadow: 0 4px 14px rgba(16, 185, 129, 0.6), inset 0 2px 5px rgba(255, 255, 255, 0.45);
+}
+
+/* Átomos Concluídos Específicos por Bioma */
+/* 1. Jardim do Aprendiz (🌸 Rosa Sakura) */
+.atom-node.biome-node-1.completed .atom-core {
+  background: linear-gradient(145deg, #ec4899, #9d174d);
+  border-color: #fbcfe8;
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.55), inset 0 2px 5px rgba(255, 255, 255, 0.5);
+}
+
+/* 2. Bosque da Fortuna (🍃 Jade Imperial) */
+.atom-node.biome-node-2.completed .atom-core {
+  background: linear-gradient(145deg, #10b981, #047857);
+  border-color: #a7f3d0;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.6), inset 0 2px 5px rgba(255, 255, 255, 0.45);
+}
+
+/* 3. Vale Glacial (❄️ Ciano & Gelo) */
+.atom-node.biome-node-3.completed .atom-core {
+  background: linear-gradient(145deg, #06b6d4, #0e7490);
+  border-color: #a5f3fc;
+  box-shadow: 0 4px 14px rgba(6, 182, 212, 0.6), inset 0 2px 5px rgba(255, 255, 255, 0.55);
+}
+
+/* 4. Floresta de Bambu (🎋 Bambu & Lima) */
+.atom-node.biome-node-4.completed .atom-core {
+  background: linear-gradient(145deg, #84cc16, #4d7c0f);
+  border-color: #d9f99d;
+  box-shadow: 0 4px 14px rgba(132, 204, 22, 0.55), inset 0 2px 5px rgba(255, 255, 255, 0.45);
+}
+
+/* 5. Santuário de Pedra (🪨 Terracota & Bronze) */
+.atom-node.biome-node-5.completed .atom-core {
+  background: linear-gradient(145deg, #ea580c, #9a3412);
+  border-color: #fed7aa;
+  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.55), inset 0 2px 5px rgba(255, 255, 255, 0.45);
+}
+
+/* 6. Rios Ancestrais (🌊 Safira Oceânica) */
+.atom-node.biome-node-6.completed .atom-core {
+  background: linear-gradient(145deg, #3b82f6, #1d4ed8);
+  border-color: #bfdbfe;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.6), inset 0 2px 5px rgba(255, 255, 255, 0.5);
+}
+
+/* 7. Reino dos Espelhos (🪞 Ametista Mística) */
+.atom-node.biome-node-7.completed .atom-core {
+  background: linear-gradient(145deg, #a855f7, #6b21a8);
+  border-color: #e9d5ff;
+  box-shadow: 0 4px 14px rgba(168, 85, 247, 0.6), inset 0 2px 5px rgba(255, 255, 255, 0.45);
+}
+
+/* 8. Savana dos Segredos (🦁 Topázio Solar) */
+.atom-node.biome-node-8.completed .atom-core {
+  background: linear-gradient(145deg, #f59e0b, #b45309);
+  border-color: #fef08a;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.6), inset 0 2px 5px rgba(255, 255, 255, 0.5);
+}
+
+/* 9. Cumes Celestiais (🦅 Índigo Astral) */
+.atom-node.biome-node-9.completed .atom-core {
+  background: linear-gradient(145deg, #6366f1, #3730a3);
+  border-color: #c7d2fe;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.6), inset 0 2px 5px rgba(255, 255, 255, 0.5);
+}
+
+/* 10. Templo dos Mestres (⛩️ Rubi Imperial) */
+.atom-node.biome-node-10.completed .atom-core {
+  background: linear-gradient(145deg, #e11d48, #9f1239);
+  border-color: #fecdd3;
+  box-shadow: 0 4px 14px rgba(225, 29, 72, 0.6), inset 0 2px 5px rgba(255, 255, 255, 0.5);
 }
 
 /* Átomo Atual / Ativo (Pulsante & Energizado) */
@@ -1366,9 +1446,7 @@ html, body {
   transform: translate(-50%, -50%);
   width: 88%;
   max-width: 340px;
-  background: rgba(8, 28, 22, 0.88);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(8, 28, 22, 0.95);
   border: 1.5px solid rgba(52, 211, 153, 0.45);
   border-radius: 18px;
   padding: 10px 14px;
@@ -1376,6 +1454,7 @@ html, body {
   align-items: center;
   gap: 10px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55), inset 0 1px 2px rgba(255, 255, 255, 0.15);
+  contain: paint layout;
   z-index: 10;
 }
 
@@ -1440,36 +1519,66 @@ html, body {
   color: #fbbf24;
 }
 
-/* Acentos Temáticos dos Portais por Bioma */
+/* Acentos Temáticos dos Portais por Bioma (1 a 10) */
 .portal-biome-1 {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(6, 78, 59, 0.6));
-  border-color: rgba(52, 211, 153, 0.55);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(76, 5, 25, 0.85));
+  border-color: rgba(244, 114, 182, 0.55);
 }
-.portal-biome-1 .world-portal-title { color: #6ee7b7; }
+.portal-biome-1 .world-portal-title { color: #f472b6; }
 
 .portal-biome-2 {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.22), rgba(20, 83, 45, 0.6));
-  border-color: rgba(74, 222, 128, 0.55);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(6, 78, 59, 0.85));
+  border-color: rgba(52, 211, 153, 0.55);
 }
-.portal-biome-2 .world-portal-title { color: #86efac; }
+.portal-biome-2 .world-portal-title { color: #6ee7b7; }
 
 .portal-biome-3 {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(120, 53, 15, 0.6));
-  border-color: rgba(251, 191, 36, 0.55);
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(8, 47, 73, 0.85));
+  border-color: rgba(34, 211, 238, 0.55);
 }
-.portal-biome-3 .world-portal-title { color: #fde047; }
+.portal-biome-3 .world-portal-title { color: #67e8f9; }
 
 .portal-biome-4 {
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.22), rgba(88, 28, 135, 0.6));
-  border-color: rgba(168, 85, 247, 0.55);
+  background: linear-gradient(135deg, rgba(132, 204, 22, 0.25), rgba(39, 64, 8, 0.85));
+  border-color: rgba(163, 230, 53, 0.55);
 }
-.portal-biome-4 .world-portal-title { color: #d8b4fe; }
+.portal-biome-4 .world-portal-title { color: #bef264; }
 
 .portal-biome-5 {
-  background: linear-gradient(135deg, rgba(244, 63, 94, 0.22), rgba(136, 19, 55, 0.6));
-  border-color: rgba(244, 63, 94, 0.55);
+  background: linear-gradient(135deg, rgba(234, 88, 12, 0.25), rgba(67, 20, 7, 0.85));
+  border-color: rgba(251, 146, 60, 0.55);
 }
-.portal-biome-5 .world-portal-title { color: #fda4af; }
+.portal-biome-5 .world-portal-title { color: #fdba74; }
+
+.portal-biome-6 {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(23, 37, 84, 0.85));
+  border-color: rgba(96, 165, 250, 0.55);
+}
+.portal-biome-6 .world-portal-title { color: #93c5fd; }
+
+.portal-biome-7 {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(59, 7, 100, 0.85));
+  border-color: rgba(192, 132, 252, 0.55);
+}
+.portal-biome-7 .world-portal-title { color: #d8b4fe; }
+
+.portal-biome-8 {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(69, 26, 3, 0.85));
+  border-color: rgba(251, 191, 36, 0.55);
+}
+.portal-biome-8 .world-portal-title { color: #fde047; }
+
+.portal-biome-9 {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(30, 27, 75, 0.85));
+  border-color: rgba(129, 140, 248, 0.55);
+}
+.portal-biome-9 .world-portal-title { color: #a5b4fc; }
+
+.portal-biome-10 {
+  background: linear-gradient(135deg, rgba(225, 29, 72, 0.25), rgba(76, 5, 25, 0.85));
+  border-color: rgba(251, 113, 133, 0.55);
+}
+.portal-biome-10 .world-portal-title { color: #fda4af; }
 
 /* Bottom Sheet / Pop-up de Missão ao Clicar no Átomo */
 .atom-preview-card {
@@ -1638,12 +1747,18 @@ html, body {
   width: 100%;
   height: 100%;
   z-index: 1;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 #board-canvas {
   width: 100%;
   height: 100%;
   display: block;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 #fx-canvas {
@@ -1654,6 +1769,9 @@ html, body {
   height: 100%;
   display: block;
   pointer-events: none;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* === HUD SUPERIOR (CABEÇALHO) === */

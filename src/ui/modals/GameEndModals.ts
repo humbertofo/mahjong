@@ -89,19 +89,19 @@ export class GameEndModals {
   }
 
   public static launchVictoryConfetti(): void {
-    const end = Date.now() + 2800;
+    const end = Date.now() + 750;
     const frame = () => {
       confetti({
-        particleCount: 7,
+        particleCount: 5,
         angle: 60,
-        spread: 55,
+        spread: 50,
         origin: { x: 0, y: 0.6 },
         colors: ['#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF', '#FF8FD8'],
       });
       confetti({
-        particleCount: 7,
+        particleCount: 5,
         angle: 120,
-        spread: 55,
+        spread: 50,
         origin: { x: 1, y: 0.6 },
         colors: ['#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF', '#FF8FD8'],
       });

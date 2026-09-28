@@ -98,6 +98,24 @@ export class HUDController {
     }
   }
 
+  public pauseTimer(): void {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  public resumeTimer(): void {
+    if (this.timerInterval) return;
+    this.gameStartTime = Date.now() - this.elapsedSeconds * 1000;
+    this.timerInterval = setInterval(() => {
+      this.elapsedSeconds = Math.floor((Date.now() - this.gameStartTime) / 1000);
+      const m = Math.floor(this.elapsedSeconds / 60).toString().padStart(2, '0');
+      const s = (this.elapsedSeconds % 60).toString().padStart(2, '0');
+      if (this.timerEl) this.timerEl.textContent = `${m}:${s}`;
+    }, 1000);
+  }
+
   public updateMenuProgress(): number {
     const total = ALL_LAYOUTS.length;
     let done = 0;

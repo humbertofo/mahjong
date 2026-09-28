@@ -66,10 +66,39 @@ window.addEventListener('DOMContentLoaded', () => {
   // 3. UIManager orquestra toda a navegação e estado
   uiManager = new UIManager(engine, renderer);
 
-  // 4. Screen Wake Lock para manter tela acesa durante o jogo (Android)
-  if ('wakeLock' in navigator && navigator.wakeLock) {
-    navigator.wakeLock.request('screen').catch(() => {});
-  }
+  // 4. Screen Wake Lock dinâmico e Gerenciamento de Ciclo de Vida Mobile (Android)
+  let wakeLockSentinel: WakeLockSentinel | null = null;
+  const requestWakeLock = async () => {
+    if ('wakeLock' in navigator && navigator.wakeLock) {
+      try {
+        wakeLockSentinel = await navigator.wakeLock.request('screen');
+        wakeLockSentinel.addEventListener('release', () => {
+          wakeLockSentinel = null;
+        });
+      } catch {
+        wakeLockSentinel = null;
+      }
+    }
+  };
+
+  requestWakeLock();
+
+  document.addEventListener('visibilitychange', () => {
+    const isVisible = document.visibilityState === 'visible';
+    uiManager?.handleAppVisibility(isVisible);
+    if (isVisible) {
+      requestWakeLock();
+    }
+  });
+
+  window.addEventListener('pagehide', () => {
+    uiManager?.handleAppVisibility(false);
+  });
+
+  window.addEventListener('pageshow', () => {
+    uiManager?.handleAppVisibility(true);
+    requestWakeLock();
+  });
 
   // 5. Verificação de Live Update com tela de download e solicitação de reinício (deferida para fluidez imediata)
   setTimeout(() => {

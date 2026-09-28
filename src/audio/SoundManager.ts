@@ -44,11 +44,11 @@ export class SoundManager {
     'bgm_lofi_22.mp3',
     'bgm_lofi_23.mp3',
     'bgm_lofi_24.mp3',
-    'bgm_zen_01',
-    'bgm_zen_02',
-    'bgm_zen_03',
-    'bgm_zen_04',
-    'bgm_zen_05',
+    'bgm_zen_01.mp3',
+    'bgm_zen_02.mp3',
+    'bgm_zen_03.mp3',
+    'bgm_zen_04.mp3',
+    'bgm_zen_05.mp3',
   ];
   private currentTrackIndex: number = 0;
 
@@ -177,6 +177,29 @@ export class SoundManager {
           // Bloqueio de autoplay até interação do usuário
         });
       }
+    }
+  }
+
+  private wasBgmPlayingBeforeSuspend: boolean = false;
+
+  public suspend(): void {
+    if (this.bgmAudio && !this.bgmAudio.paused) {
+      this.wasBgmPlayingBeforeSuspend = true;
+      this.bgmAudio.pause();
+    } else {
+      this.wasBgmPlayingBeforeSuspend = false;
+    }
+    if (this.ctx && this.ctx.state === 'running') {
+      this.ctx.suspend().catch(() => {});
+    }
+  }
+
+  public resume(): void {
+    if (this.wasBgmPlayingBeforeSuspend && this.musicEnabled && this.bgmAudio) {
+      this.bgmAudio.play().catch(() => {});
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume().catch(() => {});
     }
   }
 

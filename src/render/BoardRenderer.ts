@@ -48,12 +48,14 @@ export class BoardRenderer {
 
   private theme: ThemeType = 'mist-emerald';
 
-  // Controle de animação e economia de bateria (MediaTek Helio P35)
+  // Controle de animação e economia de bateria (Zero CPU/GPU ociosa)
   private isRunning: boolean = true;
   private animTime: number = 0;
   private isBoardDirty: boolean = true;
   private isFxActive: boolean = false;
   private animatingUntil: number = 0;
+  private isLoopScheduled: boolean = false;
+  private loopBound: ((timestamp: number) => void) | null = null;
   public isInputLocked: boolean = false;
   private pendingTilesInFlight: number = 0;
   private lastClickTime: number = 0;
@@ -94,13 +96,21 @@ export class BoardRenderer {
     return this.synergyAnimator;
   }
 
+  public wakeLoop(): void {
+    if (this.isLoopScheduled || !this.isRunning || this.isPaused || !this.loopBound) return;
+    this.isLoopScheduled = true;
+    requestAnimationFrame(this.loopBound);
+  }
+
   public requestRender(): void {
     this.isBoardDirty = true;
     this.sortedTilesCache = null;
+    this.wakeLoop();
   }
 
   public triggerAnimation(durationMs: number = 4000): void {
     this.animatingUntil = Math.max(this.animatingUntil, performance.now() + durationMs);
+    this.wakeLoop();
   }
 
   public keepAnimating(durationMs: number): void {
@@ -162,6 +172,7 @@ export class BoardRenderer {
 
   public pause(): void {
     this.isPaused = true;
+    this.isLoopScheduled = false;
   }
 
   public resume(): void {
@@ -178,6 +189,7 @@ export class BoardRenderer {
 
   public destroy(): void {
     this.isRunning = false;
+    this.isLoopScheduled = false;
   }
 
   public handleResize(): void {
@@ -252,40 +264,37 @@ export class BoardRenderer {
   }
 
   private startLoop(): void {
-    const loop = (timestamp: number) => {
-      if (!this.isRunning) return;
-
-      if (this.isPaused) {
-        requestAnimationFrame(loop);
-        return;
-      }
+    this.loopBound = (timestamp: number) => {
+      this.isLoopScheduled = false;
+      if (!this.isRunning || this.isPaused) return;
 
       this.animTime = timestamp;
 
-      let hasHinted = false;
-      let hasSelected = false;
-      let hasChameleon = false;
-      const tiles = this.engine.getTiles();
-      const nTiles = tiles.length;
-      for (let i = 0; i < nTiles; i++) {
-        const t = tiles[i];
-        if (t.isRemoved) continue;
-        if (t.isHinted) hasHinted = true;
-        if (t.isSelected) hasSelected = true;
-        if (t.value === 'chameleon') hasChameleon = true;
-        if (hasHinted && hasSelected && hasChameleon) break;
-      }
-
       const isShuffling = this.animator.isShuffling(timestamp);
       const isDealing = this.animator.isDealing(timestamp);
+      const isTimeAnimating = timestamp < this.animatingUntil;
 
-      if (this.isBoardDirty || hasHinted || hasSelected || hasChameleon || isShuffling || isDealing) {
+      // Animação de salto da dica apenas durante o tempo ativo da dica
+      let hasActiveHint = false;
+      if (isTimeAnimating) {
+        const tiles = this.engine.getTiles();
+        const nTiles = tiles.length;
+        for (let i = 0; i < nTiles; i++) {
+          const t = tiles[i];
+          if (!t.isRemoved && t.isHinted) {
+            hasActiveHint = true;
+            break;
+          }
+        }
+      }
+
+      if (this.isBoardDirty || hasActiveHint || isShuffling || isDealing) {
         this.isBoardDirty = false;
         this.renderBoard();
       }
 
       const isFxAnimating =
-        timestamp < this.animatingUntil ||
+        isTimeAnimating ||
         this.fx.hasActiveEffects(isShuffling) ||
         this.synergyAnimator.hasActiveAnimations();
 
@@ -297,9 +306,21 @@ export class BoardRenderer {
         this.isFxActive = false;
       }
 
-      requestAnimationFrame(loop);
+      const shouldContinue =
+        this.isBoardDirty ||
+        isShuffling ||
+        isDealing ||
+        hasActiveHint ||
+        isFxAnimating ||
+        isTimeAnimating;
+
+      if (shouldContinue) {
+        this.isLoopScheduled = true;
+        requestAnimationFrame(this.loopBound!);
+      }
     };
-    requestAnimationFrame(loop);
+
+    this.wakeLoop();
   }
 
   private renderBoard(): void {
@@ -344,7 +365,7 @@ export class BoardRenderer {
       const isFree = freeTileIds.has(tile.id);
 
       let animOffset = 0;
-      if (tile.isHinted) {
+      if (tile.isHinted && this.animTime < this.animatingUntil) {
         animOffset = Math.sin(this.animTime / 180) * 3;
       }
 
@@ -1728,7 +1749,7 @@ export class BoardRenderer {
         targetTile,
         onSceneComplete
       );
-      this.isBoardDirty = true;
+      this.requestRender();
     } else if (synergy.type === 'cat_paw') {
       this.isInputLocked = true;
 
@@ -1750,7 +1771,7 @@ export class BoardRenderer {
       }
 
       this.synergyAnimator.triggerCatPaw(targetX, targetY, onSceneComplete);
-      this.isBoardDirty = true;
+      this.requestRender();
     } else if (synergy.type === 'bear_feast') {
       this.isInputLocked = true;
 
@@ -1772,7 +1793,7 @@ export class BoardRenderer {
       }
 
       this.synergyAnimator.triggerBearClaw(targetX, targetY, onSceneComplete);
-      this.isBoardDirty = true;
+      this.requestRender();
     } else if (synergy.type === 'dolphin_sonar') {
       this.isInputLocked = true;
 
@@ -1794,7 +1815,7 @@ export class BoardRenderer {
       }
 
       this.synergyAnimator.triggerDolphinSonar(startX, startY, targetX, targetY, onSceneComplete);
-      this.isBoardDirty = true;
+      this.requestRender();
     } else if (synergy.type === 'bee_honey') {
       this.isInputLocked = true;
       const coords = this.getTileScreenCoords(initiatorTile || matchedPair?.[0]!);
@@ -1805,7 +1826,7 @@ export class BoardRenderer {
       const targetX = targetCoords.x + targetCoords.width / 2;
       const targetY = targetCoords.y + targetCoords.height / 2;
       this.synergyAnimator.triggerBeeSwarm(startX, startY, targetX, targetY, onSceneComplete);
-      this.isBoardDirty = true;
+      this.requestRender();
     } else if (synergy.type === 'monkey_banana') {
       this.isInputLocked = true;
       const coords = this.getTileScreenCoords(initiatorTile || matchedPair?.[0]!);
@@ -1814,7 +1835,7 @@ export class BoardRenderer {
       const targetX = this.canvas.width / (2 * this.camera.dpr);
       const targetY = this.canvas.height / (2 * this.camera.dpr);
       this.synergyAnimator.triggerMonkeyJump(startX, startY, targetX, targetY, onSceneComplete);
-      this.isBoardDirty = true;
+      this.requestRender();
     } else if (synergy.type === 'penguin_slide') {
       this.isInputLocked = true;
       const coords = this.getTileScreenCoords(initiatorTile || matchedPair?.[0]!);
@@ -1825,21 +1846,21 @@ export class BoardRenderer {
       const targetX = targetCoords.x + targetCoords.width / 2;
       const targetY = targetCoords.y + targetCoords.height / 2;
       this.synergyAnimator.triggerPenguinSlide(startX, startY, targetX, targetY, onSceneComplete);
-      this.isBoardDirty = true;
+      this.requestRender();
     } else if (synergy.type === 'panda_zen') {
       this.isInputLocked = true;
       const coords = this.getTileScreenCoords(initiatorTile || matchedPair?.[0]!);
       const targetX = coords.x + coords.width / 2;
       const targetY = coords.y + coords.height / 2;
       this.synergyAnimator.triggerPandaZen(targetX, targetY, onSceneComplete);
-      this.isBoardDirty = true;
+      this.requestRender();
     } else if (synergy.type === 'elephant_crush') {
       this.isInputLocked = true;
       const coords = this.getTileScreenCoords(initiatorTile || matchedPair?.[0]!);
       const targetX = coords.x + coords.width / 2;
       const targetY = coords.y + coords.height / 2;
       this.synergyAnimator.triggerElephantCrush(targetX, targetY, onSceneComplete);
-      this.isBoardDirty = true;
+      this.requestRender();
     } else {
       let theme: import('./SynergyAnimator').SynergyTheme = 'zen';
       if (synergy.type === 'squirrel_acorn') theme = 'nut';
@@ -1869,7 +1890,7 @@ export class BoardRenderer {
       this.isInputLocked = true;
       this.synergyAnimator.triggerMicroBurst(targetX, targetY, theme, onSceneComplete);
       this.keepAnimating(450);
-      this.isBoardDirty = true;
+      this.requestRender();
     }
   }
 
@@ -1880,6 +1901,6 @@ export class BoardRenderer {
       this.engine.getTiles().forEach((t) => (t.isHinted = false));
       this.requestRender();
     });
-    this.isBoardDirty = true;
+    this.requestRender();
   }
 }

@@ -400,25 +400,10 @@ export class FXParticleSystem {
 
   public triggerVictoryCelebration(): void {
     confetti({
-      particleCount: 80,
-      spread: 70,
+      particleCount: 45,
+      spread: 60,
       origin: { y: 0.6 },
       colors: ['#F59E0B', '#10B981', '#3B82F6', '#EF4444', '#EC4899'],
     });
-
-    setTimeout(() => {
-      confetti({
-        particleCount: 50,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0 },
-      });
-      confetti({
-        particleCount: 50,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1 },
-      });
-    }, 250);
   }
 }

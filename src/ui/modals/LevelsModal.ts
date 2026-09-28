@@ -232,10 +232,18 @@ export class LevelsModal {
         mainEl.setAttribute('class', 'map-path-unlocked');
         mapSvg.appendChild(mainEl);
 
-        const flowEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        flowEl.setAttribute('d', pathData);
-        flowEl.setAttribute('class', 'map-path-flow');
-        mapSvg.appendChild(flowEl);
+        // O feixe de partículas ativas foca no caminho que conduz à fase atual
+        const isLeadingToCurrent =
+          p2.isCurrent ||
+          p1.isCurrent ||
+          (p2.idx !== undefined && Math.abs(p2.idx - currentLevelIndex) <= 1);
+
+        if (isLeadingToCurrent) {
+          const flowEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          flowEl.setAttribute('d', pathData);
+          flowEl.setAttribute('class', 'map-path-flow');
+          mapSvg.appendChild(flowEl);
+        }
       } else {
         const lockedEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         lockedEl.setAttribute('d', pathData);
@@ -250,9 +258,10 @@ export class LevelsModal {
       const idx = pt.idx!;
       const stats = StorageManager.getLevelStats(layout.id);
       const isCompleted = stats.completed;
+      const biomeIdx = Math.floor(idx / 5) + 1;
 
       const node = document.createElement('div');
-      node.className = `atom-node${pt.isCurrent ? ' current' : ''}${isCompleted ? ' completed' : ''}${!pt.isUnlocked ? ' locked' : ''}`;
+      node.className = `atom-node biome-node-${biomeIdx}${pt.isCurrent ? ' current' : ''}${isCompleted ? ' completed' : ''}${!pt.isUnlocked ? ' locked' : ''}`;
       node.style.left = `${pt.x}px`;
       node.style.top = `${pt.y}px`;
 

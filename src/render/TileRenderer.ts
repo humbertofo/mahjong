@@ -457,16 +457,7 @@ export class TileRenderer {
     if (syn) {
       if (syn.borderColor === 'rainbow') {
         if (isFree || !this.dimBlockedTiles) {
-          const cycle = animTime > 0 ? (animTime / 1400) % 1 : 0;
-          const angle = cycle * Math.PI * 2;
-          const cosA = Math.cos(angle);
-          const sinA = Math.sin(angle);
-          const grad = ctx.createLinearGradient(
-            x + faceW * (0.5 - cosA * 0.5),
-            y + faceH * (0.5 - sinA * 0.5),
-            x + faceW * (0.5 + cosA * 0.5),
-            y + faceH * (0.5 + sinA * 0.5)
-          );
+          const grad = ctx.createLinearGradient(x, y, x + faceW, y + faceH);
           grad.addColorStop(0, '#FFD700');
           grad.addColorStop(0.33, '#00E676');
           grad.addColorStop(0.66, '#00B0FF');
@@ -491,15 +482,15 @@ export class TileRenderer {
       ctx.stroke();
     }
 
-    // 6. SELECIONADA — BORDA DOURADA BRILHANTE COM PULSO DE RESPIRAÇÃO
+    // 6. SELECIONADA — BORDA DOURADA BRILHANTE COM CONTORNO NÍTIDO
     if (tile.isSelected) {
-      const pulse = animTime > 0 ? Math.sin(animTime / 180) * 1.2 : 0;
-      ctx.lineWidth = 3.6 + pulse;
+      const pulse = animTime > 0 ? Math.sin(animTime / 180) * 0.8 : 0;
+      ctx.lineWidth = 3.8 + Math.max(0, pulse);
       ctx.strokeStyle = '#F59E0B';
       this.drawRoundedRect(ctx, x - 1, y - 1, faceW + 2, faceH + 2, 9);
       ctx.stroke();
-      ctx.lineWidth = 1.2 + Math.max(0, pulse * 0.6);
-      ctx.strokeStyle = `rgba(255, 215, 0, ${0.45 + pulse * 0.15})`;
+      ctx.lineWidth = 1.4 + Math.max(0, pulse * 0.5);
+      ctx.strokeStyle = `rgba(255, 215, 0, ${0.45 + Math.max(0, pulse * 0.15)})`;
       this.drawRoundedRect(ctx, x - 3, y - 3, faceW + 6, faceH + 6, 11);
       ctx.stroke();
     }

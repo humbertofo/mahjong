@@ -629,6 +629,20 @@ export class UIManager {
     this.renderer.resume();
   }
 
+  public handleAppVisibility(isVisible: boolean): void {
+    if (!isVisible) {
+      soundManager.suspend();
+      this.hud.pauseTimer();
+      this.renderer.pause();
+    } else {
+      soundManager.resume();
+      if (!this.screenGame.classList.contains('hidden')) {
+        this.hud.resumeTimer();
+        this.renderer.resume();
+      }
+    }
+  }
+
   /**
    * Finaliza a exibição do briefing da fase e abre as cortinas de folhagem suavemente.
    */
