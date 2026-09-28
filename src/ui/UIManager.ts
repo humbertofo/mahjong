@@ -1157,8 +1157,6 @@ export class UIManager {
       levelStats,
       this.currentLevelIndex
     );
-    soundManager.playVictoryFanfare?.();
-    hapticManager.impactVictory?.();
   }
 
   public recordMatchedPair(pair?: [PlacedTile, PlacedTile]): void {

@@ -11,7 +11,6 @@ import { FXParticleSystem } from './FXParticleSystem';
 import { soundManager } from '../audio/SoundManager';
 import { hapticManager } from '../audio/HapticManager';
 import { diagnosticLogger } from '../core/DiagnosticLogger';
-import confetti from 'canvas-confetti';
 
 export interface BoardRendererCallbacks {
   onTileClick?: (tile: PlacedTile, isFree: boolean) => void;
@@ -1500,6 +1499,7 @@ export class BoardRenderer {
     const { tileWidth, tileHeight } = this.camera.getTileDimensions();
     const hit = this.camera.getTileAtScreenPos(px, py, this.engine.getActiveBoardTiles());
     if (!hit) {
+      diagnosticLogger.recordTouchMiss();
       if (this.engine.isWaveCleared() && this.engine.hasMoreWaves()) {
         if (this.callbacks.onWaveCleared) {
           this.callbacks.onWaveCleared(this.engine.getCurrentWave(), this.engine.getTotalWaves());
@@ -1512,6 +1512,7 @@ export class BoardRenderer {
     const clickTileScreenX = hit.sx;
     const clickTileScreenY = hit.sy;
     const isFree = this.engine.isTileFree(clickedTile);
+    diagnosticLogger.recordTouch(isFree);
 
     if (this.callbacks.onTileClick) {
       this.callbacks.onTileClick(clickedTile, isFree);
@@ -1704,20 +1705,11 @@ export class BoardRenderer {
         if (this.engine.isVictory()) {
           soundManager.playVictoryFanfare();
           hapticManager.impactVictory();
-          this.fx.triggerVictoryCelebration();
-
           if (this.callbacks.onBoardCleared) {
             this.callbacks.onBoardCleared();
           }
         } else if (result.waveCleared && this.engine.hasMoreWaves()) {
           soundManager.playWaveSuccess();
-          confetti({
-            particleCount: 40,
-            spread: 55,
-            origin: { y: 0.6 },
-            colors: ['#10B981', '#F59E0B', '#3B82F6', '#EC4899'],
-          });
-
           if (this.callbacks.onWaveCleared) {
             this.callbacks.onWaveCleared(this.engine.getCurrentWave(), this.engine.getTotalWaves());
           }
@@ -1737,18 +1729,11 @@ export class BoardRenderer {
       if (this.engine.isVictory()) {
         soundManager.playVictoryFanfare();
         hapticManager.impactVictory();
-        this.fx.triggerVictoryCelebration();
         if (this.callbacks.onBoardCleared) {
           this.callbacks.onBoardCleared();
         }
       } else if (result.waveCleared && this.engine.hasMoreWaves()) {
         soundManager.playMatchSuccess();
-        confetti({
-          particleCount: 40,
-          spread: 55,
-          origin: { y: 0.6 },
-          colors: ['#10B981', '#F59E0B', '#3B82F6', '#EC4899'],
-        });
         if (this.callbacks.onWaveCleared) {
           this.callbacks.onWaveCleared(this.engine.getCurrentWave(), this.engine.getTotalWaves());
         }
@@ -1830,18 +1815,11 @@ export class BoardRenderer {
       if (this.engine.isVictory()) {
         soundManager.playVictoryFanfare();
         hapticManager.impactVictory();
-        this.fx.triggerVictoryCelebration();
         if (this.callbacks.onBoardCleared) {
           this.callbacks.onBoardCleared();
         }
       } else if (result.waveCleared && this.engine.hasMoreWaves()) {
         soundManager.playWaveSuccess();
-        confetti({
-          particleCount: 50,
-          spread: 60,
-          origin: { y: 0.6 },
-          colors: ['#F59E0B', '#10B981', '#38BDF8'],
-        });
         if (this.callbacks.onWaveCleared) {
           this.callbacks.onWaveCleared(this.engine.getCurrentWave(), this.engine.getTotalWaves());
         }
@@ -1897,18 +1875,11 @@ export class BoardRenderer {
       if (this.engine.isVictory()) {
         soundManager.playVictoryFanfare();
         hapticManager.impactVictory();
-        this.fx.triggerVictoryCelebration();
         if (this.callbacks.onBoardCleared) {
           this.callbacks.onBoardCleared();
         }
       } else if (this.engine.isWaveCleared() && this.engine.hasMoreWaves()) {
         soundManager.playWaveSuccess();
-        confetti({
-          particleCount: 40,
-          spread: 55,
-          origin: { y: 0.6 },
-          colors: ['#10B981', '#F59E0B', '#3B82F6', '#EC4899'],
-        });
         if (this.callbacks.onWaveCleared) {
           this.callbacks.onWaveCleared(this.engine.getCurrentWave(), this.engine.getTotalWaves());
         }

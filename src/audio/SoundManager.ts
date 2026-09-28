@@ -1696,6 +1696,19 @@ export class SoundManager {
     noise.start(time);
     noise.stop(time + duration);
   }
+
+  public getDiagnostics(): Record<string, any> {
+    return {
+      state: this.ctx ? this.ctx.state : 'uninitialized',
+      sampleRate: this.ctx ? this.ctx.sampleRate : null,
+      baseLatencyMs: this.ctx && 'baseLatency' in this.ctx ? Number(((this.ctx as any).baseLatency * 1000).toFixed(2)) : null,
+      outputLatencyMs: this.ctx && 'outputLatency' in this.ctx ? Number(((this.ctx as any).outputLatency * 1000).toFixed(2)) : null,
+      isMuted: this.isMuted,
+      musicEnabled: this.musicEnabled,
+      clackBuffersCount: this.clackBuffers.size,
+      matchBuffersCount: this.matchBuffers.size,
+    };
+  }
 }
 
 export const soundManager = new SoundManager();

@@ -89,39 +89,22 @@ export class GameEndModals {
   }
 
   public static launchVictoryConfetti(): void {
-    const fire = (x: number, angle: number) => {
-      confetti({
-        particleCount: 22,
-        angle,
-        spread: 55,
-        origin: { x, y: 0.65 },
-        colors: ['#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF', '#FF8FD8'],
-        disableForReducedMotion: true,
-      });
-    };
-
-    // Salva 1: explosão imediata das duas laterais
-    fire(0.05, 60);
-    fire(0.95, 120);
-
-    // Salva 2: explosão dourada central aos 220ms para impacto de fechamento
-    setTimeout(() => {
-      confetti({
-        particleCount: 28,
-        spread: 70,
-        origin: { x: 0.5, y: 0.55 },
-        colors: ['#F59E0B', '#10B981', '#3B82F6', '#EC4899', '#FEF08A'],
-        disableForReducedMotion: true,
-      });
-    }, 220);
+    confetti({
+      particleCount: 30,
+      spread: 70,
+      origin: { x: 0.5, y: 0.6 },
+      colors: ['#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF', '#FF8FD8', '#F59E0B'],
+      disableForReducedMotion: true,
+    });
   }
 
   public static launchWaveConfetti(): void {
     confetti({
-      particleCount: 28,
-      spread: 70,
+      particleCount: 20,
+      spread: 55,
       origin: { y: 0.45 },
-      colors: ['#F472B6', '#FBBF24', '#34D399', '#60A5FA', '#FBCFE8'],
+      colors: ['#F472B6', '#FBBF24', '#34D399', '#60A5FA'],
+      disableForReducedMotion: true,
     });
   }
 

@@ -1,5 +1,8 @@
+import { soundManager } from '../audio/SoundManager';
+
 export interface FrameSample {
   timestamp: number;
+  deltaMs: number; // Intervalo VSYNC desde o último quadro renderizado
   boardMs: number;
   fxMs: number;
   totalMs: number;
@@ -45,10 +48,91 @@ export class DiagnosticLogger {
 
   private isEnabled: boolean = true;
   private performanceObserver: PerformanceObserver | null = null;
+  private batteryInfo: { levelPct: number; charging: boolean } | null = null;
+  private lastFrameTimestamp: number = 0;
+  private storageInfo: { usageMB: number; quotaMB: number; persisted: boolean } | null = null;
+  private lifecycleStats = {
+    hiddenCount: 0,
+    totalBackgroundMs: 0,
+    lastHiddenAt: 0,
+    wasDiscarded: false,
+  };
+  private touchStats = {
+    totalTaps: 0,
+    freeTileTaps: 0,
+    blockedTileTaps: 0,
+    missTaps: 0,
+  };
 
   private constructor() {
     this.initErrorInterception();
     this.initLongTaskObserver();
+    this.initBatteryMonitoring();
+    this.initStorageMonitoring();
+    this.initLifecycleMonitoring();
+  }
+
+  private initBatteryMonitoring(): void {
+    if (typeof navigator !== 'undefined' && 'getBattery' in navigator) {
+      (navigator as any).getBattery?.().then((b: any) => {
+        const update = () => {
+          this.batteryInfo = {
+            levelPct: Math.round(b.level * 100),
+            charging: b.charging,
+          };
+        };
+        update();
+        b.addEventListener('levelchange', update);
+        b.addEventListener('chargingchange', update);
+      }).catch(() => {});
+    }
+  }
+
+  private initStorageMonitoring(): void {
+    if (typeof navigator !== 'undefined' && navigator.storage?.estimate) {
+      Promise.all([
+        navigator.storage.estimate().catch(() => null),
+        navigator.storage.persisted ? navigator.storage.persisted().catch(() => false) : Promise.resolve(false),
+      ]).then(([est, persisted]) => {
+        if (est) {
+          this.storageInfo = {
+            usageMB: est.usage ? Number((est.usage / 1048576).toFixed(2)) : 0,
+            quotaMB: est.quota ? Number((est.quota / 1048576).toFixed(2)) : 0,
+            persisted: !!persisted,
+          };
+        }
+      }).catch(() => {});
+    }
+  }
+
+  private initLifecycleMonitoring(): void {
+    if (typeof document === 'undefined') return;
+
+    this.lifecycleStats.wasDiscarded = (document as any).wasDiscarded || false;
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        this.lifecycleStats.hiddenCount++;
+        this.lifecycleStats.lastHiddenAt = performance.now();
+      } else if (this.lifecycleStats.lastHiddenAt > 0) {
+        this.lifecycleStats.totalBackgroundMs += Math.round(performance.now() - this.lifecycleStats.lastHiddenAt);
+        this.lifecycleStats.lastHiddenAt = 0;
+      }
+    });
+  }
+
+  public recordTouch(isFree: boolean): void {
+    this.touchStats.totalTaps++;
+    if (isFree) {
+      this.touchStats.freeTileTaps++;
+    } else {
+      this.touchStats.blockedTileTaps++;
+    }
+  }
+
+  public recordTouchMiss(): void {
+    this.touchStats.totalTaps++;
+    this.touchStats.missTaps++;
   }
 
   public static getInstance(): DiagnosticLogger {
@@ -98,12 +182,17 @@ export class DiagnosticLogger {
   }): void {
     if (!this.isEnabled) return;
 
+    const now = performance.now();
+    const deltaMs = this.lastFrameTimestamp > 0 ? Number((now - this.lastFrameTimestamp).toFixed(2)) : 16.67;
+    this.lastFrameTimestamp = now;
+
     const totalMs = sample.boardMs + sample.fxMs;
     const isSlow = totalMs > 16.6;
     const isJanky = totalMs > 33.3;
 
     const entry: FrameSample = {
-      timestamp: Math.round(performance.now()),
+      timestamp: Math.round(now),
+      deltaMs,
       boardMs: Number(sample.boardMs.toFixed(2)),
       fxMs: Number(sample.fxMs.toFixed(2)),
       totalMs: Number(totalMs.toFixed(2)),
@@ -172,6 +261,7 @@ export class DiagnosticLogger {
     jankyFrames: number;
     jankyFramesPct: number;
     longTasksCount: number;
+    estimatedRefreshRateHz: number;
   } {
     const frames = this.frameBuffer;
     const count = frames.length;
@@ -186,6 +276,7 @@ export class DiagnosticLogger {
         jankyFrames: 0,
         jankyFramesPct: 0,
         longTasksCount: this.longTaskBuffer.length,
+        estimatedRefreshRateHz: 60,
       };
     }
 
@@ -218,7 +309,49 @@ export class DiagnosticLogger {
       jankyFrames: janky,
       jankyFramesPct: Number(((janky / count) * 100).toFixed(1)),
       longTasksCount: this.longTaskBuffer.length,
+      estimatedRefreshRateHz: this.estimateDisplayRefreshRate(),
     };
+  }
+
+  private estimateDisplayRefreshRate(): number {
+    const frames = this.frameBuffer;
+    if (frames.length < 10) return 60;
+    const intervals: number[] = [];
+    for (let i = 1; i < frames.length; i++) {
+      const dt = frames[i].timestamp - frames[i - 1].timestamp;
+      if (dt > 4 && dt < 45) {
+        intervals.push(dt);
+      }
+    }
+    if (intervals.length < 8) return 60;
+    intervals.sort((a, b) => a - b);
+    const median = intervals[Math.floor(intervals.length / 2)];
+    if (median <= 9.5) return 120;
+    if (median <= 13) return 90;
+    return 60;
+  }
+
+  private getGpuDiagnostics(): Record<string, any> {
+    if (typeof document === 'undefined') return { supported: false };
+    try {
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || (canvas.getContext('experimental-webgl') as WebGLRenderingContext | null);
+      if (!gl) return { supported: false, reason: 'webgl_not_available' };
+      const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+      const unmaskedRenderer = debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : null;
+      const unmaskedVendor = debugInfo ? gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) : null;
+      const maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+      const renderer = gl.getParameter(gl.RENDERER);
+      const vendor = gl.getParameter(gl.VENDOR);
+      return {
+        supported: true,
+        unmaskedRenderer: unmaskedRenderer || renderer || 'unknown',
+        unmaskedVendor: unmaskedVendor || vendor || 'unknown',
+        maxTextureSize: maxTextureSize || 0,
+      };
+    } catch (e: any) {
+      return { supported: false, error: e?.message || 'probe_failed' };
+    }
   }
 
   public getDeviceMetadata(): Record<string, any> {
@@ -228,6 +361,7 @@ export class DiagnosticLogger {
     const fxCanvas = document.getElementById('fx-canvas') as HTMLCanvasElement | null;
 
     const perfMem = (performance as any)?.memory;
+    const nav = navigator as any;
 
     return {
       userAgent: navigator.userAgent,
@@ -239,6 +373,7 @@ export class DiagnosticLogger {
         availWidth: window.screen.availWidth,
         availHeight: window.screen.availHeight,
       },
+      screenOrientation: window.screen?.orientation?.type || 'unknown',
       viewport: {
         innerWidth: window.innerWidth,
         innerHeight: window.innerHeight,
@@ -259,7 +394,23 @@ export class DiagnosticLogger {
             clientHeight: fxCanvas.clientHeight,
           }
         : null,
+      gpu: this.getGpuDiagnostics(),
+      audio: soundManager.getDiagnostics(),
       hardwareConcurrency: navigator.hardwareConcurrency || 'unknown',
+      deviceMemoryGB: nav?.deviceMemory || 'unknown',
+      battery: this.batteryInfo || 'unavailable',
+      storage: this.storageInfo || 'unavailable',
+      lifecycle: {
+        hiddenCount: this.lifecycleStats.hiddenCount,
+        totalBackgroundMs: this.lifecycleStats.totalBackgroundMs,
+        wasDiscarded: this.lifecycleStats.wasDiscarded,
+      },
+      network: {
+        online: typeof navigator !== 'undefined' ? navigator.onLine : true,
+        effectiveType: nav?.connection?.effectiveType || 'unknown',
+        saveData: nav?.connection?.saveData || false,
+      },
+      touchErgonomics: this.touchStats,
       jsHeap: perfMem
         ? {
             usedMB: Number((perfMem.usedJSHeapSize / 1048576).toFixed(2)),

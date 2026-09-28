@@ -1,5 +1,4 @@
 import { ClimateType, PlacedTile } from '../core/types';
-import confetti from 'canvas-confetti';
 
 export interface ClimateParticle {
   x: number;
@@ -603,11 +602,6 @@ export class FXParticleSystem {
   }
 
   public triggerVictoryCelebration(): void {
-    confetti({
-      particleCount: 45,
-      spread: 60,
-      origin: { y: 0.6 },
-      colors: ['#F59E0B', '#10B981', '#3B82F6', '#EF4444', '#EC4899'],
-    });
+    // Unificado: a celebração com partículas agora é orquestrada centralmente pelo GameEndModals
   }
 }
