@@ -3,6 +3,7 @@ import { BoardRenderer } from './render/BoardRenderer';
 import { UIManager } from './ui/UIManager';
 import { garden36Layout } from './core/layouts/garden36';
 import { LiveUpdateManager } from './core/LiveUpdateManager';
+import { Capacitor } from '@capacitor/core';
 import { App } from '@capacitor/app';
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -145,17 +146,19 @@ window.addEventListener('DOMContentLoaded', () => {
     e?.preventDefault();
     const handled = uiManager?.handleHardwareBack() ?? false;
     if (!handled) {
-      App.exitApp().catch(() => {});
+      if (Capacitor.isPluginAvailable('App')) {
+        App.exitApp().catch(() => {});
+      }
     }
   };
 
-  try {
+  if (Capacitor.isPluginAvailable('App')) {
     App.addListener('backButton', () => {
       onBackButton();
     }).catch(() => {
       document.addEventListener('backbutton', onBackButton);
     });
-  } catch {
+  } else {
     document.addEventListener('backbutton', onBackButton);
   }
 });

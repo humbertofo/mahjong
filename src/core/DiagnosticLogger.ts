@@ -280,6 +280,10 @@ export class DiagnosticLogger {
       app: 'Mahjong Solitaire Offline',
       version: '1.0.1',
       reportGeneratedAt: new Date().toISOString(),
+      telemetryHint:
+        this.frameBuffer.length === 0
+          ? 'Nenhum frame de partida gravado ainda. Para coletar métricas de animação (deal, shuffle, sinergias e eliminação de pares), inicie uma fase, faça algumas jogadas e abra as configurações.'
+          : `Coleta ativa: ${this.frameBuffer.length} quadros analisados.`,
       device: this.getDeviceMetadata(),
       performanceSummary: this.getPerformanceStats(),
       longTasks: this.longTaskBuffer,

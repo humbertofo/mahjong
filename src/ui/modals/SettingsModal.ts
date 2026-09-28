@@ -82,6 +82,12 @@ export class SettingsModal {
           </div>
         </div>
 
+        ${stats.totalFrames === 0 ? `
+          <div class="diag-stat-hint">
+            💡 <em>Inicie qualquer fase e faça algumas jogadas para capturar o tempo real de desenho das peças e animações.</em>
+          </div>
+        ` : ''}
+
         <div class="diag-actions-row">
           <button id="btn-share-diag-logs" class="btn-diag-primary" type="button">
             <span class="diag-btn-icon">📤</span>
