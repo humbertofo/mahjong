@@ -12,6 +12,7 @@ import {
   TileMutationRecord,
   TileSpecialType,
   LevelRuleDefinition,
+  AnimalValue,
 } from './types';
 import { canMatch } from './deck';
 import { getLevelRules } from './levelRules';
@@ -20,11 +21,12 @@ import { SynergyDirector, ANIMAL_BIOMES } from './engine/SynergyDirector';
 import { TrayController, UndoResult } from './engine/TrayController';
 import { ZenPowerManager } from './engine/ZenPowerManager';
 import { LevelDeckCurator } from './nature/LevelDeckCurator';
+import { SpecialTileRules } from './nature/specialTiles/SpecialTileRules';
 
 export type { UndoResult };
 
 export interface TileSelectionResult {
-  action: 'added' | 'matched' | 'tray_full' | 'invalid' | 'special_action';
+  action: 'added' | 'matched' | 'tray_full' | 'invalid' | 'special_action' | 'trio_matched';
   specialEffect?: 'ice_cracked' | 'rock_crushed' | 'vines_cut' | 'cocoon_hatched';
   matchedPair?: [PlacedTile, PlacedTile];
   tile?: PlacedTile;
@@ -37,6 +39,9 @@ export interface TileSelectionResult {
   waveInfo?: WaveInfo;
   mutations?: TileMutationRecord[];
   vinesCutCount?: number;
+  trioCandidateSpecies?: AnimalValue | null;
+  isTrioMatch?: boolean;
+  trioTile?: PlacedTile;
 }
 
 /**
@@ -67,6 +72,13 @@ export class BoardEngine {
   private consecutiveMatchesStreak: number = 0;
   private harmonyScore: number = 0;
   private levelRules: LevelRuleDefinition;
+
+  // Trinca Sagrada Zen (candidata a trio na próxima jogada)
+  private lastMatchedSpecies: { value: AnimalValue; biome: TileBiome } | null = null;
+
+  public getActiveTrioCandidate(): AnimalValue | null {
+    return this.lastMatchedSpecies ? this.lastMatchedSpecies.value : null;
+  }
 
   constructor(layout: BoardLayout, levelIndex?: number) {
     this.layout = layout;
@@ -198,6 +210,7 @@ export class BoardEngine {
     });
     this.trayController.clearTray();
     this.history = [];
+    this.lastMatchedSpecies = null;
 
     this.generateCurrentWave();
     return true;
@@ -300,6 +313,78 @@ export class BoardEngine {
       };
     }
 
+    // ─── Trinca Sagrada Zen (3ª Peça da Mesma Espécie) ──────────────────
+    if (this.lastMatchedSpecies && tile.value === this.lastMatchedSpecies.value) {
+      tile.isRemoved = true;
+      tile.inTray = false;
+      tile.isSelected = false;
+      tile.isHinted = false;
+      this.invalidateCache();
+
+      const mutations: TileMutationRecord[] = [];
+      const fourthTile = this.tiles.find(
+        (t) => !t.isRemoved && t.id !== tile.id && t.value === tile.value
+      );
+      if (fourthTile) {
+        const mut = SpecialTileRules.transmuteToChameleon(fourthTile, () => this.invalidateCache());
+        mutations.push(mut);
+      }
+
+      this.consecutiveMatchesStreak++;
+      const climateTriggered = SynergyDirector.evaluateClimate(
+        tile,
+        this.recentBiomeMatches,
+        this.getTray(),
+        this.consecutiveMatchesStreak,
+        () => this.getActiveBoardTiles(),
+        () => this.getHintPair(),
+        () => this.getFreeTiles(),
+        (pts) => { this.harmonyScore += pts; },
+        true
+      );
+
+      const pointsAwarded = 500;
+      this.harmonyScore += pointsAwarded;
+
+      const secondaryRemovedTiles: PlacedTile[] = [];
+      if (climateTriggered?.affectedBoardTiles) secondaryRemovedTiles.push(...climateTriggered.affectedBoardTiles);
+      if (climateTriggered?.eliminatedBoardPairs) secondaryRemovedTiles.push(...climateTriggered.eliminatedBoardPairs);
+      if (climateTriggered?.mutations) mutations.push(...climateTriggered.mutations);
+
+      this.history.push({
+        actionType: 'trio_match',
+        trioTile: tile,
+        pointsAwarded,
+        secondaryRemovedTiles: secondaryRemovedTiles.length > 0 ? secondaryRemovedTiles : undefined,
+        mutations: mutations.length > 0 ? mutations : undefined,
+        rechargedTool: climateTriggered?.rechargedTool,
+      });
+
+      this.lastMatchedSpecies = null;
+
+      let cosmicRescue: PlacedTile[] | undefined;
+      const rescued = this.checkAndResolveCosmicRescue();
+      if (rescued && rescued.length > 0) cosmicRescue = rescued;
+      const waveCleared = this.isWaveCleared();
+
+      return {
+        action: 'trio_matched',
+        isTrioMatch: true,
+        trioTile: tile,
+        tile,
+        tray: [...this.getTray()],
+        climateTriggered: climateTriggered || undefined,
+        cosmicRescue,
+        waveCleared,
+        waveInfo: this.getWaveInfo(),
+        mutations: mutations.length > 0 ? mutations : undefined,
+        trioCandidateSpecies: null,
+      };
+    }
+
+    // Se o jogador tocou em outra espécie, reseta o candidato a Trinca
+    this.lastMatchedSpecies = null;
+
     if (this.getTray().length >= this.getMaxTraySlots()) {
       return { action: 'tray_full', tray: [...this.getTray()], isTrayFullWarning: true };
     }
@@ -392,7 +477,8 @@ export class BoardEngine {
         () => this.getActiveBoardTiles(),
         () => this.getHintPair(),
         () => this.getFreeTiles(),
-        (pts) => { this.harmonyScore += pts; }
+        (pts) => { this.harmonyScore += pts; },
+        false
       );
 
       // Baú da Fortuna 🎁
@@ -490,6 +576,9 @@ export class BoardEngine {
 
       const waveCleared = this.isWaveCleared();
 
+      // Consagra a espécie como candidata à Trinca Sagrada na próxima jogada
+      this.lastMatchedSpecies = { value: match1.value, biome };
+
       return {
         action: 'matched',
         matchedPair: [match1, match2],
@@ -501,6 +590,7 @@ export class BoardEngine {
         waveInfo: this.getWaveInfo(),
         mutations: mutations.length > 0 ? mutations : undefined,
         vinesCutCount: vinesCutCount > 0 ? vinesCutCount : undefined,
+        trioCandidateSpecies: match1.value,
       };
     }
 
@@ -519,6 +609,8 @@ export class BoardEngine {
     const isFull = this.getTray().length >= this.getMaxTraySlots();
     const waveCleared = this.isWaveCleared();
 
+    this.lastMatchedSpecies = null;
+
     return {
       action: 'added',
       tile,
@@ -527,6 +619,7 @@ export class BoardEngine {
       cosmicRescue,
       waveCleared,
       waveInfo: this.getWaveInfo(),
+      trioCandidateSpecies: null,
     };
   }
 
@@ -537,6 +630,7 @@ export class BoardEngine {
   }
 
   public undo(): UndoResult {
+    this.lastMatchedSpecies = null;
     return this.trayController.undo(
       this.history,
       () => this.harmonyScore,

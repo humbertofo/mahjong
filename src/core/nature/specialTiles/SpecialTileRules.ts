@@ -100,4 +100,25 @@ export class SpecialTileRules {
     }
     return cocoonTiles.length;
   }
+
+  /**
+   * Transmuta uma peça para Camaleão Coringa místico (usado na 4ª peça da Trinca Sagrada)
+   */
+  public static transmuteToChameleon(
+    target: PlacedTile,
+    onInvalidateCache: () => void
+  ): TileMutationRecord {
+    const record: TileMutationRecord = {
+      tile: target,
+      prevValue: target.value,
+      prevLabel: target.label,
+      prevSuit: target.suit,
+    };
+    target.value = 'chameleon';
+    target.label = '🦎 Camaleão';
+    target.suit = 'mythic';
+    target.specialType = 'chameleon';
+    onInvalidateCache();
+    return record;
+  }
 }

@@ -22,6 +22,7 @@ export interface BoardRendererCallbacks {
   onClimateTriggered?: (climate: ClimateEffectResult) => void;
   onTileLongPress?: (tile: PlacedTile) => void;
   onCosmicRescue?: (rescuedTiles: PlacedTile[]) => void;
+  onTrioMatched?: (trioTile: PlacedTile) => void;
   onStateChanged?: () => void;
   onTileFlightToTray?: (
     tile: PlacedTile,
@@ -353,6 +354,17 @@ export class BoardRenderer {
     const len = activeTiles.length;
     const isShuffling = this.animator.isShuffling(this.animTime);
     const isDealing = this.animator.isDealing(this.animTime);
+    const shuffleScaleX = isShuffling ? this.animator.getShuffleScaleX(this.animTime) : 1;
+    const dealZCache = isDealing
+      ? [
+          this.animator.getDealParams(this.animTime, 0),
+          this.animator.getDealParams(this.animTime, 1),
+          this.animator.getDealParams(this.animTime, 2),
+          this.animator.getDealParams(this.animTime, 3),
+          this.animator.getDealParams(this.animTime, 4),
+          this.animator.getDealParams(this.animTime, 5),
+        ]
+      : null;
 
     for (let i = 0; i < len; i++) {
       const tile = activeTiles[i];
@@ -369,14 +381,9 @@ export class BoardRenderer {
         animOffset = Math.sin(this.animTime / 180) * 3;
       }
 
-      let scaleXFactor = 1;
-      if (isShuffling) {
-        scaleXFactor = this.animator.getShuffleScaleX(this.animTime);
-      }
-
       let dealAlpha = 1;
-      if (isDealing) {
-        const deal = this.animator.getDealParams(this.animTime, tile.position.z);
+      if (dealZCache) {
+        const deal = dealZCache[Math.min(tile.position.z, 5)];
         dealAlpha = deal.dealAlpha;
         animOffset += deal.animOffset;
       }
@@ -388,7 +395,7 @@ export class BoardRenderer {
         screenY,
         isFree,
         animOffset,
-        scaleXFactor,
+        shuffleScaleX,
         dealAlpha,
         this.animTime
       );
@@ -1650,6 +1657,58 @@ export class BoardRenderer {
         const coords = this.getTileScreenCoords(clickedTile);
         this.triggerLocalMatchDissolve(coords, '#64748B');
       }
+    } else if (result.action === 'trio_matched' && result.trioTile) {
+      soundManager.playSynergyBonus();
+      hapticManager.impactHeavy();
+      this.fx.showMatchPop(this.canvas.getBoundingClientRect());
+
+      const tileCoords = this.getTileScreenCoords(result.trioTile);
+      this.triggerLocalMatchDissolve(tileCoords, '#F59E0B');
+
+      if (result.mutations && result.mutations.length > 0) {
+        for (const mut of result.mutations) {
+          const coords = this.getTileScreenCoords(mut.tile);
+          soundManager.playCocoonHatch();
+          this.triggerLocalMatchDissolve(coords, '#10B981');
+        }
+      }
+
+      if (result.climateTriggered) {
+        this.triggerClimateEffect(result.climateTriggered.climate);
+        if (this.callbacks.onClimateTriggered) {
+          this.callbacks.onClimateTriggered(result.climateTriggered);
+        }
+      }
+
+      if (this.callbacks.onTrioMatched) {
+        this.callbacks.onTrioMatched(result.trioTile);
+      }
+
+      if (result.cosmicRescue && result.cosmicRescue.length > 0) {
+        if (this.callbacks.onCosmicRescue) {
+          this.callbacks.onCosmicRescue(result.cosmicRescue);
+        }
+      }
+
+      if (this.engine.isVictory()) {
+        soundManager.playVictoryFanfare();
+        hapticManager.impactVictory();
+        this.fx.triggerVictoryCelebration();
+        if (this.callbacks.onBoardCleared) {
+          this.callbacks.onBoardCleared();
+        }
+      } else if (result.waveCleared && this.engine.hasMoreWaves()) {
+        soundManager.playWaveSuccess();
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.6 },
+          colors: ['#F59E0B', '#10B981', '#38BDF8'],
+        });
+        if (this.callbacks.onWaveCleared) {
+          this.callbacks.onWaveCleared(this.engine.getCurrentWave(), this.engine.getTotalWaves());
+        }
+      }
     }
 
     if (this.callbacks.onStateChanged) {
@@ -1897,6 +1956,9 @@ export class BoardRenderer {
   public triggerClimateEffect(climate: ClimateType): void {
     const viewW = this.canvas.width / this.camera.dpr;
     const viewH = this.canvas.height / this.camera.dpr;
+    if (climate === 'full_moon') {
+      this.keepAnimating(5000);
+    }
     this.fx.triggerClimateEffect(climate, viewW, viewH, () => {
       this.engine.getTiles().forEach((t) => (t.isHinted = false));
       this.requestRender();

@@ -233,16 +233,17 @@ export class FXParticleSystem {
         targetCtx.stroke();
 
         targetCtx.fillStyle = d.color || `rgba(255, 255, 255, ${alpha})`;
+        targetCtx.beginPath();
         for (let a = 0; a < 8; a++) {
           const ang = (a * Math.PI) / 4 + progress * 0.6;
           const dist = radius * (0.6 + progress * 0.6);
           const px = cx + Math.cos(ang) * dist;
           const py = cy + Math.sin(ang) * dist;
           const sparkRadius = Math.max(0.1, 2.5 * (1 - progress));
-          targetCtx.beginPath();
+          targetCtx.moveTo(px + sparkRadius, py);
           targetCtx.arc(px, py, sparkRadius, 0, Math.PI * 2);
-          targetCtx.fill();
         }
+        targetCtx.fill();
         targetCtx.restore();
       }
     }

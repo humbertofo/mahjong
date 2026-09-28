@@ -56,7 +56,8 @@ export class SynergyDirector {
     getActiveBoardTiles: () => PlacedTile[],
     getHintPair: () => MatchPair | null,
     getFreeTiles: () => PlacedTile[],
-    onAddHarmony: (pts: number) => void
+    onAddHarmony: (pts: number) => void,
+    isTrinca: boolean = false
   ): ClimateEffectResult | null {
     return ClimateEvaluator.evaluate(
       t1,
@@ -66,7 +67,8 @@ export class SynergyDirector {
       getActiveBoardTiles,
       getHintPair,
       getFreeTiles,
-      onAddHarmony
+      onAddHarmony,
+      isTrinca
     );
   }
 }

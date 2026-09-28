@@ -170,6 +170,7 @@
               <span id="wisdom-level" class="wisdom-number">1</span>
               <span id="hud-biome-badge" class="hud-biome-pill" title="Jardim das Lótus">🌿</span>
               <span id="hud-wave-badge" class="hud-wave-pill hidden">1/2</span>
+              <span id="hud-timer" class="hud-timer">00:00</span>
             </div>
           </div>
 
@@ -213,10 +214,19 @@
                 <span id="nature-event-icon" class="nature-event-icon">🌿</span>
                 <span id="nature-event-title" class="nature-event-title">Bosque Sereno</span>
               </div>
-              <span id="hud-timer" class="nature-event-timer">00:00</span>
             </div>
             <div id="nature-event-desc" class="nature-event-desc">Toque nas peças livres</div>
           </div>
+        </div>
+
+        <!-- INDICADOR FLUTUANTE DA TRINCA SAGRADA ZEN -->
+        <div id="hud-trio-indicator" class="hud-trio-indicator hidden" title="Toque para detalhes da Trinca Sagrada">
+          <div class="trio-orbs-wrap">
+            <span id="trio-icon-1" class="trio-orb filled">🐬</span>
+            <span id="trio-icon-2" class="trio-orb filled">🐬</span>
+            <span id="trio-icon-3" class="trio-orb empty">○</span>
+          </div>
+          <span id="trio-text" class="trio-text">Trinca Zen</span>
         </div>
 
         <!-- BANNER DE ORIENTAÇÃO -->
@@ -780,7 +790,7 @@
               <div class="climate-card climate-moon">
                 <div class="climate-badge">🌕 Noite de Lua Cheia</div>
                 <p class="climate-req">Gatilho: Sequência contínua de 4 acertos rápidos sem pausa (Streak 4+)</p>
-                <p class="climate-desc">O tabuleiro é banhado por vaga-lumes reluzentes que <strong>iluminam todos os pares livres disponíveis</strong> na mesa!</p>
+                <p class="climate-desc">O tabuleiro é banhado por vaga-lumes reluzentes que <strong>iluminam com serenidade 1 par livre</strong> na mesa, sem confusão visual!</p>
               </div>
 
               <div class="climate-card climate-storm">

@@ -89,25 +89,31 @@ export class GameEndModals {
   }
 
   public static launchVictoryConfetti(): void {
-    const end = Date.now() + 750;
-    const frame = () => {
+    const fire = (x: number, angle: number) => {
       confetti({
-        particleCount: 5,
-        angle: 60,
-        spread: 50,
-        origin: { x: 0, y: 0.6 },
+        particleCount: 22,
+        angle,
+        spread: 55,
+        origin: { x, y: 0.65 },
         colors: ['#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF', '#FF8FD8'],
+        disableForReducedMotion: true,
       });
-      confetti({
-        particleCount: 5,
-        angle: 120,
-        spread: 50,
-        origin: { x: 1, y: 0.6 },
-        colors: ['#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF', '#FF8FD8'],
-      });
-      if (Date.now() < end) requestAnimationFrame(frame);
     };
-    frame();
+
+    // Salva 1: explosão imediata das duas laterais
+    fire(0.05, 60);
+    fire(0.95, 120);
+
+    // Salva 2: explosão dourada central aos 220ms para impacto de fechamento
+    setTimeout(() => {
+      confetti({
+        particleCount: 28,
+        spread: 70,
+        origin: { x: 0.5, y: 0.55 },
+        colors: ['#F59E0B', '#10B981', '#3B82F6', '#EC4899', '#FEF08A'],
+        disableForReducedMotion: true,
+      });
+    }, 220);
   }
 
   public static launchWaveConfetti(): void {

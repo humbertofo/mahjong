@@ -57,17 +57,48 @@ export class SoundManager {
     this.currentTrackIndex = Math.floor(Math.random() * this.playlist.length);
 
     if (typeof window !== 'undefined') {
-      const unlockEvents = ['pointerup', 'touchend', 'click', 'keydown'];
+      // 1. Pré-aquece o AudioContext em background para que a negociação de driver de áudio não ocorra no primeiro toque
+      try {
+        const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        if (AudioCtx && !this.ctx) {
+          this.ctx = new AudioCtx();
+        }
+      } catch {
+        // Silencia em ambientes onde criação imediata sem interação for bloqueada
+      }
+
+      // 2. Pré-aloca o elemento de áudio BGM de forma assíncrona
+      setTimeout(() => {
+        try {
+          this.initBgm();
+        } catch {
+          // Silencia
+        }
+      }, 150);
+
+      // 3. Desbloqueio antecipado no pointerdown (já prepara o áudio antes do pointerup disparar)
+      const unlockEvents = ['pointerdown', 'touchstart', 'pointerup', 'touchend', 'click', 'keydown'];
       const unlockAudio = () => {
         this.hasUserInteracted = true;
         unlockEvents.forEach((evt) => window.removeEventListener(evt, unlockAudio));
-        this.initContext();
+
+        // Retoma o AudioContext de forma instantânea (< 1ms)
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume().catch(() => {});
+        } else if (!this.ctx) {
+          this.initContext();
+        }
+
+        // Inicia a música de fundo fora da thread crítica do evento de toque
         if (this.musicEnabled) {
-          this.playBGM();
+          setTimeout(() => {
+            this.playBGM();
+          }, 0);
         }
       };
+
       unlockEvents.forEach((evt) => {
-        window.addEventListener(evt, unlockAudio, { passive: true });
+        window.addEventListener(evt, unlockAudio, { passive: true, once: true });
       });
     }
   }
@@ -244,20 +275,17 @@ export class SoundManager {
   private initContext(): void {
     if (typeof window === 'undefined') return;
 
-    const hasActivation = this.canResumeAudio();
-
-    if (!this.ctx && hasActivation) {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (AudioCtx) {
         try {
           this.ctx = new AudioCtx();
         } catch {
-          // Autoplay policy prevented initialization before gesture
           return;
         }
       }
     }
-    if (this.ctx && this.ctx.state === 'suspended' && hasActivation) {
+    if (this.ctx && this.ctx.state === 'suspended' && this.canResumeAudio()) {
       this.ctx.resume().catch(() => {});
     }
   }

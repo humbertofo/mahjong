@@ -325,7 +325,7 @@ export class ForagingSynergies {
           boardPairDescription: 'O leão rugiu sob o sol dourado e iluminou o par da savana!',
           trayRescueDescription: 'A presença régia do leão absorveu o sol da sua bandeja!',
           loneCatchDescription: 'A luz dourada do leão recolheu a peça solitária do tabuleiro!',
-          zenGraceDescription: 'O sol poente da savana cobriu o tabuleiro com calor nobre (+300 Harmonia Zen)!',
+          zenGraceDescription: 'O sol dourado da savana abençoou a mesa (+300 Harmonia Zen)!',
           baseScore: 270,
         },
         activeTiles,

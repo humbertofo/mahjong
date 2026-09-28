@@ -1781,13 +1781,13 @@ html, body {
   left: 0;
   right: 0;
   z-index: 20;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  column-gap: 6px;
-  padding: calc(6px + env(safe-area-inset-top, 0px)) 8px 4px 8px;
-  background: linear-gradient(to bottom, rgba(5, 25, 20, 0.9), rgba(5, 25, 20, 0));
+  padding: calc(6px + env(safe-area-inset-top, 0px)) 10px 4px 10px;
+  background: linear-gradient(to bottom, rgba(5, 25, 20, 0.92), rgba(5, 25, 20, 0));
   pointer-events: none;
+  box-sizing: border-box;
 }
 
 .hud-top > * {
@@ -1797,16 +1797,14 @@ html, body {
 .hud-left {
   display: flex;
   align-items: center;
-  gap: 4px;
-  justify-self: start;
+  gap: 6px;
   flex-shrink: 0;
 }
 
 .hud-right {
   display: flex;
   align-items: center;
-  gap: 4px;
-  justify-self: end;
+  gap: 6px;
   flex-shrink: 0;
 }
 
@@ -1814,9 +1812,8 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
-  justify-self: center;
+  flex: 1 1 auto;
   min-width: 0;
-  max-width: 100%;
 }
 
 .wisdom-title-container {
@@ -1835,8 +1832,143 @@ html, body {
   max-width: 100%;
 }
 
+.wisdom-title-container .hud-timer {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #fde047;
+  letter-spacing: 0.3px;
+  font-variant-numeric: tabular-nums;
+  margin-left: 3px;
+  padding-left: 5px;
+  border-left: 1px solid rgba(245, 158, 11, 0.3);
+  line-height: 1;
+}
+
 .wisdom-title-container.pulse-glow {
   animation: hud-pulse-glow 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* === INDICADOR FLUTUANTE DA TRINCA SAGRADA ZEN === */
+.hud-trio-indicator {
+  position: absolute;
+  top: calc(104px + env(safe-area-inset-top, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(6, 44, 34, 0.95), rgba(35, 26, 8, 0.95));
+  border: 1.5px solid rgba(245, 158, 11, 0.85);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.65), 0 0 16px rgba(245, 158, 11, 0.35), inset 0 0 10px rgba(16, 185, 129, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 4px 14px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: trio-slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  pointer-events: auto;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.hud-trio-indicator:hover {
+  transform: translateX(-50%) scale(1.04);
+  border-color: #fef08a;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.7), 0 0 20px rgba(245, 158, 11, 0.55);
+}
+
+.hud-trio-indicator:active {
+  transform: translateX(-50%) scale(0.96);
+}
+
+.hud-trio-indicator.hidden {
+  display: none !important;
+}
+
+.trio-orbs-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.trio-orb {
+  font-size: 1rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trio-orb.filled {
+  animation: trio-orb-pop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.trio-orb.empty {
+  font-size: 0.9rem;
+  color: #fbbf24;
+  font-weight: 900;
+  animation: trio-empty-pulse 1.2s infinite ease-in-out;
+}
+
+.trio-text {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #fef08a;
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+.hud-trio-indicator.trio-completed-pulse {
+  animation: trio-complete-celebrate 1.8s ease-out forwards;
+}
+
+@keyframes trio-slide-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@keyframes trio-orb-pop {
+  0% { transform: scale(0.6); }
+  60% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+@keyframes trio-empty-pulse {
+  0%, 100% {
+    transform: scale(0.9);
+    opacity: 0.6;
+    text-shadow: 0 0 2px rgba(245, 158, 11, 0.3);
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+    text-shadow: 0 0 8px rgba(251, 191, 36, 0.9);
+  }
+}
+
+@keyframes trio-complete-celebrate {
+  0% {
+    transform: translateX(-50%) scale(1);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+  }
+  25% {
+    transform: translateX(-50%) scale(1.12);
+    box-shadow: 0 0 26px rgba(245, 158, 11, 0.9), 0 0 40px rgba(16, 185, 129, 0.8);
+    border-color: #fde047;
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0;
+  }
 }
 
 @keyframes hud-pulse-glow {
@@ -1920,15 +2052,16 @@ html, body {
   display: flex;
   align-items: stretch;
   justify-content: space-between;
-  gap: 6px;
-  padding: 0 8px;
+  gap: 5px;
+  padding: 0 6px;
   min-height: 56px;
+  max-height: 58px;
   pointer-events: none;
 }
 
 .tray-half-container {
   flex: 0 0 auto;
-  width: 164px;
+  width: 152px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1939,8 +2072,8 @@ html, body {
 .tray-slots {
   pointer-events: auto;
   display: flex;
-  gap: 4px;
-  padding: 3px 5px;
+  gap: 3px;
+  padding: 3px 4px;
   background: rgba(7, 30, 25, 0.92);
   border: 1.5px solid rgba(78, 125, 115, 0.6);
   border-radius: 12px;
@@ -1972,7 +2105,7 @@ html, body {
 .tray-slot {
   flex: 1;
   height: 100%;
-  max-width: 38px;
+  max-width: 35px;
   background: rgba(4, 18, 14, 0.85);
   border: 1.5px solid rgba(255, 255, 255, 0.12);
   border-radius: 7px;
@@ -1991,11 +2124,11 @@ html, body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: rgba(7, 30, 25, 0.92);
+  background: rgba(7, 30, 25, 0.94);
   border: 1.5px solid rgba(245, 158, 11, 0.45);
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45), inset 0 1px 3px rgba(245, 158, 11, 0.15);
-  padding: 4px 8px;
+  padding: 3px 7px;
   min-width: 0;
   pointer-events: auto;
   cursor: pointer;
@@ -2008,6 +2141,46 @@ html, body {
   animation: eventBoxPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+/* Estados Táticos do Radar da Bandeja Zen */
+.nature-event-box.tactical-pair-free {
+  border-color: rgba(16, 185, 129, 0.85);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45), 0 0 14px rgba(16, 185, 129, 0.35);
+}
+
+.nature-event-box.tactical-pair-free .nature-event-title {
+  color: #6ee7b7;
+}
+
+.nature-event-box.tactical-synergy-free {
+  border-color: rgba(168, 85, 247, 0.85);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45), 0 0 14px rgba(168, 85, 247, 0.4);
+}
+
+.nature-event-box.tactical-synergy-free .nature-event-title {
+  color: #e9d5ff;
+}
+
+.nature-event-box.tactical-tray-warning {
+  border-color: rgba(239, 68, 68, 0.85);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45), 0 0 14px rgba(239, 68, 68, 0.4);
+}
+
+.nature-event-box.tactical-tray-warning .nature-event-title {
+  color: #fca5a5;
+}
+
+.nature-event-box.tactical-pair-blocked {
+  border-color: rgba(245, 158, 11, 0.55);
+}
+
+.nature-event-box.tactical-pair-blocked .nature-event-title {
+  color: #fde047;
+}
+
+.nature-event-box.tactical-board-zen {
+  border-color: rgba(245, 158, 11, 0.45);
+}
+
 @keyframes eventBoxPop {
   0% { transform: scale(0.97); }
   50% { transform: scale(1.03); }
@@ -2017,56 +2190,50 @@ html, body {
 .nature-event-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
+  gap: 4px;
 }
 
 .nature-event-title-wrap {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
   min-width: 0;
   flex: 1;
+  overflow: hidden;
 }
 
 .nature-event-icon {
-  font-size: 0.92rem;
+  font-size: 0.90rem;
   line-height: 1;
   flex-shrink: 0;
 }
 
 .nature-event-title {
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-weight: 800;
   color: #fde047;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  letter-spacing: 0.2px;
-}
-
-.nature-event-timer {
-  font-size: 0.74rem;
-  font-weight: 800;
-  color: #94a3b8;
-  font-variant-numeric: tabular-nums;
-  margin-left: 4px;
-  flex-shrink: 0;
+  letter-spacing: 0;
+  line-height: 1.2;
 }
 
 .nature-event-desc {
-  font-size: 0.70rem;
+  font-size: 0.68rem;
   font-weight: 600;
   color: #e2e8f0;
   line-height: 1.2;
   margin-top: 1px;
   white-space: normal;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  opacity: 0.94;
+  opacity: 0.95;
+  word-break: break-word;
 }
 
 .tray-slot.filled {
@@ -2991,6 +3158,7 @@ html, body {
   align-items: center;
   justify-content: center;
   font-size: 1.55rem;
+  will-change: transform, opacity;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   animation: star-slot-pop 0.5s var(--star-delay, 0.1s) cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -3306,6 +3474,7 @@ html, body {
   align-items: center;
   justify-content: center;
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.85));
+  will-change: transform, opacity;
   transition: opacity 0.25s ease-out, transform 0.25s ease-out;
 }
 
@@ -3354,6 +3523,7 @@ html, body {
   z-index: 200;
   pointer-events: none;
   font-size: 2.2rem;
+  will-change: transform, opacity;
   animation: match-fly 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -3373,17 +3543,27 @@ html, body {
 }
 
 .tray-slot.just-filled {
+  will-change: transform;
   animation: slot-bounce 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .tray-slot.filled {
-  cursor: pointer;
+  cursor: default;
   transition: transform 0.15s ease, filter 0.15s ease;
 }
 
-.tray-slot.filled:active {
-  transform: scale(0.92);
-  filter: brightness(0.95);
+.tray-slot.filled.can-hammer {
+  cursor: pointer;
+}
+
+.tray-slot.slot-blocked-shake {
+  animation: slot-blocked-wobble 0.35s ease-in-out;
+}
+
+@keyframes slot-blocked-wobble {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px) rotate(-2deg); }
+  40%, 80% { transform: translateX(4px) rotate(2deg); }
 }
 
 .tray-slot.tray-return-anim {
@@ -4085,9 +4265,8 @@ html, body {
   align-items: center;
   justify-content: center;
   background: rgba(3, 14, 10, 0);
-  backdrop-filter: blur(0px);
-  -webkit-backdrop-filter: blur(0px);
-  transition: background 0.35s ease, backdrop-filter 0.35s ease, -webkit-backdrop-filter 0.35s ease;
+  transition: background 0.35s ease;
+  contain: paint layout;
 }
 
 .foliage-curtain.closing,
@@ -4098,9 +4277,7 @@ html, body {
 
 .foliage-curtain.closing,
 .foliage-curtain.active {
-  background: rgba(3, 16, 12, 0.92);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(3, 16, 12, 0.96);
 }
 
 .foliage-curtain-panel {

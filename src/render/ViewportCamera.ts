@@ -49,9 +49,9 @@ export class ViewportCamera {
 
     const isPortrait = viewH > viewW;
     // Margens adaptativas otimizadas:
-    // Em retrato, o topo acomoda o HUD superior + Bandeja sub-hud (42px + 56px = 98px + 14px respiro = 112px)
+    // Em retrato, o topo acomoda o HUD superior + Bandeja sub-hud + Pílula flutuante Trinca (122px)
     // A base acomoda a barra inferior de ações e badges (~89px + 15px respiro seguro = 104px)
-    const topMargin = isPortrait ? 112 : 54;
+    const topMargin = isPortrait ? 122 : 54;
     const bottomMargin = isPortrait ? 104 : 64;
     const sideMargin = isPortrait ? 10 : 64;
 

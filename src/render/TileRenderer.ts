@@ -25,6 +25,7 @@ export interface AtlasUV {
 export class TileRenderer {
   private cache: Map<string, HTMLCanvasElement> = new Map();
   private desaturateCache: Map<string, string> = new Map();
+  private lightenCache: Map<string, string> = new Map();
   private dpr: number = 1;
   private dims: TileDimensions = { tileWidth: 56, tileHeight: 74, tileDepth: 7 };
   private dimBlockedTiles: boolean = true;
@@ -91,6 +92,7 @@ export class TileRenderer {
   public clearCache(): void {
     this.cache.clear();
     this.desaturateCache.clear();
+    this.lightenCache.clear();
     this.atlasCoords.clear();
     this.cachedGlyphFont = '';
     this.cachedGlyphFontSize = 0;
@@ -426,7 +428,6 @@ export class TileRenderer {
     ctx.fill();
 
     // 4. CHANFRO TÁTIL 3D (SPECULAR BEVEL HIGHLIGHT)
-    ctx.save();
     // Borda superior e esquerda com reflexo de luz
     if (isFree || !this.dimBlockedTiles) {
       ctx.strokeStyle = z >= 1 ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 0.78)';
@@ -450,7 +451,6 @@ export class TileRenderer {
     ctx.moveTo(x + 7, y + faceH - 1.2);
     ctx.lineTo(x + faceW - 7, y + faceH - 1.2);
     ctx.stroke();
-    ctx.restore();
 
     // 5. MOLDURA E CONTORNO EXTERNO (DELIMITAÇÃO NÍTIDA COM CARTAS VIZINHAS)
     const syn = SYNERGY_FAMILIES[tile.value as AnimalValue];
@@ -517,11 +517,9 @@ export class TileRenderer {
 
     // 8.2. ESCURECIMENTO TÁTIL DE PEÇAS BLOQUEADAS (Sombra translúcida rica para destacar peças livres)
     if (!isFree && this.dimBlockedTiles) {
-      ctx.save();
       ctx.fillStyle = 'rgba(15, 23, 42, 0.35)'; // sombra ardósia zen para contraste imediato
       this.drawRoundedRect(ctx, x, y, faceW, faceH, 8);
       ctx.fill();
-      ctx.restore();
     }
 
 
@@ -859,6 +857,10 @@ export class TileRenderer {
   // =========================================================================
 
   private lighten(color: string, factor: number): string {
+    const key = `${color}_${factor}`;
+    let cached = this.lightenCache.get(key);
+    if (cached) return cached;
+
     if (color.startsWith('#')) {
       const r = parseInt(color.slice(1, 3), 16);
       const g = parseInt(color.slice(3, 5), 16);
@@ -866,9 +868,12 @@ export class TileRenderer {
       const nr = Math.min(255, Math.round(r + (255 - r) * factor));
       const ng = Math.min(255, Math.round(g + (255 - g) * factor));
       const nb = Math.min(255, Math.round(b + (255 - b) * factor));
-      return `rgb(${nr},${ng},${nb})`;
+      cached = `rgb(${nr},${ng},${nb})`;
+    } else {
+      cached = color;
     }
-    return color;
+    this.lightenCache.set(key, cached);
+    return cached;
   }
 
 

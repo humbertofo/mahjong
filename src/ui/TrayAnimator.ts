@@ -131,25 +131,28 @@ export class TrayAnimator {
 
     validBadges.forEach((badge, bIdx) => {
       const bRect = badge.getBoundingClientRect();
+      const destX = bRect.left + bRect.width / 2;
+      const destY = bRect.top + bRect.height / 2;
       const spark = document.createElement('div');
       spark.className = 'golden-mana-spark';
       spark.textContent = '✨';
       spark.style.cssText = `
         position: fixed;
-        left: ${startX}px;
-        top: ${startY}px;
+        left: 0;
+        top: 0;
         font-size: 1.5rem;
         z-index: 1000;
         pointer-events: none;
-        transition: all 0.55s cubic-bezier(0.16, 1, 0.3, 1) ${bIdx * 0.08}s;
+        transform: translate3d(${startX}px, ${startY}px, 0) scale(0.6);
+        opacity: 0.95;
+        will-change: transform, opacity;
+        transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1) ${bIdx * 0.08}s, opacity 0.55s ease ${bIdx * 0.08}s;
       `;
       document.body.appendChild(spark);
 
       requestAnimationFrame(() => {
-        spark.style.left = `${bRect.left + bRect.width / 2}px`;
-        spark.style.top = `${bRect.top + bRect.height / 2}px`;
-        spark.style.transform = 'scale(1.5)';
-        spark.style.opacity = '0.95';
+        spark.style.transform = `translate3d(${destX}px, ${destY}px, 0) scale(1.5)`;
+        spark.style.opacity = '1';
       });
 
       setTimeout(() => {

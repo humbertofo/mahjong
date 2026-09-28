@@ -27,7 +27,6 @@ export class CascadeResolver {
     const {
       type,
       title,
-      icon,
       preyValues,
       boardPairDescription,
       trayRescueDescription,
@@ -48,7 +47,7 @@ export class CascadeResolver {
       );
       return {
         type,
-        title: `${icon} ${title} (Alívio na Bandeja!)`,
+        title: `${title} (Alívio!)`,
         description:
           trayRescueDescription ||
           `O predador resgatou a peça ${trayVictim.label} presa na sua bandeja, harmonizando o caminho livre!`,
@@ -67,7 +66,7 @@ export class CascadeResolver {
       if (matchingTiles.length >= 2) {
         return {
           type,
-          title: `${icon} ${title}`,
+          title,
           description: boardPairDescription,
           bonusScore: baseScore,
           affectedBoardTiles: [matchingTiles[0], matchingTiles[1]],
@@ -83,7 +82,7 @@ export class CascadeResolver {
       if (loneTile) {
         return {
           type,
-          title: `${icon} ${title} (Captura Ágil!)`,
+          title: `${title} (Captura!)`,
           description:
             loneCatchDescription ||
             `O animal capturou a peça ${loneTile.label} que bloqueava o fluxo do tabuleiro!`,
@@ -97,10 +96,10 @@ export class CascadeResolver {
     // Se não há presas nem na bandeja nem na mesa, o animal abençoa com Harmonia Zen
     return {
       type,
-      title: `✨ Dádiva Zen: ${title}`,
+      title: `Dádiva Zen: ${title}`,
       description:
         zenGraceDescription ||
-        `O ecossistema está pacificado! O animal não encontrou presas e concedeu uma bênção de Harmonia Zen (+300 pts)!`,
+        `O ecossistema em paz concedeu bênção de Harmonia Zen (+300 pts)!`,
       bonusScore: 300,
     };
   }

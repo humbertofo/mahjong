@@ -51,6 +51,9 @@ window.addEventListener('DOMContentLoaded', () => {
     onCosmicRescue: (rescuedTiles) => {
       uiManager?.handleCosmicRescue(rescuedTiles);
     },
+    onTrioMatched: (trioTile) => {
+      uiManager?.handleTrioMatched(trioTile);
+    },
     onStateChanged: () => {
       uiManager?.updateHUD();
     },

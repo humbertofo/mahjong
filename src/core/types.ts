@@ -249,7 +249,7 @@ export type ClimateType =
   | 'autumn_gale'      // Vendaval de Outono: corta vinhas + reorganiza travadas
   | 'zen_storm'        // Tempestade Zen: raio vaporiza peça bloqueada + 1 marreta
   | 'spring_breeze'    // Brisa da Primavera: choca casulos + escudo de pétalas
-  | 'full_moon';       // Noite de Lua Cheia: vaga-lumes iluminam todos os pares livres
+  | 'full_moon';       // Noite de Lua Cheia: vaga-lumes iluminam com serenidade 1 par livre
 
 export type SynergyType =
   // Clássicas (9)
@@ -322,8 +322,9 @@ export interface TileMutationRecord {
 }
 
 export interface MoveHistoryItem {
-  actionType: 'tray_add' | 'matched_pair';
+  actionType: 'tray_add' | 'matched_pair' | 'trio_match';
   tile?: PlacedTile;
+  trioTile?: PlacedTile;
   fromBoardToTrayIndex?: number;
   matchedPair?: [PlacedTile, PlacedTile];
   pointsAwarded?: number;

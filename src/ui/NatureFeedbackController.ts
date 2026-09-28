@@ -1,4 +1,5 @@
 import { PlacedTile, SynergyResult, ClimateEffectResult } from '../core/types';
+import { TacticalOracleResult } from '../core/nature/TrayTacticalOracle';
 import { soundManager } from '../audio/SoundManager';
 import { hapticManager } from '../audio/HapticManager';
 import { HUDController } from './HUDController';
@@ -12,6 +13,7 @@ import { HUDController } from './HUDController';
 export class NatureFeedbackController {
   private natureEventTimer: ReturnType<typeof setTimeout> | null = null;
   private natureToastTimer: ReturnType<typeof setTimeout> | null = null;
+  private lastOracleResult: TacticalOracleResult | null = null;
 
   private triggerHudPulse: () => void;
   private updateHUD: () => void;
@@ -94,19 +96,65 @@ export class NatureFeedbackController {
 
     if (box) {
       box.classList.remove('event-pulse');
-      void box.offsetWidth;
-      box.classList.add('event-pulse');
+      requestAnimationFrame(() => {
+        box.classList.add('event-pulse');
+      });
     }
 
     if (this.natureEventTimer) {
       clearTimeout(this.natureEventTimer);
     }
     this.natureEventTimer = setTimeout(() => {
+      this.natureEventTimer = null;
+      this.restoreTacticalStatus();
+    }, 4500);
+  }
+
+  public updateTacticalStatus(oracle: TacticalOracleResult): void {
+    this.lastOracleResult = oracle;
+    if (this.natureEventTimer !== null) return; // Clima temporário tem prioridade visual
+
+    this.renderTacticalResult(oracle);
+  }
+
+  public restoreTacticalStatus(): void {
+    if (this.lastOracleResult) {
+      this.renderTacticalResult(this.lastOracleResult);
+    } else {
+      const boxIcon = document.getElementById('nature-event-icon');
+      const boxTitle = document.getElementById('nature-event-title');
+      const boxDesc = document.getElementById('nature-event-desc');
       if (boxIcon) boxIcon.textContent = '🌿';
       if (boxTitle) boxTitle.textContent = 'Bosque Sereno';
       if (boxDesc) boxDesc.textContent = 'Toque nas peças livres';
-      this.natureEventTimer = null;
-    }, 4500);
+    }
+  }
+
+  private renderTacticalResult(oracle: TacticalOracleResult): void {
+    const box = document.getElementById('nature-event-box');
+    const boxIcon = document.getElementById('nature-event-icon');
+    const boxTitle = document.getElementById('nature-event-title');
+    const boxDesc = document.getElementById('nature-event-desc');
+
+    if (boxIcon) boxIcon.textContent = oracle.icon;
+    if (boxTitle) boxTitle.textContent = oracle.title;
+    if (boxDesc) boxDesc.textContent = oracle.description;
+
+    if (box) {
+      box.classList.remove(
+        'tactical-pair-free',
+        'tactical-synergy-free',
+        'tactical-tray-warning',
+        'tactical-pair-blocked',
+        'tactical-board-zen'
+      );
+      const suffix = oracle.type.replace('_', '-');
+      box.classList.add(`tactical-${suffix}`);
+    }
+  }
+
+  public getLastOracleResult(): TacticalOracleResult | null {
+    return this.lastOracleResult;
   }
 
   public showNatureToast(icon: string, title: string, desc: string): void {
@@ -125,8 +173,9 @@ export class NatureFeedbackController {
 
       if (timerBar) {
         timerBar.style.animation = 'none';
-        void timerBar.offsetWidth;
-        timerBar.style.animation = 'toast-timer-drain 3.5s linear forwards';
+        requestAnimationFrame(() => {
+          timerBar.style.animation = 'toast-timer-drain 3.5s linear forwards';
+        });
       }
 
       toast.classList.remove('hidden');

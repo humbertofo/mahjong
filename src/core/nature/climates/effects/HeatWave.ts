@@ -1,45 +1,38 @@
-import { PlacedTile, ClimateEffectResult, TileMutationRecord, MatchPair } from '../../../types';
+import { PlacedTile, ClimateEffectResult, MatchPair } from '../../../types';
 import { SpecialTileRules } from '../../specialTiles/SpecialTileRules';
 
 export class HeatWave {
+  /**
+   * Executa a Onda de Calor Solar da Savana:
+   * - Derrete todas as pedras de gelo presentes no tabuleiro
+   * - Recarrega +1 Marreta 🔨 garantida (sem RNG)
+   */
+  public static execute(
+    getActiveBoardTiles: () => PlacedTile[],
+    _getHintPair: () => MatchPair | null
+  ): ClimateEffectResult {
+    const active = getActiveBoardTiles();
+    const thawedCount = SpecialTileRules.thawIceTiles(active);
+
+    return {
+      climate: 'heat_wave',
+      icon: '☀️',
+      title: 'Onda de Calor Solar!',
+      description: thawedCount > 0
+        ? `A Trinca da Savana invocou o Sol Radiante! O calor derreteu ${thawedCount} pedra(s) de gelo e restaurou +1 Marreta 🔨!`
+        : 'A Trinca da Savana invocou o Sol Radiante! A energia solar purificou o tabuleiro e restaurou +1 Marreta 🔨!',
+      rechargedTool: 'hammer',
+    };
+  }
+
   public static evaluate(
     biome: string,
-    recentBiomeMatches: string[],
+    _recentBiomeMatches: string[],
     getActiveBoardTiles: () => PlacedTile[],
-    getHintPair: () => MatchPair | null
+    getHintPair: () => MatchPair | null,
+    isTrinca: boolean = false
   ): ClimateEffectResult | null {
-    if (biome === 'savanna' && recentBiomeMatches.filter((b) => b === 'savanna').length >= 2) {
-      const hint = getHintPair();
-      let mutations: TileMutationRecord[] | undefined;
-      if (hint) {
-        const p1 = getActiveBoardTiles().find((t) => t.id === hint.tile1Id);
-        const p2 = getActiveBoardTiles().find((t) => t.id === hint.tile2Id);
-        if (p1 && p2) {
-          mutations = [
-            { tile: p1, prevValue: p1.value, prevLabel: p1.label, prevSuit: p1.suit },
-            { tile: p2, prevValue: p2.value, prevLabel: p2.label, prevSuit: p2.suit },
-          ];
-          p1.value = 'chameleon';
-          p1.label = '🦎 Camaleão';
-          p2.value = 'chameleon';
-          p2.label = '🦎 Camaleão';
-        }
-      }
-
-      const active = getActiveBoardTiles();
-      const thawedCount = SpecialTileRules.thawIceTiles(active);
-
-      return {
-        climate: 'heat_wave',
-        icon: '☀️',
-        title: 'Onda de Calor Solar!',
-        description: thawedCount > 0
-          ? 'O calor da savana derreteu o gelo e transformou um par em Camaleões!'
-          : 'O calor da savana transformou um par em Camaleões Coringa!',
-        mutations,
-      };
-    }
-
-    return null;
+    if (!isTrinca || biome !== 'savanna') return null;
+    return this.execute(getActiveBoardTiles, getHintPair);
   }
 }

@@ -170,12 +170,15 @@ export class TrayController {
         }
       }
 
-      // Reverter transmutações (Camaleão Espelho, Onda de Calor)
+      // Reverter transmutações (Camaleão Espelho, Onda de Calor, Trinca)
       if (lastItem.mutations) {
         for (const mut of lastItem.mutations) {
           mut.tile.value = mut.prevValue;
           mut.tile.label = mut.prevLabel;
           mut.tile.suit = mut.prevSuit;
+          if (mut.prevValue !== 'chameleon') {
+            mut.tile.specialType = 'normal';
+          }
         }
       }
 
@@ -187,6 +190,50 @@ export class TrayController {
         success: true,
         type: 'pair_restored',
         pair: [m1, m2],
+        secondaryTiles: lastItem.secondaryRemovedTiles,
+        rechargedTool: lastItem.rechargedTool,
+      };
+    } else if (lastItem.actionType === 'trio_match' && lastItem.trioTile) {
+      const t = lastItem.trioTile;
+      t.isRemoved = false;
+      t.inTray = false;
+      t.isSelected = false;
+      t.isHinted = false;
+      t.inSynergyAction = false;
+      t.inSynergyPulled = false;
+
+      // Reverter peças secundárias dissolvidas por climas
+      if (lastItem.secondaryRemovedTiles) {
+        for (const sec of lastItem.secondaryRemovedTiles) {
+          sec.isRemoved = false;
+          sec.inTray = false;
+          sec.isSelected = false;
+          sec.isHinted = false;
+          sec.inSynergyAction = false;
+          sec.inSynergyPulled = false;
+        }
+      }
+
+      // Reverter mutação da 4ª peça (Camaleão volta a ser o animal original)
+      if (lastItem.mutations) {
+        for (const mut of lastItem.mutations) {
+          mut.tile.value = mut.prevValue;
+          mut.tile.label = mut.prevLabel;
+          mut.tile.suit = mut.prevSuit;
+          if (mut.prevValue !== 'chameleon') {
+            mut.tile.specialType = 'normal';
+          }
+        }
+      }
+
+      if (lastItem.pointsAwarded && getHarmonyScore() >= lastItem.pointsAwarded) {
+        onSubtractHarmony(lastItem.pointsAwarded);
+      }
+      onInvalidateCache();
+      return {
+        success: true,
+        type: 'tile_restored',
+        tile: t,
         secondaryTiles: lastItem.secondaryRemovedTiles,
         rechargedTool: lastItem.rechargedTool,
       };

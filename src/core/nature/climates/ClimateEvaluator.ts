@@ -6,45 +6,46 @@ import { ArcticBlizzard } from './effects/ArcticBlizzard';
 import { AtmosphericGales } from './effects/AtmosphericGales';
 
 export class ClimateEvaluator {
+  /**
+   * Avalia a invocação de Climas da Natureza.
+   * Climas Elementares disparam EXCLUSIVAMENTE via Trinca Sagrada (isTrinca = true),
+   * garantindo intencionalidade, raridade épica e eliminando ativações acidentais.
+   */
   public static evaluate(
     t1: PlacedTile,
-    recentBiomeMatches: TileBiome[],
+    _recentBiomeMatches: TileBiome[],
     tray: PlacedTile[],
     streak: number,
     getActiveBoardTiles: () => PlacedTile[],
     getHintPair: () => MatchPair | null,
     getFreeTiles: () => PlacedTile[],
-    onAddHarmony: (pts: number) => void
+    onAddHarmony: (pts: number) => void,
+    isTrinca: boolean = false
   ): ClimateEffectResult | null {
-    const biome = getBiomeForAnimal(t1.value);
+    if (isTrinca) {
+      const biome = getBiomeForAnimal(t1.value);
+      if (biome === 'water') {
+        return OceanSurge.execute(tray, getActiveBoardTiles, getHintPair);
+      }
+      if (biome === 'savanna') {
+        return HeatWave.execute(getActiveBoardTiles, getHintPair);
+      }
+      if (biome === 'arctic') {
+        return ArcticBlizzard.execute(getActiveBoardTiles, getHintPair);
+      }
+      if (biome === 'forest') {
+        return AtmosphericGales.executeAutumn(getActiveBoardTiles);
+      }
+      if (biome === 'garden') {
+        return AtmosphericGales.executeSpring(getActiveBoardTiles, onAddHarmony);
+      }
+      // Seres Místicos / Mythic
+      return AtmosphericGales.executeZenStorm();
+    }
 
-    // 1. MARÉ ALTA PURIFICADORA 🌊 (Prioridade máxima de alívio ergonômico de bandeja)
-    const ocean = OceanSurge.evaluate(biome, recentBiomeMatches, tray, getActiveBoardTiles, getHintPair);
-    if (ocean) return ocean;
-
-    // 2. ONDA DE CALOR ☀️
-    const heat = HeatWave.evaluate(biome, recentBiomeMatches, getActiveBoardTiles, getHintPair);
-    if (heat) return heat;
-
-    // 3. NEVASCA ÁRTICA ❄️
-    const arctic = ArcticBlizzard.evaluate(biome, recentBiomeMatches, getActiveBoardTiles, getHintPair);
-    if (arctic) return arctic;
-
-    // 4. OUTONO DOURADO 🍂
-    const autumn = AtmosphericGales.evaluateAutumn(biome, t1.value, recentBiomeMatches, getActiveBoardTiles);
-    if (autumn) return autumn;
-
-    // 5. BRISA DA PRIMAVERA 🌸
-    const spring = AtmosphericGales.evaluateSpring(biome, t1.value, recentBiomeMatches, getActiveBoardTiles, onAddHarmony);
-    if (spring) return spring;
-
-    // 6. NOITE DE LUA CHEIA 🌕
+    // Noite de Lua Cheia: disparada apenas em sequências altas de maestria zen (streak >= 6)
     const fullMoon = AtmosphericGales.evaluateFullMoon(streak, getFreeTiles);
     if (fullMoon) return fullMoon;
-
-    // 7. TEMPESTADE ZEN 🌧️
-    const storm = AtmosphericGales.evaluateZenStorm(streak);
-    if (storm) return storm;
 
     return null;
   }

@@ -14,6 +14,8 @@ import { TrayAnimator } from './TrayAnimator';
 import { NatureFeedbackController } from './NatureFeedbackController';
 import { getLevelRules } from '../core/levelRules';
 import { LevelDeckCurator } from '../core/nature/LevelDeckCurator';
+import { TileRegistry } from '../core/nature/tiles/TileRegistry';
+import { TrayTacticalOracle } from '../core/nature/TrayTacticalOracle';
 
 export class UIManager {
   private engine: BoardEngine;
@@ -440,6 +442,32 @@ export class UIManager {
     this.settingsBtn.addEventListener('click', openSettings);
     document.getElementById('btn-menu-settings')?.addEventListener('click', openSettings);
 
+    // Indicador da Trinca Sagrada Zen (Toque para explicação)
+    document.getElementById('hud-trio-indicator')?.addEventListener('click', () => {
+      soundManager.playTileClick();
+      hapticManager.impactLight();
+      const trioCandidate = this.engine.getActiveTrioCandidate();
+      if (trioCandidate) {
+        const def = TileRegistry.get(trioCandidate);
+        const name = def?.label.split(' ').slice(1).join(' ') || trioCandidate;
+        this.showToast(`Trinca Zen: combine a 3ª peça de ${name} para ativar o Clima e transmutar a 4ª em Camaleão 🦎!`);
+      } else {
+        this.showToast('Trinca Zen: combine 2 peças da mesma espécie para começar a Trinca Sagrada!');
+      }
+    });
+
+    // Radar Tático da Bandeja / Caixa de Evento da Natureza (Toque para orientação tática completa)
+    document.getElementById('nature-event-box')?.addEventListener('click', () => {
+      soundManager.playTileClick();
+      hapticManager.impactLight();
+      const lastOracle = this.natureFeedback.getLastOracleResult();
+      if (lastOracle) {
+        this.showToast(`${lastOracle.icon} ${lastOracle.title}: ${lastOracle.description}`);
+      } else {
+        this.showToast('🌿 Diário Zen: Observe os pares livres e esvazie os slots da bandeja!');
+      }
+    });
+
     // Diálogo de confirmação de reset de progresso
     const resetModal = document.getElementById('modal-reset-confirm');
     document.getElementById('btn-reset-cancel')?.addEventListener('click', () => {
@@ -558,8 +586,9 @@ export class UIManager {
         hapticManager.impactLight();
 
         mascotContainer.classList.remove('mascot-reacting');
-        void mascotContainer.offsetWidth; // Força reinício da animação CSS
-        mascotContainer.classList.add('mascot-reacting');
+        requestAnimationFrame(() => {
+          mascotContainer.classList.add('mascot-reacting');
+        });
 
         if (speechBubble && speechText) {
           const quotes = UIManager.PANDA_QUOTES;
@@ -801,7 +830,7 @@ export class UIManager {
       curtain.setAttribute('aria-hidden', 'false');
       this.foliageTransitionTimer = null;
 
-      // 2. Monta o tabuleiro e troca de tela sem prender o frame de renderização (evita violation de frame longo)
+      // 2. Executa a montagem do tabuleiro de forma assíncrona desacoplada do frame da cortina
       setTimeout(() => {
         onSwitch();
         this.hud.stopTimer();
@@ -836,22 +865,22 @@ export class UIManager {
     }
 
     this.hud.resetCharges();
-    StorageManager.incrementGamesPlayed();
-
-    this.hud.startTimer();
-    this.renderer.triggerDealAnimation(420);
-    this.updateHUD();
-
-    // 🎵 Inicia uma nova música aleatória para esta fase (Shuffle randômico a cada início de fase)
-    soundManager.playRandomTrack();
-
-    // Dica de mecânica e regras foram incorporadas no briefing da cortina de transição
 
     const waveModal = document.getElementById('modal-wave-cleared');
     if (waveModal) waveModal.classList.add('hidden');
     [this.levelsModal, this.settingsModal, this.victoryModal].forEach((m) =>
       m.classList.add('hidden')
     );
+
+    // Renderização do HUD e tabuleiro
+    this.updateHUD();
+    this.renderer.requestRender();
+
+    // Tarefas em segundo plano (I/O de storage e áudio) fora da thread crítica de frame
+    setTimeout(() => {
+      StorageManager.incrementGamesPlayed();
+      soundManager.playRandomTrack();
+    }, 60);
   }
 
   public loadLayout(layoutId: string): void {
@@ -881,6 +910,30 @@ export class UIManager {
         waveBadgeEl.classList.remove('hidden');
       } else {
         waveBadgeEl.classList.add('hidden');
+      }
+    }
+
+    const trioCandidate = this.engine.getActiveTrioCandidate();
+    const trioIndicatorEl = document.getElementById('hud-trio-indicator');
+    if (trioIndicatorEl && !trioIndicatorEl.classList.contains('trio-completed-pulse')) {
+      if (trioCandidate) {
+        const def = TileRegistry.get(trioCandidate);
+        const icon = def?.label.split(' ')[0] || '🀄';
+        const name = def?.label.split(' ').slice(1).join(' ') || trioCandidate;
+        const icon1 = document.getElementById('trio-icon-1');
+        const icon2 = document.getElementById('trio-icon-2');
+        const icon3 = document.getElementById('trio-icon-3');
+        const textEl = document.getElementById('trio-text');
+        if (icon1) icon1.textContent = icon;
+        if (icon2) icon2.textContent = icon;
+        if (icon3) {
+          icon3.textContent = '○';
+          icon3.className = 'trio-orb empty';
+        }
+        if (textEl) textEl.textContent = `Trinca: 3º ${name}!`;
+        trioIndicatorEl.classList.remove('hidden');
+      } else {
+        trioIndicatorEl.classList.add('hidden');
       }
     }
 
@@ -920,7 +973,16 @@ export class UIManager {
           if (this.isHammerActive) {
             this.useHammerOnSlot(tile, slotEl);
           } else {
-            this.returnTileFromTray(tile, slotEl);
+            soundManager.playBlockedSound();
+            hapticManager.impactLight();
+            slotEl.classList.remove('slot-blocked-shake');
+            requestAnimationFrame(() => {
+              slotEl.classList.add('slot-blocked-shake');
+            });
+            setTimeout(() => {
+              slotEl.classList.remove('slot-blocked-shake');
+            }, 360);
+            this.showToast('Peça guardada na bandeja! Combine com o par na mesa, use Desfazer ↩️ ou Marreta 🔨.');
           }
         };
       } else {
@@ -966,12 +1028,22 @@ export class UIManager {
             this.updateHUD();
           }, 900);
         }
-      } else {
-        this.showNatureEvent('⚠️', 'Bandeja Cheia (4/4)!', 'Toque na Marreta 🔨 ou Desfazer ↩️!');
       }
     } else {
       this.traySlotsContainer.classList.remove('warning-full');
     }
+
+    // Radar Tático da Bandeja: avalia slots e sugere a melhor jogada na caixa de eventos da natureza
+    const worldIdx = Math.max(0, Math.min(4, Math.floor(this.currentLevelIndex / 10)));
+    const guardian = UIManager.BIOME_GUARDIANS[worldIdx];
+    const tacticalOpportunity = TrayTacticalOracle.evaluate(
+      tray,
+      this.engine.getFreeTiles(),
+      this.engine.getActiveBoardTiles(),
+      guardian?.name || 'Bosque Sereno',
+      guardian?.emoji || '🌿'
+    );
+    this.natureFeedback.updateTacticalStatus(tacticalOpportunity);
 
     this.hud.updatePowerUpBadges(this.engine.getHistoryLength() > 0);
   }
@@ -1014,43 +1086,6 @@ export class UIManager {
         this.handleWaveCleared(this.engine.getCurrentWave(), this.engine.getTotalWaves());
       }
     }, 280);
-  }
-
-  private returnTileFromTray(tile: PlacedTile, slotEl: HTMLElement): void {
-    if (this.renderer.isInputLocked) return;
-
-    tile.inFlight = true;
-    const undoResult = this.engine.undoSpecificTrayTile(tile.id);
-    if (undoResult.success) {
-      soundManager.playTileClick();
-      hapticManager.impactLight();
-
-      slotEl.classList.add('tray-return-anim');
-      const coords = this.renderer.getTileViewportCoords(tile);
-      this.renderer.isInputLocked = true;
-
-      this.trayAnimator.animateTileFromTrayToBoard(
-        tile,
-        slotEl,
-        coords.left,
-        coords.top,
-        coords.width,
-        coords.height,
-        this.renderer.getTileRenderer(),
-        () => {
-          tile.inFlight = false;
-          slotEl.classList.remove('tray-return-anim');
-          this.renderer.isInputLocked = false;
-          this.renderer.requestRender();
-          this.updateHUD();
-        }
-      );
-
-      this.updateHUD();
-      this.showToast('Peça devolvida ao tabuleiro!');
-    } else {
-      tile.inFlight = false;
-    }
   }
 
   public animateTileToTray(
@@ -1158,8 +1193,9 @@ export class UIManager {
     const hudTitle = document.querySelector('.wisdom-title-container');
     if (hudTitle) {
       hudTitle.classList.remove('pulse-glow');
-      void (hudTitle as HTMLElement).offsetWidth;
-      hudTitle.classList.add('pulse-glow');
+      requestAnimationFrame(() => {
+        hudTitle.classList.add('pulse-glow');
+      });
     }
   }
 
@@ -1171,6 +1207,36 @@ export class UIManager {
   public handleClimate(climate: ClimateEffectResult): void {
     this.synergiesTriggeredThisGame++;
     this.natureFeedback.handleClimate(climate, this.hud, this.engine.getHistoryLength() > 0);
+  }
+
+  public handleTrioMatched(trioTile: PlacedTile): void {
+    const trioIndicatorEl = document.getElementById('hud-trio-indicator');
+    if (trioIndicatorEl) {
+      const def = TileRegistry.get(trioTile.value);
+      const icon = def?.label.split(' ')[0] || '🀄';
+
+      const icon3 = document.getElementById('trio-icon-3');
+      const textEl = document.getElementById('trio-text');
+      if (icon3) {
+        icon3.textContent = icon;
+        icon3.className = 'trio-orb filled';
+      }
+      if (textEl) textEl.textContent = '✨ TRINCA CONCLUÍDA!';
+      trioIndicatorEl.classList.remove('hidden');
+      trioIndicatorEl.classList.add('trio-completed-pulse');
+
+      setTimeout(() => {
+        trioIndicatorEl.classList.remove('trio-completed-pulse');
+        trioIndicatorEl.classList.add('hidden');
+      }, 1800);
+    }
+    this.triggerHudPulse();
+    this.showNatureEvent(
+      '🦎',
+      'Trinca Sagrada Consagrada!',
+      `A 3ª peça de ${trioTile.label} consagrou a Trinca! A 4ª peça virou Camaleão Coringa 🦎 (+500 Harmonia)!`
+    );
+    this.updateHUD();
   }
 
   public handleCosmicRescue(rescuedTiles: PlacedTile[]): void {
