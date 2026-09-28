@@ -13,23 +13,40 @@ export class TileRuleEngine {
   public static computeFreeTileIds(activeTiles: PlacedTile[]): Set<string> {
     const freeSet = new Set<string>();
     const n = activeTiles.length;
+    if (n === 0) return freeSet;
 
+    // 1. Constrói o mapa de coordenadas espaciais O(1) e descobre maxZ
+    let maxZ = 0;
+    const coordMap = new Map<string, PlacedTile>();
+    for (let i = 0; i < n; i++) {
+      const t = activeTiles[i];
+      coordMap.set(`${t.position.z}:${t.position.x},${t.position.y}`, t);
+      if (t.position.z > maxZ) {
+        maxZ = t.position.z;
+      }
+    }
+
+    // 2. Avalia cada peça com verificações O(1) de vizinhança espacial
     for (let i = 0; i < n; i++) {
       const tile = activeTiles[i];
-      let hasTileAbove = false;
+      const tx = tile.position.x;
+      const ty = tile.position.y;
+      const tz = tile.position.z;
 
-      // 1. Checar se existe peça acima cobrindo
-      for (let j = 0; j < n; j++) {
-        if (i === j) continue;
-        const other = activeTiles[j];
-        if (other.position.z > tile.position.z) {
-          if (
-            Math.abs(other.position.x - tile.position.x) < 2 &&
-            Math.abs(other.position.y - tile.position.y) < 2
-          ) {
-            hasTileAbove = true;
-            break; // Já coberta por cima, não está livre!
+      // 1. Checar se existe peça acima cobrindo (|dx| < 2 e |dy| < 2 em qualquer z > tz)
+      let hasTileAbove = false;
+      if (tz < maxZ) {
+        for (let z = tz + 1; z <= maxZ; z++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+              if (coordMap.has(`${z}:${tx + dx},${ty + dy}`)) {
+                hasTileAbove = true;
+                break;
+              }
+            }
+            if (hasTileAbove) break;
           }
+          if (hasTileAbove) break;
         }
       }
 
@@ -37,26 +54,27 @@ export class TileRuleEngine {
         continue;
       }
 
-      // 2. Checar bloqueio lateral no mesmo nível Z
+      // 2. Checar bloqueio lateral no mesmo nível Z (|dy| < 2 e dx in [-2, -1] ou [1, 2])
       let hasLeftNeighbor = false;
-      let hasRightNeighbor = false;
-
-      for (let j = 0; j < n; j++) {
-        if (i === j) continue;
-        const other = activeTiles[j];
-        if (other.position.z !== tile.position.z) continue;
-
-        if (Math.abs(other.position.y - tile.position.y) < 2) {
-          if (other.position.x < tile.position.x && (tile.position.x - other.position.x) <= 2) {
+      for (let dx = -2; dx <= -1; dx++) {
+        for (let dy = -1; dy <= 1; dy++) {
+          if (coordMap.has(`${tz}:${tx + dx},${ty + dy}`)) {
             hasLeftNeighbor = true;
-          } else if (other.position.x > tile.position.x && (other.position.x - tile.position.x) <= 2) {
-            hasRightNeighbor = true;
-          }
-
-          if (hasLeftNeighbor && hasRightNeighbor) {
-            break; // Bloqueada em ambos os lados!
+            break;
           }
         }
+        if (hasLeftNeighbor) break;
+      }
+
+      let hasRightNeighbor = false;
+      for (let dx = 1; dx <= 2; dx++) {
+        for (let dy = -1; dy <= 1; dy++) {
+          if (coordMap.has(`${tz}:${tx + dx},${ty + dy}`)) {
+            hasRightNeighbor = true;
+            break;
+          }
+        }
+        if (hasRightNeighbor) break;
       }
 
       // Se for rocha ancestral, só é liberada se ambos os lados estiverem desimpedidos

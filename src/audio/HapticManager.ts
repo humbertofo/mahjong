@@ -2,6 +2,8 @@ import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 export class HapticManager {
   private enabled: boolean = true;
+  private lastHapticTime: number = 0;
+  private readonly THROTTLE_MS: number = 65;
 
   public setEnabled(val: boolean): void {
     this.enabled = val;
@@ -11,11 +13,20 @@ export class HapticManager {
     return this.enabled;
   }
 
+  private shouldThrottle(): boolean {
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    if (now - this.lastHapticTime < this.THROTTLE_MS) {
+      return true;
+    }
+    this.lastHapticTime = now;
+    return false;
+  }
+
   /**
    * Vibração leve ao tocar em uma peça livre
    */
   public async impactLight(): Promise<void> {
-    if (!this.enabled) return;
+    if (!this.enabled || this.shouldThrottle()) return;
     try {
       await Haptics.impact({ style: ImpactStyle.Light });
     } catch {
@@ -30,7 +41,7 @@ export class HapticManager {
    * Vibração média ao combinar um par com sucesso
    */
   public async impactMedium(): Promise<void> {
-    if (!this.enabled) return;
+    if (!this.enabled || this.shouldThrottle()) return;
     try {
       await Haptics.impact({ style: ImpactStyle.Medium });
     } catch {
@@ -44,7 +55,7 @@ export class HapticManager {
    * Vibração forte para a Marreta (impacto potente)
    */
   public async impactHeavy(): Promise<void> {
-    if (!this.enabled) return;
+    if (!this.enabled || this.shouldThrottle()) return;
     try {
       await Haptics.impact({ style: ImpactStyle.Heavy });
     } catch {

@@ -3,6 +3,7 @@ import { BoardRenderer } from './render/BoardRenderer';
 import { UIManager } from './ui/UIManager';
 import { garden36Layout } from './core/layouts/garden36';
 import { LiveUpdateManager } from './core/LiveUpdateManager';
+import { App } from '@capacitor/app';
 
 window.addEventListener('DOMContentLoaded', () => {
   // Confirmar que o app carregou com sucesso e desativar o rollback automático
@@ -138,4 +139,23 @@ window.addEventListener('DOMContentLoaded', () => {
       },
     });
   }, 100);
+
+  // 6. Tratamento do Hardware Back Button do Android (Evita encerramento acidental da fase)
+  const onBackButton = (e?: Event) => {
+    e?.preventDefault();
+    const handled = uiManager?.handleHardwareBack() ?? false;
+    if (!handled) {
+      App.exitApp().catch(() => {});
+    }
+  };
+
+  try {
+    App.addListener('backButton', () => {
+      onBackButton();
+    }).catch(() => {
+      document.addEventListener('backbutton', onBackButton);
+    });
+  } catch {
+    document.addEventListener('backbutton', onBackButton);
+  }
 });

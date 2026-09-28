@@ -12,6 +12,7 @@ import { GameEndModals } from './modals/GameEndModals';
 import { HUDController } from './HUDController';
 import { TrayAnimator } from './TrayAnimator';
 import { NatureFeedbackController } from './NatureFeedbackController';
+import { NatureGuideModal } from './modals/NatureGuideModal';
 import { getLevelRules } from '../core/levelRules';
 import { LevelDeckCurator } from '../core/nature/LevelDeckCurator';
 import { TileRegistry } from '../core/nature/tiles/TileRegistry';
@@ -514,43 +515,26 @@ export class UIManager {
       }
     });
 
-    // Modal Guia da Natureza
+    // Modal Guia da Natureza (Carregamento Tardio / Lazy Hydration)
     const helpBtn = document.getElementById('btn-help');
     const natureGuideModal = document.getElementById('modal-nature-guide');
+    const openNatureGuide = () => {
+      NatureGuideModal.hydrateGuide(soundManager, hapticManager);
+      natureGuideModal?.classList.remove('hidden');
+      soundManager.playTileClick();
+      hapticManager.impactLight();
+    };
+
     if (helpBtn && natureGuideModal) {
-      helpBtn.addEventListener('click', () => {
-        natureGuideModal.classList.remove('hidden');
-        soundManager.playTileClick();
-        hapticManager.impactLight();
-      });
+      helpBtn.addEventListener('click', openNatureGuide);
     }
     const natureEventBox = document.getElementById('nature-event-box');
     if (natureEventBox && natureGuideModal) {
-      natureEventBox.addEventListener('click', () => {
-        natureGuideModal.classList.remove('hidden');
-        soundManager.playTileClick();
-        hapticManager.impactLight();
-      });
+      natureEventBox.addEventListener('click', openNatureGuide);
     }
 
     document.getElementById('tutorial-tip-banner')?.addEventListener('click', () => {
       document.getElementById('tutorial-tip-banner')?.classList.add('hidden');
-    });
-
-    document.querySelectorAll('.guide-tab-btn').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        const target = e.currentTarget as HTMLElement;
-        const tab = target.dataset.tab;
-        if (!tab) return;
-
-        document.querySelectorAll('.guide-tab-btn').forEach((b) => b.classList.remove('active'));
-        target.classList.add('active');
-
-        document.querySelectorAll('.guide-tab-pane').forEach((pane) => pane.classList.add('hidden'));
-        document.getElementById(`guide-tab-${tab}`)?.classList.remove('hidden');
-        soundManager.playTileClick();
-        hapticManager.impactLight();
-      });
     });
 
     document.querySelectorAll('.modal-close').forEach((btn) => {
@@ -1441,5 +1425,54 @@ export class UIManager {
         this.showToast('✨ A atualização entrará em vigor ao reabrir o jogo.');
       };
     }
+  }
+
+  /**
+   * Trata o botão físico/gesto de "Voltar" do Android.
+   * Retorna true se consumiu o evento (fechou modal, preview ou voltou ao menu);
+   * Retorna false se já estava no menu principal e pode sair do app.
+   */
+  public handleHardwareBack(): boolean {
+    // 1. Fechar preview de fase se visível
+    const preview = document.getElementById('atom-level-preview');
+    if (preview && !preview.classList.contains('hidden')) {
+      preview.classList.add('hidden');
+      soundManager.playTileClick();
+      hapticManager.impactLight();
+      return true;
+    }
+
+    // 2. Fechar modais abertos do jogo em ordem de prioridade
+    const modals = [
+      this.restartConfirmModal,
+      this.settingsModal,
+      this.levelsModal,
+      this.statsModal,
+      this.victoryModal,
+      document.getElementById('modal-nature-guide'),
+      document.getElementById('modal-game-over'),
+      document.getElementById('modal-update-dialog'),
+    ];
+
+    for (const m of modals) {
+      if (m && !m.classList.contains('hidden')) {
+        m.classList.add('hidden');
+        soundManager.playTileClick();
+        hapticManager.impactLight();
+        return true;
+      }
+    }
+
+    // 3. Se estiver na tela de jogo, retorna para o menu com segurança
+    if (this.screenGame && !this.screenGame.classList.contains('hidden')) {
+      soundManager.playTileClick();
+      hapticManager.impactLight();
+      this.hud.stopTimer();
+      this.showMenu();
+      return true;
+    }
+
+    // 4. Se já estiver no menu inicial, retorna false permitindo que o Android minimize o app
+    return false;
   }
 }

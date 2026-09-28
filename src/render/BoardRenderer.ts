@@ -209,7 +209,11 @@ export class BoardRenderer {
     const height = parent.clientHeight;
     if (width <= 0 || height <= 0) return;
 
+    this.camera.updateDpr();
     const dpr = this.camera.dpr;
+    this.tileRenderer.setDpr(dpr);
+    this.fx.setDpr(dpr);
+
     const targetW = Math.round(width * dpr);
     const targetH = Math.round(height * dpr);
 
@@ -1392,6 +1396,7 @@ export class BoardRenderer {
     let isLongPressTriggered = false;
     let startX = 0;
     let startY = 0;
+    let cachedRect: DOMRect | null = null;
 
     const clearTimer = () => {
       if (longPressTimer) {
@@ -1403,9 +1408,9 @@ export class BoardRenderer {
     this.canvas.addEventListener('pointerdown', (e) => {
       clearTimer();
       isLongPressTriggered = false;
-      const rect = this.canvas.getBoundingClientRect();
-      startX = e.clientX - rect.left;
-      startY = e.clientY - rect.top;
+      cachedRect = this.canvas.getBoundingClientRect();
+      startX = e.clientX - cachedRect.left;
+      startY = e.clientY - cachedRect.top;
 
       const hit = this.camera.getTileAtScreenPos(startX, startY, this.engine.getActiveBoardTiles());
       if (hit) {
@@ -1417,33 +1422,43 @@ export class BoardRenderer {
           }
         }, 400);
       }
-    });
+    }, { passive: true });
 
     this.canvas.addEventListener('pointermove', (e) => {
-      const rect = this.canvas.getBoundingClientRect();
+      const rect = cachedRect || this.canvas.getBoundingClientRect();
       const currentX = e.clientX - rect.left;
       const currentY = e.clientY - rect.top;
       if (Math.hypot(currentX - startX, currentY - startY) > 12) {
         clearTimer();
       }
-    });
+    }, { passive: true });
 
     this.canvas.addEventListener('pointerup', (e) => {
       clearTimer();
-      if (isLongPressTriggered) return;
-      const rect = this.canvas.getBoundingClientRect();
+      if (isLongPressTriggered) {
+        cachedRect = null;
+        return;
+      }
+      const rect = cachedRect || this.canvas.getBoundingClientRect();
+      cachedRect = null;
       const clickX = e.clientX - rect.left;
       const clickY = e.clientY - rect.top;
       this.processClickAt(clickX, clickY);
-    });
+    }, { passive: true });
 
     this.canvas.addEventListener('pointercancel', () => {
       clearTimer();
-    });
+      cachedRect = null;
+    }, { passive: true });
 
+    let resizeRafId: number | null = null;
     window.addEventListener('resize', () => {
-      this.handleResize();
-    });
+      if (resizeRafId !== null) return;
+      resizeRafId = requestAnimationFrame(() => {
+        resizeRafId = null;
+        this.handleResize();
+      });
+    }, { passive: true });
   }
 
   private processClickAt(px: number, py: number): void {
@@ -1492,11 +1507,9 @@ export class BoardRenderer {
         tileWidth,
         tileHeight,
         hasTileAbove,
-        this.engine.getActiveBoardTiles(),
-        this.canvas.getBoundingClientRect(),
-        this.canvas.width / this.camera.dpr,
-        this.canvas.height / this.camera.dpr
+        this.engine.getActiveBoardTiles()
       );
+      this.keepAnimating(1200);
 
       if (this.callbacks.onBlockedTileClick) {
         this.callbacks.onBlockedTileClick(clickedTile, hasTileAbove);

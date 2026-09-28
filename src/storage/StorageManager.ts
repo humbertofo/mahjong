@@ -54,28 +54,60 @@ export class StorageManager {
     useEmojiMode: true,
   };
 
+  // ─── Memory Memoization Caches (Zero-Disk Lag / O(1) RAM Lookups) ──────────
+  private static prefsCache: UserPreferences | null = null;
+  private static statsCache: Map<string, LevelStats> = new Map();
+  private static globalStatsCache: GlobalStats | null = null;
+  private static progressCache: SavedProgress | null = null;
+
+  public static clearMemoryCache(): void {
+    this.statsCache.clear();
+    this.prefsCache = null;
+    this.globalStatsCache = null;
+    this.progressCache = null;
+  }
+
   // ─── Preferences ────────────────────────────────────────────────────────────
 
   public static getPreferences(): UserPreferences {
+    if (this.prefsCache) {
+      return { ...this.prefsCache };
+    }
     try {
       const raw = localStorage.getItem(PREFS_KEY);
-      if (raw) return { ...this.defaultPrefs, ...JSON.parse(raw) };
+      if (raw) {
+        const parsed = JSON.parse(raw) as Partial<UserPreferences>;
+        this.prefsCache = { ...this.defaultPrefs, ...parsed };
+        return { ...this.prefsCache };
+      }
     } catch { /* silent */ }
-    return { ...this.defaultPrefs };
+    this.prefsCache = { ...this.defaultPrefs };
+    return { ...this.prefsCache };
   }
 
   public static savePreferences(prefs: UserPreferences): void {
+    this.prefsCache = { ...prefs };
     try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch { /* silent */ }
   }
 
   // ─── Per-Level Stats ─────────────────────────────────────────────────────────
 
   public static getLevelStats(layoutId: string): LevelStats {
+    const cached = this.statsCache.get(layoutId);
+    if (cached) {
+      return { ...cached };
+    }
     try {
       const raw = localStorage.getItem(`${STATS_KEY}_${layoutId}`);
-      if (raw) return JSON.parse(raw);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        this.statsCache.set(layoutId, parsed);
+        return { ...parsed };
+      }
     } catch { /* silent */ }
-    return { completed: false, timesPlayed: 0, stars: 0 };
+    const defaultStat: LevelStats = { completed: false, timesPlayed: 0, stars: 0 };
+    this.statsCache.set(layoutId, defaultStat);
+    return { ...defaultStat };
   }
 
   /** Alias para compatibilidade com código antigo */
@@ -115,6 +147,7 @@ export class StorageManager {
       stats.stars = earnedStars;
     }
 
+    this.statsCache.set(layoutId, { ...stats });
     try { localStorage.setItem(`${STATS_KEY}_${layoutId}`, JSON.stringify(stats)); } catch { /* silent */ }
     return stats;
   }
@@ -122,11 +155,27 @@ export class StorageManager {
   // ─── Global Stats ────────────────────────────────────────────────────────────
 
   public static getGlobalStats(): GlobalStats {
+    if (this.globalStatsCache) {
+      return { ...this.globalStatsCache };
+    }
     try {
       const raw = localStorage.getItem(GLOBAL_KEY);
-      if (raw) return JSON.parse(raw);
+      if (raw) {
+        const parsed = JSON.parse(raw) as Partial<GlobalStats>;
+        this.globalStatsCache = {
+          totalGamesPlayed: parsed.totalGamesPlayed ?? 0,
+          totalGamesWon: parsed.totalGamesWon ?? 0,
+          totalPairsMatched: parsed.totalPairsMatched ?? 0,
+          totalTimePlayed: parsed.totalTimePlayed ?? 0,
+          currentStreak: parsed.currentStreak ?? 0,
+          lastPlayedDate: parsed.lastPlayedDate ?? '',
+          highestLevelUnlocked: parsed.highestLevelUnlocked ?? 0,
+          totalSynergiesTriggered: parsed.totalSynergiesTriggered ?? 0,
+        };
+        return { ...this.globalStatsCache };
+      }
     } catch { /* silent */ }
-    return {
+    this.globalStatsCache = {
       totalGamesPlayed: 0,
       totalGamesWon: 0,
       totalPairsMatched: 0,
@@ -136,6 +185,7 @@ export class StorageManager {
       highestLevelUnlocked: 0,
       totalSynergiesTriggered: 0,
     };
+    return { ...this.globalStatsCache };
   }
 
   public static incrementGamesPlayed(): void {
@@ -148,6 +198,7 @@ export class StorageManager {
       g.currentStreak = g.lastPlayedDate === yesterday ? g.currentStreak + 1 : 1;
       g.lastPlayedDate = today;
     }
+    this.globalStatsCache = { ...g };
     try { localStorage.setItem(GLOBAL_KEY, JSON.stringify(g)); } catch { /* silent */ }
   }
 
@@ -163,16 +214,35 @@ export class StorageManager {
     g.totalTimePlayed += timeSeconds;
     g.totalSynergiesTriggered = (g.totalSynergiesTriggered || 0) + synergiesTriggered;
     if (levelIndex > g.highestLevelUnlocked) g.highestLevelUnlocked = levelIndex;
+    this.globalStatsCache = { ...g };
     try { localStorage.setItem(GLOBAL_KEY, JSON.stringify(g)); } catch { /* silent */ }
   }
 
   // ─── Progress (Unlocked Levels) ──────────────────────────────────────────────
 
   public static getProgress(): SavedProgress {
+    if (this.progressCache) {
+      return {
+        currentLevelIndex: this.progressCache.currentLevelIndex,
+        unlockedLevels: [...this.progressCache.unlockedLevels],
+      };
+    }
     try {
       const raw = localStorage.getItem(PROGRESS_KEY);
-      if (raw) return JSON.parse(raw);
+      if (raw) {
+        const parsed = JSON.parse(raw) as Partial<SavedProgress>;
+        const progress: SavedProgress = {
+          currentLevelIndex: parsed.currentLevelIndex ?? 0,
+          unlockedLevels: Array.isArray(parsed.unlockedLevels) ? [...parsed.unlockedLevels] : [0],
+        };
+        this.progressCache = progress;
+        return {
+          currentLevelIndex: progress.currentLevelIndex,
+          unlockedLevels: [...progress.unlockedLevels],
+        };
+      }
     } catch { /* silent */ }
+    this.progressCache = { currentLevelIndex: 0, unlockedLevels: [0] };
     return { currentLevelIndex: 0, unlockedLevels: [0] };
   }
 
@@ -184,6 +254,10 @@ export class StorageManager {
     if (levelIndex > p.currentLevelIndex) {
       p.currentLevelIndex = levelIndex;
     }
+    this.progressCache = {
+      currentLevelIndex: p.currentLevelIndex,
+      unlockedLevels: [...p.unlockedLevels],
+    };
     try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(p)); } catch { /* silent */ }
   }
 
@@ -194,6 +268,11 @@ export class StorageManager {
   }
 
   public static resetAllProgress(): void {
+    this.statsCache.clear();
+    this.prefsCache = null;
+    this.globalStatsCache = null;
+    this.progressCache = null;
+
     try {
       // 1. Redefinir progresso para a Fase 1
       localStorage.setItem(PROGRESS_KEY, JSON.stringify({ currentLevelIndex: 0, unlockedLevels: [0] }));

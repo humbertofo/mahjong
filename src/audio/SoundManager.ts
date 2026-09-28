@@ -3,6 +3,7 @@ import { TileAudioTimbre } from '../core/nature/tiles/TileTypes';
 declare global {
   interface Window {
     webkitAudioContext?: typeof AudioContext;
+    webkitOfflineAudioContext?: typeof OfflineAudioContext;
   }
 }
 
@@ -13,6 +14,9 @@ export class SoundManager {
   private ctx: AudioContext | null = null;
   private isMuted: boolean = false;
   private volume: number = 0.8;
+  private clackBuffers: Map<string, AudioBuffer> = new Map();
+  private matchBuffers: Map<string, AudioBuffer> = new Map();
+  private isPreRenderingClacks: boolean = false;
 
   // 🎵 Trilha Sonora Ambiente (BGM Lo-Fi Zen com Playlist e Shuffle)
   private bgmAudio: HTMLAudioElement | null = null;
@@ -76,7 +80,16 @@ export class SoundManager {
         }
       }, 150);
 
-      // 3. Desbloqueio antecipado no pointerdown (já prepara o áudio antes do pointerup disparar)
+      // 3. Pré-renderiza os buffers de clack com OfflineAudioContext (Zero DSP em runtime)
+      setTimeout(() => {
+        try {
+          this.preRenderClackBuffers();
+        } catch {
+          // Silencia
+        }
+      }, 50);
+
+      // 4. Desbloqueio antecipado no pointerdown (já prepara o áudio antes do pointerup disparar)
       const unlockEvents = ['pointerdown', 'touchstart', 'pointerup', 'touchend', 'click', 'keydown'];
       const unlockAudio = () => {
         this.hasUserInteracted = true;
@@ -303,12 +316,165 @@ export class SoundManager {
   }
 
   /**
+   * Pré-sintetiza buffers PCM estáticos para os 5 timbres de clack usando OfflineAudioContext.
+   * Elimina alocação de osciladores, filtros biquad e rampas DSP a cada clique no tabuleiro.
+   */
+  public async preRenderClackBuffers(): Promise<void> {
+    if (this.isPreRenderingClacks || typeof window === 'undefined') return;
+    const OfflineCtx = window.OfflineAudioContext || (window as unknown as { webkitOfflineAudioContext: typeof OfflineAudioContext }).webkitOfflineAudioContext;
+    if (!OfflineCtx) return;
+
+    this.isPreRenderingClacks = true;
+    const timbres = [
+      { name: 'zen', centerFreq: 2200, baseFreq: 1400, endFreq: 350, qFactor: 8, duration: 0.05 },
+      { name: 'water', centerFreq: 1800, baseFreq: 1200, endFreq: 420, qFactor: 6, duration: 0.055 },
+      { name: 'wood', centerFreq: 1250, baseFreq: 950, endFreq: 260, qFactor: 10, duration: 0.04 },
+      { name: 'crystal', centerFreq: 3100, baseFreq: 1900, endFreq: 700, qFactor: 12, duration: 0.06 },
+      { name: 'leaf', centerFreq: 2100, baseFreq: 1350, endFreq: 320, qFactor: 7, duration: 0.045 },
+    ];
+
+    const sampleRate = 44100;
+
+    for (const t of timbres) {
+      try {
+        const totalDuration = t.duration + 0.02;
+        const length = Math.ceil(sampleRate * totalDuration);
+        const offlineCtx = new OfflineCtx(1, length, sampleRate);
+
+        // 1. Oscilador principal
+        const osc = offlineCtx.createOscillator();
+        const filter = offlineCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(t.centerFreq, 0);
+        filter.Q.setValueAtTime(t.qFactor, 0);
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(t.baseFreq, 0);
+        osc.frequency.exponentialRampToValueAtTime(t.endFreq, t.duration * 0.8);
+
+        const oscGain = offlineCtx.createGain();
+        oscGain.gain.setValueAtTime(0.7, 0);
+        oscGain.gain.exponentialRampToValueAtTime(0.001, t.duration);
+
+        osc.connect(filter);
+        filter.connect(oscGain);
+        oscGain.connect(offlineCtx.destination);
+
+        osc.start(0);
+        osc.stop(t.duration);
+
+        // 2. Ruído percussivo de impacto
+        const transientDuration = 0.02;
+        const transientLength = Math.ceil(sampleRate * transientDuration);
+        const noiseBuf = offlineCtx.createBuffer(1, transientLength, sampleRate);
+        const noiseData = noiseBuf.getChannelData(0);
+        for (let i = 0; i < transientLength; i++) {
+          noiseData[i] = Math.random() * 2 - 1;
+        }
+
+        const noise = offlineCtx.createBufferSource();
+        noise.buffer = noiseBuf;
+
+        const noiseFilter = offlineCtx.createBiquadFilter();
+        noiseFilter.type = 'highpass';
+        noiseFilter.frequency.setValueAtTime(3000, 0);
+
+        const noiseGain = offlineCtx.createGain();
+        noiseGain.gain.setValueAtTime(0.15, 0);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, transientDuration);
+
+        noise.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(offlineCtx.destination);
+
+        noise.start(0);
+        noise.stop(transientDuration);
+
+        const renderedBuffer = await offlineCtx.startRendering();
+        this.clackBuffers.set(t.name, renderedBuffer);
+      } catch {
+        // Falha graciosa mantendo sintetizador procedural
+      }
+    }
+
+    // Pré-renderização dos acordes de combinação (playMatchSuccess)
+    const matchConfigs: Array<{
+      name: string;
+      notes: number[];
+      decay: number;
+      oscType: OscillatorType;
+    }> = [
+      { name: 'default', notes: [523.25, 659.25, 783.99, 1046.5], decay: 0.35, oscType: 'sine' },
+      { name: 'zen', notes: [392.00, 523.25, 659.25, 1046.5], decay: 0.55, oscType: 'sine' },
+      { name: 'water', notes: [587.33, 739.99, 880, 1174.66], decay: 0.42, oscType: 'sine' },
+      { name: 'crystal', notes: [659.25, 830.61, 987.77, 1318.51], decay: 0.48, oscType: 'triangle' },
+      { name: 'wood', notes: [440, 554.37, 659.25, 880], decay: 0.30, oscType: 'sine' },
+      { name: 'leaf', notes: [523.25, 587.33, 659.25, 880], decay: 0.38, oscType: 'sine' },
+    ];
+
+    for (const m of matchConfigs) {
+      try {
+        const totalDuration = (m.notes.length - 1) * 0.05 + m.decay + 0.05;
+        const length = Math.ceil(sampleRate * totalDuration);
+        const offlineCtx = new OfflineCtx(1, length, sampleRate);
+
+        m.notes.forEach((freq, idx) => {
+          const startTime = idx * 0.05;
+          const osc = offlineCtx.createOscillator();
+          const gain = offlineCtx.createGain();
+
+          osc.type = m.oscType;
+          osc.frequency.setValueAtTime(freq, startTime);
+
+          gain.gain.setValueAtTime(0, startTime);
+          gain.gain.setValueAtTime(0.25, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, startTime + m.decay);
+
+          osc.connect(gain);
+          gain.connect(offlineCtx.destination);
+
+          osc.start(startTime);
+          osc.stop(startTime + m.decay + 0.02);
+        });
+
+        const renderedMatchBuffer = await offlineCtx.startRendering();
+        this.matchBuffers.set(m.name, renderedMatchBuffer);
+      } catch {
+        // Silencia em caso de limitação do device
+      }
+    }
+  }
+
+  /**
    * Som realista de pedra/marfim batendo suavemente (Tile Clack) com modulação de timbre
+   * Utiliza buffer PCM estático pré-renderizado se disponível para latência mínima e zero alocação DSP.
    */
   public playTileClick(timbre?: TileAudioTimbre): void {
     if (this.isMuted) return;
     this.initContext();
     if (!this.ctx) return;
+
+    const key = timbre || 'zen';
+    const cachedBuffer = this.clackBuffers.get(key) || this.clackBuffers.get('zen');
+
+    if (cachedBuffer) {
+      try {
+        const source = this.ctx.createBufferSource();
+        source.buffer = cachedBuffer;
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(this.volume, this.ctx.currentTime);
+
+        source.connect(gain);
+        gain.connect(this.ctx.destination);
+        source.start();
+        return;
+      } catch {
+        // Fallback procedural abaixo caso ocorra erro no buffer source
+      }
+    } else if (!this.isPreRenderingClacks) {
+      this.preRenderClackBuffers().catch(() => {});
+    }
 
     const now = this.ctx.currentTime;
     const osc = this.ctx.createOscillator();
@@ -389,6 +555,28 @@ export class SoundManager {
     if (this.isMuted) return;
     this.initContext();
     if (!this.ctx) return;
+
+    const key = timbre || 'default';
+    const cachedBuffer = this.matchBuffers.get(key) || this.matchBuffers.get('default');
+
+    if (cachedBuffer) {
+      try {
+        const source = this.ctx.createBufferSource();
+        source.buffer = cachedBuffer;
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(this.volume, this.ctx.currentTime);
+
+        source.connect(gain);
+        gain.connect(this.ctx.destination);
+        source.start();
+        return;
+      } catch {
+        // Fallback procedural abaixo caso ocorra erro
+      }
+    } else if (!this.isPreRenderingClacks) {
+      this.preRenderClackBuffers().catch(() => {});
+    }
 
     const now = this.ctx.currentTime;
     let notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6 (Acorde Maior)

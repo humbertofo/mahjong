@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-09-28T10:03:56.228Z",
-  "totalFiles": 102,
-  "totalLines": 51774,
+  "timestamp": "2026-09-28T16:22:22.354Z",
+  "totalFiles": 103,
+  "totalLines": 52876,
   "monoliths": [
     {
       "file": "src/index.css",
-      "lines": 4853,
-      "sizeKb": "109.2 KB"
+      "lines": 4873,
+      "sizeKb": "109.8 KB"
     },
     {
       "file": "src/core/nature/tiles/tileCatalog.ts",
@@ -15,8 +15,8 @@
     },
     {
       "file": "src/render/BoardRenderer.ts",
-      "lines": 2064,
-      "sizeKb": "71.0 KB"
+      "lines": 2077,
+      "sizeKb": "71.4 KB"
     },
     {
       "file": "src/core/layouts/levels/level42_four_bridges.ts",
@@ -25,18 +25,18 @@
     },
     {
       "file": "src/audio/SoundManager.ts",
-      "lines": 1514,
-      "sizeKb": "43.6 KB"
+      "lines": 1702,
+      "sizeKb": "50.6 KB"
+    },
+    {
+      "file": "src/ui/UIManager.ts",
+      "lines": 1479,
+      "sizeKb": "55.2 KB"
     },
     {
       "file": "src/core/layouts/levels/level44_four_hills.ts",
       "lines": 1473,
       "sizeKb": "18.7 KB"
-    },
-    {
-      "file": "src/ui/UIManager.ts",
-      "lines": 1446,
-      "sizeKb": "54.2 KB"
     },
     {
       "file": "src/core/layouts/levels/level25_saturn_rings.ts",
@@ -84,6 +84,11 @@
       "sizeKb": "14.6 KB"
     },
     {
+      "file": "src/render/TileRenderer.ts",
+      "lines": 1049,
+      "sizeKb": "35.1 KB"
+    },
+    {
       "file": "src/core/BoardEngine.ts",
       "lines": 1015,
       "sizeKb": "32.9 KB"
@@ -95,12 +100,13 @@
     "src/audio/HapticManager.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\audio\\HapticManager.ts",
       "relativePath": "src/audio/HapticManager.ts",
-      "lines": 73,
-      "sizeBytes": 1765,
+      "lines": 84,
+      "sizeBytes": 2181,
       "dependencies": [],
       "dependents": [
         "src/render/BoardRenderer.ts",
         "src/ui/modals/LevelsModal.ts",
+        "src/ui/modals/NatureGuideModal.ts",
         "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/ui/UIManager.ts"
@@ -108,12 +114,13 @@
       "transitiveDependents": [
         "src/render/BoardRenderer.ts",
         "src/ui/modals/LevelsModal.ts",
+        "src/ui/modals/NatureGuideModal.ts",
         "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/ui/UIManager.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 6,
+      "blastRadiusScore": 7,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -121,14 +128,15 @@
     "src/audio/SoundManager.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\audio\\SoundManager.ts",
       "relativePath": "src/audio/SoundManager.ts",
-      "lines": 1514,
-      "sizeBytes": 44676,
+      "lines": 1702,
+      "sizeBytes": 51854,
       "dependencies": [
         "src/core/nature/tiles/TileTypes.ts"
       ],
       "dependents": [
         "src/render/BoardRenderer.ts",
         "src/ui/modals/LevelsModal.ts",
+        "src/ui/modals/NatureGuideModal.ts",
         "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/ui/UIManager.ts"
@@ -136,12 +144,13 @@
       "transitiveDependents": [
         "src/render/BoardRenderer.ts",
         "src/ui/modals/LevelsModal.ts",
+        "src/ui/modals/NatureGuideModal.ts",
         "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/ui/UIManager.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 6,
+      "blastRadiusScore": 7,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": true
@@ -252,8 +261,8 @@
     "src/core/engine/TileRuleEngine.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\engine\\TileRuleEngine.ts",
       "relativePath": "src/core/engine/TileRuleEngine.ts",
-      "lines": 94,
-      "sizeBytes": 3330,
+      "lines": 112,
+      "sizeBytes": 3847,
       "dependencies": [
         "src/core/types.ts"
       ],
@@ -2259,7 +2268,7 @@
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/NatureFeedbackController.ts"
       ],
-      "blastRadiusScore": 19,
+      "blastRadiusScore": 18,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -2302,7 +2311,7 @@
         "src/ui/NatureFeedbackController.ts",
         "src/core/layouts/pipeline/levelValidator.ts"
       ],
-      "blastRadiusScore": 24,
+      "blastRadiusScore": 23,
       "riskLevel": "ALTO",
       "isOrphan": false,
       "isMonolith": true
@@ -2350,7 +2359,7 @@
         "src/render/ViewportCamera.ts",
         "src/ui/TrayAnimator.ts"
       ],
-      "blastRadiusScore": 23,
+      "blastRadiusScore": 22,
       "riskLevel": "ALTO",
       "isOrphan": false,
       "isMonolith": false
@@ -2393,7 +2402,7 @@
         "src/ui/NatureFeedbackController.ts",
         "src/core/layouts/pipeline/levelValidator.ts"
       ],
-      "blastRadiusScore": 24,
+      "blastRadiusScore": 23,
       "riskLevel": "ALTO",
       "isOrphan": false,
       "isMonolith": false
@@ -2434,7 +2443,7 @@
         "src/ui/TrayAnimator.ts",
         "src/ui/NatureFeedbackController.ts"
       ],
-      "blastRadiusScore": 21,
+      "blastRadiusScore": 20,
       "riskLevel": "ALTO",
       "isOrphan": false,
       "isMonolith": false
@@ -2460,6 +2469,7 @@
         "src/core/nature/tiles/TileRegistry.ts",
         "src/render/BoardRenderer.ts",
         "src/ui/modals/LevelsModal.ts",
+        "src/ui/modals/NatureGuideModal.ts",
         "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/ui/UIManager.ts",
@@ -2482,7 +2492,7 @@
         "src/ui/TrayAnimator.ts",
         "src/core/layouts/pipeline/levelValidator.ts"
       ],
-      "blastRadiusScore": 26,
+      "blastRadiusScore": 27,
       "riskLevel": "ALTO",
       "isOrphan": false,
       "isMonolith": false
@@ -2703,7 +2713,8 @@
         "src/core/nature/tiles/index.ts",
         "src/audio/SoundManager.ts",
         "src/core/nature/tiles/tileCatalog.ts",
-        "src/ui/modals/SettingsModal.ts"
+        "src/ui/modals/SettingsModal.ts",
+        "src/ui/modals/NatureGuideModal.ts"
       ],
       "blastRadiusScore": 94,
       "riskLevel": "CRÍTICO",
@@ -2713,8 +2724,8 @@
     "src/index.css": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\index.css",
       "relativePath": "src/index.css",
-      "lines": 4853,
-      "sizeBytes": 111807,
+      "lines": 4873,
+      "sizeBytes": 112400,
       "dependencies": [],
       "dependents": [],
       "transitiveDependents": [],
@@ -2726,8 +2737,8 @@
     "src/main.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\main.ts",
       "relativePath": "src/main.ts",
-      "lines": 142,
-      "sizeBytes": 4516,
+      "lines": 162,
+      "sizeBytes": 5081,
       "dependencies": [
         "src/core/BoardEngine.ts",
         "src/render/BoardRenderer.ts",
@@ -2764,8 +2775,8 @@
     "src/render/BoardRenderer.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\render\\BoardRenderer.ts",
       "relativePath": "src/render/BoardRenderer.ts",
-      "lines": 2064,
-      "sizeBytes": 72701,
+      "lines": 2077,
+      "sizeBytes": 73133,
       "dependencies": [
         "src/core/BoardEngine.ts",
         "src/core/engine/SynergyDirector.ts",
@@ -2796,8 +2807,8 @@
     "src/render/FXParticleSystem.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\render\\FXParticleSystem.ts",
       "relativePath": "src/render/FXParticleSystem.ts",
-      "lines": 411,
-      "sizeBytes": 12849,
+      "lines": 614,
+      "sizeBytes": 18478,
       "dependencies": [
         "src/core/types.ts"
       ],
@@ -2838,8 +2849,8 @@
     "src/render/TileRenderer.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\render\\TileRenderer.ts",
       "relativePath": "src/render/TileRenderer.ts",
-      "lines": 991,
-      "sizeBytes": 34335,
+      "lines": 1049,
+      "sizeBytes": 35936,
       "dependencies": [
         "src/core/types.ts",
         "src/core/nature/synergies/SynergyFamilies.ts",
@@ -2860,13 +2871,13 @@
       "blastRadiusScore": 5,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
-      "isMonolith": false
+      "isMonolith": true
     },
     "src/render/ViewportCamera.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\render\\ViewportCamera.ts",
       "relativePath": "src/render/ViewportCamera.ts",
-      "lines": 131,
-      "sizeBytes": 4764,
+      "lines": 147,
+      "sizeBytes": 5294,
       "dependencies": [
         "src/core/types.ts",
         "src/render/TileRenderer.ts"
@@ -2887,8 +2898,8 @@
     "src/storage/StorageManager.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\storage\\StorageManager.ts",
       "relativePath": "src/storage/StorageManager.ts",
-      "lines": 226,
-      "sizeBytes": 7743,
+      "lines": 305,
+      "sizeBytes": 10687,
       "dependencies": [
         "src/core/types.ts"
       ],
@@ -2982,6 +2993,27 @@
       "isOrphan": false,
       "isMonolith": false
     },
+    "src/ui/modals/NatureGuideModal.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\modals\\NatureGuideModal.ts",
+      "relativePath": "src/ui/modals/NatureGuideModal.ts",
+      "lines": 443,
+      "sizeBytes": 25031,
+      "dependencies": [
+        "src/audio/SoundManager.ts",
+        "src/audio/HapticManager.ts"
+      ],
+      "dependents": [
+        "src/ui/UIManager.ts"
+      ],
+      "transitiveDependents": [
+        "src/ui/UIManager.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 2,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": false
+    },
     "src/ui/modals/SettingsModal.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\modals\\SettingsModal.ts",
       "relativePath": "src/ui/modals/SettingsModal.ts",
@@ -3052,8 +3084,8 @@
     "src/ui/UIManager.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\UIManager.ts",
       "relativePath": "src/ui/UIManager.ts",
-      "lines": 1446,
-      "sizeBytes": 55490,
+      "lines": 1479,
+      "sizeBytes": 56511,
       "dependencies": [
         "src/core/BoardEngine.ts",
         "src/render/BoardRenderer.ts",
@@ -3069,6 +3101,7 @@
         "src/ui/HUDController.ts",
         "src/ui/TrayAnimator.ts",
         "src/ui/NatureFeedbackController.ts",
+        "src/ui/modals/NatureGuideModal.ts",
         "src/core/levelRules.ts",
         "src/core/nature/LevelDeckCurator.ts",
         "src/core/nature/tiles/TileRegistry.ts",

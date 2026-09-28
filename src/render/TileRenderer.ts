@@ -37,11 +37,22 @@ export class TileRenderer {
   private atlasCoords: Map<AnimalValue, AtlasUV> = new Map();
   private static animalIndexMap: Map<AnimalValue, number> | null = null;
 
+  // Cache de Superfície 3D Completa da Peça (Bake On-Demand de Corpo + Chanfros + Face)
+  private tileSpriteCache: Map<string, HTMLCanvasElement> = new Map();
+
   private cachedGlyphFontSize: number = 0;
   private cachedGlyphFont: string = '';
 
   constructor() {
-    this.dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 3) : 1;
+    this.dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 2.0) : 1;
+  }
+
+  public setDpr(dpr: number): void {
+    if (this.dpr !== dpr) {
+      this.dpr = dpr;
+      this.clearCache();
+      this.initMasterAtlas();
+    }
   }
 
   private static getAnimalIndex(animal: AnimalValue): number {
@@ -94,6 +105,7 @@ export class TileRenderer {
     this.desaturateCache.clear();
     this.lightenCache.clear();
     this.atlasCoords.clear();
+    this.tileSpriteCache.clear();
     this.cachedGlyphFont = '';
     this.cachedGlyphFontSize = 0;
   }
@@ -228,6 +240,12 @@ export class TileRenderer {
 
       g.restore();
     }
+
+    // Pré-aquece os sprites 3D completos em GPU (Livre e Bloqueada, Z=0) para zero lag no primeiro toque
+    for (let i = 0; i < animals.length; i++) {
+      this.getOrGenerateTileSprite(animals[i], true, 0);
+      this.getOrGenerateTileSprite(animals[i], false, 0);
+    }
   }
 
   public bakeAnimalSlot(animal: AnimalValue): AtlasUV | null {
@@ -284,7 +302,193 @@ export class TileRenderer {
   }
 
   // =========================================================================
-  // MAIN DRAW ENTRY POINT (ULTRA-OTIMIZADO - ZERO OFFSCREEN CANVAS POR TILE)
+  // CACHE DE CORPO 3D + FACE DAS PEÇAS (HARDWARE BLIT VIA GPU)
+  // =========================================================================
+
+  public getOrGenerateTileSprite(
+    animal: AnimalValue,
+    isFree: boolean,
+    z: number
+  ): HTMLCanvasElement {
+    const zClamped = Math.min(Math.max(0, z), 2);
+    const key = `${animal}_${isFree ? '1' : '0'}_${zClamped}_${this.dims.tileWidth}_${this.dims.tileHeight}_${this.showHelperNumbers}_${this.dimBlockedTiles}`;
+    let cached = this.tileSpriteCache.get(key);
+    if (cached) return cached;
+
+    const { tileWidth, tileHeight, tileDepth } = this.dims;
+    const inset = 2;
+    const faceW = tileWidth - inset * 2;
+    const faceH = tileHeight - inset * 2;
+    const dX = Math.round(tileDepth * 0.65);
+    const dY = Math.round(tileDepth * 0.65);
+    const pad = 1;
+    const spriteLogicalW = faceW + dX + pad;
+    const spriteLogicalH = faceH + dY + pad;
+
+    const off = document.createElement('canvas');
+    off.width = Math.ceil(spriteLogicalW * this.dpr);
+    off.height = Math.ceil(spriteLogicalH * this.dpr);
+    const g = off.getContext('2d');
+    if (!g) return off;
+
+    g.scale(this.dpr, this.dpr);
+
+    const x = 0;
+    const y = 0;
+
+    // --- FACE LATERAL DIREITA ---
+    const ivorySplitY = y + Math.round(faceH * 0.62);
+
+    // Topo de Marfim da lateral direita
+    g.fillStyle = isFree || !this.dimBlockedTiles ? '#EAE2D2' : '#B8B0A2';
+    g.beginPath();
+    g.moveTo(x + faceW, y + 6);
+    g.lineTo(x + faceW + dX, y + 6 + dY);
+    g.lineTo(x + faceW + dX, ivorySplitY + dY);
+    g.lineTo(x + faceW, ivorySplitY);
+    g.closePath();
+    g.fill();
+
+    // Fundo de Jade da lateral direita (base clássica de Mahjong)
+    g.fillStyle = isFree || !this.dimBlockedTiles ? '#09534C' : '#05332E';
+    g.beginPath();
+    g.moveTo(x + faceW, ivorySplitY);
+    g.lineTo(x + faceW + dX, ivorySplitY + dY);
+    g.lineTo(x + faceW + dX, y + faceH + dY - 4);
+    g.lineTo(x + faceW, y + faceH);
+    g.closePath();
+    g.fill();
+
+    // Filete de separação entre marfim e jade
+    g.strokeStyle = 'rgba(0, 0, 0, 0.18)';
+    g.lineWidth = 1;
+    g.beginPath();
+    g.moveTo(x + faceW, ivorySplitY);
+    g.lineTo(x + faceW + dX, ivorySplitY + dY);
+    g.stroke();
+
+    // --- FACE LATERAL INFERIOR ---
+    const ivoryBottomH = dY * 0.62;
+
+    // Seção Marfim inferior
+    g.fillStyle = isFree || !this.dimBlockedTiles ? '#D0C5B4' : '#9E9484';
+    g.beginPath();
+    g.moveTo(x + 6, y + faceH);
+    g.lineTo(x + 6 + dX * 0.62, y + faceH + ivoryBottomH);
+    g.lineTo(x + faceW + dX * 0.62, y + faceH + ivoryBottomH);
+    g.lineTo(x + faceW, y + faceH);
+    g.closePath();
+    g.fill();
+
+    // Seção Jade inferior
+    g.fillStyle = isFree || !this.dimBlockedTiles ? '#033B34' : '#02241F';
+    g.beginPath();
+    g.moveTo(x + 6 + dX * 0.62, y + faceH + ivoryBottomH);
+    g.lineTo(x + 6 + dX, y + faceH + dY);
+    g.lineTo(x + faceW + dX, y + faceH + dY);
+    g.lineTo(x + faceW + dX * 0.62, y + faceH + ivoryBottomH);
+    g.closePath();
+    g.fill();
+
+    // Contorno da lateral 3D
+    g.strokeStyle = isFree || !this.dimBlockedTiles ? 'rgba(15, 23, 42, 0.35)' : 'rgba(15, 23, 42, 0.55)';
+    g.lineWidth = 1.2;
+    g.beginPath();
+    g.moveTo(x + faceW, y + 6);
+    g.lineTo(x + faceW + dX, y + 6 + dY);
+    g.lineTo(x + faceW + dX, y + faceH + dY);
+    g.lineTo(x + 6 + dX, y + faceH + dY);
+    g.lineTo(x + 6, y + faceH);
+    g.stroke();
+
+    // 3. FACE PRINCIPAL DA PEDRA
+    const palette = TileRegistry.getPalette(animal);
+    let bgColor = isFree || !this.dimBlockedTiles ? palette.bg : this.getDimmedColor(palette.bg);
+
+    if (zClamped === 1 && isFree) {
+      bgColor = this.lighten(bgColor, 0.05);
+    } else if (zClamped >= 2 && isFree) {
+      bgColor = this.lighten(bgColor, 0.10);
+    }
+
+    g.fillStyle = bgColor;
+    this.drawRoundedRect(g, x, y, faceW, faceH, 8);
+    g.fill();
+
+    // 4. CHANFRO TÁTIL 3D (SPECULAR BEVEL HIGHLIGHT)
+    if (isFree || !this.dimBlockedTiles) {
+      g.strokeStyle = zClamped >= 1 ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 0.78)';
+    } else {
+      g.strokeStyle = 'rgba(255, 255, 255, 0.18)';
+    }
+    g.lineWidth = 1.6;
+    g.beginPath();
+    g.moveTo(x + 7, y + 1.2);
+    g.lineTo(x + faceW - 7, y + 1.2);
+    g.moveTo(x + 1.2, y + 7);
+    g.lineTo(x + 1.2, y + faceH - 7);
+    g.stroke();
+
+    // Borda inferior e direita interna com sombra de chanfro
+    g.strokeStyle = 'rgba(71, 85, 105, 0.22)';
+    g.lineWidth = 1.2;
+    g.beginPath();
+    g.moveTo(x + faceW - 1.2, y + 7);
+    g.lineTo(x + faceW - 1.2, y + faceH - 7);
+    g.moveTo(x + 7, y + faceH - 1.2);
+    g.lineTo(x + faceW - 7, y + faceH - 1.2);
+    g.stroke();
+
+    // 5. MOLDURA E CONTORNO EXTERNO
+    const syn = SYNERGY_FAMILIES[animal];
+    if (syn) {
+      if (syn.borderColor === 'rainbow') {
+        if (isFree || !this.dimBlockedTiles) {
+          const grad = g.createLinearGradient(x, y, x + faceW, y + faceH);
+          grad.addColorStop(0, '#FFD700');
+          grad.addColorStop(0.33, '#00E676');
+          grad.addColorStop(0.66, '#00B0FF');
+          grad.addColorStop(1, '#E040FB');
+          g.lineWidth = 2.6;
+          g.strokeStyle = grad;
+        } else {
+          g.lineWidth = 1.6;
+          g.strokeStyle = 'rgba(100, 116, 139, 0.70)';
+        }
+      } else {
+        g.lineWidth = isFree ? 2.4 : 1.6;
+        g.strokeStyle = isFree ? syn.borderColor : (this.dimBlockedTiles ? 'rgba(100, 116, 139, 0.65)' : syn.borderColor);
+      }
+      this.drawRoundedRect(g, x, y, faceW, faceH, 8);
+      g.stroke();
+    } else {
+      g.lineWidth = isFree ? 1.4 : 1.2;
+      g.strokeStyle = isFree ? 'rgba(71, 85, 105, 0.65)' : (this.dimBlockedTiles ? 'rgba(100, 116, 139, 0.55)' : 'rgba(71, 85, 105, 0.65)');
+      this.drawRoundedRect(g, x, y, faceW, faceH, 8);
+      g.stroke();
+    }
+
+    // 6. GLIFO DO ANIMAL, BADGE E NÚMERO (DO MASTER ATLAS)
+    const uv = this.getAtlasUV(animal);
+    if (uv && this.masterAtlas) {
+      g.drawImage(this.masterAtlas, uv.sx, uv.sy, uv.sw, uv.sh, x, y, faceW, faceH);
+    } else {
+      this.drawAnimalGlyph(g, animal, faceW, faceH, x, y);
+    }
+
+    // 7. ESCURECIMENTO TÁTIL DE PEÇAS BLOQUEADAS (JÁ PRÉ-ASSADO)
+    if (!isFree && this.dimBlockedTiles) {
+      g.fillStyle = 'rgba(15, 23, 42, 0.35)';
+      this.drawRoundedRect(g, x, y, faceW, faceH, 8);
+      g.fill();
+    }
+
+    this.tileSpriteCache.set(key, off);
+    return off;
+  }
+
+  // =========================================================================
+  // MAIN DRAW ENTRY POINT (ULTRA-OTIMIZADO - GPU HARDWARE BLIT)
   // =========================================================================
 
   public drawTile(
@@ -309,15 +513,17 @@ export class TileRenderer {
     const y = screenY + yOffset + inset;
     const z = tile.position.z;
 
-    ctx.save();
-
-    if (alpha < 1) {
-      ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
-    }
-    if (scaleXFactor !== 1) {
-      ctx.translate(x + faceW / 2, y + faceH / 2);
-      ctx.scale(scaleXFactor, 1);
-      ctx.translate(-(x + faceW / 2), -(y + faceH / 2));
+    const needsTransform = scaleXFactor !== 1 || alpha < 1;
+    if (needsTransform) {
+      ctx.save();
+      if (alpha < 1) {
+        ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+      }
+      if (scaleXFactor !== 1) {
+        ctx.translate(x + faceW / 2, y + faceH / 2);
+        ctx.scale(scaleXFactor, 1);
+        ctx.translate(-(x + faceW / 2), -(y + faceH / 2));
+      }
     }
 
     // 1. SOMBRAS PROJETADAS EM CAMADAS (Z-DEPTH CAST SHADOW)
@@ -343,146 +549,16 @@ export class TileRenderer {
       ctx.fill();
     }
 
-    // 2. BASE 3D DA PEDRA (CORPO DE MARFIM + BASE DE JADE VERDE NOBRE)
+    // 2. HARDWARE TEXTURE BLIT DO CORPO 3D + FACE DA PEDRA (ASSADO EM GPU)
+    const animal = tile.value as AnimalValue;
+    const tileSprite = this.getOrGenerateTileSprite(animal, isFree, z);
     const dX = Math.round(tileDepth * 0.65);
     const dY = Math.round(tileDepth * 0.65);
+    const spriteLogicalW = faceW + dX + 1;
+    const spriteLogicalH = faceH + dY + 1;
+    ctx.drawImage(tileSprite, x, y, spriteLogicalW, spriteLogicalH);
 
-    // --- FACE LATERAL DIREITA ---
-    const ivorySplitY = y + Math.round(faceH * 0.62);
-
-    // Topo de Marfim da lateral direita
-    ctx.fillStyle = isFree || !this.dimBlockedTiles ? '#EAE2D2' : '#B8B0A2';
-    ctx.beginPath();
-    ctx.moveTo(x + faceW, y + 6);
-    ctx.lineTo(x + faceW + dX, y + 6 + dY);
-    ctx.lineTo(x + faceW + dX, ivorySplitY + dY);
-    ctx.lineTo(x + faceW, ivorySplitY);
-    ctx.closePath();
-    ctx.fill();
-
-    // Fundo de Jade da lateral direita (base clássica de Mahjong)
-    ctx.fillStyle = isFree || !this.dimBlockedTiles ? '#09534C' : '#05332E';
-    ctx.beginPath();
-    ctx.moveTo(x + faceW, ivorySplitY);
-    ctx.lineTo(x + faceW + dX, ivorySplitY + dY);
-    ctx.lineTo(x + faceW + dX, y + faceH + dY - 4);
-    ctx.lineTo(x + faceW, y + faceH);
-    ctx.closePath();
-    ctx.fill();
-
-    // Filete de separação entre marfim e jade
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.18)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(x + faceW, ivorySplitY);
-    ctx.lineTo(x + faceW + dX, ivorySplitY + dY);
-    ctx.stroke();
-
-    // --- FACE LATERAL INFERIOR ---
-    const ivoryBottomH = dY * 0.62;
-
-    // Seção Marfim inferior
-    ctx.fillStyle = isFree || !this.dimBlockedTiles ? '#D0C5B4' : '#9E9484';
-    ctx.beginPath();
-    ctx.moveTo(x + 6, y + faceH);
-    ctx.lineTo(x + 6 + dX * 0.62, y + faceH + ivoryBottomH);
-    ctx.lineTo(x + faceW + dX * 0.62, y + faceH + ivoryBottomH);
-    ctx.lineTo(x + faceW, y + faceH);
-    ctx.closePath();
-    ctx.fill();
-
-    // Seção Jade inferior
-    ctx.fillStyle = isFree || !this.dimBlockedTiles ? '#033B34' : '#02241F';
-    ctx.beginPath();
-    ctx.moveTo(x + 6 + dX * 0.62, y + faceH + ivoryBottomH);
-    ctx.lineTo(x + 6 + dX, y + faceH + dY);
-    ctx.lineTo(x + faceW + dX, y + faceH + dY);
-    ctx.lineTo(x + faceW + dX * 0.62, y + faceH + ivoryBottomH);
-    ctx.closePath();
-    ctx.fill();
-
-    // Contorno da lateral 3D
-    ctx.strokeStyle = isFree || !this.dimBlockedTiles ? 'rgba(15, 23, 42, 0.35)' : 'rgba(15, 23, 42, 0.55)';
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.moveTo(x + faceW, y + 6);
-    ctx.lineTo(x + faceW + dX, y + 6 + dY);
-    ctx.lineTo(x + faceW + dX, y + faceH + dY);
-    ctx.lineTo(x + 6 + dX, y + faceH + dY);
-    ctx.lineTo(x + 6, y + faceH);
-    ctx.stroke();
-
-    // 3. FACE PRINCIPAL DA PEDRA
-    const palette = TileRegistry.getPalette(tile.value as AnimalValue);
-    let bgColor = isFree || !this.dimBlockedTiles ? palette.bg : this.getDimmedColor(palette.bg);
-
-    // Ajuste de luminosidade por nível Z: Peças mais altas recebem mais luz ambiente
-    if (z === 1 && isFree) {
-      bgColor = this.lighten(bgColor, 0.05);
-    } else if (z >= 2 && isFree) {
-      bgColor = this.lighten(bgColor, 0.10);
-    }
-
-    ctx.fillStyle = bgColor;
-    this.drawRoundedRect(ctx, x, y, faceW, faceH, 8);
-    ctx.fill();
-
-    // 4. CHANFRO TÁTIL 3D (SPECULAR BEVEL HIGHLIGHT)
-    // Borda superior e esquerda com reflexo de luz
-    if (isFree || !this.dimBlockedTiles) {
-      ctx.strokeStyle = z >= 1 ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 0.78)';
-    } else {
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
-    }
-    ctx.lineWidth = 1.6;
-    ctx.beginPath();
-    ctx.moveTo(x + 7, y + 1.2);
-    ctx.lineTo(x + faceW - 7, y + 1.2);
-    ctx.moveTo(x + 1.2, y + 7);
-    ctx.lineTo(x + 1.2, y + faceH - 7);
-    ctx.stroke();
-
-    // Borda inferior e direita interna com sombra de chanfro
-    ctx.strokeStyle = 'rgba(71, 85, 105, 0.22)';
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.moveTo(x + faceW - 1.2, y + 7);
-    ctx.lineTo(x + faceW - 1.2, y + faceH - 7);
-    ctx.moveTo(x + 7, y + faceH - 1.2);
-    ctx.lineTo(x + faceW - 7, y + faceH - 1.2);
-    ctx.stroke();
-
-    // 5. MOLDURA E CONTORNO EXTERNO (DELIMITAÇÃO NÍTIDA COM CARTAS VIZINHAS)
-    const syn = SYNERGY_FAMILIES[tile.value as AnimalValue];
-    if (syn) {
-      if (syn.borderColor === 'rainbow') {
-        if (isFree || !this.dimBlockedTiles) {
-          const grad = ctx.createLinearGradient(x, y, x + faceW, y + faceH);
-          grad.addColorStop(0, '#FFD700');
-          grad.addColorStop(0.33, '#00E676');
-          grad.addColorStop(0.66, '#00B0FF');
-          grad.addColorStop(1, '#E040FB');
-          ctx.lineWidth = 2.6;
-          ctx.strokeStyle = grad;
-        } else {
-          ctx.lineWidth = 1.6;
-          ctx.strokeStyle = 'rgba(100, 116, 139, 0.70)';
-        }
-      } else {
-        ctx.lineWidth = isFree ? 2.4 : 1.6;
-        ctx.strokeStyle = isFree ? syn.borderColor : (this.dimBlockedTiles ? 'rgba(100, 116, 139, 0.65)' : syn.borderColor);
-      }
-      this.drawRoundedRect(ctx, x, y, faceW, faceH, 8);
-      ctx.stroke();
-    } else {
-      // Peça neutra: contorno nítido que demarca o limite mesmo entre peças da mesma cor
-      ctx.lineWidth = isFree ? 1.4 : 1.2;
-      ctx.strokeStyle = isFree ? 'rgba(71, 85, 105, 0.65)' : (this.dimBlockedTiles ? 'rgba(100, 116, 139, 0.55)' : 'rgba(71, 85, 105, 0.65)');
-      this.drawRoundedRect(ctx, x, y, faceW, faceH, 8);
-      ctx.stroke();
-    }
-
-    // 6. SELECIONADA — BORDA DOURADA BRILHANTE COM CONTORNO NÍTIDO
+    // 3. SELECIONADA — BORDA DOURADA BRILHANTE COM CONTORNO NÍTIDO
     if (tile.isSelected) {
       const pulse = animTime > 0 ? Math.sin(animTime / 180) * 0.8 : 0;
       ctx.lineWidth = 3.8 + Math.max(0, pulse);
@@ -495,7 +571,7 @@ export class TileRenderer {
       ctx.stroke();
     }
 
-    // 7. DICA — AURA ESMERALDA PULSANTE
+    // 4. DICA — AURA ESMERALDA PULSANTE
     if (tile.isHinted) {
       ctx.lineWidth = 3.5;
       ctx.strokeStyle = '#10B981';
@@ -503,30 +579,12 @@ export class TileRenderer {
       ctx.stroke();
     }
 
-    // 8. GLIFO DO ANIMAL E MICRO-BADGE (MASTER TEXTURE ATLAS)
-    const uv = this.getAtlasUV(tile.value as AnimalValue);
-    if (uv && this.masterAtlas) {
-      ctx.drawImage(this.masterAtlas, uv.sx, uv.sy, uv.sw, uv.sh, x, y, faceW, faceH);
-    } else {
-      const face = this.getOrGenerateTileFace(tile);
-      ctx.drawImage(face, x, y, faceW, faceH);
-    }
-
-    // 8.1. CAMADAS E OVERLAYS ESPECIAIS (Gelo, Cipó, Rocha, Casulo, Baú, Espelho)
+    // 5. CAMADAS E OVERLAYS ESPECIAIS (Gelo, Cipó, Rocha, Casulo, Baú, Espelho)
     this.drawSpecialOverlay(ctx, tile, x, y, faceW, faceH, isFree);
 
-    // 8.2. ESCURECIMENTO TÁTIL DE PEÇAS BLOQUEADAS (Sombra translúcida rica para destacar peças livres)
-    if (!isFree && this.dimBlockedTiles) {
-      ctx.fillStyle = 'rgba(15, 23, 42, 0.35)'; // sombra ardósia zen para contraste imediato
-      this.drawRoundedRect(ctx, x, y, faceW, faceH, 8);
-      ctx.fill();
+    if (needsTransform) {
+      ctx.restore();
     }
-
-
-    // 10. NÚMERO ARÁBICO DE AUXÍLIO / ACESSIBILIDADE
-    // Já pré-renderizado diretamente na textura do Master Atlas (passo 8) com zero custo de CPU por frame.
-
-    ctx.restore();
   }
 
   public getOrGenerateTileFace(tile: PlacedTile): HTMLCanvasElement {

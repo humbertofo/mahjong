@@ -13,7 +13,12 @@ export class ViewportCamera {
   public baseTileDepth: number = 9;
 
   constructor() {
-    this.dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 3) : 1;
+    this.updateDpr();
+  }
+
+  public updateDpr(): void {
+    // DPR travado em no máximo 2.0 para equilibrar nitidez Retina com -55% de consumo de VRAM e GPU no Android
+    this.dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 2.0) : 1;
   }
 
   public getTileDimensions(): TileDimensions {
@@ -108,9 +113,17 @@ export class ViewportCamera {
     activeTiles: PlacedTile[]
   ): { tile: PlacedTile; sx: number; sy: number } | null {
     const { tileWidth, tileHeight, tileDepth } = this.getTileDimensions();
-    const sorted = [...activeTiles].sort((a, b) => b.position.z - a.position.z);
+    const len = activeTiles.length;
+    let bestHit: { tile: PlacedTile; sx: number; sy: number } | null = null;
+    let maxZ = -Infinity;
 
-    for (const tile of sorted) {
+    // Itera de trás para frente no array pré-ordenado por Z sem alocar arrays nem disparar GC
+    for (let i = len - 1; i >= 0; i--) {
+      const tile = activeTiles[i];
+      if (bestHit && tile.position.z < maxZ) {
+        break;
+      }
+
       const zShiftX = tile.position.z * Math.round(tileDepth * 0.55);
       const zShiftY = tile.position.z * Math.round(tileDepth * 1.10);
       const sx = this.offsetX + (tile.position.x / 2) * tileWidth - zShiftX;
@@ -122,9 +135,12 @@ export class ViewportCamera {
         py >= sy &&
         py <= sy + tileHeight
       ) {
-        return { tile, sx, sy };
+        if (tile.position.z > maxZ) {
+          maxZ = tile.position.z;
+          bestHit = { tile, sx, sy };
+        }
       }
     }
-    return null;
+    return bestHit;
   }
 }

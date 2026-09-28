@@ -43,12 +43,12 @@ Este documento define padrões de engenharia para garantir máxima autonomia de 
   - Telas mobile operam com `window.devicePixelRatio >= 2.0` ou `3.0`.
   - O Canvas deve ter suas dimensões de buffer escaladas pelo DPR e reduzidas via CSS:
     ```typescript
-    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2.0);
     canvas.width = Math.floor(cssWidth * dpr);
     canvas.height = Math.floor(cssHeight * dpr);
     ctx.scale(dpr, dpr);
     ```
-  - Evitar DPR excessivo (>3.0) para não inflar consumo de VRAM e manter o consumo de bateria ultra-baixo.
+  - Evitar DPR excessivo (>2.0): Em telas mobile de 6" (380-450 PPI), DPR 2.0 já atinge o padrão Retina (>280 DPI efetivos). Travar o teto em 2.0 economiza ~55% de largura de banda de memória GPU e VRAM sem perda perceptível de qualidade visual.
 
 ---
 

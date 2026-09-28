@@ -1,5 +1,5 @@
 :root {
-  --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family: system-ui, -apple-system, Roboto, 'Noto Sans', 'Segoe UI', sans-serif;
   --color-primary-gold: #fbbf24;
   --color-primary-amber: #f59e0b;
   --color-bg-deep: #07221c;
@@ -54,6 +54,14 @@ html, body {
 
 .screen.hidden * {
   animation-play-state: paused !important;
+}
+
+/* Otimização de GPU para Mobile/Android: Suprime leitura de framebuffer pesada de blur */
+@media (hover: none) and (pointer: coarse), (max-width: 768px) {
+  * {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
 }
 
 .hidden:not(.screen):not(.modal-container):not(.tutorial-tip-banner):not(.update-dialog-backdrop) {
@@ -1074,6 +1082,7 @@ html, body {
   padding: 0 !important;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
   background: linear-gradient(
     180deg,
     #08211a 0%,    /* Mundo 1: Jardim do Aprendiz */
@@ -1182,6 +1191,9 @@ html, body {
   justify-content: center;
   cursor: pointer;
   z-index: 5;
+  contain: layout style paint;
+  content-visibility: auto;
+  contain-intrinsic-size: 62px 62px;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   -webkit-tap-highlight-color: transparent;
   user-select: none;
@@ -1454,7 +1466,9 @@ html, body {
   align-items: center;
   gap: 10px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55), inset 0 1px 2px rgba(255, 255, 255, 0.15);
-  contain: paint layout;
+  contain: paint layout style;
+  content-visibility: auto;
+  contain-intrinsic-size: 340px 62px;
   z-index: 10;
 }
 
@@ -4369,6 +4383,7 @@ html, body {
   justify-content: center;
   background: rgba(3, 16, 12, 0);
   transition: background 0.35s ease;
+  contain: paint layout;
 }
 
 .foliage-curtain.closing,
@@ -4389,9 +4404,14 @@ html, body {
   width: 100%;
   height: 100%;
   z-index: 1;
-  will-change: transform;
+  contain: paint layout;
   transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
+}
+
+.foliage-curtain.closing .foliage-curtain-panel,
+.foliage-curtain.opening .foliage-curtain-panel {
+  will-change: transform;
 }
 
 .foliage-curtain-left {
