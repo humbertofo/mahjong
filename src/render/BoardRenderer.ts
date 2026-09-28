@@ -64,7 +64,7 @@ export class BoardRenderer {
   private isBoardDirty: boolean = true;
   private isFxActive: boolean = false;
   private animatingUntil: number = 0;
-  private isLoopScheduled: boolean = false;
+  private rafId: number | null = null;
   private loopBound: ((timestamp: number) => void) | null = null;
   public isInputLocked: boolean = false;
   private pendingTilesInFlight: number = 0;
@@ -107,9 +107,8 @@ export class BoardRenderer {
   }
 
   public wakeLoop(): void {
-    if (this.isLoopScheduled || !this.isRunning || this.isPaused || !this.loopBound) return;
-    this.isLoopScheduled = true;
-    requestAnimationFrame(this.loopBound);
+    if (this.rafId !== null || !this.isRunning || this.isPaused || !this.loopBound) return;
+    this.rafId = requestAnimationFrame(this.loopBound);
   }
 
   public requestRender(): void {
@@ -182,7 +181,10 @@ export class BoardRenderer {
 
   public pause(): void {
     this.isPaused = true;
-    this.isLoopScheduled = false;
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
   }
 
   public resume(): void {
@@ -199,7 +201,10 @@ export class BoardRenderer {
 
   public destroy(): void {
     this.isRunning = false;
-    this.isLoopScheduled = false;
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
   }
 
   public handleResize(): void {
@@ -280,7 +285,7 @@ export class BoardRenderer {
 
   private startLoop(): void {
     this.loopBound = (timestamp: number) => {
-      this.isLoopScheduled = false;
+      this.rafId = null;
       if (!this.isRunning || this.isPaused) return;
 
       this.animTime = timestamp;
@@ -353,8 +358,7 @@ export class BoardRenderer {
         isTimeAnimating;
 
       if (shouldContinue) {
-        this.isLoopScheduled = true;
-        requestAnimationFrame(this.loopBound!);
+        this.wakeLoop();
       }
     };
 

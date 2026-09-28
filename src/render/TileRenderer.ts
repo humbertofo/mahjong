@@ -265,6 +265,38 @@ export class TileRenderer {
     return this.masterAtlas!;
   }
 
+  /**
+   * Pré-aquece gradualmente as espécies no Master Atlas em segundo plano (lotes de 4),
+   * eliminando travamentos de 250ms durante o carregamento de fases.
+   */
+  public prewarmIdleBatch(onComplete?: () => void): void {
+    const allAnimals = TileRegistry.getAll().map((t) => t.value as AnimalValue);
+    let index = 0;
+    const chunkSize = 4;
+
+    const processNextChunk = () => {
+      if (index >= allAnimals.length) {
+        onComplete?.();
+        return;
+      }
+      const chunk = allAnimals.slice(index, index + chunkSize);
+      this.prewarmTiles(chunk);
+      index += chunkSize;
+
+      if (typeof window !== 'undefined') {
+        if ('requestIdleCallback' in window) {
+          (window as any).requestIdleCallback(() => processNextChunk());
+        } else {
+          setTimeout(processNextChunk, 25);
+        }
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      setTimeout(processNextChunk, 250);
+    }
+  }
+
   public getAtlasUV(animal: AnimalValue): AtlasUV | null {
     if (!this.masterAtlas) {
       this.initMasterAtlas();

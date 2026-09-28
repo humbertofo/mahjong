@@ -95,6 +95,9 @@ window.addEventListener('DOMContentLoaded', () => {
   // 3. UIManager orquestra toda a navegação e estado
   uiManager = new UIManager(engine, renderer);
 
+  // Pré-aquece o Master Atlas em segundo plano para eliminar o engasgo de 250ms no carregamento de partidas
+  renderer.getTileRenderer().prewarmIdleBatch();
+
   // 4. Screen Wake Lock dinâmico e Gerenciamento de Ciclo de Vida Mobile (Android)
   let wakeLockSentinel: WakeLockSentinel | null = null;
   const requestWakeLock = async () => {
