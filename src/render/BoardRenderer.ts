@@ -10,6 +10,7 @@ import { BoardAnimator } from './BoardAnimator';
 import { FXParticleSystem } from './FXParticleSystem';
 import { soundManager } from '../audio/SoundManager';
 import { hapticManager } from '../audio/HapticManager';
+import { diagnosticLogger } from '../core/DiagnosticLogger';
 import confetti from 'canvas-confetti';
 
 export interface BoardRendererCallbacks {
@@ -225,6 +226,7 @@ export class BoardRenderer {
 
       this.ctx.setTransform(1, 0, 0, 1, 0, 0);
       this.ctx.scale(dpr, dpr);
+      diagnosticLogger.recordEvent('render', 'canvas_resize', { targetW, targetH, cssWidth: width, cssHeight: height, dpr });
     }
 
     const fxCanvas = this.fx.getFxCanvas();
@@ -301,9 +303,14 @@ export class BoardRenderer {
         }
       }
 
+      let boardDuration = 0;
+      let fxDuration = 0;
+
       if (this.isBoardDirty || hasActiveHint || isShuffling || isDealing) {
         this.isBoardDirty = false;
+        const startB = performance.now();
         this.renderBoard();
+        boardDuration = performance.now() - startB;
       }
 
       const isFxAnimating =
@@ -313,10 +320,28 @@ export class BoardRenderer {
 
       if (isFxAnimating) {
         this.isFxActive = true;
+        const startFx = performance.now();
         this.renderFX();
+        fxDuration = performance.now() - startFx;
       } else if (this.isFxActive) {
         this.fx.clearFX();
         this.isFxActive = false;
+      }
+
+      if (boardDuration > 0 || fxDuration > 0) {
+        const tags = [
+          isDealing ? 'deal' : '',
+          isShuffling ? 'shuffle' : '',
+          hasActiveHint ? 'hint' : '',
+          isFxAnimating ? 'fx' : '',
+        ].filter(Boolean).join(',');
+
+        diagnosticLogger.recordFrame({
+          boardMs: boardDuration,
+          fxMs: fxDuration,
+          activeTiles: this.engine.getActiveBoardTiles().length,
+          tags: tags || 'idle',
+        });
       }
 
       const shouldContinue =

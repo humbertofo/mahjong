@@ -17,6 +17,7 @@ import { getLevelRules } from '../core/levelRules';
 import { LevelDeckCurator } from '../core/nature/LevelDeckCurator';
 import { TileRegistry } from '../core/nature/tiles/TileRegistry';
 import { TrayTacticalOracle } from '../core/nature/TrayTacticalOracle';
+import { diagnosticLogger } from '../core/DiagnosticLogger';
 
 export class UIManager {
   private engine: BoardEngine;
@@ -282,6 +283,7 @@ export class UIManager {
     this.undoBtn.addEventListener('click', () => {
       this.cancelHammerMode();
       this.undoBtn.classList.remove('pulse-attention');
+      diagnosticLogger.recordEvent('game', 'undo_click', { remainingUndos: this.hud.undoCount });
       if (this.hud.undoCount <= 0) {
         this.showToast('Sem desfazeres restantes nesta fase!');
         soundManager.playBlockedSound();
@@ -340,6 +342,7 @@ export class UIManager {
     // Dica
     this.hintBtn.addEventListener('click', () => {
       this.cancelHammerMode();
+      diagnosticLogger.recordEvent('game', 'hint_click', { remainingHints: this.hud.hintCount });
       if (this.hud.hintCount <= 0) {
         this.showToast('Sem dicas restantes nesta fase!');
         soundManager.playBlockedSound();
@@ -374,6 +377,7 @@ export class UIManager {
     // Misturar
     this.shuffleBtn.addEventListener('click', () => {
       this.cancelHammerMode();
+      diagnosticLogger.recordEvent('game', 'shuffle_click', { remainingShuffles: this.hud.shuffleCount });
       if (this.hud.shuffleCount <= 0) {
         this.showToast('Sem misturas restantes nesta fase!');
         soundManager.playBlockedSound();
@@ -846,6 +850,13 @@ export class UIManager {
   public startGame(levelIndex: number): void {
     this.currentLevelIndex = Math.max(0, Math.min(levelIndex, ALL_LAYOUTS.length - 1));
     const layout = ALL_LAYOUTS[this.currentLevelIndex];
+
+    diagnosticLogger.recordEvent('game', 'start_game', {
+      levelIndex: this.currentLevelIndex,
+      layoutId: layout.id,
+      layoutName: layout.name,
+      tilesCount: layout.slots.length,
+    });
 
     this.showGame();
 

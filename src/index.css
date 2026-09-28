@@ -2733,6 +2733,182 @@ html, body {
   transform: translateX(20px);
 }
 
+/* Seção de Diagnóstico e Performance nas Configurações */
+.settings-diag-section {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1.5px solid rgba(56, 189, 248, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.diag-section-header {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.diag-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #7dd3fc;
+  letter-spacing: 0.2px;
+}
+
+.diag-icon {
+  font-size: 1.15rem;
+}
+
+.diag-section-desc {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #94a3b8;
+  line-height: 1.35;
+}
+
+.diag-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.55);
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+@media (max-width: 440px) {
+  .diag-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+}
+
+.diag-stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  text-align: center;
+}
+
+.diag-stat-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.diag-stat-value {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #f8fafc;
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.diag-stat-value.diag-warning {
+  color: #facc15;
+}
+
+.diag-stat-value.diag-danger {
+  color: #f87171;
+}
+
+.diag-pct {
+  font-size: 0.72rem;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.diag-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.btn-diag-primary {
+  flex: 2;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.25), rgba(2, 132, 199, 0.35));
+  border: 1.5px solid rgba(56, 189, 248, 0.5);
+  color: #bae6fd;
+  font-size: 0.88rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: var(--font-family);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-diag-primary:active {
+  transform: scale(0.97);
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.35), rgba(2, 132, 199, 0.5));
+}
+
+.btn-diag-secondary {
+  flex: 1;
+  min-height: 44px;
+  padding: 10px 10px;
+  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.65);
+  border: 1.5px solid rgba(148, 163, 184, 0.25);
+  color: #e2e8f0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: var(--font-family);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-diag-secondary:active {
+  transform: scale(0.97);
+  background: rgba(51, 65, 85, 0.8);
+}
+
+.diag-feedback-msg {
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+  animation: fadeInModal 0.2s ease-out;
+}
+
+.diag-feedback-success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #6ee7b7;
+}
+
+.diag-feedback-error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
+
 /* Seção de Gerenciamento e Reset de Dados nas Configurações */
 .settings-danger-section {
   margin-top: 18px;
