@@ -1784,8 +1784,8 @@ html, body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: calc(6px + env(safe-area-inset-top, 0px)) 10px 4px 10px;
-  background: linear-gradient(to bottom, rgba(5, 25, 20, 0.92), rgba(5, 25, 20, 0));
+  padding: calc(6px + env(safe-area-inset-top, 0px)) 8px 4px 8px;
+  background: linear-gradient(to bottom, rgba(5, 25, 20, 0.94), rgba(5, 25, 20, 0));
   pointer-events: none;
   box-sizing: border-box;
 }
@@ -1797,14 +1797,14 @@ html, body {
 .hud-left {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   flex-shrink: 0;
 }
 
 .hud-right {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   flex-shrink: 0;
 }
 
@@ -1814,34 +1814,43 @@ html, body {
   align-items: center;
   flex: 1 1 auto;
   min-width: 0;
+  padding: 0 4px;
 }
 
 .wisdom-title-container {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
-  text-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);
-  background: rgba(4, 20, 16, 0.85);
+  text-shadow: 0 1px 6px rgba(245, 158, 11, 0.4);
+  background: rgba(4, 20, 16, 0.88);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   padding: 2px 8px;
   border-radius: 9999px;
-  border: 1px solid rgba(245, 158, 11, 0.35);
+  border: 1px solid rgba(245, 158, 11, 0.4);
   transition: all 0.3s ease;
   white-space: nowrap;
   max-width: 100%;
+  box-sizing: border-box;
+}
+
+.wisdom-title-container > * {
+  flex-shrink: 0;
 }
 
 .wisdom-title-container .hud-timer {
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-weight: 800;
   color: #fde047;
-  letter-spacing: 0.3px;
+  letter-spacing: 0;
   font-variant-numeric: tabular-nums;
-  margin-left: 3px;
+  margin-left: 2px;
   padding-left: 5px;
-  border-left: 1px solid rgba(245, 158, 11, 0.3);
+  border-left: 1px solid rgba(245, 158, 11, 0.35);
   line-height: 1;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .wisdom-title-container.pulse-glow {
@@ -1988,16 +1997,18 @@ html, body {
 }
 
 .wisdom-label {
-  font-size: 0.82rem;
-  font-weight: 800;
+  font-size: 0.78rem;
+  font-weight: 700;
   color: #fde047;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
+  flex-shrink: 0;
 }
 
 .wisdom-number {
-  font-size: 0.98rem;
+  font-size: 0.92rem;
   font-weight: 900;
   color: #fef08a;
+  flex-shrink: 0;
 }
 
 .wisdom-sparkle {
@@ -2045,7 +2056,7 @@ html, body {
 /* === FAIXA SUPERIOR DIVIDIDA: BANDEJA 4 SLOTS + CAIXA DE EVENTOS === */
 .sub-hud-strip {
   position: absolute;
-  top: calc(42px + env(safe-area-inset-top, 0px));
+  top: calc(44px + env(safe-area-inset-top, 0px));
   left: 0;
   right: 0;
   z-index: 15;
@@ -3414,25 +3425,59 @@ html, body {
 /* === RESPONSIVIDADE VERTICAL (20:9 E 16:9) === */
 @media (max-width: 600px), (orientation: portrait) {
   .hud-top {
-    padding: calc(6px + env(safe-area-inset-top, 0px)) 8px 4px 8px;
+    padding: calc(5px + env(safe-area-inset-top, 0px)) 6px 3px 6px;
+  }
+
+  .hud-left {
+    gap: 4px;
+  }
+
+  .hud-right {
+    gap: 4px;
   }
 
   .hud-icon-btn {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
   }
 
   .hud-icon-btn svg {
-    width: 16px !important;
-    height: 16px !important;
+    width: 15px !important;
+    height: 15px !important;
+  }
+
+  .hud-icon-btn .hud-svg-icon {
+    width: 19px !important;
+    height: 19px !important;
+  }
+
+  .wisdom-title-container {
+    padding: 2px 6px;
+    gap: 3px;
   }
 
   .wisdom-label {
-    font-size: 0.82rem;
+    font-size: 0.76rem;
   }
 
   .wisdom-number {
-    font-size: 0.98rem;
+    font-size: 0.88rem;
+  }
+
+  .hud-biome-pill {
+    padding: 1px 4px;
+    font-size: 0.76rem;
+  }
+
+  .hud-wave-pill {
+    padding: 1px 4px;
+    font-size: 0.64rem;
+  }
+
+  .wisdom-title-container .hud-timer {
+    font-size: 0.72rem;
+    padding-left: 4px;
+    margin-left: 1px;
   }
 
   .tray-slots {
@@ -3460,6 +3505,61 @@ html, body {
 
   .circle-action-btn .btn-icon {
     font-size: 1.45rem;
+  }
+}
+
+/* === TELAS ULTRACOMPACTAS (<= 370px, ex: Android compactos e telas divididas) === */
+@media (max-width: 370px) {
+  .hud-top {
+    padding: calc(5px + env(safe-area-inset-top, 0px)) 4px 3px 4px;
+  }
+
+  .hud-left,
+  .hud-right {
+    gap: 3px;
+  }
+
+  .hud-icon-btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .hud-icon-btn svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  .hud-icon-btn .hud-svg-icon {
+    width: 17px !important;
+    height: 17px !important;
+  }
+
+  .wisdom-title-container {
+    padding: 2px 4px;
+    gap: 2px;
+  }
+
+  .wisdom-label {
+    display: none; /* Em telas estreitas, prioriza o número da fase, bioma, onda e timer */
+  }
+
+  .wisdom-number {
+    font-size: 0.86rem;
+  }
+
+  .hud-biome-pill {
+    padding: 1px 3px;
+    font-size: 0.72rem;
+  }
+
+  .hud-wave-pill {
+    padding: 1px 3px;
+    font-size: 0.60rem;
+  }
+
+  .wisdom-title-container .hud-timer {
+    font-size: 0.70rem;
+    padding-left: 3px;
   }
 }
 
@@ -4085,16 +4185,18 @@ html, body {
   background: rgba(16, 185, 129, 0.28);
   border: 1px solid rgba(52, 211, 153, 0.6);
   color: #a7f3d0;
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   font-weight: 800;
-  padding: 1px 6px;
+  padding: 1px 5px;
   border-radius: 9999px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   display: inline-flex;
   align-items: center;
-  line-height: 1.1;
+  line-height: 1;
   box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
   animation: wave-badge-flow 2.5s infinite ease-in-out;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 @keyframes wave-badge-flow {
@@ -4113,16 +4215,17 @@ html, body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 1px 6px;
+  padding: 1px 5px;
   border-radius: 9999px;
   background: rgba(16, 185, 129, 0.22);
   border: 1px solid rgba(52, 211, 153, 0.5);
   color: #6ee7b7;
-  font-size: 0.82rem;
-  line-height: 1.1;
+  font-size: 0.78rem;
+  line-height: 1;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* Ícones SVG Canônicos dos Botões e HUD */
@@ -4134,8 +4237,8 @@ html, body {
 }
 
 .hud-svg-icon {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   display: block;
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
 }
@@ -4264,9 +4367,8 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(3, 14, 10, 0);
+  background: rgba(3, 16, 12, 0);
   transition: background 0.35s ease;
-  contain: paint layout;
 }
 
 .foliage-curtain.closing,
@@ -4277,14 +4379,14 @@ html, body {
 
 .foliage-curtain.closing,
 .foliage-curtain.active {
-  background: rgba(3, 16, 12, 0.96);
+  background: #03100c; /* Fundo 100% opaco da floresta zen, eliminando fantasmas de telas anteriores */
 }
 
 .foliage-curtain-panel {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 58%;
+  width: 100%;
   height: 100%;
   z-index: 1;
   will-change: transform;
@@ -4294,23 +4396,32 @@ html, body {
 
 .foliage-curtain-left {
   left: 0;
-  transform: translate3d(-102%, 0, 0);
+  transform: translate3d(-100%, 0, 0);
 }
 
 .foliage-curtain-right {
   right: 0;
-  transform: translate3d(102%, 0, 0);
+  transform: translate3d(100%, 0, 0);
 }
 
 .foliage-curtain-svg {
   width: 100%;
   height: 100%;
-  object-fit: cover;
   display: block;
-  filter: drop-shadow(0 0 24px rgba(0, 0, 0, 0.85));
+  pointer-events: none;
 }
 
-/* Estado Fechado: painéis se encontram com sobreposição rica no centro */
+.foliage-curtain-left .foliage-curtain-svg {
+  object-fit: cover;
+  object-position: left center;
+}
+
+.foliage-curtain-right .foliage-curtain-svg {
+  object-fit: cover;
+  object-position: right center;
+}
+
+/* Estado Fechado: painéis deslizam suavemente até cobrir e entrelaçar a folhagem */
 .foliage-curtain.closing .foliage-curtain-left,
 .foliage-curtain.active .foliage-curtain-left {
   transform: translate3d(0, 0, 0);
@@ -4323,12 +4434,12 @@ html, body {
 
 /* Estado de Abertura */
 .foliage-curtain.opening .foliage-curtain-left {
-  transform: translate3d(-102%, 0, 0);
+  transform: translate3d(-100%, 0, 0);
   transition: transform 0.42s cubic-bezier(0.4, 0, 0.7, 0.2);
 }
 
 .foliage-curtain.opening .foliage-curtain-right {
-  transform: translate3d(102%, 0, 0);
+  transform: translate3d(100%, 0, 0);
   transition: transform 0.42s cubic-bezier(0.4, 0, 0.7, 0.2);
 }
 
@@ -4388,26 +4499,23 @@ html, body {
   width: 86px;
   height: 86px;
   display: block;
-  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.85));
-  animation: guardian-avatar-breathe 2.4s ease-in-out infinite alternate;
   margin-bottom: -18px;
   position: relative;
   z-index: 3;
+  animation: guardian-avatar-breathe 2.4s ease-in-out infinite alternate;
 }
 
 @keyframes guardian-avatar-breathe {
-  from { transform: scale(1); filter: drop-shadow(0 8px 20px rgba(212, 175, 55, 0.4)); }
-  to   { transform: scale(1.05); filter: drop-shadow(0 12px 30px rgba(212, 175, 55, 0.8)); }
+  from { transform: scale(1); }
+  to   { transform: scale(1.05); }
 }
 
 .foliage-guardian-meta {
-  background: rgba(4, 22, 16, 0.96);
+  background: rgba(4, 22, 16, 0.98);
   border: 1.5px solid rgba(212, 175, 55, 0.7);
   border-radius: 20px;
   padding: 24px 16px 16px 16px;
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.8), 0 0 20px rgba(16, 185, 129, 0.2);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   display: flex;
   flex-direction: column;
   align-items: center;

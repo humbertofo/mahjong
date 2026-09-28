@@ -137,6 +137,23 @@ export class UIManager {
     this.bindDomElements();
     this.attachEvents();
     this.showMenu();
+    this.preloadTransitionAssets();
+  }
+
+  // ─── Preload de Ativos de Transição (Zero Jank no Android) ────────────────
+  private preloadTransitionAssets(): void {
+    const assets = [
+      './assets/nature/foliage-curtain-left.svg',
+      './assets/nature/foliage-curtain-right.svg',
+      ...UIManager.BIOME_GUARDIANS.map((g) => g.avatar),
+    ];
+    assets.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+      if ('decode' in img) {
+        img.decode().catch(() => {});
+      }
+    });
   }
 
   // ─── Preferences ──────────────────────────────────────────────────────────
@@ -831,11 +848,11 @@ export class UIManager {
       this.foliageTransitionTimer = null;
 
       // 2. Executa a montagem do tabuleiro de forma assíncrona desacoplada do frame da cortina
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         onSwitch();
         this.hud.stopTimer();
-      }, 0);
-    }, 380);
+      });
+    }, 420);
   }
 
   // ─── Iniciar Partida ──────────────────────────────────────────────────────
