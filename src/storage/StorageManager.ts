@@ -301,4 +301,21 @@ export class StorageManager {
       keysToRemove.forEach((key) => localStorage.removeItem(key));
     } catch { /* silent */ }
   }
+
+  /**
+   * Solicita persistência durável de dados no dispositivo (Android WebView / Browser Storage API)
+   * garantindo que o progresso do jogador e savegame nunca sejam descartados pelo sistema operacional.
+   */
+  public static async requestPersistentStorage(): Promise<boolean> {
+    if (typeof navigator !== 'undefined' && navigator.storage && navigator.storage.persist) {
+      try {
+        const isPersisted = await navigator.storage.persisted();
+        if (isPersisted) return true;
+        return await navigator.storage.persist();
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  }
 }

@@ -1178,10 +1178,24 @@ export class UIManager {
   }
 
   public handleWaveCleared(currentWave: number, totalWaves: number): void {
-    GameEndModals.showWaveCleared(currentWave, totalWaves, () => {
+    let isNextWavePrepared = false;
+
+    const prepareNextWaveInBackground = () => {
+      if (isNextWavePrepared) return;
+      isNextWavePrepared = true;
       this.engine.advanceToNextWave();
       this.renderer.handleResize();
       this.renderer.prewarmActiveTiles();
+    };
+
+    // Pré-calcula e pré-aquece a próxima onda em background enquanto o jogador lê o modal
+    const prewarmTimer = setTimeout(() => {
+      prepareNextWaveInBackground();
+    }, 60);
+
+    GameEndModals.showWaveCleared(currentWave, totalWaves, () => {
+      clearTimeout(prewarmTimer);
+      prepareNextWaveInBackground();
       this.renderer.triggerDealAnimation(420);
       this.renderer.requestRender();
       this.updateHUD();

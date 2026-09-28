@@ -135,6 +135,12 @@ export class DiagnosticLogger {
     this.touchStats.missTaps++;
   }
 
+  public updateStoragePersistence(persisted: boolean): void {
+    if (this.storageInfo) {
+      this.storageInfo.persisted = persisted;
+    }
+  }
+
   public static getInstance(): DiagnosticLogger {
     if (!DiagnosticLogger.instance) {
       DiagnosticLogger.instance = new DiagnosticLogger();

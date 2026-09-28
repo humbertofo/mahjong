@@ -5,6 +5,8 @@ import { garden36Layout } from './core/layouts/garden36';
 import { LiveUpdateManager } from './core/LiveUpdateManager';
 import { Capacitor } from '@capacitor/core';
 import { App } from '@capacitor/app';
+import { StorageManager } from './storage/StorageManager';
+import { diagnosticLogger } from './core/DiagnosticLogger';
 
 window.addEventListener('DOMContentLoaded', () => {
   // Confirmar que o app carregou com sucesso e desativar o rollback automático
@@ -97,6 +99,12 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Pré-aquece o Master Atlas em segundo plano para eliminar o engasgo de 250ms no carregamento de partidas
   renderer.getTileRenderer().prewarmIdleBatch();
+
+  // Blindagem de armazenamento contra descarte de cache pelo SO (Android Storage Persistence)
+  StorageManager.requestPersistentStorage().then((persisted) => {
+    diagnosticLogger.updateStoragePersistence(persisted);
+    diagnosticLogger.recordEvent('storage', 'persist_status', { persisted });
+  }).catch(() => {});
 
   // 4. Screen Wake Lock dinâmico e Gerenciamento de Ciclo de Vida Mobile (Android)
   let wakeLockSentinel: WakeLockSentinel | null = null;
