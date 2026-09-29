@@ -4,7 +4,6 @@ import { UIManager } from './ui/UIManager';
 import { garden36Layout } from './core/layouts/garden36';
 import { LiveUpdateManager } from './core/LiveUpdateManager';
 import { Capacitor } from '@capacitor/core';
-import { App } from '@capacitor/app';
 import { StorageManager } from './storage/StorageManager';
 import { diagnosticLogger } from './core/DiagnosticLogger';
 
@@ -167,27 +166,17 @@ window.addEventListener('DOMContentLoaded', () => {
     e?.preventDefault();
     const handled = uiManager?.handleHardwareBack() ?? false;
     if (!handled) {
-      if (Capacitor.isNativePlatform() && Capacitor.isPluginAvailable('App')) {
-        try {
-          App.exitApp().catch(() => {});
-        } catch {
-          // Silencia
-        }
+      const nav = navigator as any;
+      if (nav?.app?.exitApp) {
+        nav.app.exitApp();
+      } else if (Capacitor.isNativePlatform()) {
+        import('@capacitor/app')
+          .then(({ App }) => App.exitApp())
+          .catch(() => {});
       }
     }
   };
 
-  // Registra listener no document (100% suportado em qualquer runtime Android WebView)
+  // Registra listener nativo no document (100% suportado e estável no Android WebView)
   document.addEventListener('backbutton', onBackButton);
-
-  // Registra listener nativo se disponível de forma protegida contra rejeições prematuras
-  if (Capacitor.isNativePlatform() && Capacitor.isPluginAvailable('App')) {
-    try {
-      App.addListener('backButton', () => {
-        onBackButton();
-      }).catch(() => {});
-    } catch {
-      // Silencia
-    }
-  }
 });

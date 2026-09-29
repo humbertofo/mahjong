@@ -284,6 +284,10 @@ export class DiagnosticLogger {
   }
 
   public recordError(message: string, stack?: string, type: string = 'error'): void {
+    if (message && message.toLowerCase().includes('plugin is not implemented')) {
+      return;
+    }
+
     const entry: ErrorRecord = {
       timestamp: Math.round(performance.now()),
       message,
