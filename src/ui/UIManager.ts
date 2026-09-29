@@ -461,7 +461,8 @@ export class UIManager {
           // Solicitação de reset de dados
           const resetModal = document.getElementById('modal-reset-confirm');
           resetModal?.classList.remove('hidden');
-        }
+        },
+        this.renderer
       );
       this.settingsModal.classList.remove('hidden');
     };
@@ -852,6 +853,7 @@ export class UIManager {
   // ─── Iniciar Partida ──────────────────────────────────────────────────────
 
   public startGame(levelIndex: number): void {
+    const tStart = performance.now();
     this.currentLevelIndex = Math.max(0, Math.min(levelIndex, ALL_LAYOUTS.length - 1));
     const layout = ALL_LAYOUTS[this.currentLevelIndex];
 
@@ -865,9 +867,16 @@ export class UIManager {
     this.showGame();
     LiveUpdateManager.setGameActive(true);
 
+    const t0 = performance.now();
     this.engine = new BoardEngine(layout, this.currentLevelIndex);
+    const engineGenMs = performance.now() - t0;
+
+    const t1 = performance.now();
     this.renderer.setLevelIndex(this.currentLevelIndex);
     this.renderer.setEngine(this.engine);
+    const tilePrewarmMs = performance.now() - t1;
+
+    const t2 = performance.now();
     this.isHammerActive = false;
     this.hammerBtn.classList.remove('active-hammer');
     this.pairsMatchedThisGame = 0;
@@ -894,6 +903,20 @@ export class UIManager {
     // Renderização do HUD e tabuleiro
     this.updateHUD();
     this.renderer.requestRender();
+    const uiSetupMs = performance.now() - t2;
+    const totalLoadMs = performance.now() - tStart;
+
+    diagnosticLogger.recordPhaseLoad({
+      levelIndex: this.currentLevelIndex,
+      layoutId: layout.id,
+      layoutName: layout.name,
+      tilesCount: layout.slots.length,
+      engineGenMs: Number(engineGenMs.toFixed(2)),
+      tilePrewarmMs: Number(tilePrewarmMs.toFixed(2)),
+      uiSetupMs: Number(uiSetupMs.toFixed(2)),
+      totalLoadMs: Number(totalLoadMs.toFixed(2)),
+      timestamp: Math.round(performance.now()),
+    });
 
     // Tarefas em segundo plano (I/O de storage e áudio) fora da thread crítica de frame
     setTimeout(() => {

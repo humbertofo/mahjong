@@ -167,19 +167,27 @@ window.addEventListener('DOMContentLoaded', () => {
     e?.preventDefault();
     const handled = uiManager?.handleHardwareBack() ?? false;
     if (!handled) {
-      if (Capacitor.isPluginAvailable('App')) {
-        App.exitApp().catch(() => {});
+      if (Capacitor.isNativePlatform() && Capacitor.isPluginAvailable('App')) {
+        try {
+          App.exitApp().catch(() => {});
+        } catch {
+          // Silencia
+        }
       }
     }
   };
 
-  if (Capacitor.isPluginAvailable('App')) {
-    App.addListener('backButton', () => {
-      onBackButton();
-    }).catch(() => {
-      document.addEventListener('backbutton', onBackButton);
-    });
-  } else {
-    document.addEventListener('backbutton', onBackButton);
+  // Registra listener no document (100% suportado em qualquer runtime Android WebView)
+  document.addEventListener('backbutton', onBackButton);
+
+  // Registra listener nativo se disponível de forma protegida contra rejeições prematuras
+  if (Capacitor.isNativePlatform() && Capacitor.isPluginAvailable('App')) {
+    try {
+      App.addListener('backButton', () => {
+        onBackButton();
+      }).catch(() => {});
+    } catch {
+      // Silencia
+    }
   }
 });

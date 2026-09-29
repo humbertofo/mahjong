@@ -32,6 +32,43 @@ export interface ErrorRecord {
   type: string;
 }
 
+export interface PhaseLoadMetric {
+  levelIndex: number;
+  layoutId: string;
+  layoutName: string;
+  tilesCount: number;
+  engineGenMs: number;
+  tilePrewarmMs: number;
+  uiSetupMs: number;
+  totalLoadMs: number;
+  timestamp: number;
+}
+
+export interface BenchmarkPhaseDetail {
+  levelIndex: number;
+  layoutName: string;
+  tilesCount: number;
+  loadMs: number;
+  prewarmMs: number;
+  avgMatchFrameMs: number;
+}
+
+export interface BenchmarkResult {
+  executedAt: string;
+  phasesTested: number;
+  avgLoadTimeMs: number;
+  avgEngineGenMs: number;
+  avgPrewarmMs: number;
+  avgFrameMs: number;
+  minFrameMs: number;
+  maxFrameMs: number;
+  simulatedFps: number;
+  heapDeltaMB: number;
+  grade: 'S' | 'A' | 'B' | 'C';
+  summary: string;
+  phaseDetails: BenchmarkPhaseDetail[];
+}
+
 export class DiagnosticLogger {
   private static instance: DiagnosticLogger | null = null;
 
@@ -40,11 +77,14 @@ export class DiagnosticLogger {
   private readonly MAX_EVENTS = 200;
   private readonly MAX_LONG_TASKS = 100;
   private readonly MAX_ERRORS = 50;
+  private readonly MAX_PHASE_LOADS = 25;
 
   private frameBuffer: FrameSample[] = [];
   private eventBuffer: GameEventRecord[] = [];
   private longTaskBuffer: LongTaskRecord[] = [];
   private errorBuffer: ErrorRecord[] = [];
+  private phaseLoadBuffer: PhaseLoadMetric[] = [];
+  private lastBenchmarkResult: BenchmarkResult | null = null;
 
   private isEnabled: boolean = true;
   private performanceObserver: PerformanceObserver | null = null;
@@ -257,6 +297,56 @@ export class DiagnosticLogger {
     this.errorBuffer.push(entry);
   }
 
+  public recordPhaseLoad(sample: PhaseLoadMetric): void {
+    if (!this.isEnabled) return;
+    if (this.phaseLoadBuffer.length >= this.MAX_PHASE_LOADS) {
+      this.phaseLoadBuffer.shift();
+    }
+    this.phaseLoadBuffer.push(sample);
+  }
+
+  public recordBenchmarkResult(result: BenchmarkResult): void {
+    this.lastBenchmarkResult = result;
+  }
+
+  public getLastBenchmarkResult(): BenchmarkResult | null {
+    return this.lastBenchmarkResult;
+  }
+
+  public getPhaseLoadingSummary(): Record<string, any> {
+    const list = this.phaseLoadBuffer;
+    if (list.length === 0) {
+      return { totalRecorded: 0, status: 'no_data' };
+    }
+    let sumTotal = 0;
+    let sumEngine = 0;
+    let sumPrewarm = 0;
+    let sumUi = 0;
+    let fastest = Infinity;
+    let slowest = 0;
+
+    for (let i = 0; i < list.length; i++) {
+      const item = list[i];
+      sumTotal += item.totalLoadMs;
+      sumEngine += item.engineGenMs;
+      sumPrewarm += item.tilePrewarmMs;
+      sumUi += item.uiSetupMs;
+      if (item.totalLoadMs < fastest) fastest = item.totalLoadMs;
+      if (item.totalLoadMs > slowest) slowest = item.totalLoadMs;
+    }
+
+    const count = list.length;
+    return {
+      totalRecorded: count,
+      avgTotalLoadMs: Number((sumTotal / count).toFixed(2)),
+      avgEngineGenMs: Number((sumEngine / count).toFixed(2)),
+      avgTilePrewarmMs: Number((sumPrewarm / count).toFixed(2)),
+      avgUiSetupMs: Number((sumUi / count).toFixed(2)),
+      fastestLoadMs: Number(fastest.toFixed(2)),
+      slowestLoadMs: Number(slowest.toFixed(2)),
+    };
+  }
+
   public getPerformanceStats(): {
     totalFrames: number;
     avgFrameMs: number;
@@ -443,6 +533,12 @@ export class DiagnosticLogger {
           : `Coleta ativa: ${this.frameBuffer.length} quadros analisados.`,
       device: this.getDeviceMetadata(),
       performanceSummary: this.getPerformanceStats(),
+      phaseLoading: {
+        lastLoad: this.phaseLoadBuffer[this.phaseLoadBuffer.length - 1] || null,
+        history: this.phaseLoadBuffer,
+        summary: this.getPhaseLoadingSummary(),
+      },
+      benchmark: this.lastBenchmarkResult,
       longTasks: this.longTaskBuffer,
       recentFrames: this.frameBuffer,
       recentEvents: this.eventBuffer,

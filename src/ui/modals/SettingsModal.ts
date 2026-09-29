@@ -2,17 +2,22 @@ import { UserPreferences } from '../../storage/StorageManager';
 import { soundManager } from '../../audio/SoundManager';
 import { hapticManager } from '../../audio/HapticManager';
 import { diagnosticLogger } from '../../core/DiagnosticLogger';
+import { BenchmarkRunner } from '../../core/BenchmarkRunner';
+import { BoardRenderer } from '../../render/BoardRenderer';
 
 export class SettingsModal {
   public static renderSettingsOptions(
     prefs: UserPreferences,
     onSaveAndApply: (updated: UserPreferences) => void,
-    onRequestReset?: () => void
+    onRequestReset?: () => void,
+    renderer?: BoardRenderer
   ): void {
     const container = document.getElementById('settings-options-container');
     if (!container) return;
 
     const stats = diagnosticLogger.getPerformanceStats();
+    const phaseSummary = diagnosticLogger.getPhaseLoadingSummary();
+    const lastBench = diagnosticLogger.getLastBenchmarkResult();
 
     container.innerHTML = `
       <div class="setting-row">
@@ -59,7 +64,7 @@ export class SettingsModal {
             <span>Diagnóstico & Performance</span>
           </div>
           <div class="diag-section-desc">
-            Capture métricas reais de FPS, Long Tasks e tempo de desenho do Canvas para investigar lentidão no Android.
+            Métricas de FPS, Long Tasks, tempo de carga das fases e simulação automatizada de estresse.
           </div>
         </div>
 
@@ -73,6 +78,10 @@ export class SettingsModal {
             <div class="diag-stat-value">${stats.avgFrameMs > 0 ? stats.avgFrameMs + 'ms' : '--'}</div>
           </div>
           <div class="diag-stat-card">
+            <div class="diag-stat-label">Carga de Fase</div>
+            <div class="diag-stat-value">${phaseSummary.avgTotalLoadMs ? phaseSummary.avgTotalLoadMs + 'ms' : '--'}</div>
+          </div>
+          <div class="diag-stat-card">
             <div class="diag-stat-label">Lentos (&gt;16ms)</div>
             <div class="diag-stat-value ${stats.slowFrames > 0 ? 'diag-warning' : ''}">${stats.slowFrames} <span class="diag-pct">(${stats.slowFramesPct}%)</span></div>
           </div>
@@ -82,10 +91,31 @@ export class SettingsModal {
           </div>
         </div>
 
-        ${stats.totalFrames === 0 ? `
-          <div class="diag-stat-hint">
-            💡 <em>Inicie qualquer fase e faça algumas jogadas para capturar o tempo real de desenho das peças e animações.</em>
+        ${lastBench ? `
+          <div class="diag-benchmark-card">
+            <div class="diag-benchmark-header">
+              <div class="diag-benchmark-title">
+                <span>⚡ Último Benchmark</span>
+              </div>
+              <span class="diag-benchmark-badge grade-${lastBench.grade.toLowerCase()}">Classe ${lastBench.grade}</span>
+            </div>
+            <div class="diag-benchmark-desc">
+              ${lastBench.summary}
+            </div>
           </div>
+        ` : ''}
+
+        <div id="diag-benchmark-progress" class="diag-progress-container hidden">
+          <div id="diag-benchmark-text" class="diag-progress-text">Iniciando simulação...</div>
+          <div class="diag-progress-bar-bg">
+            <div id="diag-benchmark-fill" class="diag-progress-bar-fill"></div>
+          </div>
+        </div>
+
+        ${renderer ? `
+          <button id="btn-run-benchmark" class="btn-diag-benchmark" type="button">
+            <span>⚡ Executar Simulação & Benchmark</span>
+          </button>
         ` : ''}
 
         <div class="diag-actions-row">
@@ -186,6 +216,42 @@ export class SettingsModal {
       hapticManager.impactLight();
       diagnosticLogger.downloadLogsFile();
       showFeedback('💾 Arquivo .json enviado para os Downloads do aparelho!');
+    });
+
+    // Execução do Benchmark Automatizado
+    const btnBenchmark = container.querySelector('#btn-run-benchmark') as HTMLButtonElement | null;
+    const progressContainer = container.querySelector('#diag-benchmark-progress') as HTMLElement | null;
+    const progressFill = container.querySelector('#diag-benchmark-fill') as HTMLElement | null;
+    const progressText = container.querySelector('#diag-benchmark-text') as HTMLElement | null;
+
+    btnBenchmark?.addEventListener('click', async () => {
+      if (!renderer || BenchmarkRunner.getIsRunning()) return;
+
+      soundManager.playTileClick();
+      hapticManager.impactMedium();
+
+      btnBenchmark.disabled = true;
+      if (progressContainer) progressContainer.classList.remove('hidden');
+
+      try {
+        const result = await BenchmarkRunner.runBenchmark(renderer, (pct, text) => {
+          if (progressFill) progressFill.style.width = `${pct}%`;
+          if (progressText) progressText.textContent = text;
+        });
+
+        soundManager.playSynergyBonus();
+        hapticManager.impactVictory();
+        showFeedback(`🎉 Benchmark concluído! Nota: Classe ${result.grade}`);
+
+        // Re-renderiza o modal para atualizar a grade e exibir o card de resultado
+        setTimeout(() => {
+          SettingsModal.renderSettingsOptions(prefs, onSaveAndApply, onRequestReset, renderer);
+        }, 1200);
+      } catch (err: any) {
+        showFeedback(`❌ Erro no benchmark: ${err?.message || 'Falha na simulação'}`, true);
+        if (progressContainer) progressContainer.classList.add('hidden');
+        btnBenchmark.disabled = false;
+      }
     });
 
     container.querySelector('#btn-settings-reset-data')?.addEventListener('click', () => {

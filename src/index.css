@@ -2903,6 +2903,129 @@ html, body {
   background: rgba(51, 65, 85, 0.8);
 }
 
+.btn-diag-benchmark {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(126, 34, 206, 0.35));
+  border: 1.5px solid rgba(192, 132, 252, 0.5);
+  color: #f3e8ff;
+  font-size: 0.88rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(126, 34, 206, 0.2);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: var(--font-family);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-diag-benchmark:active:not(:disabled) {
+  transform: scale(0.97);
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.35), rgba(126, 34, 206, 0.5));
+}
+
+.btn-diag-benchmark:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.diag-benchmark-card {
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: rgba(30, 27, 75, 0.5);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 12px;
+  animation: fadeInModal 0.25s ease-out;
+}
+
+.diag-benchmark-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.diag-benchmark-title {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #c084fc;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.diag-benchmark-badge {
+  font-size: 0.85rem;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+}
+
+.diag-benchmark-badge.grade-s {
+  background: linear-gradient(135deg, #ec4899, #8b5cf6);
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.4);
+}
+
+.diag-benchmark-badge.grade-a {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.diag-benchmark-badge.grade-b {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.diag-benchmark-badge.grade-c {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+}
+
+.diag-benchmark-desc {
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  line-height: 1.4;
+}
+
+.diag-progress-container {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: rgba(15, 23, 42, 0.7);
+  border-radius: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  animation: fadeInModal 0.2s ease-out;
+}
+
+.diag-progress-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: rgba(51, 65, 85, 0.6);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.diag-progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+  border-radius: 4px;
+  transition: width 0.15s ease-out;
+}
+
+.diag-progress-text {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #93c5fd;
+  text-align: center;
+}
+
 .diag-feedback-msg {
   padding: 8px 12px;
   border-radius: 10px;

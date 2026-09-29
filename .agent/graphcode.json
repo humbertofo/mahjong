@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-09-29T15:13:40.959Z",
-  "totalFiles": 104,
-  "totalLines": 53920,
+  "timestamp": "2026-09-29T15:35:10.409Z",
+  "totalFiles": 105,
+  "totalLines": 54413,
   "monoliths": [
     {
       "file": "src/index.css",
-      "lines": 5040,
-      "sizeKb": "112.8 KB"
+      "lines": 5163,
+      "sizeKb": "115.5 KB"
     },
     {
       "file": "src/core/nature/tiles/tileCatalog.ts",
@@ -30,8 +30,8 @@
     },
     {
       "file": "src/ui/UIManager.ts",
-      "lines": 1498,
-      "sizeKb": "55.9 KB"
+      "lines": 1521,
+      "sizeKb": "56.7 KB"
     },
     {
       "file": "src/core/layouts/levels/level44_four_hills.ts",
@@ -118,9 +118,10 @@
         "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/ui/UIManager.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 7,
+      "blastRadiusScore": 8,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -150,12 +151,37 @@
         "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/ui/UIManager.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 9,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": true
+    },
+    "src/core/BenchmarkRunner.ts": {
+      "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\BenchmarkRunner.ts",
+      "relativePath": "src/core/BenchmarkRunner.ts",
+      "lines": 177,
+      "sizeBytes": 6464,
+      "dependencies": [
+        "src/core/BoardEngine.ts",
+        "src/core/layouts/index.ts",
+        "src/render/BoardRenderer.ts",
+        "src/core/DiagnosticLogger.ts"
+      ],
+      "dependents": [
+        "src/ui/modals/SettingsModal.ts"
+      ],
+      "transitiveDependents": [
+        "src/ui/modals/SettingsModal.ts",
+        "src/ui/UIManager.ts",
+        "src/main.ts"
+      ],
+      "blastRadiusScore": 3,
+      "riskLevel": "BAIXO",
+      "isOrphan": false,
+      "isMonolith": false
     },
     "src/core/BoardEngine.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\BoardEngine.ts",
@@ -175,19 +201,22 @@
         "src/core/nature/tiles/TileTraits.ts"
       ],
       "dependents": [
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
         "src/render/BoardRenderer.ts",
         "src/ui/UIManager.ts"
       ],
       "transitiveDependents": [
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
         "src/render/BoardRenderer.ts",
-        "src/ui/UIManager.ts"
+        "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts"
       ],
-      "blastRadiusScore": 4,
-      "riskLevel": "BAIXO",
+      "blastRadiusScore": 6,
+      "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": true
     },
@@ -218,14 +247,16 @@
         "src/core/nature/climates/effects/OceanSurge.ts",
         "src/core/nature/TrayTacticalOracle.ts",
         "src/render/BoardRenderer.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
         "src/ui/UIManager.ts",
         "src/core/nature/climates/ClimateEvaluator.ts",
         "src/ui/NatureFeedbackController.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/core/engine/SynergyDirector.ts"
       ],
-      "blastRadiusScore": 13,
+      "blastRadiusScore": 14,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -233,25 +264,27 @@
     "src/core/DiagnosticLogger.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\DiagnosticLogger.ts",
       "relativePath": "src/core/DiagnosticLogger.ts",
-      "lines": 563,
-      "sizeBytes": 18685,
+      "lines": 659,
+      "sizeBytes": 21410,
       "dependencies": [
         "src/audio/SoundManager.ts"
       ],
       "dependents": [
+        "src/core/BenchmarkRunner.ts",
         "src/main.ts",
         "src/render/BoardRenderer.ts",
         "src/ui/modals/SettingsModal.ts",
         "src/ui/UIManager.ts"
       ],
       "transitiveDependents": [
+        "src/core/BenchmarkRunner.ts",
         "src/main.ts",
         "src/render/BoardRenderer.ts",
         "src/ui/modals/SettingsModal.ts",
         "src/ui/UIManager.ts"
       ],
-      "blastRadiusScore": 4,
-      "riskLevel": "BAIXO",
+      "blastRadiusScore": 5,
+      "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
     },
@@ -276,11 +309,13 @@
         "src/core/BoardEngine.ts",
         "src/core/engine/ZenPowerManager.ts",
         "src/render/BoardRenderer.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
-        "src/ui/UIManager.ts"
+        "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts"
       ],
-      "blastRadiusScore": 6,
+      "blastRadiusScore": 8,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -298,12 +333,14 @@
       ],
       "transitiveDependents": [
         "src/core/BoardEngine.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
         "src/render/BoardRenderer.ts",
-        "src/ui/UIManager.ts"
+        "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts"
       ],
-      "blastRadiusScore": 5,
+      "blastRadiusScore": 7,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -324,12 +361,14 @@
       "transitiveDependents": [
         "src/core/BoardEngine.ts",
         "src/core/engine/ZenPowerManager.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
         "src/render/BoardRenderer.ts",
-        "src/ui/UIManager.ts"
+        "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts"
       ],
-      "blastRadiusScore": 6,
+      "blastRadiusScore": 8,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -350,12 +389,14 @@
       ],
       "transitiveDependents": [
         "src/core/BoardEngine.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
         "src/render/BoardRenderer.ts",
-        "src/ui/UIManager.ts"
+        "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts"
       ],
-      "blastRadiusScore": 5,
+      "blastRadiusScore": 7,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -439,6 +480,7 @@
         "src/core/layouts/levels/level50_classic_shanghai.ts"
       ],
       "dependents": [
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
@@ -446,15 +488,17 @@
         "src/ui/UIManager.ts"
       ],
       "transitiveDependents": [
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 7,
+      "blastRadiusScore": 9,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -472,15 +516,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -498,15 +544,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -524,15 +572,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -550,15 +600,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -576,15 +628,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -602,15 +656,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -628,15 +684,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -654,15 +712,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -680,15 +740,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -706,15 +768,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -732,15 +796,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -758,15 +824,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -784,15 +852,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -810,15 +880,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -836,15 +908,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -862,15 +936,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -888,15 +964,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -914,15 +992,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -940,15 +1020,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -966,15 +1048,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -992,15 +1076,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": true
@@ -1018,15 +1104,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1044,15 +1132,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1070,15 +1160,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1096,15 +1188,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": true
@@ -1122,15 +1216,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1148,15 +1244,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1174,15 +1272,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1200,15 +1300,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1226,15 +1328,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": true
@@ -1252,15 +1356,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": true
@@ -1278,15 +1384,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1304,15 +1412,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1330,15 +1440,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1356,15 +1468,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1382,15 +1496,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1408,15 +1524,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": true
@@ -1434,15 +1552,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1460,15 +1580,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1486,15 +1608,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": true
@@ -1512,15 +1636,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": true
@@ -1538,15 +1664,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": true
@@ -1564,15 +1692,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1590,15 +1720,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": true
@@ -1616,15 +1748,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1642,15 +1776,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": true
@@ -1668,15 +1804,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1694,15 +1832,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1720,15 +1860,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": true
@@ -1746,15 +1888,17 @@
       ],
       "transitiveDependents": [
         "src/core/layouts/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1803,17 +1947,19 @@
       "transitiveDependents": [
         "src/core/layouts/index.ts",
         "src/core/levelRules.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/HUDController.ts",
         "src/ui/modals/GameEndModals.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
         "src/core/BoardEngine.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts",
         "src/render/BoardRenderer.ts"
       ],
-      "blastRadiusScore": 11,
+      "blastRadiusScore": 12,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1836,11 +1982,13 @@
         "src/core/BoardEngine.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
-        "src/render/BoardRenderer.ts"
+        "src/render/BoardRenderer.ts",
+        "src/ui/modals/SettingsModal.ts"
       ],
-      "blastRadiusScore": 6,
+      "blastRadiusScore": 8,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1883,11 +2031,13 @@
         "src/core/BoardEngine.ts",
         "src/core/engine/ZenPowerManager.ts",
         "src/render/BoardRenderer.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
-        "src/ui/UIManager.ts"
+        "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1913,11 +2063,13 @@
         "src/core/BoardEngine.ts",
         "src/core/engine/ZenPowerManager.ts",
         "src/render/BoardRenderer.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
-        "src/ui/UIManager.ts"
+        "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts"
       ],
-      "blastRadiusScore": 7,
+      "blastRadiusScore": 9,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1940,11 +2092,13 @@
         "src/core/BoardEngine.ts",
         "src/core/engine/ZenPowerManager.ts",
         "src/render/BoardRenderer.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
-        "src/ui/UIManager.ts"
+        "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1968,11 +2122,13 @@
         "src/core/BoardEngine.ts",
         "src/core/engine/ZenPowerManager.ts",
         "src/render/BoardRenderer.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
-        "src/ui/UIManager.ts"
+        "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -1995,11 +2151,13 @@
         "src/core/BoardEngine.ts",
         "src/core/engine/ZenPowerManager.ts",
         "src/render/BoardRenderer.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
-        "src/ui/UIManager.ts"
+        "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -2022,11 +2180,13 @@
         "src/core/BoardEngine.ts",
         "src/core/engine/ZenPowerManager.ts",
         "src/render/BoardRenderer.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
-        "src/ui/UIManager.ts"
+        "src/ui/UIManager.ts",
+        "src/ui/modals/SettingsModal.ts"
       ],
-      "blastRadiusScore": 8,
+      "blastRadiusScore": 10,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -2049,11 +2209,13 @@
         "src/core/BoardEngine.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/UIManager.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
-        "src/render/BoardRenderer.ts"
+        "src/render/BoardRenderer.ts",
+        "src/ui/modals/SettingsModal.ts"
       ],
-      "blastRadiusScore": 6,
+      "blastRadiusScore": 8,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -2077,14 +2239,16 @@
         "src/core/engine/SynergyDirector.ts",
         "src/core/nature/climates/effects/AtmosphericGales.ts",
         "src/core/nature/climates/effects/HeatWave.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
         "src/render/BoardRenderer.ts",
         "src/ui/UIManager.ts",
         "src/core/engine/ZenPowerManager.ts",
-        "src/core/nature/climates/ClimateEvaluator.ts"
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/ui/modals/SettingsModal.ts"
       ],
-      "blastRadiusScore": 10,
+      "blastRadiusScore": 11,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -2116,11 +2280,13 @@
         "src/render/BoardRenderer.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/ui/UIManager.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
-        "src/core/nature/climates/ClimateEvaluator.ts"
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/ui/modals/SettingsModal.ts"
       ],
-      "blastRadiusScore": 16,
+      "blastRadiusScore": 18,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -2150,11 +2316,13 @@
         "src/render/BoardRenderer.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/ui/UIManager.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
-        "src/core/nature/climates/ClimateEvaluator.ts"
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/ui/modals/SettingsModal.ts"
       ],
-      "blastRadiusScore": 14,
+      "blastRadiusScore": 16,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -2184,11 +2352,13 @@
         "src/render/BoardRenderer.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/ui/UIManager.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
-        "src/core/nature/climates/ClimateEvaluator.ts"
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/ui/modals/SettingsModal.ts"
       ],
-      "blastRadiusScore": 14,
+      "blastRadiusScore": 16,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -2210,10 +2380,12 @@
         "src/render/BoardRenderer.ts",
         "src/render/ViewportCamera.ts",
         "src/ui/TrayAnimator.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/main.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/UIManager.ts"
       ],
-      "blastRadiusScore": 6,
+      "blastRadiusScore": 8,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -2246,11 +2418,13 @@
         "src/render/BoardRenderer.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/ui/UIManager.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
-        "src/core/nature/climates/ClimateEvaluator.ts"
+        "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/ui/modals/SettingsModal.ts"
       ],
-      "blastRadiusScore": 13,
+      "blastRadiusScore": 15,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
@@ -2288,15 +2462,17 @@
         "src/core/nature/TrayTacticalOracle.ts",
         "src/core/engine/SynergyDirector.ts",
         "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/main.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/UIManager.ts",
         "src/render/ViewportCamera.ts",
         "src/ui/TrayAnimator.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/ui/NatureFeedbackController.ts"
       ],
-      "blastRadiusScore": 18,
-      "riskLevel": "MÉDIO",
+      "blastRadiusScore": 20,
+      "riskLevel": "ALTO",
       "isOrphan": false,
       "isMonolith": false
     },
@@ -2331,14 +2507,16 @@
         "src/core/nature/climates/effects/OceanSurge.ts",
         "src/core/engine/SynergyDirector.ts",
         "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/main.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/render/ViewportCamera.ts",
         "src/ui/TrayAnimator.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/core/layouts/pipeline/levelValidator.ts"
       ],
-      "blastRadiusScore": 23,
+      "blastRadiusScore": 25,
       "riskLevel": "ALTO",
       "isOrphan": false,
       "isMonolith": true
@@ -2377,16 +2555,18 @@
         "src/render/TileRenderer.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/main.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/core/engine/ZenPowerManager.ts",
         "src/core/nature/climates/effects/ArcticBlizzard.ts",
         "src/core/nature/climates/effects/AtmosphericGales.ts",
         "src/core/nature/climates/effects/OceanSurge.ts",
         "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/render/ViewportCamera.ts",
         "src/ui/TrayAnimator.ts"
       ],
-      "blastRadiusScore": 22,
+      "blastRadiusScore": 24,
       "riskLevel": "ALTO",
       "isOrphan": false,
       "isMonolith": false
@@ -2422,14 +2602,16 @@
         "src/core/nature/climates/effects/OceanSurge.ts",
         "src/core/engine/SynergyDirector.ts",
         "src/core/nature/climates/ClimateEvaluator.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/main.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/render/ViewportCamera.ts",
         "src/ui/TrayAnimator.ts",
         "src/ui/modals/LevelsModal.ts",
         "src/ui/NatureFeedbackController.ts",
         "src/core/layouts/pipeline/levelValidator.ts"
       ],
-      "blastRadiusScore": 23,
+      "blastRadiusScore": 25,
       "riskLevel": "ALTO",
       "isOrphan": false,
       "isMonolith": false
@@ -2451,6 +2633,7 @@
         "src/core/BoardEngine.ts",
         "src/core/engine/TrayController.ts",
         "src/core/nature/tiles/index.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
         "src/render/BoardRenderer.ts",
@@ -2460,6 +2643,7 @@
         "src/core/nature/biomes.ts",
         "src/core/nature/synergies/SynergyFamilies.ts",
         "src/render/TileRenderer.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/core/nature/climates/effects/ArcticBlizzard.ts",
         "src/core/nature/climates/effects/AtmosphericGales.ts",
         "src/core/nature/climates/effects/OceanSurge.ts",
@@ -2470,7 +2654,7 @@
         "src/ui/TrayAnimator.ts",
         "src/ui/NatureFeedbackController.ts"
       ],
-      "blastRadiusScore": 20,
+      "blastRadiusScore": 22,
       "riskLevel": "ALTO",
       "isOrphan": false,
       "isMonolith": false
@@ -2508,6 +2692,7 @@
         "src/core/nature/LevelDeckCurator.ts",
         "src/core/nature/synergies/SynergyRegistry.ts",
         "src/core/nature/TrayTacticalOracle.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/main.ts",
         "src/core/BoardEngine.ts",
         "src/core/engine/ZenPowerManager.ts",
@@ -2520,7 +2705,7 @@
         "src/ui/TrayAnimator.ts",
         "src/core/layouts/pipeline/levelValidator.ts"
       ],
-      "blastRadiusScore": 28,
+      "blastRadiusScore": 29,
       "riskLevel": "ALTO",
       "isOrphan": false,
       "isMonolith": false
@@ -2733,6 +2918,7 @@
         "src/ui/NatureFeedbackController.ts",
         "src/ui/TrayAnimator.ts",
         "src/ui/UIManager.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/core/layouts/pipeline/levelValidator.ts",
         "src/main.ts",
         "src/ui/HUDController.ts",
@@ -2753,8 +2939,8 @@
     "src/index.css": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\index.css",
       "relativePath": "src/index.css",
-      "lines": 5040,
-      "sizeBytes": 115549,
+      "lines": 5163,
+      "sizeBytes": 118237,
       "dependencies": [],
       "dependents": [],
       "transitiveDependents": [],
@@ -2766,8 +2952,8 @@
     "src/main.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\main.ts",
       "relativePath": "src/main.ts",
-      "lines": 186,
-      "sizeBytes": 6215,
+      "lines": 194,
+      "sizeBytes": 6503,
       "dependencies": [
         "src/core/BoardEngine.ts",
         "src/render/BoardRenderer.ts",
@@ -2795,11 +2981,13 @@
       ],
       "transitiveDependents": [
         "src/render/BoardRenderer.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/main.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/UIManager.ts"
       ],
-      "blastRadiusScore": 3,
-      "riskLevel": "BAIXO",
+      "blastRadiusScore": 5,
+      "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
     },
@@ -2824,14 +3012,18 @@
         "src/core/DiagnosticLogger.ts"
       ],
       "dependents": [
+        "src/core/BenchmarkRunner.ts",
         "src/main.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/UIManager.ts"
       ],
       "transitiveDependents": [
+        "src/core/BenchmarkRunner.ts",
         "src/main.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/UIManager.ts"
       ],
-      "blastRadiusScore": 2,
+      "blastRadiusScore": 4,
       "riskLevel": "BAIXO",
       "isOrphan": false,
       "isMonolith": true
@@ -2849,11 +3041,13 @@
       ],
       "transitiveDependents": [
         "src/render/BoardRenderer.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/main.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/UIManager.ts"
       ],
-      "blastRadiusScore": 3,
-      "riskLevel": "BAIXO",
+      "blastRadiusScore": 5,
+      "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
     },
@@ -2870,11 +3064,13 @@
       ],
       "transitiveDependents": [
         "src/render/BoardRenderer.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/main.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/UIManager.ts"
       ],
-      "blastRadiusScore": 3,
-      "riskLevel": "BAIXO",
+      "blastRadiusScore": 5,
+      "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
     },
@@ -2897,10 +3093,12 @@
         "src/render/BoardRenderer.ts",
         "src/render/ViewportCamera.ts",
         "src/ui/TrayAnimator.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/main.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/UIManager.ts"
       ],
-      "blastRadiusScore": 5,
+      "blastRadiusScore": 7,
       "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": true
@@ -2919,11 +3117,13 @@
       ],
       "transitiveDependents": [
         "src/render/BoardRenderer.ts",
+        "src/core/BenchmarkRunner.ts",
         "src/main.ts",
+        "src/ui/modals/SettingsModal.ts",
         "src/ui/UIManager.ts"
       ],
-      "blastRadiusScore": 3,
-      "riskLevel": "BAIXO",
+      "blastRadiusScore": 5,
+      "riskLevel": "MÉDIO",
       "isOrphan": false,
       "isMonolith": false
     },
@@ -3050,13 +3250,15 @@
     "src/ui/modals/SettingsModal.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\modals\\SettingsModal.ts",
       "relativePath": "src/ui/modals/SettingsModal.ts",
-      "lines": 198,
-      "sizeBytes": 8481,
+      "lines": 264,
+      "sizeBytes": 11424,
       "dependencies": [
         "src/storage/StorageManager.ts",
         "src/audio/SoundManager.ts",
         "src/audio/HapticManager.ts",
-        "src/core/DiagnosticLogger.ts"
+        "src/core/DiagnosticLogger.ts",
+        "src/core/BenchmarkRunner.ts",
+        "src/render/BoardRenderer.ts"
       ],
       "dependents": [
         "src/ui/UIManager.ts"
@@ -3118,8 +3320,8 @@
     "src/ui/UIManager.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\UIManager.ts",
       "relativePath": "src/ui/UIManager.ts",
-      "lines": 1498,
-      "sizeBytes": 57234,
+      "lines": 1521,
+      "sizeBytes": 58034,
       "dependencies": [
         "src/core/BoardEngine.ts",
         "src/render/BoardRenderer.ts",
