@@ -21,9 +21,6 @@ export class LevelsModal {
 
     if (!mapContent || !mapSvg) return;
 
-    // Limpar conteúdo anterior
-    mapContent.querySelectorAll('.atom-node, .atom-world-portal').forEach((el) => el.remove());
-    mapSvg.innerHTML = '';
     if (previewCard) previewCard.classList.add('hidden');
 
     if (previewClose && previewCard) {
@@ -33,6 +30,9 @@ export class LevelsModal {
         previewCard.classList.add('hidden');
       };
     }
+
+    // Fragmento de alta performance para inserção atômica única no DOM
+    const contentFrag = document.createDocumentFragment();
 
     const worldHabitats = [
       { icon: '🌸', name: 'Jardim' },
@@ -47,9 +47,9 @@ export class LevelsModal {
       { icon: '⛩️', name: 'Mestres' },
     ];
 
-    // Preencher Tabs de Navegação Rápida entre Mundos
+    // Preencher Tabs de Navegação Rápida entre Mundos via DocumentFragment
     if (tabsContainer) {
-      tabsContainer.innerHTML = '';
+      const tabsFrag = document.createDocumentFragment();
 
       WORLDS.forEach((world, wIdx) => {
         const habitat = worldHabitats[wIdx] || { icon: '🌿', name: `Mundo ${wIdx + 1}` };
@@ -71,8 +71,11 @@ export class LevelsModal {
           const portal = document.getElementById(`world-portal-${world.id}`);
           portal?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
-        tabsContainer.appendChild(tab);
+        tabsFrag.appendChild(tab);
       });
+
+      tabsContainer.innerHTML = '';
+      tabsContainer.appendChild(tabsFrag);
     }
 
     // Atualizar Contador Geral de Estrelas no Topo
@@ -139,7 +142,7 @@ export class LevelsModal {
           <span class="portal-progress-stars">⭐ ${starsInWorld}</span>
         </div>
       `;
-      mapContent.appendChild(portal);
+      contentFrag.appendChild(portal);
 
       const firstUnlockedInWorld = StorageManager.isLevelUnlocked(startLvl - 1);
       
@@ -194,7 +197,6 @@ export class LevelsModal {
     mapSvg.setAttribute('preserveAspectRatio', 'none');
 
     // Vagalumes e partículas zen ambientais no mapa
-    mapContent.querySelectorAll('.map-ambient-firefly').forEach((el) => el.remove());
     for (let f = 0; f < 18; f++) {
       const firefly = document.createElement('div');
       firefly.className = 'map-ambient-firefly';
@@ -204,10 +206,11 @@ export class LevelsModal {
       firefly.style.top = `${Math.max(16, fy)}px`;
       firefly.style.animationDelay = `${(f * 0.45).toFixed(2)}s`;
       firefly.style.animationDuration = `${6 + (f % 5) * 1.8}s`;
-      mapContent.appendChild(firefly);
+      contentFrag.appendChild(firefly);
     }
 
-    // Desenhar caminhos orgânicos suaves (S-Curves)
+    // Desenhar caminhos orgânicos suaves (S-Curves) via buffer de string atômica
+    const svgPaths: string[] = [];
     for (let i = 0; i < route.length - 1; i++) {
       const p1 = route[i];
       const p2 = route[i + 1];
@@ -231,39 +234,19 @@ export class LevelsModal {
 
         if (isLeadingToCurrent) {
           // Veio de fronteira ativo (ouro cintilante conduzindo à fase atual)
-          const glowEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          glowEl.setAttribute('d', pathData);
-          glowEl.setAttribute('class', 'map-path-frontier-glow');
-          mapSvg.appendChild(glowEl);
-
-          const mainEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          mainEl.setAttribute('d', pathData);
-          mainEl.setAttribute('class', 'map-path-frontier');
-          mapSvg.appendChild(mainEl);
-
-          const flowEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          flowEl.setAttribute('d', pathData);
-          flowEl.setAttribute('class', 'map-path-flow');
-          mapSvg.appendChild(flowEl);
+          svgPaths.push(`<path d="${pathData}" class="map-path-frontier-glow" />`);
+          svgPaths.push(`<path d="${pathData}" class="map-path-frontier" />`);
+          svgPaths.push(`<path d="${pathData}" class="map-path-flow" />`);
         } else {
           // Veio concluído padrão (verde jade reluzente sólido)
-          const glowEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          glowEl.setAttribute('d', pathData);
-          glowEl.setAttribute('class', 'map-path-glow');
-          mapSvg.appendChild(glowEl);
-
-          const mainEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          mainEl.setAttribute('d', pathData);
-          mainEl.setAttribute('class', 'map-path-unlocked');
-          mapSvg.appendChild(mainEl);
+          svgPaths.push(`<path d="${pathData}" class="map-path-glow" />`);
+          svgPaths.push(`<path d="${pathData}" class="map-path-unlocked" />`);
         }
       } else {
-        const lockedEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        lockedEl.setAttribute('d', pathData);
-        lockedEl.setAttribute('class', 'map-path-locked');
-        mapSvg.appendChild(lockedEl);
+        svgPaths.push(`<path d="${pathData}" class="map-path-locked" />`);
       }
     }
+    mapSvg.innerHTML = svgPaths.join('');
 
     // Renderizar nós atômicos limpos
     route.filter((p) => p.type === 'node' && p.layout).forEach((pt) => {
@@ -384,12 +367,16 @@ export class LevelsModal {
         }
       });
 
-      mapContent.appendChild(node);
+      contentFrag.appendChild(node);
     });
 
-    setTimeout(() => {
+    // Inserção atômica única no DOM vivo (Zero reflows intermediários)
+    mapContent.innerHTML = '';
+    mapContent.appendChild(contentFrag);
+
+    requestAnimationFrame(() => {
       const activeNode = mapContent.querySelector('.atom-node.current');
       activeNode?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 150);
+    });
   }
 }

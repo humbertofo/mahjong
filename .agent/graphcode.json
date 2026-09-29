@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-09-29T14:39:23.976Z",
+  "timestamp": "2026-09-29T14:50:06.755Z",
   "totalFiles": 104,
-  "totalLines": 53857,
+  "totalLines": 53844,
   "monoliths": [
     {
       "file": "src/index.css",
@@ -3004,8 +3004,8 @@
     "src/ui/modals/LevelsModal.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\modals\\LevelsModal.ts",
       "relativePath": "src/ui/modals/LevelsModal.ts",
-      "lines": 396,
-      "sizeBytes": 14913,
+      "lines": 383,
+      "sizeBytes": 14256,
       "dependencies": [
         "src/core/layouts/index.ts",
         "src/storage/StorageManager.ts",
