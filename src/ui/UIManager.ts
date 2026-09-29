@@ -220,6 +220,7 @@ export class UIManager {
     });
     const btnMenuLevels = document.getElementById('btn-menu-levels');
     const openLevelsMap = () => {
+      LiveUpdateManager.setGameActive(false);
       soundManager.playTileClick();
       hapticManager.impactLight();
       LevelsModal.renderLevelsList(
@@ -346,6 +347,7 @@ export class UIManager {
       if (this.hud.hintCount <= 0) {
         this.showToast('Sem dicas restantes nesta fase!');
         soundManager.playBlockedSound();
+        hapticManager.impactWarning();
         return;
       }
       this.engine.getTiles().forEach((t) => (t.isHinted = false));
@@ -359,17 +361,18 @@ export class UIManager {
         if (t2) t2.isHinted = true;
         soundManager.playTileClick();
         hapticManager.impactLight();
-        this.renderer.triggerAnimation(4000);
+        this.renderer.triggerAnimation(2200);
         this.renderer.requestRender();
         this.showToast(`Dica revelada! (${this.hud.hintCount} restante${this.hud.hintCount === 1 ? '' : 's'})`);
         setTimeout(() => {
           if (t1) t1.isHinted = false;
           if (t2) t2.isHinted = false;
           this.renderer.requestRender();
-        }, 4000);
+        }, 2200);
       } else {
         this.showToast('Nenhum par disponível! Use Misturar.');
         soundManager.playBlockedSound();
+        hapticManager.impactWarning();
       }
       this.updateHUD();
     });
@@ -634,6 +637,7 @@ export class UIManager {
   // ─── Screen Navigation ────────────────────────────────────────────────────
 
   private showMenu(): void {
+    LiveUpdateManager.setGameActive(false);
     this.hud.stopTimer();
     this.cancelHammerMode();
     this.natureFeedback.clearTimers();
@@ -859,6 +863,7 @@ export class UIManager {
     });
 
     this.showGame();
+    LiveUpdateManager.setGameActive(true);
 
     this.engine = new BoardEngine(layout, this.currentLevelIndex);
     this.renderer.setLevelIndex(this.currentLevelIndex);
@@ -1152,6 +1157,8 @@ export class UIManager {
       levelStats,
       this.currentLevelIndex
     );
+
+    LiveUpdateManager.setGameActive(false);
   }
 
   public recordMatchedPair(pair?: [PlacedTile, PlacedTile]): void {

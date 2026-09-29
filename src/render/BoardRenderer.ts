@@ -1520,7 +1520,7 @@ export class BoardRenderer {
 
     if (!isFree) {
       soundManager.playBlockedSound();
-      hapticManager.impactLight();
+      hapticManager.impactWarning();
 
       const hasTileAbove = this.engine.getActiveBoardTiles().some(
         (o) =>
@@ -1550,6 +1550,7 @@ export class BoardRenderer {
     const willMatchWithTray = this.engine.getTray().some((t) => canMatch(t, clickedTile));
     if (!willMatchWithTray && this.engine.getTray().length + this.pendingTilesInFlight >= this.engine.getMaxTraySlots()) {
       soundManager.playBlockedSound();
+      hapticManager.impactWarning();
       return;
     }
 
@@ -1774,7 +1775,7 @@ export class BoardRenderer {
         }
       } else if (result.specialEffect === 'elemental_sealed') {
         soundManager.playBlockedSound();
-        hapticManager.impactLight();
+        hapticManager.impactWarning();
         if (this.callbacks.onElementalSealed) {
           this.callbacks.onElementalSealed(clickedTile);
         }

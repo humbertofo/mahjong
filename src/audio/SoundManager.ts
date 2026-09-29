@@ -65,7 +65,11 @@ export class SoundManager {
       try {
         const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
         if (AudioCtx && !this.ctx) {
-          this.ctx = new AudioCtx();
+          try {
+            this.ctx = new AudioCtx({ latencyHint: 'interactive' });
+          } catch {
+            this.ctx = new AudioCtx();
+          }
         }
       } catch {
         // Silencia em ambientes onde criação imediata sem interação for bloqueada

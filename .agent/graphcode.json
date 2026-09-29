@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-09-29T14:50:06.755Z",
+  "timestamp": "2026-09-29T15:13:40.959Z",
   "totalFiles": 104,
-  "totalLines": 53844,
+  "totalLines": 53920,
   "monoliths": [
     {
       "file": "src/index.css",
@@ -15,8 +15,8 @@
     },
     {
       "file": "src/render/BoardRenderer.ts",
-      "lines": 2077,
-      "sizeKb": "71.5 KB"
+      "lines": 2078,
+      "sizeKb": "71.6 KB"
     },
     {
       "file": "src/core/layouts/levels/level42_four_bridges.ts",
@@ -25,13 +25,13 @@
     },
     {
       "file": "src/audio/SoundManager.ts",
-      "lines": 1715,
-      "sizeKb": "51.2 KB"
+      "lines": 1719,
+      "sizeKb": "51.4 KB"
     },
     {
       "file": "src/ui/UIManager.ts",
-      "lines": 1491,
-      "sizeKb": "55.6 KB"
+      "lines": 1498,
+      "sizeKb": "55.9 KB"
     },
     {
       "file": "src/core/layouts/levels/level44_four_hills.ts",
@@ -100,8 +100,8 @@
     "src/audio/HapticManager.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\audio\\HapticManager.ts",
       "relativePath": "src/audio/HapticManager.ts",
-      "lines": 84,
-      "sizeBytes": 2181,
+      "lines": 102,
+      "sizeBytes": 2759,
       "dependencies": [],
       "dependents": [
         "src/render/BoardRenderer.ts",
@@ -128,8 +128,8 @@
     "src/audio/SoundManager.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\audio\\SoundManager.ts",
       "relativePath": "src/audio/SoundManager.ts",
-      "lines": 1715,
-      "sizeBytes": 52469,
+      "lines": 1719,
+      "sizeBytes": 52588,
       "dependencies": [
         "src/core/nature/tiles/TileTypes.ts"
       ],
@@ -1848,8 +1848,8 @@
     "src/core/LiveUpdateManager.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\core\\LiveUpdateManager.ts",
       "relativePath": "src/core/LiveUpdateManager.ts",
-      "lines": 172,
-      "sizeBytes": 5803,
+      "lines": 218,
+      "sizeBytes": 7581,
       "dependencies": [],
       "dependents": [
         "src/main.ts",
@@ -2806,8 +2806,8 @@
     "src/render/BoardRenderer.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\render\\BoardRenderer.ts",
       "relativePath": "src/render/BoardRenderer.ts",
-      "lines": 2077,
-      "sizeBytes": 73237,
+      "lines": 2078,
+      "sizeBytes": 73278,
       "dependencies": [
         "src/core/BoardEngine.ts",
         "src/core/engine/SynergyDirector.ts",
@@ -3118,8 +3118,8 @@
     "src/ui/UIManager.ts": {
       "path": "D:\\Este Computador\\Documentos\\gihub\\mahjong\\src\\ui\\UIManager.ts",
       "relativePath": "src/ui/UIManager.ts",
-      "lines": 1491,
-      "sizeBytes": 56978,
+      "lines": 1498,
+      "sizeBytes": 57234,
       "dependencies": [
         "src/core/BoardEngine.ts",
         "src/render/BoardRenderer.ts",

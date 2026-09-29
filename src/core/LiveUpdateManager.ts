@@ -14,6 +14,28 @@ export interface LiveUpdateCallbacks {
 
 export class LiveUpdateManager {
   private static isChecking = false;
+  private static isGameActive = false;
+  private static pendingUpdate: {
+    latestSha: string;
+    commitMessage: string;
+    callbacks?: LiveUpdateCallbacks | ((message: string) => void);
+  } | null = null;
+
+  /**
+   * Informa se há uma partida com toques ativos em andamento para postergar
+   * operações pesadas de I/O (download/descompactação do dist.zip de 5MB)
+   */
+  public static setGameActive(active: boolean): void {
+    this.isGameActive = active;
+    if (!active && this.pendingUpdate && !this.isChecking) {
+      console.log('[LiveUpdate] Partida finalizada ou pausada. Executando download postergado...');
+      const update = this.pendingUpdate;
+      this.pendingUpdate = null;
+      this.executeBundleDownload(update).catch((err) => {
+        console.warn('[LiveUpdate] Erro ao executar download postergado:', err);
+      });
+    }
+  }
 
   /**
    * Obtém o identificador do bundle atualmente em execução.
@@ -99,9 +121,36 @@ export class LiveUpdateManager {
         return;
       }
 
-      console.log(`[LiveUpdate] Nova versão detectada (${latestSha}). Ativo: ${currentSha || 'APK base'}. Baixando dist.zip...`);
+      console.log(`[LiveUpdate] Nova versão detectada (${latestSha}). Ativo: ${currentSha || 'APK base'}.`);
 
-      // Notificar início do download (exibe tela de progresso)
+      // Se o usuário estiver no meio da partida, posterga o download pesado para quando a partida terminar
+      if (this.isGameActive) {
+        console.log('[LiveUpdate] Partida em andamento. Postergar download de dist.zip para tela estática de vitória/menu.');
+        this.pendingUpdate = { latestSha, commitMessage, callbacks };
+        return;
+      }
+
+      await this.executeBundleDownload({ latestSha, commitMessage, callbacks });
+    } catch (err) {
+      console.warn('[LiveUpdate] Verificação em background ignorada (offline ou conexão lenta):', err);
+    } finally {
+      this.isChecking = false;
+    }
+  }
+
+  /**
+   * Executa o download e registro do bundle ZIP em segundo plano fora do jogo ativo
+   */
+  private static async executeBundleDownload(update: {
+    latestSha: string;
+    commitMessage: string;
+    callbacks?: LiveUpdateCallbacks | ((message: string) => void);
+  }): Promise<void> {
+    const { latestSha, commitMessage, callbacks } = update;
+    try {
+      console.log(`[LiveUpdate] Iniciando download do bundle ${latestSha}...`);
+
+      // Notificar início do download (exibe tela de progresso se callback fornecido)
       if (typeof callbacks === 'object' && callbacks?.onDownloading) {
         callbacks.onDownloading(commitMessage);
       }
@@ -120,7 +169,6 @@ export class LiveUpdateManager {
           url: `${BUNDLE_ZIP_URL}?_v=${latestSha}`,
         });
       } catch (dlErr: unknown) {
-        // Se já existia e não pôde ser deletado, tenta prosseguir
         const msg = dlErr instanceof Error ? dlErr.message : String(dlErr);
         if (!msg.includes('already exists')) {
           throw dlErr;
@@ -148,9 +196,7 @@ export class LiveUpdateManager {
         callbacks(commitMessage);
       }
     } catch (err) {
-      console.warn('[LiveUpdate] Verificação em background ignorada (offline ou conexão lenta):', err);
-    } finally {
-      this.isChecking = false;
+      console.warn('[LiveUpdate] Falha no download do bundle:', err);
     }
   }
 

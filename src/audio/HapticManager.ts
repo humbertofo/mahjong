@@ -1,4 +1,4 @@
-import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 
 export class HapticManager {
   private enabled: boolean = true;
@@ -52,6 +52,20 @@ export class HapticManager {
   }
 
   /**
+   * Vibração de aviso ao tentar tocar em peça bloqueada ou ação sem carga
+   */
+  public async impactWarning(): Promise<void> {
+    if (!this.enabled || this.shouldThrottle()) return;
+    try {
+      await Haptics.notification({ type: NotificationType.Warning });
+    } catch {
+      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+        navigator.vibrate([15, 30, 15]);
+      }
+    }
+  }
+
+  /**
    * Vibração forte para a Marreta (impacto potente)
    */
   public async impactHeavy(): Promise<void> {
@@ -66,15 +80,19 @@ export class HapticManager {
   }
 
   /**
-   * Vibração de vitória
+   * Vibração de celebração na vitória da fase
    */
   public async impactVictory(): Promise<void> {
     if (!this.enabled) return;
     try {
-      await Haptics.impact({ style: ImpactStyle.Heavy });
+      await Haptics.notification({ type: NotificationType.Success });
     } catch {
-      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-        navigator.vibrate([40, 50, 40, 50, 60]);
+      try {
+        await Haptics.impact({ style: ImpactStyle.Heavy });
+      } catch {
+        if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+          navigator.vibrate([40, 50, 40, 50, 60]);
+        }
       }
     }
   }
