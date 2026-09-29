@@ -51,11 +51,16 @@ export interface BenchmarkPhaseDetail {
   loadMs: number;
   prewarmMs: number;
   avgMatchFrameMs: number;
+  totalMovesExecuted: number;
+  victory: boolean;
+  shufflesUsed: number;
 }
 
 export interface BenchmarkResult {
   executedAt: string;
   phasesTested: number;
+  fullGamesCleared: number;
+  totalMovesSimulated: number;
   avgLoadTimeMs: number;
   avgEngineGenMs: number;
   avgPrewarmMs: number;

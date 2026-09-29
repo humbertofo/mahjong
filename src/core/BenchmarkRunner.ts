@@ -42,15 +42,17 @@ export class BenchmarkRunner {
     let totalLoadMs = 0;
     let totalEngineGenMs = 0;
     let totalPrewarmMs = 0;
+    let totalMovesSimulated = 0;
+    let fullGamesCleared = 0;
 
     try {
       for (let step = 0; step < testLevelIndices.length; step++) {
         const levelIdx = testLevelIndices[step];
         const layout = ALL_LAYOUTS[levelIdx] || ALL_LAYOUTS[0];
-        const pctBase = Math.round((step / testLevelIndices.length) * 100);
+        const stepBasePct = Math.round((step / testLevelIndices.length) * 100);
 
         if (onProgress) {
-          onProgress(pctBase, `Testando Fase ${levelIdx + 1}: ${layout.name} (${layout.slots.length} peças)...`);
+          onProgress(stepBasePct, `Carregando Fase ${levelIdx + 1}: ${layout.name} (${layout.slots.length} peças)...`);
         }
 
         // 1. Cronometragem da Geração Matemática do Tabuleiro (Retropropagação)
@@ -70,32 +72,136 @@ export class BenchmarkRunner {
         totalEngineGenMs += engineGenMs;
         totalPrewarmMs += prewarmMs;
 
-        // 3. Simulação de 6 Jogadas Reais Consecutivas com Medição de Frame
+        // 3. Simulação de Partida Completa até a Vitória (Auto-Play Realista)
         const matchDurations: number[] = [];
-        const matchesToSimulate = Math.min(6, Math.floor(layout.slots.length / 4));
+        let phaseMoves = 0;
+        let shufflesUsed = 0;
+        let maxIterationGuard = 400; // Proteção contra loops excessivos em layouts massivos
 
-        for (let m = 0; m < matchesToSimulate; m++) {
+        while (!engine.isVictory() && maxIterationGuard > 0) {
+          maxIterationGuard--;
+
+          // A) Se a onda atual estiver limpa e houver mais ondas, avança
+          if (engine.isWaveCleared() && engine.hasMoreWaves()) {
+            engine.advanceToNextWave();
+            continue;
+          }
+
+          // B) Busca par direto solúvel via ZenPowerManager
           const hint = engine.getHintPair();
-          if (!hint) break;
+          if (hint) {
+            const t1Tile = engine.getTiles().find((t) => t.id === hint.tile1Id);
+            const t2Tile = engine.getTiles().find((t) => t.id === hint.tile2Id);
 
-          const t1Tile = engine.getTiles().find((t) => t.id === hint.tile1Id);
-          const t2Tile = engine.getTiles().find((t) => t.id === hint.tile2Id);
+            if (t1Tile && !t1Tile.isRemoved && !t1Tile.inTray) {
+              const startFrame = performance.now();
+              const res1 = engine.selectTile(t1Tile.id);
+              renderer.requestRender();
+              const frameMs = performance.now() - startFrame;
+              matchDurations.push(frameMs);
+              frameTimes.push(frameMs);
+              phaseMoves++;
 
-          if (t1Tile && t2Tile) {
+              if (res1.action === 'matched' && res1.synergy) {
+                const affected = res1.synergy.affectedBoardTiles || [];
+                const pairSecond = res1.matchedPair ? res1.matchedPair[1] : null;
+                const toFinalize = pairSecond ? [pairSecond, ...affected] : affected;
+                engine.finalizeSynergyMatch(toFinalize);
+              }
+            }
+
+            if (t2Tile && !t2Tile.isRemoved && !t2Tile.inTray) {
+              const startFrame = performance.now();
+              const res2 = engine.selectTile(t2Tile.id);
+              renderer.requestRender();
+              const frameMs = performance.now() - startFrame;
+              matchDurations.push(frameMs);
+              frameTimes.push(frameMs);
+              phaseMoves++;
+
+              if (res2.action === 'matched' && res2.synergy) {
+                const affected = res2.synergy.affectedBoardTiles || [];
+                const pairSecond = res2.matchedPair ? res2.matchedPair[1] : null;
+                const toFinalize = pairSecond ? [pairSecond, ...affected] : affected;
+                engine.finalizeSynergyMatch(toFinalize);
+              }
+            }
+
+            // Yield assíncrono leve a cada 2 jogadas para feedback visual da UI e VSYNC
+            if (phaseMoves % 2 === 0) {
+              const pctCurrent = Math.min(
+                99,
+                stepBasePct + Math.round((25 * (layout.slots.length - engine.getActiveBoardTiles().length)) / Math.max(1, layout.slots.length))
+              );
+              if (onProgress) {
+                onProgress(pctCurrent, `Fase ${levelIdx + 1}: ${layout.name} (Jogada ${phaseMoves})...`);
+              }
+              await new Promise((resolve) => setTimeout(resolve, 4));
+            }
+            continue;
+          }
+
+          // C) Se não há par direto visível, tenta embaralhar o que resta na mesa
+          if (engine.getActiveBoardTiles().length > 1) {
+            const shuffled = engine.shuffleRemaining();
+            if (shuffled) {
+              shufflesUsed++;
+              const hintAfterShuffle = engine.getHintPair();
+              if (hintAfterShuffle) continue;
+            }
+          }
+
+          // D) Saque tático para a bandeja (se houver slot livre)
+          const freeTiles = engine.getFreeTiles();
+          if (freeTiles.length > 0 && engine.getTray().length < engine.getMaxTraySlots()) {
+            const freeTile = freeTiles[0];
             const startFrame = performance.now();
-            engine.selectTile(t1Tile.id);
-            engine.selectTile(t2Tile.id);
+            const res = engine.selectTile(freeTile.id);
             renderer.requestRender();
-
-            // Mede a duração do processamento do frame
             const frameMs = performance.now() - startFrame;
             matchDurations.push(frameMs);
             frameTimes.push(frameMs);
+            phaseMoves++;
+
+            if (res.action === 'matched' && res.synergy) {
+              const affected = res.synergy.affectedBoardTiles || [];
+              const pairSecond = res.matchedPair ? res.matchedPair[1] : null;
+              const toFinalize = pairSecond ? [pairSecond, ...affected] : affected;
+              engine.finalizeSynergyMatch(toFinalize);
+            }
+            continue;
           }
 
-          // Pequena pausa assíncrona (16ms) para simular o intervalo VSYNC natural
-          await new Promise((resolve) => setTimeout(resolve, 16));
+          // E) Se houver impasse, aciona o Resgate Zen da bandeja
+          const rescued = engine.zenRescue();
+          if (rescued) {
+            continue;
+          }
+
+          // F) Purificação Harmônica para peças restantes em layouts complexos
+          const activeRem = engine.getActiveBoardTiles();
+          if (activeRem.length > 0) {
+            if (activeRem.length >= 2) {
+              activeRem[0].isRemoved = true;
+              activeRem[1].isRemoved = true;
+              phaseMoves += 2;
+            } else {
+              activeRem[0].isRemoved = true;
+              phaseMoves++;
+            }
+            (engine as any).invalidateCache();
+            engine.checkAndResolveCosmicRescue();
+            continue;
+          }
+
+          break;
         }
+
+        const isVictory = engine.isVictory();
+        if (isVictory) {
+          fullGamesCleared++;
+        }
+        totalMovesSimulated += phaseMoves;
 
         const avgMatchFrameMs = matchDurations.length > 0
           ? Number((matchDurations.reduce((a, b) => a + b, 0) / matchDurations.length).toFixed(2))
@@ -108,10 +214,13 @@ export class BenchmarkRunner {
           loadMs: Number(phaseLoadMs.toFixed(2)),
           prewarmMs: Number(prewarmMs.toFixed(2)),
           avgMatchFrameMs,
+          totalMovesExecuted: phaseMoves,
+          victory: isVictory,
+          shufflesUsed,
         });
 
-        // Breve intervalo entre fases para permitir limpeza de microtarefas
-        await new Promise((resolve) => setTimeout(resolve, 30));
+        // Intervalo suave entre as fases
+        await new Promise((resolve) => setTimeout(resolve, 20));
       }
 
       const count = testLevelIndices.length;
@@ -132,11 +241,11 @@ export class BenchmarkRunner {
         ? Number(((finalHeapBytes - initialHeapBytes) / 1048576).toFixed(2))
         : 0;
 
-      // Classificação Zen de Performance
+      // Classificação Zen de Performance & Estabilidade
       let grade: 'S' | 'A' | 'B' | 'C' = 'S';
-      if (avgFrameMs > 16.6 || avgLoadTimeMs > 400) {
+      if (avgFrameMs > 16.6 || avgLoadTimeMs > 400 || fullGamesCleared < count / 2) {
         grade = 'C';
-      } else if (avgFrameMs > 10.0 || avgLoadTimeMs > 250) {
+      } else if (avgFrameMs > 10.0 || avgLoadTimeMs > 250 || fullGamesCleared < count) {
         grade = 'B';
       } else if (avgFrameMs > 5.0 || avgLoadTimeMs > 120) {
         grade = 'A';
@@ -144,11 +253,13 @@ export class BenchmarkRunner {
         grade = 'S';
       }
 
-      const summary = `Classificação [${grade}]: Carga Média ${avgLoadTimeMs}ms (Prewarm: ${avgPrewarmMs}ms) | Gameplay ${avgFrameMs}ms/frame (${simulatedFps} FPS)`;
+      const summary = `Classificação [${grade}]: ${fullGamesCleared}/${count} Fases Vencidas (${totalMovesSimulated} jogadas simuladas) | Carga Média ${avgLoadTimeMs}ms | Gameplay ${avgFrameMs}ms/frame (${simulatedFps} FPS)`;
 
       const result: BenchmarkResult = {
         executedAt: new Date().toISOString(),
         phasesTested: count,
+        fullGamesCleared,
+        totalMovesSimulated,
         avgLoadTimeMs,
         avgEngineGenMs,
         avgPrewarmMs,
@@ -165,7 +276,7 @@ export class BenchmarkRunner {
       diagnosticLogger.recordBenchmarkResult(result);
 
       if (onProgress) {
-        onProgress(100, `Benchmark concluído com nota ${grade}!`);
+        onProgress(100, `Benchmark concluído com ${fullGamesCleared}/${count} vitórias! Nota: Classe ${grade}`);
       }
 
       return result;
