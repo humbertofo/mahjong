@@ -146,14 +146,14 @@ export class LevelsModal {
       // Ponto de transição superior do portal
       route.push({
         x: centerX,
-        y: portalCenterY - portalHeight / 2 + 4,
+        y: portalCenterY - portalHeight / 2,
         isUnlocked: firstUnlockedInWorld,
         type: 'portal',
       });
       // Ponto de transição inferior do portal
       route.push({
         x: centerX,
-        y: portalCenterY + portalHeight / 2 - 4,
+        y: portalCenterY + portalHeight / 2,
         isUnlocked: firstUnlockedInWorld,
         type: 'portal',
       });
@@ -212,6 +212,11 @@ export class LevelsModal {
       const p1 = route[i];
       const p2 = route[i + 1];
 
+      // Nunca desenhar linha atravessando o interior do portal de bioma
+      if (p1.type === 'portal' && p2.type === 'portal') {
+        continue;
+      }
+
       // Curva natural de rio com curvatura fluida
       const dy = p2.y - p1.y;
       const cp1x = p1.x + (p2.x - p1.x) * 0.15;
@@ -222,27 +227,35 @@ export class LevelsModal {
       const pathData = `M ${p1.x} ${p1.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
 
       if (p2.isUnlocked) {
-        const glowEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        glowEl.setAttribute('d', pathData);
-        glowEl.setAttribute('class', 'map-path-glow');
-        mapSvg.appendChild(glowEl);
-
-        const mainEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        mainEl.setAttribute('d', pathData);
-        mainEl.setAttribute('class', 'map-path-unlocked');
-        mapSvg.appendChild(mainEl);
-
-        // O feixe de partículas ativas foca no caminho que conduz à fase atual
-        const isLeadingToCurrent =
-          p2.isCurrent ||
-          p1.isCurrent ||
-          (p2.idx !== undefined && Math.abs(p2.idx - currentLevelIndex) <= 1);
+        const isLeadingToCurrent = Boolean(p2.isCurrent);
 
         if (isLeadingToCurrent) {
+          // Veio de fronteira ativo (ouro cintilante conduzindo à fase atual)
+          const glowEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          glowEl.setAttribute('d', pathData);
+          glowEl.setAttribute('class', 'map-path-frontier-glow');
+          mapSvg.appendChild(glowEl);
+
+          const mainEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          mainEl.setAttribute('d', pathData);
+          mainEl.setAttribute('class', 'map-path-frontier');
+          mapSvg.appendChild(mainEl);
+
           const flowEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
           flowEl.setAttribute('d', pathData);
           flowEl.setAttribute('class', 'map-path-flow');
           mapSvg.appendChild(flowEl);
+        } else {
+          // Veio concluído padrão (verde jade reluzente sólido)
+          const glowEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          glowEl.setAttribute('d', pathData);
+          glowEl.setAttribute('class', 'map-path-glow');
+          mapSvg.appendChild(glowEl);
+
+          const mainEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          mainEl.setAttribute('d', pathData);
+          mainEl.setAttribute('class', 'map-path-unlocked');
+          mapSvg.appendChild(mainEl);
         }
       } else {
         const lockedEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');

@@ -62,3 +62,22 @@ Este documento define padrões de engenharia para garantir máxima autonomia de 
   - Haptics são disparados apenas em eventos-chave (toque bem-sucedido em peça livre, combinação eliminada e vitória).
   - Evitar vibrações longas ou repetitivas para preservar a bateria e a tranquilidade da experiência Zen.
 
+---
+
+## 🚫 5. Armadilhas de CSS Containment & GPU Blending
+
+- **Proibição de `contain: paint` e `content-visibility: auto` em Nós Circulares/Halos:**
+  - NUNCA aplique `contain: paint` ou `content-visibility: auto` em nós circulares, avatares ou elementos que possuam `box-shadow` difusa, auras ou `radial-gradient`. Em WebViews Android (Mali/Adreno), isso gera caixas quadradas pretas ao redor do elemento.
+- **Relevo 3D Nativo (Sem Pseudo-Elementos com Alfa):**
+  - NUNCA utilize pseudo-elementos (`::before`/`::after`) ovais rotacionados com cor semitransparente para simular reflexos sobre elementos móveis ou animados; eles sofrem erro de inversão de alfa na GPU móvel. Relevo 3D deve ser feito exclusivamente via `box-shadow: inset` e `linear-gradient` nativos no próprio elemento.
+
+---
+
+## 🪟 6. HUD Não-Invasivo & Telemetria Zero-Overhead
+
+- **Anti-Poluição do Viewport:**
+  - Toasts e avisos de eventos secundários (ex: clima, ciclo dia/noite) jamais devem cobrir o tabuleiro ou a área de interação ativa do usuário. O status deve ser comunicado em faixas passivas fixas nas extremidades do HUD.
+- **Telemetria de Frametime Não-Bloqueante:**
+  - Para profiling de 60 FPS, registre delta-times de quadros via `performance.now()` sem alocar objetos na thread de renderização, monitorando `slowFrames` (>16.6ms) e `janks` (>33ms).
+
+

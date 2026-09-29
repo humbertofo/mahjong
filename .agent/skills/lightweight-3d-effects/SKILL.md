@@ -159,3 +159,16 @@ export function setupParallaxGyroscope(onAngleChange: (angleX: number, angleY: n
 
 1. **Evite cálculos trigonométricos caros no render:** Use multiplicações simples e matrizes 2D de translação em vez de cálculos 3D completos.
 2. **Desative o giroscópio quando o tabuleiro estiver ocioso:** Se não houver toque do usuário nos últimos 10 segundos, remova o listener de orientação para permitir que o processador do celular entre em repouso profundo.
+
+---
+
+## 🚫 Armadilha de GPU: Relevo 3D Nativo vs. Pseudo-Elementos (`::before`)
+
+1. **Nunca use pseudo-elementos (`::before`/`::after`) para "adesivos" de reflexo de luz em nós animados ou móveis:**
+   * Em GPUs móveis (ARM Mali e Adreno), pseudo-elementos ovais com `transform: rotate(-30deg)` e `rgba(255, 255, 255, 0.5)` sofrem erros de inversão de canal alfa (alfa premultiplicado corrompido), transformando o reflexo brilhante em um buraco escuro/mancha preta no elemento.
+2. **Construa o relevo 3D de forma 100% nativa no próprio elemento:**
+   * Utilize `box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.5)` para o reflexo superior de marfim/vidro.
+   * Utilize `box-shadow: inset 0 -3px 6px rgba(0, 0, 0, 0.35)` para a sombra inferior de chanfro.
+   * Utilize `background: linear-gradient(145deg, #primary, #darker)` para o gradiente de curvatura esférica.
+   * Esta abordagem é 100% imune a falhas de composição de GPU em qualquer celular.
+

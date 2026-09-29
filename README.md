@@ -13,6 +13,11 @@ O produto combina a tradição milenar das pedras de Mahjong com mecânicas auto
 
 ---
 
+> 📖 **Documentação Canônica Completa:**  
+> Consulte o [**Compêndio Oficial de Design & Engenharia (Bíblia de Jogo)**](./docs/compendium/README.md) para a especificação exaustiva das mecânicas, catálogo das **157 Peças**, matriz de **211 Sinergias** e atlas das **50 Fases Oficiais**.
+
+---
+
 ## 🌟 Principais Recursos & Filosofia Zen
 
 ### 👵 Acessibilidade Suprema & Ergonomia Mobile

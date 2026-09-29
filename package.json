@@ -16,7 +16,8 @@
     "graphcode": "npx tsx scripts/graphcode.ts",
     "graphcode:audit": "npx tsx scripts/graphcode.ts --audit",
     "render:svg": "npx tsx scripts/render-svg.ts",
-    "report:levels": "npx tsx scripts/generate_level_report.ts"
+    "report:levels": "npx tsx scripts/generate_level_report.ts",
+    "generate:compendium": "npx tsx scripts/generate_compendium.ts"
   },
   "dependencies": {
     "@capacitor/android": "^6.2.0",

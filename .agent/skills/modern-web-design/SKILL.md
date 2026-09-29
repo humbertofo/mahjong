@@ -123,3 +123,24 @@ export async function triggerHaptic(style: ImpactStyle = ImpactStyle.Light) {
 1. **Sem temporizadores punitivos:** Se houver cronômetro, ele deve ser puramente informativo, nunca causando "Game Over".
 2. **Desfazer ilimitado:** Um jogador deve poder voltar quantos passos desejar sem penalidade de pontuação.
 3. **Dicas claras:** As peças sugeridas pela dica devem pulsar suavemente em ouro/âmbar sem piscar agressivamente (prevenção contra desconforto visual e fotossensibilidade).
+
+---
+
+## 🪟 HUD Não-Invasivo (Zero-Distraction Interaction)
+
+1. **Nunca obstrua a área de jogo/interação principal:** Toasts efêmeros, popups de eventos secundários (ex: ciclo solar/lunar, mudanças cosméticas de clima) jamais devem cobrir o centro do tabuleiro ou a área onde o jogador está tomando decisões.
+2. **Ancoragem em Faixas Estáticas:** Notificações contextuais devem ser passivas e ancoradas nas extremidades (barra de sub-HUD superior ou inferior) sem sobreposição flutuante sobre alvos de toque.
+3. **Feedback de Estado sem Interrupção:** Mudanças de estado devem ser comunicadas por partículas ambientais sutis ou atualização de texto no HUD, sem modais bloqueantes a cada rodada.
+
+---
+
+## 🗺️ Mapas de Fases e Trilhas em SVG (Saga Pathing)
+
+1. **Hierarquia Visual de Caminhos:**
+   * **Caminhos Concluídos:** Veio sólido, limpo e reluzente. Nunca aplique pontilhados móveis ou traços interrompidos sobre trechos já vencidos.
+   * **Fronteira Ativa (Caminho para o Objetivo):** Destaque luminoso com feixe sutil de partículas/pulso direcionado exclusivamente ao nó corrente a ser jogado.
+   * **Caminhos Bloqueados:** Linha sutil tracejada em tom suave e discreto.
+2. **Desvio Limpo em Marcos e Portais:**
+   * Linhas de conexão SVG jamais devem atravessar o miolo ou o texto de cards de transição/portais. A linha conecta na borda superior do marco e recomeça da borda inferior.
+   * Cards de marcos devem ter planos de fundo ricos e opacos (com `backdrop-filter: blur(12px)`) para garantir leitura perfeita.
+
