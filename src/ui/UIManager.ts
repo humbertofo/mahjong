@@ -1131,24 +1131,19 @@ export class UIManager {
 
     const harmonyScore = this.engine.getHarmonyScore();
 
-    const levelStats = StorageManager.recordVictory(
+    const nextLevelIdx = this.currentLevelIndex + 1;
+    const hasNext = nextLevelIdx < ALL_LAYOUTS.length;
+
+    const levelStats = StorageManager.recordVictoryBatch({
       layoutId,
       timeSeconds,
       toolsRemaining,
-      this.synergiesTriggeredThisGame,
-      harmonyScore
-    );
-    StorageManager.incrementGamesWon(
-      timeSeconds,
-      this.pairsMatchedThisGame,
-      this.currentLevelIndex,
-      this.synergiesTriggeredThisGame
-    );
-
-    const nextLevelIdx = this.currentLevelIndex + 1;
-    if (nextLevelIdx < ALL_LAYOUTS.length) {
-      StorageManager.unlockLevel(nextLevelIdx);
-    }
+      synergiesTriggered: this.synergiesTriggeredThisGame,
+      score: harmonyScore,
+      pairsMatched: this.pairsMatchedThisGame,
+      levelIndex: this.currentLevelIndex,
+      nextLevelIndex: hasNext ? nextLevelIdx : undefined,
+    });
 
     GameEndModals.showVictoryModal(
       timeSeconds,

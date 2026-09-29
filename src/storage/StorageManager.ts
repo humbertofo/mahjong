@@ -152,6 +152,93 @@ export class StorageManager {
     return stats;
   }
 
+  /**
+   * Grava todas as métricas de vitória de fase em lote atômico (Batch Victory Transaction).
+   * Reduz múltiplas chamadas com I/O síncrono no localStorage para uma passagem unificada,
+   * eliminando long tasks na CPU/eMMC do Android no momento da celebração de vitória.
+   */
+  public static recordVictoryBatch(params: {
+    layoutId: string;
+    timeSeconds: number;
+    toolsRemaining: number;
+    synergiesTriggered: number;
+    score: number;
+    pairsMatched: number;
+    levelIndex: number;
+    nextLevelIndex?: number;
+  }): LevelStats {
+    const {
+      layoutId,
+      timeSeconds,
+      toolsRemaining,
+      synergiesTriggered,
+      score,
+      pairsMatched,
+      levelIndex,
+      nextLevelIndex,
+    } = params;
+
+    // 1. Estatísticas do Tabuleiro Atual
+    const stats = this.getLevelStats(layoutId);
+    stats.completed = true;
+    stats.timesPlayed += 1;
+    if (!stats.bestTimeSeconds || timeSeconds < stats.bestTimeSeconds) {
+      stats.bestTimeSeconds = timeSeconds;
+    }
+    if (!stats.bestScore || score > stats.bestScore) {
+      stats.bestScore = score;
+    }
+
+    let earnedStars: 0 | 1 | 2 | 3 = 1;
+    if (toolsRemaining > 0 && synergiesTriggered > 0) {
+      earnedStars = 3;
+    } else if (toolsRemaining > 0 || synergiesTriggered > 0) {
+      earnedStars = 2;
+    }
+    if (earnedStars > stats.stars) {
+      stats.stars = earnedStars;
+    }
+    this.statsCache.set(layoutId, { ...stats });
+
+    // 2. Estatísticas Globais
+    const g = this.getGlobalStats();
+    g.totalGamesWon += 1;
+    g.totalPairsMatched += pairsMatched;
+    g.totalTimePlayed += timeSeconds;
+    g.totalSynergiesTriggered = (g.totalSynergiesTriggered || 0) + synergiesTriggered;
+    if (levelIndex > g.highestLevelUnlocked) g.highestLevelUnlocked = levelIndex;
+    this.globalStatsCache = { ...g };
+
+    // 3. Progresso e Desbloqueio da Próxima Fase
+    let p: SavedProgress | null = null;
+    if (nextLevelIndex !== undefined) {
+      p = this.getProgress();
+      if (!p.unlockedLevels.includes(nextLevelIndex)) {
+        p.unlockedLevels.push(nextLevelIndex);
+      }
+      if (nextLevelIndex > p.currentLevelIndex) {
+        p.currentLevelIndex = nextLevelIndex;
+      }
+      this.progressCache = {
+        currentLevelIndex: p.currentLevelIndex,
+        unlockedLevels: [...p.unlockedLevels],
+      };
+    }
+
+    // Persistência em lote (passagem única de I/O)
+    try {
+      localStorage.setItem(`${STATS_KEY}_${layoutId}`, JSON.stringify(stats));
+      localStorage.setItem(GLOBAL_KEY, JSON.stringify(g));
+      if (p) {
+        localStorage.setItem(PROGRESS_KEY, JSON.stringify(p));
+      }
+    } catch {
+      /* silent */
+    }
+
+    return stats;
+  }
+
   // ─── Global Stats ────────────────────────────────────────────────────────────
 
   public static getGlobalStats(): GlobalStats {

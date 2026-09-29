@@ -241,10 +241,13 @@ export class TileRenderer {
       g.restore();
     }
 
-    // Pré-aquece os sprites 3D completos em GPU (Livre e Bloqueada, Z=0) para zero lag no primeiro toque
+    // Pré-aquece os sprites 3D completos em GPU (Livre e Bloqueada para todos os níveis Z: 0, 1 e 2)
+    // Elimina Cache Misses e micro-travamentos na thread gráfica durante a partida
     for (let i = 0; i < animals.length; i++) {
-      this.getOrGenerateTileSprite(animals[i], true, 0);
-      this.getOrGenerateTileSprite(animals[i], false, 0);
+      for (let z = 0; z <= 2; z++) {
+        this.getOrGenerateTileSprite(animals[i], true, z);
+        this.getOrGenerateTileSprite(animals[i], false, z);
+      }
     }
   }
 

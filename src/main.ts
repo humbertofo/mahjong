@@ -140,17 +140,27 @@ window.addEventListener('DOMContentLoaded', () => {
     requestWakeLock();
   });
 
-  // 5. Verificação de Live Update com tela de download e solicitação de reinício (deferida para fluidez imediata)
-  setTimeout(() => {
-    LiveUpdateManager.checkForUpdates({
-      onDownloading: (message) => {
-        uiManager?.showUpdateDownloading(message);
-      },
-      onReady: (message) => {
-        uiManager?.showUpdateReady(message);
-      },
-    });
-  }, 100);
+  // 5. Verificação de Live Update deferida para momento de CPU ociosa (elimina concorrência e long tasks no boot)
+  const scheduleLiveUpdateCheck = () => {
+    const runCheck = () => {
+      LiveUpdateManager.checkForUpdates({
+        onDownloading: (message) => {
+          uiManager?.showUpdateDownloading(message);
+        },
+        onReady: (message) => {
+          uiManager?.showUpdateReady(message);
+        },
+      });
+    };
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      (window as unknown as { requestIdleCallback: (cb: () => void, opts: { timeout: number }) => void }).requestIdleCallback(runCheck, { timeout: 10000 });
+    } else {
+      setTimeout(runCheck, 600);
+    }
+  };
+
+  setTimeout(scheduleLiveUpdateCheck, 4500);
 
   // 6. Tratamento do Hardware Back Button do Android (Evita encerramento acidental da fase)
   const onBackButton = (e?: Event) => {
