@@ -1199,7 +1199,6 @@ export class UIManager {
       this.renderer.triggerDealAnimation(420);
       this.renderer.requestRender();
       this.updateHUD();
-      this.showNatureToast('🌊', `Onda ${this.engine.getCurrentWave()} Iniciada!`, 'Novas peças na mesa com peças gigantes!');
     });
   }
 
@@ -1325,14 +1324,9 @@ export class UIManager {
     this.updateHUD();
   }
 
-  public handleTimeOfDayChanged(newTime: TimeOfDay): void {
-    if (newTime === 'day') {
-      this.showToast('☀️ O Sol atinge o zênite! Espécies diurnas concedem bônus solar (+150 pts).', 3500);
-    } else if (newTime === 'twilight') {
-      this.showToast('🌅 O Crepúsculo cai suavemente sobre a floresta...', 3500);
-    } else if (newTime === 'night') {
-      this.showToast('🌙 A Noite enluarada desperta as criaturas noturnas! (+150 pts)', 3500);
-    }
+  public handleTimeOfDayChanged(_newTime: TimeOfDay): void {
+    // Transição silenciosa do ciclo solar/lunar sem popups para manter o tabuleiro 100% limpo
+    this.updateHUD();
   }
 
   public handleCocoonCracked(tile: PlacedTile): void {

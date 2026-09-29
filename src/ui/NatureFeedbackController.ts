@@ -158,36 +158,8 @@ export class NatureFeedbackController {
   }
 
   public showNatureToast(icon: string, title: string, desc: string): void {
+    // Atualiza exclusivamente o indicador sutil do cabeçalho, sem popup poluindo o tabuleiro
     this.showNatureEvent(icon, title, desc);
-
-    const toast = document.getElementById('nature-toast');
-    const toastIcon = document.getElementById('nature-toast-icon');
-    const toastTitle = document.getElementById('nature-toast-title');
-    const toastDesc = document.getElementById('nature-toast-desc');
-    const timerBar = toast?.querySelector('.nature-toast-timer-bar') as HTMLElement | null;
-
-    if (toast && toastIcon && toastTitle && toastDesc) {
-      toastIcon.textContent = icon;
-      toastTitle.textContent = title;
-      toastDesc.textContent = desc;
-
-      if (timerBar) {
-        timerBar.style.animation = 'none';
-        requestAnimationFrame(() => {
-          timerBar.style.animation = 'toast-timer-drain 3.5s linear forwards';
-        });
-      }
-
-      toast.classList.remove('hidden');
-
-      if (this.natureToastTimer) {
-        clearTimeout(this.natureToastTimer);
-      }
-      this.natureToastTimer = setTimeout(() => {
-        toast.classList.add('hidden');
-        this.natureToastTimer = null;
-      }, 3500);
-    }
   }
 
   public handleTileLongPress(tile: PlacedTile): void {
