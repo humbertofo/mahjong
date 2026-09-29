@@ -76,7 +76,8 @@ export class BenchmarkRunner {
         const matchDurations: number[] = [];
         let phaseMoves = 0;
         let shufflesUsed = 0;
-        let maxIterationGuard = 400; // Proteção contra loops excessivos em layouts massivos
+        let consecutiveShufflesWithoutMatch = 0;
+        let maxIterationGuard = 650; // Proteção estendida para suportar layouts massivos de 186+ peças em 3 ondas
 
         while (!engine.isVictory() && maxIterationGuard > 0) {
           maxIterationGuard--;
@@ -84,12 +85,14 @@ export class BenchmarkRunner {
           // A) Se a onda atual estiver limpa e houver mais ondas, avança
           if (engine.isWaveCleared() && engine.hasMoreWaves()) {
             engine.advanceToNextWave();
+            consecutiveShufflesWithoutMatch = 0;
             continue;
           }
 
           // B) Busca par direto solúvel via ZenPowerManager
           const hint = engine.getHintPair();
           if (hint) {
+            consecutiveShufflesWithoutMatch = 0;
             const t1Tile = engine.getTiles().find((t) => t.id === hint.tile1Id);
             const t2Tile = engine.getTiles().find((t) => t.id === hint.tile2Id);
 
@@ -141,11 +144,12 @@ export class BenchmarkRunner {
             continue;
           }
 
-          // C) Se não há par direto visível, tenta embaralhar o que resta na mesa
-          if (engine.getActiveBoardTiles().length > 1) {
+          // C) Se não há par direto visível, tenta embaralhar o que resta na mesa (até 2 vezes consecutivas)
+          if (engine.getActiveBoardTiles().length > 1 && consecutiveShufflesWithoutMatch < 2) {
             const shuffled = engine.shuffleRemaining();
             if (shuffled) {
               shufflesUsed++;
+              consecutiveShufflesWithoutMatch++;
               const hintAfterShuffle = engine.getHintPair();
               if (hintAfterShuffle) continue;
             }
@@ -189,7 +193,14 @@ export class BenchmarkRunner {
               activeRem[0].isRemoved = true;
               phaseMoves++;
             }
+            consecutiveShufflesWithoutMatch = 0;
             (engine as any).invalidateCache();
+            engine.checkAndResolveCosmicRescue();
+            continue;
+          }
+
+          // G) Se a mesa zerou mas ainda resta peça na bandeja, purifica com Resgate Cósmico
+          if (engine.getActiveBoardTiles().length === 0 && engine.getTray().length > 0) {
             engine.checkAndResolveCosmicRescue();
             continue;
           }
